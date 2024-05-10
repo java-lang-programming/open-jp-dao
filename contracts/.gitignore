@@ -1,0 +1,6 @@
+src/.cache/*
+src/node_modules/*
+src/artifacts/*
+src/cache/*
+src/.env
+.DS_Store

@@ -1,0 +1,12 @@
+version: '3.7'
+services:
+  open-jp-dao-contracts-dev:
+    build:
+      context: .
+    image: open-jp-dao-contracts-dev
+    container_name: open-jp-dao-contracts-dev
+    tty: true
+    volumes:
+      - ./src/:/app/src/
+    ports:
+      - "8545:8545"

@@ -1,0 +1,12 @@
+version: '3.7'
+services:
+  open-jp-dao-python-server-dev:
+    build:
+      context: .
+    image: open-jp-dao-python-server-dev
+    container_name: open-jp-dao-python-server-dev
+    tty: true
+    volumes:
+      - ./server:/usr/src/app
+    # ports:
+    #   - "8545:8545"

@@ -1,0 +1,34 @@
+name: backend コードチェック&テスト
+
+on:
+  push:
+    branches:
+      - develop
+      - feature/backend/*
+    paths-ignore:
+      - .gitignore
+      - '**.md'
+
+jobs:
+  check:
+    name: backend check
+    runs-on: ubuntu-22.04
+    strategy:
+      matrix:
+        python-version: ["3.12"]
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+          architecture: 'x64' # optional x64 or x86. Defaults to x64 if not specified
+      - name: Install Poetry(no virtualenvs)
+        run: |
+          cd backend/server
+          pip install poetry
+          poetry config virtualenvs.in-project false && poetry config installer.parallel false && poetry config virtualenvs.create false && poetry install --no-root
+      - name: check python code formatting
+        run: |
+          cd backend/server
+          make code_formatting
