@@ -14,6 +14,7 @@ launch_hardhat:
 	npx hardhat node --hostname 0.0.0.0
 unit_test:
 	npx hardhat test test/EmployeeAuthorityWorkerNFT.js
+	npx hardhat test test/EmployeeAuthorityHolderNFT.js
 unit_test_all:
 	npx hardhat test
 mit_to_goerli:

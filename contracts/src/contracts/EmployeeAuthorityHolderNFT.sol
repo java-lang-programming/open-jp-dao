@@ -3,7 +3,7 @@ pragma solidity ^0.8.19;
 
 import {ERC721Upgradeable} from "@openzeppelin/contracts-upgradeable/token/ERC721/ERC721Upgradeable.sol";
 
-contract EmployeeAuthorityWorkerNFT is ERC721Upgradeable {
+contract EmployeeAuthorityHolderNFT is ERC721Upgradeable {
     mapping(uint256 => string) private _urls;
 
     function initialize(string memory name_, string memory symbol_) initializer public onlyInitializing {
@@ -18,7 +18,7 @@ contract EmployeeAuthorityWorkerNFT is ERC721Upgradeable {
 
     // ここはプロジェクトによって書き換えること
     function _baseURI() internal view virtual override returns (string memory) {
-        return "https://java-lang-programming.github.io/nfts/dwebnft/";
+        return "https://java-lang-programming.github.io/nfts/holder/";
     }
 
     // urlと紐づける
@@ -33,11 +33,5 @@ contract EmployeeAuthorityWorkerNFT is ERC721Upgradeable {
             return super.tokenURI(tokenId);
         }
         return _urls[tokenId];
-    }
-
-    //　譲渡不可能にする(ロックの有無を考えても良い)
-    function transferFrom(address from, address to, uint256 tokenId) public override {
-      require(from == address(0), "Err: token is SOUL BOUND");
-      super.transferFrom(from, to, tokenId);
     }
 }

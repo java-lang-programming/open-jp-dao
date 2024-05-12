@@ -15,3 +15,4 @@
 # 仕様
 
 社員権　- 業務執行社員 - contracts/src/contracts/EmployeeAuthorityWorkerNFT.sol
+       - その他社員 - contracts/src/contracts/EmployeeAuthorityHolderNFT.sol

@@ -23,6 +23,10 @@ class Ethereum(BaseContractRepository):
     def contract(self, contract_address: str, abi: any):
         return self.w3.eth.contract(address=contract_address, abi=abi)
 
+    # トランザクじょんのreceipを取得する
+    def get_transaction_receipt(self, tx_hash: any):
+        return self.w3.eth.get_transaction_receipt(tx_hash)
+
     # ネットワークを返す
     def network(self):
         if self.chain_id == 8545:

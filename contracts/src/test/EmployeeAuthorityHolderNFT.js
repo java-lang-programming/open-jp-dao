@@ -1,7 +1,7 @@
 const { expect } = require("chai");
 const { ethers, upgrades } = require("hardhat");
 
-describe("EmployeeAuthorityWorkerNFT contract", function () {
+describe("EmployeeAuthorityHolderNFT contract", function () {
 
   let Token;
   let NFT;
@@ -14,14 +14,14 @@ describe("EmployeeAuthorityWorkerNFT contract", function () {
   // time. It receives a callback, which can be async.
   beforeEach(async function () {
     // Get the ContractFactory and Signers here.
-    Token = await ethers.getContractFactory("EmployeeAuthorityWorkerNFT");
+    Token = await ethers.getContractFactory("EmployeeAuthorityHolderNFT");
     [owner, addr1, addr2, ...addrs] = await ethers.getSigners();
 
     // To deploy our contract, we just have to call Token.deploy() and await
     // for it to be deployed(), which happens once its transaction has been
     // mined.
     // 更新可能にする
-    NFT = await upgrades.deployProxy(Token, ["EmployeeAuthorityWorkerNFT", "EAWNFT"]);
+    NFT = await upgrades.deployProxy(Token, ["EmployeeAuthorityHolderNFT", "EAHNFT"]);
     // DWebNFT = await Token.deploy();
     // waiting deploy...
     // await marsaAcademyNFT.deployed();
@@ -30,11 +30,11 @@ describe("EmployeeAuthorityWorkerNFT contract", function () {
   // You can nest describe calls to create subsections.
   describe("IERC721Metadata", function () {
     it("should assign symbol of token", async function () {
-      expect(await NFT.symbol()).to.equal("EAWNFT");
+      expect(await NFT.symbol()).to.equal("EAHNFT");
     });
 
     it("should assign name of token", async function () {
-      expect(await NFT.name()).to.equal("EmployeeAuthorityWorkerNFT");
+      expect(await NFT.name()).to.equal("EmployeeAuthorityHolderNFT");
     });
 
     it("should revert when tokenID is not exists", async function () {
@@ -52,7 +52,7 @@ describe("EmployeeAuthorityWorkerNFT contract", function () {
     });
   });
 
-  describe("EmployeeAuthorityWorkerNFT", function () {
+  describe("EmployeeAuthorityHolderNFT", function () {
     describe("mintNFT", function () {
       it("should be revert when mint to the zero address", async function () {
         await expect(NFT.mintNFT("0x0000000000000000000000000000000000000000", 0)).to.be.revertedWith("ERC721: mint to the zero address");
@@ -75,7 +75,7 @@ describe("EmployeeAuthorityWorkerNFT contract", function () {
       it("should be tokenURI of tokenID", async function () {
         await NFT.mintNFT(addr1.address, 1);
         const uri = await NFT.tokenURI(1)
-        expect(uri).to.equal("https://java-lang-programming.github.io/nfts/dwebnft/1");
+        expect(uri).to.equal("https://java-lang-programming.github.io/nfts/holder/1");
       });
 
       // setTokenURIを利用する
@@ -88,18 +88,23 @@ describe("EmployeeAuthorityWorkerNFT contract", function () {
     });
 
     describe("transferFrom", function () {
-      it("should be error when transferred from owner.address to addr1.address.", async function () {
+      it("should be transferred from owner.address to addr1.address.", async function () {
+        //await NFT.setApprovalForAll(owner.address, true)
         await NFT.mintNFT(owner.address, 1);
-        await expect(NFT.transferFrom(owner.address, addr1.address, 1)).to.be.revertedWith("Err: token is SOUL BOUND");
+        // // await NFT.mintNFT(owner.address, 1);
+        await NFT.transferFrom(owner.address, addr1.address, 1)
+        expect(await NFT.balanceOf(owner.address)).to.equal(0);
+        expect(await NFT.balanceOf(addr1.address)).to.equal(1);
+      });
+
+      it("should be transferred from addr1.address to addr2.address.", async function () {
+        await NFT.mintNFT(addr1.address, 1);
+
+        // ownerでも所持者じゃないのでNG
+　　　　　await expect(NFT.transferFrom(addr1.address, addr2.address, 1)).to.be.revertedWith("ERC721: caller is not token owner or approved");
+
+        await NFT.connect(addr1).transferFrom(addr1.address, addr2.address, 1)
       });
     });
-
-    // safeTransferFromが動作しない
-    // describe("safeTransferFrom", function () {
-    //   it("should be error when safeTransferFrom from owner.address to addr1.address.", async function () {
-    //     await NFT.mintNFT(owner.address, 1);
-    //     await expect(NFT.safeTransferFrom(owner.address, addr1.address, 1, [])).to.be.revertedWith("Err: token is SOUL BOUND");
-    //   });
-    // });
   });
 });

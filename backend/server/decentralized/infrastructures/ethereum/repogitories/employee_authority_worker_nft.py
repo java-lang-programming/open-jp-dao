@@ -1,12 +1,15 @@
 # -*- coding: utf-8 -*-
 
 from decentralized.infrastructures.ethereum.ethereum import Ethereum
+from decentralized.infrastructures.ethereum.repogitories.interfaces.i_erc721_metadata import (
+    IERC721Metadata,
+)
 from decentralized.infrastructures.ethereum.repogitories.i_employee_authority_worker_nft import (
     IEmployeeAuthorityWorkerNFTRepogitory,
 )
 
 
-class EmployeeAuthorityWorkerNFTRepogitory(IEmployeeAuthorityWorkerNFTRepogitory):
+class EmployeeAuthorityWorkerNFTRepogitory(IERC721Metadata, IEmployeeAuthorityWorkerNFTRepogitory):
     ARTIFACTS_JSON_PATH: str = "./abi/EmployeeAuthorityWorkerNFT.json"
     HARDHAT_CONTRACT_ADDRESS: str = "0x9fE46736679d2D9a65F0992F2272dE9f3c7fa6e0"
 
@@ -29,15 +32,26 @@ class EmployeeAuthorityWorkerNFTRepogitory(IEmployeeAuthorityWorkerNFTRepogitory
             return EmployeeAuthorityWorkerNFTRepogitory.HARDHAT_CONTRACT_ADDRESS
         return None
 
-    # 　継承
-    def name(self):
-        return self.contract.functions.name().call()
+    def name(self, from_address: str) -> str:
+        return self.contract.functions.name().call({'from': from_address})
 
-    def symbol(self) -> None:
-        return self.contract.functions.symbol().call()
+    def symbol(self, from_address: str) -> str:
+        return self.contract.functions.symbol().call({'from': from_address})
 
-    def balanceOf(self, address: str) -> None:
-        return self.contract.functions.balanceOf(address).call()
+    def tokenURI(self, token_id: int, from_address: str) -> str:
+        return self.contract.functions.tokenURI(token_id).call({'from': from_address})
+
+    def balanceOf(self, target_address: str, from_address: str) -> None:
+        return self.contract.functions.balanceOf(target_address).call({'from': from_address})
+
+    def mintNFT(self, address: str, token_id: int):
+        # from_addressも必要かも
+        # 　トランザクション
+        tx_hash = self.contract.functions.mintNFT(address, token_id).transact()
+        # receiptを返す
+        # print(receipt)
+        return self.ethereum.get_transaction_receipt(tx_hash)
+        # myContract.events.myEvent().process_receipt(receipt)
 
     # def mint
 

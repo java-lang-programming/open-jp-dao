@@ -4,7 +4,7 @@
 
 ## コンテナに入る
 
-docker exec -it  open-jp-dao-contracts-dev /bin/sh
+docker exec -it open-jp-dao-contracts-dev /bin/sh
 
 ## Deployment
 
@@ -54,11 +54,5 @@ make launch_hardhat
 2. deploy
 
 ```
-deploy_contracts_to_hardhat
-```
-
-##　コードフォーマット
-
-```
-make code_formatting
+make deploy_contracts_to_hardhat
 ```
