@@ -35,7 +35,7 @@ docker exec -it open-jp-dao-contracts-dev /bin/sh
 npm install
 ```
 
-##　動作確認
+## 動作確認
 
 ```
 make unit_test

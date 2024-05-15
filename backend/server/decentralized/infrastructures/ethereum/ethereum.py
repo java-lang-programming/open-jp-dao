@@ -4,6 +4,7 @@ from web3 import Web3
 from decentralized.infrastructures.ethereum.repogitories.base_contract_repository import (
     BaseContractRepository,
 )
+from decentralized.utils.chains import Chains
 
 
 class Ethereum(BaseContractRepository):
@@ -11,7 +12,7 @@ class Ethereum(BaseContractRepository):
         self.w3 = Web3(Web3.HTTPProvider(url))
         self.chain_id = chain_id
 
-    def is_connected(self):
+    def is_connected(self) -> bool:
         return self.w3.is_connected()
 
     # 継承
@@ -29,5 +30,8 @@ class Ethereum(BaseContractRepository):
 
     # ネットワークを返す
     def network(self):
-        if self.chain_id == 8545:
+        if self.chain_id == Chains.HARDHAT_CHAIN_ID:
             return "localhost"
+        elif self.chain_id == Chains.SEPOLIA_CHAIN_ID:
+            return "Sepolia"
+        return None

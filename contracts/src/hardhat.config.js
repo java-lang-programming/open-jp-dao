@@ -6,18 +6,21 @@ require('@openzeppelin/hardhat-upgrades');
 const { API_URL, PRIVATE_KEY } = process.env;
 /** @type import('hardhat/config').HardhatUserConfig */
 module.exports = {
+  // https://ethereum.stackexchange.com/questions/142621/transaction-reverted-trying-to-deploy-a-contract-whose-code-is-too-large
   solidity: {
     version: "0.8.21",
     optimizer: {
       enabled: true,
-      runs: 200,
+      runs: 1000,
       details: { yul: false },
     },
-  }, 
+  },
   defaultNetwork: "hardhat",
    networks: {
       hardhat: {
-        chainId: 1338
+        chainId: 1338,
+        // govenorはこれが必要
+        allowUnlimitedContractSize: true,
       },
       localhost: {
         chainId: 1338,
