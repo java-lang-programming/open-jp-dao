@@ -8,3 +8,5 @@ lint:
 code_formatting:
 	make format
 	make lint
+unit_test:
+	poetry run pytest --cache-clear

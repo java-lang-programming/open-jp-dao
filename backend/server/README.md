@@ -2,7 +2,7 @@
 
 0pen JP Daoで利用するpythonコード
 
-##　コードフォーマット
+## コードフォーマット
 
 ```
 make code_formatting

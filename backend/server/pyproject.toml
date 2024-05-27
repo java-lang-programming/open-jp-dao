@@ -10,8 +10,13 @@ python = "^3.12"
 web3 = "^6.18.0"
 ruff = "^0.4.4"
 black = "^24.4.2"
+pytest = "^8.2.1"
 
 
 [build-system]
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
+
+[tool.pytest.ini_options]
+# pythonpath = "decentralized"
+testpaths = ["tests"]

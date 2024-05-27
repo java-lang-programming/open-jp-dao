@@ -8,10 +8,6 @@ from decentralized.infrastructures.ethereum.repogitories.employee_authority_work
 # 以下はhardhatを選択した場合
 url = "http://host.docker.internal:8545"
 
-ABI_PATH = "./abi/EmployeeAuthorityWorkerNFT.json"
-# 実行するコントラクトのアドレス
-contract_address = "0x9fE46736679d2D9a65F0992F2272dE9f3c7fa6e0"
-
 #jsonStr = None
 #with open(ABI_PATH, "r") as j:
 #  jsonStr = json.load(j)
@@ -50,14 +46,3 @@ print(nft.balanceOf(target_address=user_address_1, from_address=owner))
 print(nft.balanceOf(target_address=user_address_1, from_address=user_address_2))
 # print(balance)
 print(nft.tokenURI(token_id=3, from_address=user_address_1))
-# https://java-lang-programming.github.io/nfts/dwebnft/1
-# print(nft.name(from=user_address_1))
-# print(nft.name(from=user_address_2))
-# print(nft.name(from=user_address_3))
-# balance = nft.balanceOf(user_address_1)
-# print(balance)
-# if balance ==  0:
-# 	print(nft.mintNFT(user_address_1, 3))
-# balance = nft.balanceOf(user_address_1)
-# print(balance)
-#private_key = ""
