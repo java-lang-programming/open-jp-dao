@@ -8,5 +8,5 @@ services:
     tty: true
     volumes:
       - ./server:/usr/src/app
-    # ports:
-    #   - "8545:8545"
+    ports:
+      - "8001:8000"
