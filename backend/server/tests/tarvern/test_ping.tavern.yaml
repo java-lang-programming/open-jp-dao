@@ -1,0 +1,24 @@
+---
+test_name: ping
+
+stages:
+  - name: tokenの取得
+    request:
+      url: "{service.proto:s}://{service.host:s}:{service.port:d}/api/ethereum/8545/address/0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266/tokens"
+      method: GET
+      headers:
+        content-type: application/json
+
+    response:
+      status_code: 200
+
+# {
+#     "tokens": [
+#         {
+#             "workerNft": {
+#                 "balance": 1,
+#                 "mata_url": "https://java-lang-programming.github.io/nfts/dwebnft/1"
+#             }
+#         }
+#     ]
+# }

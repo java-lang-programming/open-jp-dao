@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 
-import pytest
 from decentralized.infrastructures.ethereum.ethereum import Ethereum
 from decentralized.utils.chains import Chains
 
@@ -18,4 +17,4 @@ class TestEthereum:
 
   def test_is_connected_sepolia(self):
     ethereum = Ethereum(url=Chains.SEPOLIA_URL, chain_id=Chains.SEPOLIA_CHAIN_ID)
-    assert ethereum.is_connected() == True
+    assert ethereum.is_connected(), 'SEPOLIA_URL connected'
