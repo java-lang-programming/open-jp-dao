@@ -1,0 +1,853 @@
+---
+test_name: NFT作成
+
+stages:
+  - name: ErrInvalidColumnName(カラム名が不正)
+    request:
+      url: "{service.proto:s}://{service.host:s}:{service.port:d}/api/nfts"
+      method: POST
+      data:
+        employee_id: 642
+      files:
+        file_data: "tests/employees_supports/publish/files/employee_support_employees_create_import_excels/invalid_column_name.xlsx"
+      headers:
+        content-type: multipart/form-data
+
+    response:
+      status_code: 400
+      strict: False
+      json:
+        errors:
+          - code: "ERR-IMPORT-FILE-INVALID"
+            meta:
+              - row: 1
+                column: "セル1行目"
+                message: "1行目に定義されているカラム名が正しくありません"
+                data: "emai"
+
+  - name: ErrInvalidColumnNum(データ部分のカラムが不正(多い))
+    request:
+      url: "{service.proto:s}://{service.host:s}:{service.port:d}/v1/companies/21/employees_supports_employees_create_import_pub"
+      method: POST
+      data:
+        employee_id: 642
+      files:
+        file_data: "tests/employees_supports/publish/files/employee_support_employees_create_import_excels/invalid_data_column_num.xlsx"
+      headers:
+        content-type: multipart/form-data
+
+    response:
+      status_code: 400
+      strict: False
+      json:
+        errors:
+          - code: "ERR-IMPORT-FILE-INVALID"
+            meta:
+              - row: 2
+                column: "mail_address"
+                message: "2行目に定義されているカラムの数が正しくありません"
+                data: ""
+
+  - name: ErrNotFoundExcelBodyData(データなし())
+    request:
+      url: "{service.proto:s}://{service.host:s}:{service.port:d}/v1/companies/21/employees_supports_employees_create_import_pub"
+      method: POST
+      data:
+        employee_id: 642
+      files:
+        file_data: "tests/employees_supports/publish/files/employee_support_employees_create_import_excels/invalid_no_data.xlsx"
+      headers:
+        content-type: multipart/form-data
+
+    response:
+      status_code: 400
+      strict: False
+      json:
+        errors:
+          - code: "ERR-IMPORT-FILE-INVALID"
+            meta:
+              - row: 2
+                column: ""
+                message: "2行目に定義されているデータが存在しません"
+                data: ""
+
+  - name: ErrInvalidEmailFormat
+    request:
+      url: "{service.proto:s}://{service.host:s}:{service.port:d}/v1/companies/21/employees_supports_employees_create_import_pub"
+      method: POST
+      data:
+        employee_id: 642
+      files:
+        file_data: "tests/employees_supports/publish/files/employee_support_employees_create_import_excels/invalid_email_format.xlsx"
+      headers:
+        content-type: multipart/form-data
+
+    response:
+      status_code: 400
+      strict: False
+      json:
+        errors:
+          - code: "ERR-IMPORT-FILE-INVALID"
+            meta:
+              - row: 3
+                column: "mail_address"
+                message: "3行目に定義されているメールアドレスが正しくありません"
+                data: "jiro@wevox"
+
+  - name: csvの途中に空白データがある
+    request:
+      url: "{service.proto:s}://{service.host:s}:{service.port:d}/v1/companies/21/employees_supports_employees_create_import_pub"
+      method: POST
+      data:
+        employee_id: 642
+      files:
+        file_data: "tests/employees_supports/publish/files/employee_support_employees_create_import_excels/empty_string_data_along_the_way.xlsx"
+      headers:
+        content-type: multipart/form-data
+
+    response:
+      status_code: 400
+      strict: False
+      json:
+        errors:
+          - code: "ERR-IMPORT-FILE-INVALID"
+            meta:
+              - row: 4
+                column: "mail_address"
+                message: "4行目に定義されているメールアドレスが正しくありません"
+                data: " "
+              - row: 6
+                column: "mail_address"
+                message: "6行目に定義されているメールアドレスが正しくありません"
+                data: " "
+
+  - name: 色々なエラーがある場合
+    request:
+      url: "{service.proto:s}://{service.host:s}:{service.port:d}/v1/companies/21/employees_supports_employees_create_import_pub"
+      method: POST
+      data:
+        employee_id: 642
+      files:
+        file_data: "tests/employees_supports/publish/files/employee_support_employees_create_import_excels/multi_error.xlsx"
+      headers:
+        content-type: multipart/form-data
+
+    response:
+      status_code: 400
+      strict: True
+      json:
+        internal_message: "不正なファイル"
+        errors:
+          - code: "ERR-IMPORT-FILE-INVALID"
+            meta:
+              - row: 2
+                column: "mail_address"
+                message: "2行目に定義されているメールアドレスが正しくありません"
+                data: "taro"
+              - row: 4
+                column: "mail_address"
+                message: "4行目に定義されているメールアドレスが正しくありません"
+                data: "アイウエお"
+              - row: 6
+                column: "mail_address"
+                message: "6行目に定義されているデータが存在しません"
+                data: ""
+              - row: 8
+                column: "mail_address"
+                message: "8行目に定義されているメールアドレスが正しくありません"
+                data: " "
+
+---
+test_name: excel validate. (英語)
+
+marks:
+  - usefixtures:
+    - update_employees643_langen
+
+stages:
+  - name: ErrInvalidColumnName(カラム名が不正)
+    request:
+      url: "{service.proto:s}://{service.host:s}:{service.port:d}/v1/companies/21/employees_supports_employees_create_import_pub"
+      method: POST
+      data:
+        employee_id: 643
+      files:
+        file_data: "tests/employees_supports/publish/files/employee_support_employees_create_import_excels/invalid_column_name.xlsx"
+      headers:
+        content-type: multipart/form-data
+
+    response:
+      status_code: 400
+      strict: False
+      json:
+        errors:
+          - code: "ERR-IMPORT-FILE-INVALID"
+            meta:
+              - row: 1
+                column: "Cell 1 line"
+                message: "The column name defined in row 1 is incorrect."
+                data: "emai"
+
+  - name: ErrInvalidColumnNum(データ部分のカラムが不正(多い))
+    request:
+      url: "{service.proto:s}://{service.host:s}:{service.port:d}/v1/companies/21/employees_supports_employees_create_import_pub"
+      method: POST
+      data:
+        employee_id: 643
+      files:
+        file_data: "tests/employees_supports/publish/files/employee_support_employees_create_import_excels/invalid_data_column_num.xlsx"
+      headers:
+        content-type: multipart/form-data
+
+    response:
+      status_code: 400
+      strict: False
+      json:
+        errors:
+          - code: "ERR-IMPORT-FILE-INVALID"
+            meta:
+              - row: 2
+                column: "mail_address"
+                message: "The number of columns defined in row 2 is incorrect."
+                data: ""
+
+---
+test_name: excel validate. (ドイツ語)
+
+marks:
+  - usefixtures:
+    - update_employees643_langde
+
+stages:
+  - name: InvalidColumnName(カラム名が不正)
+    request:
+      url: "{service.proto:s}://{service.host:s}:{service.port:d}/v1/companies/21/employees_supports_employees_create_import_pub"
+      method: POST
+      data:
+        employee_id: 643
+      files:
+        file_data: "tests/employees_supports/publish/files/employee_support_employees_create_import_excels/invalid_column_name.xlsx"
+      headers:
+        content-type: multipart/form-data
+
+    response:
+      status_code: 400
+      strict: False
+      json:
+        errors:
+          - code: "ERR-IMPORT-FILE-INVALID"
+            meta:
+              - row: 1
+                column: "Zelle 1 Zeile"
+                message: "Der in Zeile 1 definierte Spaltenname ist falsch."
+                data: "emai"
+
+  - name: InvalidColumnNum(データ部分のカラムが不正(カラムが多い))
+    request:
+      url: "{service.proto:s}://{service.host:s}:{service.port:d}/v1/companies/21/employees_supports_employees_create_import_pub"
+      method: POST
+      data:
+        employee_id: 643
+      files:
+        file_data: "tests/employees_supports/publish/files/employee_support_employees_create_import_excels/invalid_data_column_num.xlsx"
+      headers:
+        content-type: multipart/form-data
+
+    response:
+      status_code: 400
+      strict: False
+      json:
+        errors:
+          - code: "ERR-IMPORT-FILE-INVALID"
+            meta:
+              - row: 2
+                column: "mail_address"
+                message: "Die Anzahl der in Zeile 2 definierten Spalten ist falsch."
+                data: ""
+
+  - name: 色々なエラーがある場合
+    request:
+      url: "{service.proto:s}://{service.host:s}:{service.port:d}/v1/companies/21/employees_supports_employees_create_import_pub"
+      method: POST
+      data:
+        employee_id: 643
+      files:
+        file_data: "tests/employees_supports/publish/files/employee_support_employees_create_import_excels/multi_error.xlsx"
+      headers:
+        content-type: multipart/form-data
+
+    response:
+      status_code: 400
+      strict: False
+      json:
+        errors:
+          - code: "ERR-IMPORT-FILE-INVALID"
+            meta:
+              - row: 2
+                column: "mail_address"
+                message: "Die in Zeile 2 angegebene E-Mail-Adresse ist falsch."
+                data: "taro"
+              - row: 4
+                column: "mail_address"
+                message: "Die in Zeile 4 angegebene E-Mail-Adresse ist falsch."
+                data: "アイウエお"
+              - row: 6
+                column: "mail_address"
+                message: "Es sind keine Daten in Zeile 6 definiert."
+                data: ""
+              - row: 8
+                column: "mail_address"
+                message: "Die in Zeile 8 angegebene E-Mail-Adresse ist falsch."
+                data: " "
+
+---
+test_name: excel validate. (スペイン語)
+
+marks:
+  - usefixtures:
+    - update_employees643_langes
+
+stages:
+  - name: InvalidColumnName(カラム名が不正)
+    request:
+      url: "{service.proto:s}://{service.host:s}:{service.port:d}/v1/companies/21/employees_supports_employees_create_import_pub"
+      method: POST
+      data:
+        employee_id: 643
+      files:
+        file_data: "tests/employees_supports/publish/files/employee_support_employees_create_import_excels/invalid_column_name.xlsx"
+      headers:
+        content-type: multipart/form-data
+
+    response:
+      status_code: 400
+      strict: False
+      json:
+        errors:
+          - code: "ERR-IMPORT-FILE-INVALID"
+            meta:
+              - row: 1
+                column: "Celda 1 línea"
+                message: "El nombre de columna definido en la fila 1 es incorrecto."
+                data: "emai"
+
+  - name: InvalidColumnNum(データ部分のカラムが不正(カラムが多い))
+    request:
+      url: "{service.proto:s}://{service.host:s}:{service.port:d}/v1/companies/21/employees_supports_employees_create_import_pub"
+      method: POST
+      data:
+        employee_id: 643
+      files:
+        file_data: "tests/employees_supports/publish/files/employee_support_employees_create_import_excels/invalid_data_column_num.xlsx"
+      headers:
+        content-type: multipart/form-data
+
+    response:
+      status_code: 400
+      strict: False
+      json:
+        errors:
+          - code: "ERR-IMPORT-FILE-INVALID"
+            meta:
+              - row: 2
+                column: "mail_address"
+                message: "El número de columnas definido en la fila 2 es incorrecto."
+                data: ""
+
+  - name: 色々なエラーがある場合
+    request:
+      url: "{service.proto:s}://{service.host:s}:{service.port:d}/v1/companies/21/employees_supports_employees_create_import_pub"
+      method: POST
+      data:
+        employee_id: 643
+      files:
+        file_data: "tests/employees_supports/publish/files/employee_support_employees_create_import_excels/multi_error.xlsx"
+      headers:
+        content-type: multipart/form-data
+
+    response:
+      status_code: 400
+      strict: False
+      json:
+        errors:
+          - code: "ERR-IMPORT-FILE-INVALID"
+            meta:
+              - row: 2
+                column: "mail_address"
+                message: "La dirección de correo electrónico definida en la fila 2 es incorrecta."
+                data: "taro"
+              - row: 4
+                column: "mail_address"
+                message: "La dirección de correo electrónico definida en la fila 4 es incorrecta."
+                data: "アイウエお"
+              - row: 6
+                column: "mail_address"
+                message: "No hay datos definidos en la fila 6."
+                data: ""
+              - row: 8
+                column: "mail_address"
+                message: "La dirección de correo electrónico definida en la fila 8 es incorrecta."
+                data: " "
+
+---
+test_name: excel validate. (フランス語)
+
+marks:
+  - usefixtures:
+    - update_employees643_langfr
+
+stages:
+  - name: InvalidColumnName(カラム名が不正)
+    request:
+      url: "{service.proto:s}://{service.host:s}:{service.port:d}/v1/companies/21/employees_supports_employees_create_import_pub"
+      method: POST
+      data:
+        employee_id: 643
+      files:
+        file_data: "tests/employees_supports/publish/files/employee_support_employees_create_import_excels/invalid_column_name.xlsx"
+      headers:
+        content-type: multipart/form-data
+
+    response:
+      status_code: 400
+      strict: False
+      json:
+        errors:
+          - code: "ERR-IMPORT-FILE-INVALID"
+            meta:
+              - row: 1
+                column: "Cellule 1 ligne"
+                message: "Le nom de la colonne définie à la ligne 1 est incorrect."
+                data: "emai"
+
+  - name: InvalidColumnNum(データ部分のカラムが不正(カラムが多い))
+    request:
+      url: "{service.proto:s}://{service.host:s}:{service.port:d}/v1/companies/21/employees_supports_employees_create_import_pub"
+      method: POST
+      data:
+        employee_id: 643
+      files:
+        file_data: "tests/employees_supports/publish/files/employee_support_employees_create_import_excels/invalid_data_column_num.xlsx"
+      headers:
+        content-type: multipart/form-data
+
+    response:
+      status_code: 400
+      strict: False
+      json:
+        errors:
+          - code: "ERR-IMPORT-FILE-INVALID"
+            meta:
+              - row: 2
+                column: "mail_address"
+                message: "Le nombre de colonnes défini à la ligne 2 est incorrect."
+                data: ""
+
+  - name: 色々なエラーがある場合
+    request:
+      url: "{service.proto:s}://{service.host:s}:{service.port:d}/v1/companies/21/employees_supports_employees_create_import_pub"
+      method: POST
+      data:
+        employee_id: 643
+      files:
+        file_data: "tests/employees_supports/publish/files/employee_support_employees_create_import_excels/multi_error.xlsx"
+      headers:
+        content-type: multipart/form-data
+
+    response:
+      status_code: 400
+      strict: False
+      json:
+        errors:
+          - code: "ERR-IMPORT-FILE-INVALID"
+            meta:
+              - row: 2
+                column: "mail_address"
+                message: "L'adresse électronique définie à la ligne 2 est incorrecte"
+                data: "taro"
+              - row: 4
+                column: "mail_address"
+                message: "L'adresse électronique définie à la ligne 4 est incorrecte"
+                data: "アイウエお"
+              - row: 6
+                column: "mail_address"
+                message: "Il n'y a pas de données définies dans la ligne 6."
+                data: ""
+              - row: 8
+                column: "mail_address"
+                message: "L'adresse électronique définie à la ligne 8 est incorrecte"
+                data: " "
+
+---
+test_name: excel validate. (韓国語)
+
+marks:
+  - usefixtures:
+    - update_employees643_langko
+
+stages:
+  - name: InvalidColumnName(カラム名が不正)
+    request:
+      url: "{service.proto:s}://{service.host:s}:{service.port:d}/v1/companies/21/employees_supports_employees_create_import_pub"
+      method: POST
+      data:
+        employee_id: 643
+      files:
+        file_data: "tests/employees_supports/publish/files/employee_support_employees_create_import_excels/invalid_column_name.xlsx"
+      headers:
+        content-type: multipart/form-data
+
+    response:
+      status_code: 400
+      strict: False
+      json:
+        errors:
+          - code: "ERR-IMPORT-FILE-INVALID"
+            meta:
+              - row: 1
+                column: "셀 1 줄"
+                message: "행 1에 정의된 열 이름이 올바르지 않습니다."
+                data: "emai"
+
+  - name: InvalidColumnNum(データ部分のカラムが不正(カラムが多い))
+    request:
+      url: "{service.proto:s}://{service.host:s}:{service.port:d}/v1/companies/21/employees_supports_employees_create_import_pub"
+      method: POST
+      data:
+        employee_id: 643
+      files:
+        file_data: "tests/employees_supports/publish/files/employee_support_employees_create_import_excels/invalid_data_column_num.xlsx"
+      headers:
+        content-type: multipart/form-data
+
+    response:
+      status_code: 400
+      strict: False
+      json:
+        errors:
+          - code: "ERR-IMPORT-FILE-INVALID"
+            meta:
+              - row: 2
+                column: "mail_address"
+                message: "행 2에 정의된 열 수가 올바르지 않습니다."
+                data: ""
+
+  - name: 色々なエラーがある場合
+    request:
+      url: "{service.proto:s}://{service.host:s}:{service.port:d}/v1/companies/21/employees_supports_employees_create_import_pub"
+      method: POST
+      data:
+        employee_id: 643
+      files:
+        file_data: "tests/employees_supports/publish/files/employee_support_employees_create_import_excels/multi_error.xlsx"
+      headers:
+        content-type: multipart/form-data
+
+    response:
+      status_code: 400
+      strict: False
+      json:
+        errors:
+          - code: "ERR-IMPORT-FILE-INVALID"
+            meta:
+              - row: 2
+                column: "mail_address"
+                message: "2행에 정의된 이메일 주소가 올바르지 않습니다."
+                data: "taro"
+              - row: 4
+                column: "mail_address"
+                message: "4행에 정의된 이메일 주소가 올바르지 않습니다."
+                data: "アイウエお"
+              - row: 6
+                column: "mail_address"
+                message: "6행에 정의된 데이터가 없습니다."
+                data: ""
+              - row: 8
+                column: "mail_address"
+                message: "8행에 정의된 이메일 주소가 올바르지 않습니다."
+                data: " "
+
+---
+test_name: excel validate. (タイ語)
+
+marks:
+  - usefixtures:
+    - update_employees643_langth
+
+stages:
+  - name: InvalidColumnName(カラム名が不正)
+    request:
+      url: "{service.proto:s}://{service.host:s}:{service.port:d}/v1/companies/21/employees_supports_employees_create_import_pub"
+      method: POST
+      data:
+        employee_id: 643
+      files:
+        file_data: "tests/employees_supports/publish/files/employee_support_employees_create_import_excels/invalid_column_name.xlsx"
+      headers:
+        content-type: multipart/form-data
+
+    response:
+      status_code: 400
+      strict: False
+      json:
+        errors:
+          - code: "ERR-IMPORT-FILE-INVALID"
+            meta:
+              - row: 1
+                column: "Cell  1 ไลน์"
+                message: "ชื่อคอลัมน์ที่กำหนดในแถว 1 ไม่ถูกต้อง"
+                data: "emai"
+
+  - name: InvalidColumnNum(データ部分のカラムが不正(カラムが多い))
+    request:
+      url: "{service.proto:s}://{service.host:s}:{service.port:d}/v1/companies/21/employees_supports_employees_create_import_pub"
+      method: POST
+      data:
+        employee_id: 643
+      files:
+        file_data: "tests/employees_supports/publish/files/employee_support_employees_create_import_excels/invalid_data_column_num.xlsx"
+      headers:
+        content-type: multipart/form-data
+
+    response:
+      status_code: 400
+      strict: False
+      json:
+        errors:
+          - code: "ERR-IMPORT-FILE-INVALID"
+            meta:
+              - row: 2
+                column: "mail_address"
+                message: "จำนวนคอลัมน์ที่กำหนดในแถว 2 ไม่ถูกต้อง"
+                data: ""
+
+  - name: 色々なエラーがある場合
+    request:
+      url: "{service.proto:s}://{service.host:s}:{service.port:d}/v1/companies/21/employees_supports_employees_create_import_pub"
+      method: POST
+      data:
+        employee_id: 643
+      files:
+        file_data: "tests/employees_supports/publish/files/employee_support_employees_create_import_excels/multi_error.xlsx"
+      headers:
+        content-type: multipart/form-data
+
+    response:
+      status_code: 400
+      strict: False
+      json:
+        errors:
+          - code: "ERR-IMPORT-FILE-INVALID"
+            meta:
+              - row: 2
+                column: "mail_address"
+                message: "ที่อยู่อีเมลที่กำหนดในแถว 2 ไม่ถูกต้อง"
+                data: "taro"
+              - row: 4
+                column: "mail_address"
+                message: "ที่อยู่อีเมลที่กำหนดในแถว 4 ไม่ถูกต้อง"
+                data: "アイウエお"
+              - row: 6
+                column: "mail_address"
+                message: "ไม่มีการกำหนดข้อมูลในแถว 6"
+                data: ""
+              - row: 8
+                column: "mail_address"
+                message: "ที่อยู่อีเมลที่กำหนดในแถว 8 ไม่ถูกต้อง"
+                data: " "
+
+---
+test_name: excel validate. (中国語)
+
+marks:
+  - usefixtures:
+    - update_employees643_langzh
+
+stages:
+  - name: InvalidColumnName(カラム名が不正)
+    request:
+      url: "{service.proto:s}://{service.host:s}:{service.port:d}/v1/companies/21/employees_supports_employees_create_import_pub"
+      method: POST
+      data:
+        employee_id: 643
+      files:
+        file_data: "tests/employees_supports/publish/files/employee_support_employees_create_import_excels/invalid_column_name.xlsx"
+      headers:
+        content-type: multipart/form-data
+
+    response:
+      status_code: 400
+      strict: False
+      json:
+        errors:
+          - code: "ERR-IMPORT-FILE-INVALID"
+            meta:
+              - row: 1
+                column: "1 行"
+                message: "第1行定义的列名不正确"
+                data: "emai"
+
+  - name: InvalidColumnNum(データ部分のカラムが不正(カラムが多い))
+    request:
+      url: "{service.proto:s}://{service.host:s}:{service.port:d}/v1/companies/21/employees_supports_employees_create_import_pub"
+      method: POST
+      data:
+        employee_id: 643
+      files:
+        file_data: "tests/employees_supports/publish/files/employee_support_employees_create_import_excels/invalid_data_column_num.xlsx"
+      headers:
+        content-type: multipart/form-data
+
+    response:
+      status_code: 400
+      strict: False
+      json:
+        errors:
+          - code: "ERR-IMPORT-FILE-INVALID"
+            meta:
+              - row: 2
+                column: "mail_address"
+                message: "第2行定义的列数不正确"
+                data: ""
+
+  - name: 色々なエラーがある場合
+    request:
+      url: "{service.proto:s}://{service.host:s}:{service.port:d}/v1/companies/21/employees_supports_employees_create_import_pub"
+      method: POST
+      data:
+        employee_id: 643
+      files:
+        file_data: "tests/employees_supports/publish/files/employee_support_employees_create_import_excels/multi_error.xlsx"
+      headers:
+        content-type: multipart/form-data
+
+    response:
+      status_code: 400
+      strict: False
+      json:
+        errors:
+          - code: "ERR-IMPORT-FILE-INVALID"
+            meta:
+              - row: 2
+                column: "mail_address"
+                message: "第2行定义的电子邮箱地址不正确"
+                data: "taro"
+              - row: 4
+                column: "mail_address"
+                message: "第4行定义的电子邮箱地址不正确"
+                data: "アイウエお"
+              - row: 6
+                column: "mail_address"
+                message: "第6行定义的数据不存在"
+                data: ""
+              - row: 8
+                column: "mail_address"
+                message: "第8行定义的电子邮箱地址不正确"
+                data: " "
+
+---
+test_name: excel validate. (ベトナム語)
+
+marks:
+  - usefixtures:
+    - update_employees643_langvi
+
+stages:
+  - name: InvalidColumnName(カラム名が不正)
+    request:
+      url: "{service.proto:s}://{service.host:s}:{service.port:d}/v1/companies/21/employees_supports_employees_create_import_pub"
+      method: POST
+      data:
+        employee_id: 643
+      files:
+        file_data: "tests/employees_supports/publish/files/employee_support_employees_create_import_excels/invalid_column_name.xlsx"
+      headers:
+        content-type: multipart/form-data
+
+    response:
+      status_code: 400
+      strict: False
+      json:
+        errors:
+          - code: "ERR-IMPORT-FILE-INVALID"
+            meta:
+              - row: 1
+                column: "ô 1 dòng"
+                message: "Tên cột được xác định trong hàng 1 không chính xác."
+                data: "emai"
+
+  - name: InvalidColumnNum(データ部分のカラムが不正(カラムが多い))
+    request:
+      url: "{service.proto:s}://{service.host:s}:{service.port:d}/v1/companies/21/employees_supports_employees_create_import_pub"
+      method: POST
+      data:
+        employee_id: 643
+      files:
+        file_data: "tests/employees_supports/publish/files/employee_support_employees_create_import_excels/invalid_data_column_num.xlsx"
+      headers:
+        content-type: multipart/form-data
+
+    response:
+      status_code: 400
+      strict: False
+      json:
+        errors:
+          - code: "ERR-IMPORT-FILE-INVALID"
+            meta:
+              - row: 2
+                column: "mail_address"
+                message: "Số cột được xác định trong hàng 2 không chính xác."
+                data: ""
+
+  - name: 色々なエラーがある場合
+    request:
+      url: "{service.proto:s}://{service.host:s}:{service.port:d}/v1/companies/21/employees_supports_employees_create_import_pub"
+      method: POST
+      data:
+        employee_id: 643
+      files:
+        file_data: "tests/employees_supports/publish/files/employee_support_employees_create_import_excels/multi_error.xlsx"
+      headers:
+        content-type: multipart/form-data
+
+    response:
+      status_code: 400
+      strict: False
+      json:
+        errors:
+          - code: "ERR-IMPORT-FILE-INVALID"
+            meta:
+              - row: 2
+                column: "mail_address"
+                message: "Địa chỉ email được xác định trong hàng 2 không chính xác."
+                data: "taro"
+              - row: 4
+                column: "mail_address"
+                message: "Địa chỉ email được xác định trong hàng 4 không chính xác."
+                data: "アイウエお"
+              - row: 6
+                column: "mail_address"
+                message: "Không có dữ liệu nào được xác định trong hàng 6."
+                data: ""
+              - row: 8
+                column: "mail_address"
+                message: "Địa chỉ email được xác định trong hàng 8 không chính xác."
+                data: " "
+
+---
+test_name: fixture test reset
+
+marks:
+  - usefixtures:
+    - update_employees643_langja
+
+stages:
+  - name: テストデータをリセット
+    request:
+      url: "{service.proto:s}://{service.host:s}:{service.port:d}/ping"
+      method: GET
+      headers:
+        content-type: multipart/form-data
+
+    response:
+      status_code: 200

@@ -11,3 +11,7 @@ class IEmployeeAuthorityWorkerNFTRepogitory(metaclass=abc.ABCMeta):
     @abc.abstractmethod
     def mintNFT(self, address: str, token_id: int, from_address: str):
         raise NotImplementedError()
+
+    @abc.abstractmethod
+    def ownerOf(self, token_id: int, from_address: str) -> list[int]:
+        raise NotImplementedError()
