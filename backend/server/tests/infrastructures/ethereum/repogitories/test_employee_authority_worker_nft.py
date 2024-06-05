@@ -37,3 +37,11 @@ class TestEmployeeAuthorityWorkerNFTRepogitory:
     owner = test_account.owner_address
     if nft.balanceOf(target_address=owner, from_address=owner) == 1:
       assert nft.tokenURI(token_id=1, from_address=owner) == "https://java-lang-programming.github.io/nfts/dwebnft/1"
+
+  @pytest.mark.skipif(not hardhat_ethereum.is_connected(), reason='no launch hardhat')
+  def test_tokenIDOf_case_balance_is_not_1(self) -> str:
+    # balanceが1でない場合
+    if nft.balanceOf(target_address=owner, from_address=owner) != 1:
+      assert nft.tokenIDOf(target_address=owner, from_address=owner) == -1
+
+

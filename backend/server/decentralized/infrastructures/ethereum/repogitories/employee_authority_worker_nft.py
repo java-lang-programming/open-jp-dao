@@ -42,9 +42,11 @@ class EmployeeAuthorityWorkerNFTRepogitory(
         return self.contract.functions.symbol().call({"from": from_address})
 
     def tokenURI(self, token_id: int, from_address: str) -> str:
-        return self.contract.functions.tokenURI(token_id).call({"from": from_address})
+        return self.contract.functions.tokenURI(token_id).call(
+            {"from": from_address}
+        )
 
-    def balanceOf(self, target_address: str, from_address: str) -> None:
+    def balanceOf(self, target_address: str, from_address: str) -> int:
         return self.contract.functions.balanceOf(target_address).call(
             {"from": from_address}
         )
@@ -57,6 +59,45 @@ class EmployeeAuthorityWorkerNFTRepogitory(
         )
         return self.ethereum.get_transaction_receipt(tx_hash)
 
-    # def mint
+    def ownerOf(self, token_id: int, from_address: str) -> str:
+        return self.contract.functions.ownerOf(token_id).call({"from": from_address})
 
-    # https://web3py.readthedocs.io/en/stable/transactions.html
+    # 　複数所持は許可しないけど、一応
+    # def tokenIDsOf(self, target_address: str, from_address: str) -> list[int]:
+    #     token_ids: list[int] = []
+    #     balance: int = self.balanceOf(
+    #         target_address=target_address, from_address=from_address
+    #     )
+    #     if balance > 0:
+    #         found_token_count: int = 0
+    #         start_token_id: int = 0
+    #         while found_token_count != balance:
+    #             owner_address: str = self.ownerOf(
+    #                 token_id=start_token_id, from_address=target_address
+    #             )
+    #             if owner_address == target_address:
+    #                 token_ids.push(start_token_id)
+    #                 found_token_count = found_token_count + 1
+    #     return token_ids
+
+    def tokenIDOf(self, target_address: str, from_address: str) -> int:
+        balance: int = self.balanceOf(
+          target_address=target_address, from_address=from_address
+        )
+        if balance != 1:
+            # not found
+            return -1
+
+        not_found_token: bool = True
+        start_token_id: int = 1
+        # MAX 1000まで
+        while not_found_token:
+            owner_address: str = self.ownerOf(
+                token_id=start_token_id, from_address=target_address
+            )
+            if owner_address == target_address:
+                not_found_token = False
+                return start_token_id
+            start_token_id = start_token_id + 1
+        # 件数over
+        return -1

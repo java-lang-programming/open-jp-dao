@@ -1,0 +1,32 @@
+---
+test_name: トークン取得
+
+stages:
+  - name: ErrInvalidColumnName(カラム名が不正)
+    request:
+      url: "http://localhost:8001/api/ethereum/8545/address/0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266/tokens"
+      method: GET
+      headers:
+        content-type: multipart/form-data
+
+    response:
+      status_code: 400
+      strict: False
+      json:
+        tokens:
+          - workerNft: null
+            votesToken:
+              balance: 0
+
+# {
+#     "tokens": [
+#         {
+#             "workerNft": null
+#         },
+#         {
+#             "votesToken": {
+#                 "balance": 0
+#             }
+#         }
+#     ]
+# }
