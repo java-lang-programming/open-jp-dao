@@ -42,21 +42,20 @@ class EmployeeAuthorityWorkerNFTRepogitory(
         return self.contract.functions.symbol().call({"from": from_address})
 
     def tokenURI(self, token_id: int, from_address: str) -> str:
-        return self.contract.functions.tokenURI(token_id).call(
-            {"from": from_address}
-        )
+        return self.contract.functions.tokenURI(token_id).call({"from": from_address})
 
     def balanceOf(self, target_address: str, from_address: str) -> int:
         return self.contract.functions.balanceOf(target_address).call(
             {"from": from_address}
         )
 
-    def mintNFT(self, address: str, token_id: int, from_address: str):
+    def mintNFT(self, address: str, from_address: str):
         # from_addressも必要かも
         # 　トランザクション
-        tx_hash = self.contract.functions.mintNFT(address, token_id).transact(
+        tx_hash = self.contract.functions.mintNFT(address).transact(
             {"from": from_address}
         )
+        # TODO eventをlocalにDBに保存する。保存の有無はフラグで判断可能にする
         return self.ethereum.get_transaction_receipt(tx_hash)
 
     def ownerOf(self, token_id: int, from_address: str) -> str:
@@ -82,7 +81,7 @@ class EmployeeAuthorityWorkerNFTRepogitory(
 
     def tokenIDOf(self, target_address: str, from_address: str) -> int:
         balance: int = self.balanceOf(
-          target_address=target_address, from_address=from_address
+            target_address=target_address, from_address=from_address
         )
         if balance != 1:
             # not found

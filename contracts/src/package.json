@@ -4,7 +4,8 @@
   "description": "Open Jp Dao contracts.",
   "main": "index.js",
   "scripts": {
-    "lint:sol": "npx solhint 'contracts/**/*.sol'"
+    "lint:sol": "npx solhint 'contracts/**/*.sol'",
+    "lint:fix": "npx solhint --fix 'contracts/**/*.sol'"
   },
   "author": "",
   "license": "ISC",

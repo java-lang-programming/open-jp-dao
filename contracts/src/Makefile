@@ -1,6 +1,8 @@
 # target: test - calls the "test" django command
 lint:
 	npm run lint:sol
+fix:
+	npm run lint:fix
 compile:
 	npx hardhat clean
 	npx hardhat compile

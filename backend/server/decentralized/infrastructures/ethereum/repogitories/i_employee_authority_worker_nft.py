@@ -9,7 +9,7 @@ class IEmployeeAuthorityWorkerNFTRepogitory(metaclass=abc.ABCMeta):
         raise NotImplementedError()
 
     @abc.abstractmethod
-    def mintNFT(self, address: str, token_id: int, from_address: str):
+    def mintNFT(self, address: str, from_address: str):
         raise NotImplementedError()
 
     @abc.abstractmethod

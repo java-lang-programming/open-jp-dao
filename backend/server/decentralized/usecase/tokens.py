@@ -6,7 +6,6 @@ from decentralized.infrastructures.ethereum.repogitories.employee_authority_work
 from decentralized.infrastructures.ethereum.repogitories.erc20_votes_token_repository import (
     ERC20VotesTokenRepository,
 )
-import time
 
 
 class Tokens:
@@ -16,11 +15,15 @@ class Tokens:
     def execute(self, address: str):
         worker_nft_repo = EmployeeAuthorityWorkerNFTRepogitory(ethereum=self.ethereum)
 
-        token_id: int = worker_nft_repo.tokenIDOf(target_address=address, from_address=address)
+        token_id: int = worker_nft_repo.tokenIDOf(
+            target_address=address, from_address=address
+        )
         worker_nft: dict | None = None
         if token_id != -1:
-          meta_url: str  = worker_nft_repo.tokenURI(token_id=token_id, from_address=address)
-          worker_nft = {"token_id": token_id, "meta_url": meta_url}
+            meta_url: str = worker_nft_repo.tokenURI(
+                token_id=token_id, from_address=address
+            )
+            worker_nft = {"token_id": token_id, "meta_url": meta_url}
 
         vote_token = ERC20VotesTokenRepository(ethereum=self.ethereum)
         vote_token_balance: int = vote_token.balanceOf(

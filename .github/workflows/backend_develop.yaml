@@ -3,6 +3,7 @@ name: backend コードチェック&テスト
 on:
   push:
     branches:
+      - main
       - develop
       - feature/backend/*
     paths-ignore:
