@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-import json
+
 
 class Errors:
     code: int
@@ -10,16 +10,17 @@ class Errors:
         self.code = code
         self.message = message
         self.detail = detail
-        
+
     # def create(self, engagement_targets_job_categories: any):
     def to_dict(self) -> dict:
         error: dict = {}
-        error['code'] = self.code
-        error['message'] = self.message
-        error['detail'] = self.detail
-        errors: dict =  {}
-        errors['errors'] = error
+        error["code"] = self.code
+        error["message"] = self.message
+        error["detail"] = self.detail
+        errors: dict = {}
+        errors["errors"] = error
         return errors
+
 
 class ErrorCodes:
     # 不正なchainID

@@ -4,7 +4,16 @@ from decentralized.infrastructures.ethereum.ethereum import Ethereum
 from decentralized.utils.chains import Chains
 from decentralized.exceptions.invalid_chain_id import InvalidChainID
 from decentralized.usecase.tokens import Tokens
+from decentralized.usecase.nfts.create import Create
 from decentralized.responses.errors import Errors, ErrorCodes
+from decentralized.requests.nft import Nft
+
+from decentralized.exceptions.employee_authority_worker_nft_minted import (
+    EmployeeAuthorityWorkerNFTMinted,
+)
+from decentralized.exceptions.invalid_employee_authority_nft import (
+    InvalidEmployeeAuthorityNFT,
+)
 
 
 app = FastAPI()
@@ -42,26 +51,11 @@ def address_tokens(chain_id: str, address: str, q: str = None):
     #　エラーの場合はエラーを返す仕組みにする
     return tokens.execute(address=address)
 
-class Nft(BaseModel):
-    kind: int
-    address: str
-    chainId: int
-
-    # ethereum/{chain_id}/address/{address}
-
-    # def create(self, engagement_targets_job_categories: any):
-    def is_worker(self):
-        if self.kind == 1:
-            print("workerだよ")
-
-# ccurl -X POST -H "Content-Type: application/json" -d '{"name":"太郎", "age":"30"}' https://xxxxx.net/xxxxxx
+# curl -X POST -H "Content-Type: application/json" -d '{"kind":1, "targetAddress":"0A396F4ce6aB8827279cffFb92266", "fromAddress": "0x70997970C51812dc3A010C7d01b50e0d17dc79C8", "chainId":8545 }' http://localhost:8001/api/nfts
 # curl -X POST -H "Content-Type: application/json" -d '{"kind":1, "address":"0xa1122334455667788990011223344556677889900"}' http://localhost:8001/api/nfts
 @app.post("/api/nfts")
-# async def create_nft(nft: Nft):
 def create_nft(nft: Nft):
-    print("qqqqq")
-    # nftの種類をチェック
-    print(nft.is_worker())
+    print("aa")
 
     int_chain_id = 0
     try:
@@ -76,17 +70,14 @@ def create_nft(nft: Nft):
     if not ethereum.is_connected():
       return Errors(code=ErrorCodes.NOT_CONNECTED_ETHEREUM, message="イーサリアムに接続できませんでした", detail="接続先のステータスを確認してください").to_dict()
 
-    
-    # 接続チェック
-    #print(nft.IsWorker())
+    create = Create(ethereum=ethereum)
+    try:
+        create.execute(nft=nft)
+    except EmployeeAuthorityWorkerNFTMinted as e:
+        return Errors(code=ErrorCodes.NOT_CONNECTED_ETHEREUM, message="NFTはMINT済みです", detail=repr(e)).to_dict()
+    except InvalidEmployeeAuthorityNFT as e:
+        return Errors(code=ErrorCodes.NOT_CONNECTED_ETHEREUM, message="不正なNFTが指定されました", detail=repr(e)).to_dict()
+    except Exception as e:
+        return Errors(code=ErrorCodes.NOT_CONNECTED_ETHEREUM, message="予期せぬエラーが発生しました", detail=repr(e)).to_dict()
 
-    return {"aa": "ok"}
-
-
-
-
-# #　ユーザー情報
-# def user():
-#     # select * from users
-#     # addressからnftを取得
-#     # 
+    return None
