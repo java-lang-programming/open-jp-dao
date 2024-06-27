@@ -33,3 +33,11 @@ jobs:
         run: |
           cd backend/server
           make code_formatting
+      - name: unit test
+        run: |
+          cd backend/server
+          make unit_test
+      # - name: tarvern test
+      #   run: |
+      #     cd backend/server
+      #     make code_formatting

@@ -8,7 +8,7 @@ from decentralized.infrastructures.ethereum.repogitories.erc20_votes_token_repos
 )
 
 
-class Tokens:
+class Balance:
     def __init__(self, ethereum: Ethereum):
         self.ethereum = ethereum
 

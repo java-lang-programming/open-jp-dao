@@ -35,6 +35,7 @@ class Create:
 
             # TODO eventを記録 ガス代の経費出力として記録日付は必須。
             worker_nft.mintNFT(address=nft.targetAddress, from_address=nft.fromAddress)
+            # worker_nft.log_mint()
         else:
             # TODO log
             raise InvalidEmployeeAuthorityNFT(
