@@ -28,6 +28,18 @@ class Ethereum(BaseContractRepository):
     def get_transaction_receipt(self, tx_hash: any):
         return self.w3.eth.get_transaction_receipt(tx_hash)
 
+    def block_number(self):
+        return self.w3.eth.block_number
+
+    def is_checksum_address(self, user_address):
+        return self.w3.is_checksum_address(user_address)
+
+    # 残高
+    def ether_balance(self, user_address: str):
+        # return 0
+        checksum_user_address = self.w3.to_checksum_address(user_address)
+        return self.w3.from_wei(self.w3.eth.get_balance(checksum_user_address), "ether")
+
     # ネットワークを返す
     def network(self):
         if self.chain_id == Chains.HARDHAT_CHAIN_ID:

@@ -52,11 +52,28 @@ class EmployeeAuthorityWorkerNFTRepogitory(
     def mintNFT(self, address: str, from_address: str):
         # from_addressも必要かも
         # 　トランザクション
+        print(from_address)
         tx_hash = self.contract.functions.mintNFT(address).transact(
             {"from": from_address}
         )
         # TODO eventをlocalにDBに保存する。保存の有無はフラグで判断可能にする
         return self.ethereum.get_transaction_receipt(tx_hash)
+
+    # https://web3py.readthedocs.io/en/latest/filters.html
+    # https://web3py.readthedocs.io/en/stable/web3.contract.html#contract-get-logs
+    def log_mint(self):
+        print("-----")
+        print(self.ethereum.block_number())
+        # fetch transfer events in the last block
+        # self.ethereum.block_number
+        # 　コードで確認　_update　で transferを読んできる　 emit Transfer(from, to, value);
+        # print(self.ethereum.block_number)
+        # https://web3py.readthedocs.io/en/stable/web3.contract.html#event-log-object 呼び出しのいとか
+        # mintじゃないので移動も含まれるな。それでもいいのかな。
+        logs = self.contract.events.Transfer().get_logs(fromBlock=5)
+        for log in logs:
+            print(log)
+        # print(f"Transfer of {w3.from_wei(log.args.wad, 'ether')} WETH from {log.args.src} to {log.args.dst}")
 
     def ownerOf(self, token_id: int, from_address: str) -> str:
         return self.contract.functions.ownerOf(token_id).call({"from": from_address})
