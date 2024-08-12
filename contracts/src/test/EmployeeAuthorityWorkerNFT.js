@@ -38,7 +38,7 @@ describe("EmployeeAuthorityWorkerNFT contract", function () {
     });
 
     it("should revert when tokenID is not exists", async function () {
-      await expect(NFT.tokenURI(0)).to.be.revertedWith("ERC721: invalid token ID");
+      await expect(NFT.tokenURI(0)).to.be.revertedWith("ERC721NonexistentToken");
     });
 
     it("should be true when IERC721 is implemented", async function () {
@@ -68,7 +68,7 @@ describe("EmployeeAuthorityWorkerNFT contract", function () {
     describe("tokenURI", function () {
       // tokenIdのNFTが存在しない場合
       it("should be revert when tokenId is not exsists.", async function () {
-        await expect(NFT.tokenURI(1)).to.be.revertedWith("ERC721: invalid token ID");
+        await expect(NFT.tokenURI(1)).to.be.revertedWith("ERC721NonexistentToken");
       });
 
       // setTokenURIを利用してない場合
