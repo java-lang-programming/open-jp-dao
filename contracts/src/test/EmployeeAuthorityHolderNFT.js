@@ -38,7 +38,7 @@ describe("EmployeeAuthorityHolderNFT contract", function () {
     });
 
     it("should revert when tokenID is not exists", async function () {
-      await expect(NFT.tokenURI(0)).to.be.revertedWith("ERC721: invalid token ID");
+      await expect(NFT.tokenURI(0)).to.be.revertedWith("ERC721NonexistentToken");
     });
 
     it("should be true when IERC721 is implemented", async function () {
@@ -55,7 +55,7 @@ describe("EmployeeAuthorityHolderNFT contract", function () {
   describe("EmployeeAuthorityHolderNFT", function () {
     describe("mintNFT", function () {
       it("should be revert when mint to the zero address", async function () {
-        await expect(NFT.mintNFT("0x0000000000000000000000000000000000000000", 0)).to.be.revertedWith("ERC721: mint to the zero address");
+        await expect(NFT.mintNFT("0x0000000000000000000000000000000000000000", 0)).to.be.revertedWith("ERC721InvalidReceiver");
       });
 
       it("should be mintNFT when mint to the address", async function () {
@@ -68,7 +68,7 @@ describe("EmployeeAuthorityHolderNFT contract", function () {
     describe("tokenURI", function () {
       // tokenIdのNFTが存在しない場合
       it("should be revert when tokenId is not exsists.", async function () {
-        await expect(NFT.tokenURI(1)).to.be.revertedWith("ERC721: invalid token ID");
+        await expect(NFT.tokenURI(1)).to.be.revertedWith("ERC721NonexistentToken");
       });
 
       // setTokenURIを利用してない場合
@@ -101,7 +101,7 @@ describe("EmployeeAuthorityHolderNFT contract", function () {
         await NFT.mintNFT(addr1.address, 1);
 
         // ownerでも所持者じゃないのでNG
-　　　　　await expect(NFT.transferFrom(addr1.address, addr2.address, 1)).to.be.revertedWith("ERC721: caller is not token owner or approved");
+　　　　　await expect(NFT.transferFrom(addr1.address, addr2.address, 1)).to.be.revertedWith("ERC721InsufficientApproval");
 
         await NFT.connect(addr1).transferFrom(addr1.address, addr2.address, 1)
       });
