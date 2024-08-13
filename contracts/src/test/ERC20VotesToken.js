@@ -28,11 +28,13 @@ describe("ERC20VotesToken contract", function () {
     Token = await ethers.getContractFactory("ERC20VotesToken");
     [owner, addr1, addr2, ...addrs] = await ethers.getSigners();
 
+    // https://ethereum.stackexchange.com/questions/139417/how-to-deploy-a-contract-with-many-arguments
+
     // To deploy our contract, we just have to call Token.deploy() and await
     // for it to be deployed(), which happens once its transaction has been
     // mined.
     // 1億
-    VoteToken = await Token.deploy();
+    VoteToken = await Token.deploy(addr1.address);
     // waiting deploy...
     await VoteToken.deployed();
   });
@@ -51,6 +53,8 @@ describe("ERC20VotesToken contract", function () {
 　describe("ERC20VotesToken", function () {
     it("should be mint 1000000.", async function () {
       await VoteToken.mint(owner.address, 1000000);
+      const owner1 = await VoteToken.owner()
+      console.log(owner1);
       expect(await VoteToken.totalSupply()).to.equal(1000000);
       expect(await VoteToken.balanceOf(owner.address)).to.equal(1000000);
     });
@@ -65,5 +69,11 @@ describe("ERC20VotesToken contract", function () {
       expect(await VoteToken.balanceOf(addr1.address)).to.equal(100);
       expect(await VoteToken.balanceOf(addr2.address)).to.equal(100);
     });
+  });
+
+  describe("Ownable2Step", function () {
+    it("should be owner deploy address", async function () {
+      expect(await VoteToken.owner()).to.equal(addr1.address);
+    });    
   });
 });
