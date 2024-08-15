@@ -1,18 +1,13 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.19;
 
-import {EIP712} from "@openzeppelin/contracts/utils/cryptography/EIP712.sol";
-// import {Context} from "@openzeppelin/contracts/utils/Context.sol";
-// import {Governor} from "@openzeppelin/contracts/governance/Governor.sol";
 import "@openzeppelin/contracts/governance/Governor.sol";
 import "@openzeppelin/contracts/governance/extensions/GovernorCountingSimple.sol";
-//import "@openzeppelin/contracts/governance/compatibility/GovernorCompatibilityBravo.sol";
 import "@openzeppelin/contracts/governance/extensions/GovernorVotes.sol";
 import "@openzeppelin/contracts/governance/extensions/GovernorVotesQuorumFraction.sol";
-//import "@openzeppelin/contracts/governance/extensions/GovernorTimelockControl.sol";
 import "@openzeppelin/contracts/governance/utils/IVotes.sol";
-import "@openzeppelin/contracts/utils/math/SafeCast.sol";
-import "hardhat/console.sol";
+//import "@openzeppelin/contracts/utils/math/SafeCast.sol";
+//import "hardhat/console.sol";
 
 
 contract OpenJpDaoGovernor is Governor,
@@ -20,9 +15,6 @@ contract OpenJpDaoGovernor is Governor,
     GovernorVotes,
     GovernorVotesQuorumFraction {
 
-    // string private _name;
-    // EIP712(name_, version())
-    //constructor() Governor("OpenJpDaoGovernor") {}
     constructor(
         IVotes _token
     ) Governor("OpenJpDaoGovernor") GovernorVotes(_token) GovernorVotesQuorumFraction(0) {}
@@ -44,15 +36,15 @@ contract OpenJpDaoGovernor is Governor,
     function quorum(uint256 blockNumber)
         public
         view
-        override(IGovernor, GovernorVotesQuorumFraction)
+        override(Governor, GovernorVotesQuorumFraction)
         returns (uint256)
     {
         return super.quorum(blockNumber);
     }
 
-    function temp_timestamp() public returns (uint256) {
-        return SafeCast.toUint48(block.timestamp);
-    }
+    //function temp_timestamp() public returns (uint256) {
+    //    return SafeCast.toUint48(block.timestamp);
+    //}
 
 
     /**
@@ -89,7 +81,7 @@ contract OpenJpDaoGovernor is Governor,
     //    messageHash = keccak256(bytes(_message));
     //}
 
-    function getMessageHash(string memory _message) public view returns (bytes32) {
-        return keccak256(bytes(_message));
-    }
+    //function getMessageHash(string memory _message) public view returns (bytes32) {
+    //    return keccak256(bytes(_message));
+    //}
 }
