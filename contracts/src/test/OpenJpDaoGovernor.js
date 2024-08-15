@@ -24,7 +24,7 @@ describe("OpenJpDaoGovernor contract", function () {
     // for it to be deployed(), which happens once its transaction has been
     // mined.
     // 1億
-    VoteToken = await Token.deploy();
+    VoteToken = await Token.deploy(owner.address);
     // waiting deploy...
     await VoteToken.deployed();
     console.log("ERC20VotesToken deployed to address:", VoteToken.address);
@@ -93,14 +93,11 @@ describe("OpenJpDaoGovernor contract", function () {
         await VoteToken.transfer(addr1.address, 1000);
         await VoteToken.transfer(addr2.address, 1000);
 
+        // governor 10000
         const governor_balance_1 = await VoteToken.balanceOf(Governor.address);
 
-        console.log("governor_balance_1");
-        console.log(governor_balance_1);
-
+        // addr1 1000
         const addr1_balance_1 = await VoteToken.balanceOf(addr1.address);
-        console.log("addr1_balance_1");
-        console.log(addr1_balance_1);
         
         // 投票権をadd1からownerに委譲する
         await VoteToken.connect(addr1).delegate(owner.address);

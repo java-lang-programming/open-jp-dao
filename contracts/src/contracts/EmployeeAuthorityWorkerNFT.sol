@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.19;
 
+import {IERC721} from "@openzeppelin/contracts/token/ERC721/IERC721.sol";
 import {ERC721Upgradeable} from "@openzeppelin/contracts-upgradeable/token/ERC721/ERC721Upgradeable.sol";
-import {IERC721Upgradeable} from "@openzeppelin/contracts-upgradeable/token/ERC721/IERC721Upgradeable.sol";
 import {ERC721EnumerableUpgradeable} from "@openzeppelin/contracts-upgradeable/token/ERC721/extensions/ERC721EnumerableUpgradeable.sol";
 import "hardhat/console.sol";
 
@@ -51,7 +51,7 @@ contract EmployeeAuthorityWorkerNFT is ERC721EnumerableUpgradeable {
     }
 
     //　譲渡不可能にする(ロックの有無を考えても良い)
-    function transferFrom(address from, address to, uint256 tokenId) public override(ERC721Upgradeable, IERC721Upgradeable) {
+    function transferFrom(address from, address to, uint256 tokenId) public override(ERC721Upgradeable, IERC721) {
       require(from == address(0), "Err: token is SOUL BOUND");
       super.transferFrom(from, to, tokenId);
     }
