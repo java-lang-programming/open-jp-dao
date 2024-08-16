@@ -105,10 +105,11 @@ describe("ERC20VotesToken contract", function () {
         // チェックポイント数
         expect(await VoteToken.numCheckpoints(owner.address)).to.equal(0);
         expect(await VoteToken.numCheckpoints(addr1.address)).to.equal(0);
+        expect(await VoteToken.getVotes(addr2.address)).to.equal(0);
 
         // ownerがERC20Voteを10000mint
         await VoteToken.mint(owner.address, 10000);
-        // Gownerがaddr1に1000を渡す
+        // ownerがaddr1に1000を渡す
         await VoteToken.transfer(addr1.address, 100);
         // 投票権をadd1からownerに投票権を委譲する
         await VoteToken.connect(addr1).delegate(owner.address);
@@ -116,16 +117,35 @@ describe("ERC20VotesToken contract", function () {
         expect(await VoteToken.numCheckpoints(owner.address)).to.equal(1);
         expect(await VoteToken.numCheckpoints(addr1.address)).to.equal(0);
 
-        // Gownerがaddr2に100を渡す
-        await VoteToken.transfer(addr2.address, 100);
-        // 投票権をadd1からownerに投票権を委譲する
+        // ownerがaddr2に100を渡す
+        await VoteToken.transfer(addr2.address, 200);
+        // 投票権をadd2からownerに投票権を委譲する
         await VoteToken.connect(addr2).delegate(owner.address);
 
         expect(await VoteToken.numCheckpoints(owner.address)).to.equal(2);
         expect(await VoteToken.numCheckpoints(addr1.address)).to.equal(0);
-
+        expect(await VoteToken.numCheckpoints(addr2.address)).to.equal(0);
       });
-    }); 
+    });
+
+    describe("clock", function () {
+      it("should get clock.", async function () {
+        before_count = await VoteToken.clock();
+
+        // 3回トランザクションを実行する //
+
+        // ownerがERC20Voteを10000mint
+        await VoteToken.mint(owner.address, 10000);
+        // ownerがaddr1に1000を渡す
+        await VoteToken.transfer(addr1.address, 100);
+        // 投票権をadd1からownerに投票権を委譲する
+        await VoteToken.connect(addr1).delegate(owner.address);
+
+        after_count = await VoteToken.clock();
+
+        expect(after_count).to.equal(before_count + 3);
+      });
+    });
 
   });
 
