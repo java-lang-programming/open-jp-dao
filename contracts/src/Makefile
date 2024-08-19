@@ -26,3 +26,5 @@ unit_test_all:
 	npx hardhat test
 mit_to_goerli:
 	npx hardhat run scripts/mint/mint_marsa_academy_nft.js --network goerli
+ci:
+	npx hardhat test

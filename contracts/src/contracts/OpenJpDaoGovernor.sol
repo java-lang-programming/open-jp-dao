@@ -19,13 +19,17 @@ contract OpenJpDaoGovernor is Governor,
         IVotes _token
     ) Governor("OpenJpDaoGovernor") GovernorVotes(_token) GovernorVotesQuorumFraction(0) {}
 
+    // 指定された遅延の後に開始される
+    // これだと1blockになる。
     function votingDelay() public pure override returns (uint256) {
         return 1; // 1 block
     }
 
+    // 登場はvotingPeriodで指定された期間続く。
+    // これだと3block
     function votingPeriod() public pure override returns (uint256) {
         // return 45818; // 1 week
-        return 1; // 1 week
+        return 3; // 1 block
     }
   
     function proposalThreshold() public pure override returns (uint256) {
