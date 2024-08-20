@@ -28,13 +28,13 @@ jobs:
           node-version: ${{ matrix.node-version }}
           cache: npm
       - name: Install
+        working-directory: contracts/src
         run: npm install
-          working-directory: contracts/src
       - name: Run Hardhat Test
+        working-directory: contracts/src
         # env: 
         #   COINGECKO_API_KEY: ${{ secrets.COINGECKO_API_KEY }}
         #   REPORT_CURRENCY: ${{ secrets.REPORT_CURRENCY }}
         #   REPORT_GAS: true
         #   REPORT_MAIN_TOKEN: ${{ secrets.REPORT_MAIN_TOKEN }}
         run: make ci
-          working-directory: working-directory: contracts/src
