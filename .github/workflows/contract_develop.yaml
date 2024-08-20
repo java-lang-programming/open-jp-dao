@@ -1,0 +1,40 @@
+name: backend コードチェック&テスト
+
+on:
+  push:
+    branches:
+      - main
+      - develop
+      - feature/*
+    paths-ignore:
+      - backend/*
+      - docs/*
+      - .gitignore
+      - '**.md'
+
+# https://engineering.teknasyon.com/solidity-and-hardhat-continuous-integration-via-github-actions-f64c0e760df7
+jobs:
+  check:
+    name: contracts check
+    runs-on: ubuntu-22.04
+    strategy:
+      matrix:
+        node-version: ['18.x']
+    steps:
+      - uses: actions/checkout@v4
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+          # cache: npm
+      - name: Install
+        working-directory: contracts/src
+        run: npm install
+      - name: Run Hardhat Test
+        working-directory: contracts/src
+        # env: 
+        #   COINGECKO_API_KEY: ${{ secrets.COINGECKO_API_KEY }}
+        #   REPORT_CURRENCY: ${{ secrets.REPORT_CURRENCY }}
+        #   REPORT_GAS: true
+        #   REPORT_MAIN_TOKEN: ${{ secrets.REPORT_MAIN_TOKEN }}
+        run: make ci

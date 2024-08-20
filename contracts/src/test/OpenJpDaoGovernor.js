@@ -27,7 +27,7 @@ describe("OpenJpDaoGovernor contract", function () {
     VoteToken = await Token.deploy(owner.address);
     // waiting deploy...
     await VoteToken.deployed();
-    console.log("ERC20VotesToken deployed to address:", VoteToken.address);
+    //console.log("ERC20VotesToken deployed to address:", VoteToken.address);
 
     const token_address = VoteToken.address;
 
@@ -51,7 +51,7 @@ describe("OpenJpDaoGovernor contract", function () {
     // [owner, addr1, addr2, ...addrs] = await ethers.getSigners();
 
     // https://docs.alchemy.com/docs/how-to-create-a-dao-governance-token
-    console.log("MyGovernor");
+    //console.log("MyGovernor");
     
 
     // To deploy our contract, we just have to call Token.deploy() and await
@@ -59,10 +59,10 @@ describe("OpenJpDaoGovernor contract", function () {
     // mined.
     // 1億
     Governor = await MyGovernorFactory.deploy(VoteToken.address);
-    console.log("deploy MyGovernor");
+    //console.log("deploy MyGovernor");
     // waiting deploy...
     await Governor.deployed();
-    console.log("OpenJpDaoGovernor deployed to address:", Governor.address);
+    //console.log("OpenJpDaoGovernor deployed to address:", Governor.address);
 
 
   //     const factoryDex = await ethers.getContractFactory('DWebDEX');
@@ -83,7 +83,18 @@ describe("OpenJpDaoGovernor contract", function () {
       });
     });
 
-    describe("propose", function () {
+    // アカウントがプロポーザルを作成するために必要な最低投票数。
+    describe("proposalThreshold", function () {
+      it("should be zero Threshold", async function () {
+        expect(await Governor.proposalThreshold()).to.equal(0);
+      });
+    });
+
+    // 投票権を与える
+    // 両方とも賛成票
+    // Goveから100tokenをaddr1.addressに渡す
+    describe("propose for", function () {
+      //　賛成の場合
       it("should be creadted propose", async function () {
         // コントラクトにイーサ
         await VoteToken.mint(Governor.address, 10000);
@@ -101,33 +112,25 @@ describe("OpenJpDaoGovernor contract", function () {
         
         // 投票権をadd1からownerに委譲する
         await VoteToken.connect(addr1).delegate(owner.address);
-        // 投票権をadd2からownerに委譲する
-        await VoteToken.connect(addr2).delegate(owner.address);
+        // 自身にdelegate
+        await VoteToken.connect(addr2).delegate(addr2.address);
 
+        // delegateeはない？
+
+        // voteチェック
         const t_owner_vote = await VoteToken.getVotes(owner.address);
-        console.log("t_owner_vote");
-        console.log(t_owner_vote);
-
+        expect(t_owner_vote).to.equal(1000);
         const t_addr1_vote = await VoteToken.getVotes(addr1.address);
-        console.log("t_addr1_vote");
-        console.log(t_addr1_vote);
-
+        expect(t_addr1_vote).to.equal(0);
         const t_addr2_vote = await VoteToken.getVotes(addr2.address);
-        console.log("t_addr2_vote");
-        console.log(t_addr2_vote);
-        // console.log("VoteToken.address");
-        // console.log(VoteToken.address);
+        expect(t_addr2_vote).to.equal(1000);
+
         // https://docs.uxd.fi/uxdprogram-ethereum/governance/governance-proposals
         const teamAddress = addr1.address;
-        const grantAmount = 100;
+        const grantAmount = 200;
         // ethers.keccak256
         const transferCalldata = VoteToken.interface.encodeFunctionData("transfer", [teamAddress, grantAmount]);
-        // console.log("transferCalldata");
-        // console.log(transferCalldata);
 
-        // console.log("temp_block");
-        // a = await Governor.temp_blockNumber();
-        // console.log(a);
         // const proposalId = 
         // ここでproposalIdは取得できない。イベントから取得する
         // https://forum.openzeppelin.com/t/question-regarding-the-governor-propose/21678/3
@@ -150,76 +153,104 @@ describe("OpenJpDaoGovernor contract", function () {
         // expect(receipt.events[0].args.proposalId).to.equal(76581773275773702640151039093264761630080263083005103229063328352517182367742);
 
         // https://ethereum.stackexchange.com/questions/130880/governor-proposal-not-successful
-        const proposalState = await Governor.state(proposalId)  
-        // const deadline = await Governor.proposalDeadline(76581773275773702640151039093264761630080263083005103229063328352517182367742);
-        // console.log("proposalState");
-        // console.log(proposalState);
+        const proposalState = await Governor.state(proposalId);
+        // state check is pendding
+        expect(proposalState).to.equal(0);
 
-        // const quorum = await Governor.quorum(1);
-        // console.log("quorum");
-        // console.log(quorum);
-
-        // ここでblockを進める
+        // TODO votingDelayをとってblockを進める処理を書く
+        // ここでblockを進める(これが重要)
         await VoteToken.transfer(addr1.address, 100);
+        //await VoteToken.transfer(addr1.address, 100);
 
-        // // ここでexecute
-        // const descriptionHash = ethers.utils.id("Proposal #1: Give grant to team");
-        // await Governor.execute(
-        //   [VoteToken.address],
-        //   [0],
-        //   [transferCalldata],
-        //   descriptionHash,
-        // );
+        // statsの変更を確認
+        //const proposalState2 = await Governor.state(proposalId);
+        // state check = active
+        // expect(proposalState2).to.equal(1);
 
         // The account that created a proposal.
         const proposalProposer = await Governor.proposalProposer(proposalId);
-        // console.log("owner");
-        // console.log(owner.address);
-        // console.log("proposalProposer");
-        // console.log(proposalProposer);
+        expect(proposalProposer).to.equal(owner.address);
 
         const ownerhasVoted = await Governor.hasVoted(proposalId, owner.address);
-        // console.log("ownerhasVoted");
-        // console.log(ownerhasVoted);
+        expect(ownerhasVoted).to.equal(false);
 
         const addr1hasVoted = await Governor.hasVoted(proposalId, addr1.address);
-        // console.log("addr1hasVoted");
-        // console.log(addr1hasVoted);
+        expect(addr1hasVoted).to.equal(false);
+
+        const addr2hasVoted = await Governor.hasVoted(proposalId, addr2.address);
+        expect(addr2hasVoted).to.equal(false);
+
+        // https://forum.openzeppelin.com/t/question-regarding-the-governor-propose/21678/5
+
+        // statsの変更を確認
+        const proposalState2 = await Governor.state(proposalId);
+        // state check = pendding
+        expect(proposalState2).to.equal(0);
 
         // cast vote
         const voteWay = 1 // 0 = Against, 1 = For, 2 = Abstain
-        // connect(addr1)
-        const voteTx = await Governor.castVote(proposalId, voteWay);
+        // connect(owner)
+        const voteTx = await Governor.connect(addr2).castVote(proposalId, voteWay);
         // console.log("voteTx");
         // console.log(voteTx);
         await voteTx.wait(1);
 
+        // const ssss = await Governor.proposalVotes(proposalId);
+        // console.log(ssss);
+        // console.log("aaaa")
 
-        const snapshot = await Governor.proposalSnapshot(proposalId);
-        console.log("snapshot");
-        console.log(snapshot);
-        const snapshot_s = snapshot.toString();
+        //const snapshot = await Governor.proposalSnapshot(proposalId);
+        //console.log("snapshot");
+        //console.log(snapshot);
+        //const snapshot_s = snapshot.toString();
 
-        const owner_vote = await Governor.getVotes(owner.address, snapshot_s);
-        console.log("owner_vote");
-        console.log(owner_vote);
+        // const owner_vote = await Governor.getVotes(owner.address, snapshot_s);
+        // ここでblockを進める
+        // await VoteToken.transfer(addr1.address, 100);
+
 
         // 投票結果
         const ownerhasVoted2 = await Governor.hasVoted(proposalId, owner.address);
-        console.log("ownerhasVoted2");
-        console.log(ownerhasVoted2);
+        expect(ownerhasVoted2).to.equal(false);
 
         const addr1hasVoted2 = await Governor.hasVoted(proposalId, addr1.address);
-        console.log("addr1hasVoted2");
-        console.log(addr1hasVoted2);
+        expect(addr1hasVoted2).to.equal(false);
 
-        // cast vote
-        // const voteWay2 = 0 // 0 = Against, 1 = For, 2 = Abstain
-        // const voteTx2 = await Governor.connect(addr2).castVote(proposalId, 0)
-        // await voteTx2.wait(1);
+        const addr2hasVoted2 = await Governor.hasVoted(proposalId, addr2.address);
+        expect(addr2hasVoted2).to.equal(true);
+
+        // statsの変更を確認
+        // const proposalState4 = await Governor.state(proposalId);
+        // state check = active
+        // console.log(proposalState4);
 
         // ここでblockを進める
-        await VoteToken.transfer(addr2.address, 100);
+        await VoteToken.transfer(addr1.address, 100);
+
+        // TODO block取得
+
+        // 投票2
+        const voteTx2 = await Governor.connect(owner).castVote(proposalId, voteWay);
+        // console.log("voteTx");
+        // console.log(voteTx);
+        await voteTx2.wait(1);
+
+        // 投票結果
+        // const ownerhasVoted2 = await Governor.hasVoted(proposalId, owner.address);
+        expect(await Governor.hasVoted(proposalId, owner.address)).to.equal(true);
+        expect(await Governor.hasVoted(proposalId, addr1.address)).to.equal(false);
+        expect(await Governor.hasVoted(proposalId, addr2.address)).to.equal(true);
+
+
+        const proposalState4 = await Governor.state(proposalId);
+        console.log(proposalState4);
+
+
+
+
+
+        // ここでblockを進める
+        // await VoteToken.transfer(addr2.address, 100);
 
         // // 投票結果
         // const addr1hasVoted3 = await Governor.hasVoted(proposalId, addr1.address);
@@ -236,8 +267,7 @@ describe("OpenJpDaoGovernor contract", function () {
 
         // againstVotes, proposalVote.forVotes, proposalVote.abstainVotes
 
-        const ssss = await Governor.proposalVotes(proposalId);
-        console.log(ssss);
+        
 
 
         // const snapshot = await Governor.proposalSnapshot(proposalId);
@@ -266,8 +296,8 @@ describe("OpenJpDaoGovernor contract", function () {
          
         //const descriptionHash = ethers.utils.keccak256(ethers.utils.toUtf8Bytes("Proposal #1: Give grant to team"));
         const descriptionHash = ethers.utils.id("Proposal #1: Give grant to team");
-        console.log("descriptionHash");
-        console.log(descriptionHash);
+        //console.log("descriptionHash");
+        //console.log(descriptionHash);
 
         // aaaa = await Governor.getMessageHash("Proposal #1: Give grant to team");
         // console.log("descriptionHash2");
@@ -288,14 +318,11 @@ describe("OpenJpDaoGovernor contract", function () {
         );
 
 
-        const governor_balance_2 = await VoteToken.balanceOf(Governor.address);
-
-        console.log("governor_balance_2");
-        console.log(governor_balance_2);
-
-        const addr1_balance_2 = await VoteToken.balanceOf(addr1.address);
-        console.log("addr1_balance_2");
-        console.log(addr1_balance_2);
+        // tokenの移動
+        expect(await VoteToken.balanceOf(Governor.address)).to.equal(9800);
+        expect(await VoteToken.balanceOf(addr1.address)).to.equal(1400);
+        // Executed
+        expect(await Governor.state(proposalId) ).to.equal(7);
 
         // addr1.address)
 
