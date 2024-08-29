@@ -90,10 +90,35 @@ describe("OpenJpDaoGovernor contract", function () {
       });
     });
 
+
+
     // 投票権を与える
     // 両方とも賛成票
     // Goveから100tokenをaddr1.addressに渡す
     describe("propose for", function () {
+      // calldataなし
+      it("should be creadted propose. no calldata", async function () {
+        const proposal_tx = await Governor.propose(
+          [VoteToken.address],
+          [0],
+          ["0x"],
+          "Proposal #1: 日本語",
+        );
+
+        // console.log(proposal_tx);
+
+        const receipt = await proposal_tx.wait(1)
+        const proposalId = receipt.events[0].args.proposalId.toString();
+
+        console.log("proposalId");
+        console.log(proposalId);
+
+        const proposalSnapshot = await Governor.proposalSnapshot(proposalId);
+
+        console.log("proposalSnapshot");
+        console.log(proposalSnapshot);
+      });
+
       //　賛成の場合
       it("should be creadted propose", async function () {
         // コントラクトにイーサ
@@ -322,7 +347,7 @@ describe("OpenJpDaoGovernor contract", function () {
         expect(await VoteToken.balanceOf(Governor.address)).to.equal(9800);
         expect(await VoteToken.balanceOf(addr1.address)).to.equal(1400);
         // Executed
-        expect(await Governor.state(proposalId) ).to.equal(7);
+        expect(await Governor.state(proposalId)).to.equal(7);
 
         // addr1.address)
 

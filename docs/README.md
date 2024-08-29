@@ -58,5 +58,5 @@ mintで作成されたNFTをmarketで購入
 
 ##　機能
 
-投票にも使える
+投票には使えない。
 https://docs.openzeppelin.com/contracts/5.x/governance

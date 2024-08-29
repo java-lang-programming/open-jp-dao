@@ -16,7 +16,7 @@ from decentralized.infrastructures.ethereum.repogitories.interfaces.i_erc20 impo
 # IERC721Metadata, IEmployeeAuthorityWorkerNFTRepogitory
 class ERC20VotesTokenRepository(IERC20Metadata, IERC20):
     ARTIFACTS_JSON_PATH: str = "./abi/ERC20VotesToken.json"
-    HARDHAT_CONTRACT_ADDRESS: str = "0xCf7Ed3AccA5a467e9e704C703E8D87F634fB0Fc9"
+    HARDHAT_CONTRACT_ADDRESS: str = "0x5FbDB2315678afecb367f032d93F642f64180aa3"
     SEPOLIA_CONTRACT_ADDRESS: str = "0x9fE46736679d2D9a65F0992F2272dE9f3c7fa6e0"
 
     FIRST_MINT_AMOUNT: int = 1000000
@@ -66,7 +66,7 @@ class ERC20VotesTokenRepository(IERC20Metadata, IERC20):
         )
         # receiptを返す
         # print(receipt)
-        return self.ethereum.get_transaction_receipt(tx_hash)
+        return self.ethereum.wait_for_transaction_receipt(tx_hash)
         # myContract.events.myEvent().process_receipt(receipt)
 
     # https://web3py.readthedocs.io/en/stable/transactions.html

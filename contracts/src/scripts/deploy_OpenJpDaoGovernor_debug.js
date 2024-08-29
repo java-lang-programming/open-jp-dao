@@ -8,6 +8,23 @@ async function main () {
   const OpenJpDaoGovernor = await OpenJpDaoGovernorFactory.deploy(VoteTokenAddress);
   await OpenJpDaoGovernor.deployed();
   console.log('OpenJpDaoGovernor deployed to:', OpenJpDaoGovernor.address);
+  const proposal_tx = await OpenJpDaoGovernor.propose(
+    [VoteTokenAddress],
+    [0],
+    ["0x"],
+    "Proposal #1: 日本語",
+  );
+
+  // console.log(proposal_tx);
+  const receipt = await proposal_tx.wait(1)
+  const proposalId = receipt.events[0].args.proposalId.toString();
+
+  console.log("proposalId");
+  console.log(proposalId);
+
+  const proposalSnapshot = await OpenJpDaoGovernor.proposalSnapshot(proposalId);
+  console.log("proposalSnapshot");
+  console.log(proposalSnapshot);
 }
 
 main();
