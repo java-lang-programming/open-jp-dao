@@ -1,13 +1,18 @@
 # -*- coding: utf-8 -*-
 from pydantic import BaseModel
-# from siwe import SiweMessage
+from siwe import SiweMessage
 
-class Verify(BaseModel):
-    chain_id: int
-    message: str
-    signature: str
-    nonce: str
-    domain: str
+class DeployedContracts(BaseModel):
+    #　コントラクトアカウント
+    ca: str
+    returncode: int
+    stdout: str
+
+    #　objectに変換
+    def data(self):
+        return False
+
+
 
     # def create(self, engagement_targets_job_categories: any):
     # def is_worker(self) -> bool:

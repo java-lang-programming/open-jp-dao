@@ -90,6 +90,8 @@ describe("OpenJpDaoGovernor contract", function () {
       });
     });
 
+
+
     // 投票権を与える
     // 両方とも賛成票
     // Goveから100tokenをaddr1.addressに渡す
@@ -108,8 +110,13 @@ describe("OpenJpDaoGovernor contract", function () {
         const receipt = await proposal_tx.wait(1)
         const proposalId = receipt.events[0].args.proposalId.toString();
 
-        //console.log("proposalId");
-        // console.log(proposalId);
+        console.log("proposalId");
+        console.log(proposalId);
+
+        const proposalSnapshot = await Governor.proposalSnapshot(proposalId);
+
+        console.log("proposalSnapshot");
+        console.log(proposalSnapshot);
       });
 
       //　賛成の場合
