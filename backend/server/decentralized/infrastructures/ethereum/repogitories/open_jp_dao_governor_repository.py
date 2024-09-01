@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 
+from web3 import Web3
 from decentralized.infrastructures.ethereum.ethereum import Ethereum
 from bunsan.ethereum.repositories.i_governor_repository import (
     IGovernorRepository,
@@ -7,6 +8,7 @@ from bunsan.ethereum.repositories.i_governor_repository import (
 from bunsan.ethereum.eips.i_erc6372 import (
     IERC6372,
 )
+
 # from decentralized.infrastructures.ethereum.repogitories.interfaces.i_erc20 import (
 #     IERC20,
 # )
@@ -44,17 +46,24 @@ class OpenJpDaoGovernorRepository(IGovernorRepository, IERC6372):
             return OpenJpDaoGovernorRepository.SEPOLIA_CONTRACT_ADDRESS
         return None
 
-    def propose(self, targets: list[str], values: list[int], calldatas: str, description: str, from_address: str):
-        tx_hash = self.contract.functions.propose(targets, values, calldatas, description).transact(
-            {"from": from_address}
-        )
+    def propose(
+        self,
+        targets: list[str],
+        values: list[int],
+        calldatas: str,
+        description: str,
+        from_address: str,
+    ):
+        tx_hash = self.contract.functions.propose(
+            targets, values, calldatas, description
+        ).transact({"from": from_address})
         # TODO eventをlocalにDBに保存する。保存の有無はフラグで判断可能にする
         receipt = self.ethereum.get_transaction_receipt(tx_hash)
- 
+
         print("receipt")
         print(receipt)
 
-        #　分割する　かつ　classにする ２回目はどうなる？
+        # 　分割する　かつ　classにする ２回目はどうなる？
         logs = self.proposalCreatedEventLogs()
         event = logs[0]
         print("event.args")
@@ -64,18 +73,34 @@ class OpenJpDaoGovernorRepository(IGovernorRepository, IERC6372):
         # return self.contract.functions.propose(targets, values, calldatas, description).call({"from": from_address})
 
     def proposalDeadline(self, proposalId: int, from_address: str) -> int:
-        return self.contract.functions.proposalDeadline(proposalId).call({"from": from_address})
+        return self.contract.functions.proposalDeadline(proposalId).call(
+            {"from": from_address}
+        )
 
     # https://zenn.dev/markwu/scraps/f7a17153baeb08
     def proposalSnapshot(self, proposalId: int, from_address: str) -> int:
-        return self.contract.functions.proposalSnapshot(proposalId).call({"from": from_address})
+        return self.contract.functions.proposalSnapshot(proposalId).call(
+            {"from": from_address}
+        )
 
     def proposalProposer(self, proposalId: int, from_address: str) -> str:
-        return self.contract.functions.proposalProposer(proposalId).call({"from": from_address})
+        return self.contract.functions.proposalProposer(proposalId).call(
+            {"from": from_address}
+        )
 
     # bytes32 descriptionHash pythonでも同暗号化処理が必要
-    def hashProposal(self, targets: list[str], values: list[int], calldatas: str, description: str, from_address: str) -> int:
-        return self.contract.functions.hashProposal(targets, values, calldatas, description).call({"from": from_address}) 
+    def hashProposal(
+        self,
+        targets: list[str],
+        values: list[int],
+        calldatas: str,
+        description: str,
+        from_address: str,
+    ) -> int:
+        description_hash = Web3.keccak(hexstr=Web3.to_hex(text=description))
+        return self.contract.functions.hashProposal(
+            targets, values, calldatas, description_hash
+        ).call({"from": from_address})
 
     def state(self, proposalId: int, from_address: str) -> int:
         return self.contract.functions.state(proposalId).call({"from": from_address})

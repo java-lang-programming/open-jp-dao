@@ -90,6 +90,15 @@ describe("OpenJpDaoGovernor contract", function () {
       });
     });
 
+    // test
+    describe("proposalThreshold", function () {
+      it("should be zero Threshold", async function () {
+        const MessageHash = await Governor.getMessageHash("test");
+        console.log(MessageHash);
+        //expect(await Governor.getMessageHash("test")).to.equal(0);
+      });
+    });
+
 
 
     // 投票権を与える

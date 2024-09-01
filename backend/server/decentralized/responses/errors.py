@@ -27,3 +27,7 @@ class ErrorCodes:
     INVALID_CHAIN_ID: str = "E0000001"
     # イーサリアムに接続できない
     NOT_CONNECTED_ETHEREUM = "E0000002"
+    # votec createのエラー
+    ERROR_VOTE_CREATE = "EVC00001"
+    # votec showのエラー
+    ERROR_VOTE_SHOW = "EVS00001"
