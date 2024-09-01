@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 from pydantic import BaseModel
+
 # from siwe import SiweMessage
+
 
 class Verify(BaseModel):
     chain_id: int
@@ -42,4 +44,3 @@ class Verify(BaseModel):
     #         print("Authentication attempt rejected.")
     #     except siwe.InvalidSignature:
     #         print("Authentication attempt rejected.")
-

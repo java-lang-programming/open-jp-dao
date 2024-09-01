@@ -7,7 +7,7 @@ import "@openzeppelin/contracts/governance/extensions/GovernorVotes.sol";
 import "@openzeppelin/contracts/governance/extensions/GovernorVotesQuorumFraction.sol";
 import "@openzeppelin/contracts/governance/utils/IVotes.sol";
 //import "@openzeppelin/contracts/utils/math/SafeCast.sol";
-//import "hardhat/console.sol";
+import "hardhat/console.sol";
 
 
 contract OpenJpDaoGovernor is Governor,
@@ -85,7 +85,8 @@ contract OpenJpDaoGovernor is Governor,
     //    messageHash = keccak256(bytes(_message));
     //}
 
-    //function getMessageHash(string memory _message) public view returns (bytes32) {
-    //    return keccak256(bytes(_message));
-    //}
+    function getMessageHash(string memory _message) public view returns (bytes32) {
+        console.logBytes(bytes(_message));
+        return keccak256(bytes(_message));
+    }
 }

@@ -4,7 +4,7 @@ from web3 import Web3
 from decentralized.infrastructures.ethereum.repogitories.base_contract_repository import (
     BaseContractRepository,
 )
-from decentralized.utils.chains import Chains
+from bunsan.ethereum.chains import Chains
 
 
 class Ethereum(BaseContractRepository):
@@ -45,5 +45,5 @@ class Ethereum(BaseContractRepository):
         if self.chain_id == Chains.HARDHAT_CHAIN_ID:
             return "localhost"
         elif self.chain_id == Chains.SEPOLIA_CHAIN_ID:
-            return "Sepolia"
+            return "sepolia"
         return None

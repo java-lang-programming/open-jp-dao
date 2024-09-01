@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 from pydantic import BaseModel
 
+
 class VoteCreateRequest(BaseModel):
     # NFT worker
     CALL_DATE_TYPE_NO_DATA: int = 1
@@ -23,7 +24,7 @@ class VoteCreateRequest(BaseModel):
     # taggetsの取得
     # targets: list[str]
     def targets(self) -> list[str]:
-      return [self.token_address]
+        return [self.token_address]
 
     # # TODO hsh
     # def description(self) -> str:
@@ -32,7 +33,7 @@ class VoteCreateRequest(BaseModel):
     # name: str
     # summary: str# optionak
 
-          # [VoteToken.address],
-          # [0],
-          # [transferCalldata],
-          # "Proposal #1: Give grant to team",
+    # [VoteToken.address],
+    # [0],
+    # [transferCalldata],
+    # "Proposal #1: Give grant to team",

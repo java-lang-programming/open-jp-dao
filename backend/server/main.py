@@ -187,11 +187,14 @@ async def vote_create(chain_id: str, voteCreate: VoteCreateRequest):
       return Errors(code=ErrorCodes.NOT_CONNECTED_ETHEREUM, message="イーサリアムに接続できませんでした", detail="接続先のステータスを確認してください").to_dict()
 
     create = VoteCreate(ethereum=ethereum)
-    result = create.execute(voteCreate=voteCreate)    
+    try:
+      result = create.execute(voteCreate=voteCreate)
+    except Exception as e:
+      return Errors(code=ErrorCodes.ERROR_VOTE_CREATE, message="vote create error", detail=repr(e)).to_dict()
 
     return result
 
-# curl -X GET -H "Content-Type: application/json" http://localhost:8001/api/ethereum/8545/address/0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266/votes/64888995718551627983973306268611596997836813712203156556871952482053903175158
+# curl -X GET -H "Content-Type: application/json" http://localhost:8001/api/ethereum/8545/address/0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266/votes/6575811453577265609264472254941757295222982262946132559213360139185348548097
 # 投票を取得する
 @app.get("/api/ethereum/{chain_id}/address/{address}/votes/{proposalId}")
 def vote_show(chain_id: str, address: str, proposalId: str, q: str = None):
@@ -209,7 +212,10 @@ def vote_show(chain_id: str, address: str, proposalId: str, q: str = None):
       return Errors(code=ErrorCodes.NOT_CONNECTED_ETHEREUM, message="イーサリアムに接続できませんでした", detail="接続先のステータスを確認してください").to_dict()
 
     show = VoteShow(ethereum=ethereum)
-    rsult = show.execute(proposalId=int(proposalId), from_address=address)    
+    try:
+      rsult = show.execute(proposalId=int(proposalId), from_address=address)
+    except Exception as e:
+      return Errors(code=ErrorCodes.ERROR_VOTE_SHOW, message="vote show error", detail=repr(e)).to_dict()   
 
     return rsult
 

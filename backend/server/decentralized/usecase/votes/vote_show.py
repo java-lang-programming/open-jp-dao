@@ -1,8 +1,10 @@
 # -*- coding: utf-8 -*-
 from decentralized.infrastructures.ethereum.ethereum import Ethereum
 from decentralized.infrastructures.ethereum.repogitories.open_jp_dao_governor_repository import (
-    OpenJpDaoGovernorRepository
+    OpenJpDaoGovernorRepository,
 )
+from bunsan.ethereum.exceptions.governor.exception_snapshot import ExceptionSnapshot
+
 
 class VoteShow:
     def __init__(self, ethereum: Ethereum):
@@ -11,31 +13,44 @@ class VoteShow:
     # , address: str
     def execute(self, proposalId: int, from_address: str):
         try:
-          openJpDaoRepo = OpenJpDaoGovernorRepository(ethereum=self.ethereum)
-          proposalDeadline = openJpDaoRepo.proposalDeadline(proposalId=proposalId, from_address=from_address)
-          proposalSnapshot = openJpDaoRepo.proposalSnapshot(proposalId=proposalId, from_address=from_address)
+            openJpDaoRepo = OpenJpDaoGovernorRepository(ethereum=self.ethereum)
 
-          clock = openJpDaoRepo.clock(from_address=from_address)
-          print(clock)
-          clockMode = openJpDaoRepo.CLOCK_MODE(from_address=from_address)
-          print(clockMode)
-          #　コントkラウトで実装されている
-          #　まだblockが進んでいないのでは？
-          #if proposalSnapshot == 0:
-          #  return { "revort": "GovernorNonexistentProposal" }
+            proposalDeadline = openJpDaoRepo.proposalDeadline(
+                proposalId=proposalId, from_address=from_address
+            )
+            proposalSnapshot = openJpDaoRepo.proposalSnapshot(
+                proposalId=proposalId, from_address=from_address
+            )
+            if proposalSnapshot == 0:
+                # 提案がない
+                raise ExceptionSnapshot("proposalSnapshot is zero.")
+
+            # print(clockMode)
+            # 　コントkラウトで実装されている
+            # 　まだblockが進んでいないのでは？
+            # if proposalSnapshot == 0:
+            #  return { "revort": "GovernorNonexistentProposal" }
             # revert GovernorNonexistentProposal(proposalId);
 
-          proposalProposer = openJpDaoRepo.proposalProposer(proposalId=proposalId, from_address=from_address)
-          state = openJpDaoRepo.state(proposalId=proposalId, from_address=from_address)
-          return { "state": state, "proposal" : {"deadline": proposalDeadline, "snapshot": proposalSnapshot, "proposer": proposalProposer} }
+            proposalProposer = openJpDaoRepo.proposalProposer(
+                proposalId=proposalId, from_address=from_address
+            )
+            state = openJpDaoRepo.state(
+                proposalId=proposalId, from_address=from_address
+            )
+            return {
+                "state": state,
+                "proposal": {
+                    "deadline": proposalDeadline,
+                    "snapshot": proposalSnapshot,
+                    "proposer": proposalProposer,
+                },
+            }
         except Exception as e:
-          # GovernorNonexistentProposalと判断する方法が必要。
-          print(e)
-          return  { "e": e }
+            # GovernorNonexistentProposalと判断する方法が必要。
+            raise e
 
-        #　ここでコントらくと作成のじっけん
-        #　ここで出力
-        # time.sleep(10)  # 3秒間スリープ
+
 # show
 
 # proposal_id
@@ -46,7 +61,7 @@ class VoteShow:
 # proposalProposer
 
 # {
-    
+
 #   voting {
 #     perood;
 #     Delay
@@ -58,11 +73,10 @@ class VoteShow:
 #     snapshot:
 #     deadline:
 #     Proposer:
-#   } 
+#   }
 
 #   proposalVotes
 # }
-
 
 
 # votingPeriod

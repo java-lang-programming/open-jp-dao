@@ -15,6 +15,10 @@ class IGovernorRepository(metaclass=abc.ABCMeta):
     def proposalDeadline(proposalId: int, from_address: str) -> int:
         raise NotImplementedError()
 
+    @abc.abstractmethod
+    def proposalSnapshot(self, proposalId: int, from_address: str) -> int:
+        raise NotImplementedError()
+
     # https://docs.openzeppelin.com/contracts/4.x/api/governance#IGovernor-proposalProposer-uint256-
     @abc.abstractmethod
     def proposalProposer(self, proposalId: int, from_address: str) -> str:
@@ -31,8 +35,3 @@ class IGovernorRepository(metaclass=abc.ABCMeta):
     @abc.abstractmethod
     def clock(self, from_address: str) -> int:
         raise NotImplementedError()
-    # /**
-    #  * @inheritdoc IERC6372
-    #  */
-    # function clock() public view virtual returns (uint48);
-
