@@ -11,10 +11,14 @@ from bunsan.ethereum.eips.i_erc5805 import (
     IERC5805,
 )
 
+from bunsan.ethereum.eips.i_erc6372 import (
+    IERC6372,
+)
+
 from bunsan.ethereum.chains import Chains
 
 
-class ERC20VotesRepository(IERC20Metadata, IERC20, IERC5805):
+class ERC20VotesRepository(IERC20Metadata, IERC20, IERC5805, IERC6372):
     ARTIFACTS_JSON_PATH: str = "./abi/ERC20VotesToken.json"
     HARDHAT_CONTRACT_ADDRESS: str = "0x5FbDB2315678afecb367f032d93F642f64180aa3"
     SEPOLIA_CONTRACT_ADDRESS: str = "0x9fE46736679d2D9a65F0992F2272dE9f3c7fa6e0"
@@ -65,6 +69,16 @@ class ERC20VotesRepository(IERC20Metadata, IERC20, IERC5805):
         )
         # receiptを返す
         return self.ethereum.wait_for_transaction_receipt(tx_hash)
+
+    def clock(self, from_address: str) -> int:
+        return self.contract.functions.clock().call(
+            {"from": from_address}
+        )
+
+    def CLOCK_MODE(from_address: str) -> str:
+        return self.contract.functions.CLOCK_MODE().call(
+            {"from": from_address}
+        )
 
     def getVotes(self, tagret_address: str, from_address: str) -> int:
         return self.contract.functions.getVotes(tagret_address).call(
