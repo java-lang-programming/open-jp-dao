@@ -43,7 +43,7 @@ class Ethereum(BaseContractRepository):
     # ネットワークを返す
     def network(self):
         if self.chain_id == Chains.HARDHAT_CHAIN_ID:
-            return "localhost"
+            return Chains.HARDHAT_CHAIN_NAME
         elif self.chain_id == Chains.SEPOLIA_CHAIN_ID:
-            return "sepolia"
+            return Chains.SEPOLIA_CHAIN_NAME
         return None
