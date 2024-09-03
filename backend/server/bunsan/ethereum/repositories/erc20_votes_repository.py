@@ -50,17 +50,26 @@ class ERC20VotesRepository(IERC20Metadata, IERC20, IERC5805, IERC6372):
     def symbol(self, from_address: str) -> str:
         return self.contract.functions.symbol().call({"from": from_address})
 
+    def eventTransfer(self):
+        return self.contract.events.Transfer
+
     def balanceOf(self, target_address: str, from_address: str) -> int:
         return self.contract.functions.balanceOf(target_address).call(
             {"from": from_address}
         )
 
+    # TODO evebt
     def transfer(self, target_address: str, amount: int, from_address: str) -> bool:
         tx_hash = self.contract.functions.transfer(target_address, amount).transact(
             {"from": from_address}
         )
-        return self.ethereum.get_transaction_receipt(tx_hash)
+        receipt = self.ethereum.get_transaction_receipt(tx_hash)
 
+        logs = self.eventTransfer().get_logs()
+        print(logs)
+        return receipt
+
+    # TODO evebt
     def mint(self, target_address: str, amount: int, from_address: str):
         # from_addressも必要かも
         # 　トランザクション
@@ -68,7 +77,12 @@ class ERC20VotesRepository(IERC20Metadata, IERC20, IERC5805, IERC6372):
             {"from": from_address}
         )
         # receiptを返す
-        return self.ethereum.wait_for_transaction_receipt(tx_hash)
+        receipt = self.ethereum.get_transaction_receipt(tx_hash)
+        #print(receipt)
+
+        #logs = self.eventTransfer().get_logs()
+        #print(logs)
+        return receipt
 
     def clock(self, from_address: str) -> int:
         return self.contract.functions.clock().call(

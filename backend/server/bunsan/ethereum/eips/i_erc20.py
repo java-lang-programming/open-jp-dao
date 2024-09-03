@@ -7,6 +7,10 @@ import abc
 class IERC20(metaclass=abc.ABCMeta):
 
     @abc.abstractmethod
+    def eventTransfer():
+        raise NotImplementedError()
+
+    @abc.abstractmethod
     def balanceOf(self, target_address: str, from_address: str) -> int:
         """
         Returns the amount of tokens owned by account.
