@@ -18,7 +18,7 @@ class IERC20(metaclass=abc.ABCMeta):
         raise NotImplementedError()
 
     @abc.abstractmethod
-    def transfer(self, target_address: str, amount: int, from_address: str) -> bool:
+    def transfer(self, to_address: str, amount: int, from_address: str):
         """
         Moves amount tokens from the caller’s account to to.
         Returns a boolean value indicating whether the operation succeeded.

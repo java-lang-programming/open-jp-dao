@@ -24,6 +24,7 @@ class ERC20VotesRepository(IERC20Metadata, IERC20, IERC5805, IERC6372):
     SEPOLIA_CONTRACT_ADDRESS: str = "0x9fE46736679d2D9a65F0992F2272dE9f3c7fa6e0"
 
     FIRST_MINT_AMOUNT: int = 1000000
+    NOT_FOUND_ADDRESS: str = "0x0000000000000000000000000000000000000000"
 
     def __init__(self, ethereum: Ethereum):
         self.ethereum = ethereum
@@ -59,14 +60,14 @@ class ERC20VotesRepository(IERC20Metadata, IERC20, IERC5805, IERC6372):
         )
 
     # TODO evebt
-    def transfer(self, target_address: str, amount: int, from_address: str) -> bool:
-        tx_hash = self.contract.functions.transfer(target_address, amount).transact(
+    def transfer(self, to_address: str, amount: int, from_address: str):
+        tx_hash = self.contract.functions.transfer(to_address, amount).transact(
             {"from": from_address}
         )
         receipt = self.ethereum.get_transaction_receipt(tx_hash)
 
-        logs = self.eventTransfer().get_logs()
-        print(logs)
+        # logs = self.eventTransfer().get_logs()
+        print(receipt)
         return receipt
 
     # TODO evebt
@@ -104,7 +105,36 @@ class ERC20VotesRepository(IERC20Metadata, IERC20, IERC5805, IERC6372):
             {"from": from_address}
         )
 
-    def delegates(self, tagret_address: str, timepoint: int, from_address: str) -> str:
-        return self.contract.functions.delegates(tagret_address, timepoint).call(
+    # Returns the delegate that `account` has chosen.
+    # 委譲しているユーザーを取得
+    # Get the address account is currently delegating to.
+    def delegates(self, tagret_address: str, from_address: str) -> str:
+        return self.contract.functions.delegates(tagret_address).call(
             {"from": from_address}
         )
+
+    # Delegates votes from the sender to `delegatee`.
+    def delegate(self, delegatee_address: str, from_address: str):
+        tx_hash = self.contract.functions.delegate(delegatee_address).transact(
+            {"from": from_address}
+        )
+        receipt = self.ethereum.get_transaction_receipt(tx_hash)
+        #　ここでemit
+
+        
+        return receipt
+
+    def eventDelegateChanged():
+        raise NotImplementedError()
+
+    #### ここからオリジナル #####
+
+    #　委譲しているユーザーがいればtrue。いればtrue
+    def hasDelegates(self, tagret_address: str, from_address: str) -> bool:
+        if self.delegates(tagret_address=tagret_address, from_address=from_address) == ERC20VotesRepository.NOT_FOUND_ADDRESS:
+            return False
+
+    # seteVoteの逆。tokenを渡して以上する
+    def setVote(self, to_address: str, amount: int, from_address: str):
+        self.transfer(to_address=to_address, amount=amount, from_address=from_address)
+        self.delegate(delegatee_address=to_address, from_address=to_address)
