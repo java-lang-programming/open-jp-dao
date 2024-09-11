@@ -36,20 +36,24 @@ if from_address_balance == 0:
 
 tagret_address_1_vote = votes.getVotes(tagret_address=tagret_address_1, from_address=tagret_address_1)
 
-print(tagret_address_1_vote)
+# print(tagret_address_1_vote)
+
+if tagret_address_1_vote > 0:
+	#　投票する
+	# votes.castvote
 
 
-if tagret_address_1_vote == 0:
-	# 投票分おくる
- 	votes.transfer(to_address=tagret_address_1, amount=500, from_address=from_address)
- 	votes.delegate(delegatee_address=tagret_address_1, from_address=tagret_address_1)
-#  	logs = votes.eventTransfer().get_logs()
-#  	print(logs)
+# if tagret_address_1_vote == 0:
+# 	# 投票分おくる
+#  	votes.transfer(to_address=tagret_address_1, amount=500, from_address=from_address)
+#  	votes.delegate(delegatee_address=tagret_address_1, from_address=tagret_address_1)
+# #  	logs = votes.eventTransfer().get_logs()
+# #  	print(logs)
 
-tagret_address_2_vote = votes.getVotes(tagret_address=tagret_address_2, from_address=tagret_address_2)
-print(tagret_address_2_vote)
-if tagret_address_2_vote == 0:
-	votes.setVote(to_address=tagret_address_2, amount=1000, from_address=from_address)
+# tagret_address_2_vote = votes.getVotes(tagret_address=tagret_address_2, from_address=tagret_address_2)
+# print(tagret_address_2_vote)
+# if tagret_address_2_vote == 0:
+# 	votes.setVote(to_address=tagret_address_2, amount=1000, from_address=from_address)
 
 
 

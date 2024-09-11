@@ -6,6 +6,8 @@ from decentralized.utils.chains import Chains
 from decentralized.exceptions.invalid_chain_id import InvalidChainID
 from decentralized.usecase.tokens import Tokens
 from decentralized.usecase.nfts.create import Create
+from decentralized.usecase.votes.vote_add import VoteAdd
+#　こっちはproposal
 from decentralized.usecase.votes.vote_create import VoteCreate
 from decentralized.usecase.votes.vote_show import VoteShow
 from decentralized.responses.errors import Errors, ErrorCodes
@@ -13,9 +15,10 @@ from decentralized.requests.nft import Nft
 from decentralized.requests.nonce import Nonce
 from decentralized.requests.verify import Verify
 from decentralized.requests.votes.votes_create import VoteCreateRequest
+from decentralized.requests.votes.votes_add import VoteAddRequest
 import secrets
 import string
-from siwe import SiweMessage
+# from siwe import SiweMessage
 
 from decentralized.exceptions.employee_authority_worker_nft_minted import (
     EmployeeAuthorityWorkerNFTMinted,
@@ -134,34 +137,34 @@ def nonce():
 # prams { message, stirng, signature: string, nonce: String, domain= string }
 # message.verify(signature, nonce="abcdef", domain="example.com"
 # session https://blog.hapins.net/entry/2023/03/05/113755
-@app.post("/api/verify")
-async def verify(verify: Verify):
-    int_chain_id = 0
-    try:
-      int_chain_id = Chains.validate_chain_id(chain_id=verify.chain_id)
-      print(int_chain_id)
-    except Exception as e:
-      print("ここ")  
-      return Errors(code=ErrorCodes.INVALID_CHAIN_ID, message="chain_id error", detail=repr(e)).to_dict()
+# @app.post("/api/verify")
+# async def verify(verify: Verify):
+#     int_chain_id = 0
+#     try:
+#       int_chain_id = Chains.validate_chain_id(chain_id=verify.chain_id)
+#       print(int_chain_id)
+#     except Exception as e:
+#       print("ここ")  
+#       return Errors(code=ErrorCodes.INVALID_CHAIN_ID, message="chain_id error", detail=repr(e)).to_dict()
 
-    url = Chains.url_via_chain_id(chain_id=int_chain_id)
+#     url = Chains.url_via_chain_id(chain_id=int_chain_id)
 
-    ethereum = Ethereum(url=url, chain_id=int_chain_id)
-    if not ethereum.is_connected():
-      return Errors(code=ErrorCodes.NOT_CONNECTED_ETHEREUM, message="イーサリアムに接続できませんでした", detail="接続先のステータスを確認してください").to_dict()
+#     ethereum = Ethereum(url=url, chain_id=int_chain_id)
+#     if not ethereum.is_connected():
+#       return Errors(code=ErrorCodes.NOT_CONNECTED_ETHEREUM, message="イーサリアムに接続できませんでした", detail="接続先のステータスを確認してください").to_dict()
 
-    try:
-        message = SiweMessage.from_message(message=verify.message)
-        print(message)
-        aaa = message.verify(verify.signature, nonce=verify.nonce, domain=verify.domain)
-        print(aaa)
-        #print("エラーe")message = SiweMessage(message=verify.message)
-    except Exception as e:
-        print("エラーe")
-        return Errors(code=ErrorCodes.INVALID_CHAIN_ID, message="chain_id error", detail=repr(e)).to_dict()
+#     try:
+#         message = SiweMessage.from_message(message=verify.message)
+#         print(message)
+#         aaa = message.verify(verify.signature, nonce=verify.nonce, domain=verify.domain)
+#         print(aaa)
+#         #print("エラーe")message = SiweMessage(message=verify.message)
+#     except Exception as e:
+#         print("エラーe")
+#         return Errors(code=ErrorCodes.INVALID_CHAIN_ID, message="chain_id error", detail=repr(e)).to_dict()
 
-    # expiration_timeは1hってとこかな
-    return {"status": "OK", "expiration_time": "aaaa"}
+#     # expiration_timeは1hってとこかな
+#     return {"status": "OK", "expiration_time": "aaaa"}
 
 # ta
 @app.post("/api/ethereum/{chain_id}/transfer")
@@ -218,5 +221,33 @@ def vote_show(chain_id: str, address: str, proposalId: str, q: str = None):
 
     return rsult
 
+# 0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266
+# curl -X POST -H "Content-Type: application/json" -d '{"to": "0x70997970C51812dc3A010C7d01b50e0d17dc79C8", "amount": 100 }' http://localhost:8001/api/ethereum/8545/address/0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266/addvote
+# 投票用のトークンを付加する
+@app.post("/api/ethereum/{chain_id}/address/{address}/addvote")
+def vote_add(chain_id: str, address: str, voteAdd: VoteAddRequest):
+    #　ここが全部同じなので共通化
+    int_chain_id = 0
+    try:
+      int_chain_id = Chains.validate_chain_id(chain_id=chain_id)
+    except Exception as e: 
+      return Errors(code=ErrorCodes.INVALID_CHAIN_ID, message="chain_id error", detail=repr(e)).to_dict()
 
+    url = Chains.url_via_chain_id(chain_id=int_chain_id)
 
+    ethereum = Ethereum(url=url, chain_id=int_chain_id)
+    if not ethereum.is_connected():
+      return Errors(code=ErrorCodes.NOT_CONNECTED_ETHEREUM, message="イーサリアムに接続できませんでした", detail="接続先のステータスを確認してください").to_dict()
+
+    add = VoteAdd(ethereum=ethereum)
+    try:
+      add.execute(request=voteAdd, from_address=address)
+    except Exception as e:
+      return Errors(code=ErrorCodes.ERROR_VOTE_SHOW, message="vote show error", detail=repr(e)).to_dict()   
+
+    return None
+
+#　投票する
+# @app.get("/api/ethereum/{chain_id}/address/{address}/votes/{proposalId}/cast")
+#　仕様を完全に理解すること
+# https://docs.openzeppelin.com/contracts/4.x/api/governance#IGovernor-castVote-uint256-uint8-
