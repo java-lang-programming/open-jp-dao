@@ -46,6 +46,11 @@ class OpenJpDaoGovernorRepository(IGovernorRepository, IERC6372):
             return OpenJpDaoGovernorRepository.SEPOLIA_CONTRACT_ADDRESS
         return None
 
+    def hasVoted(self, proposalId: int, target_address: str, from_address: str) -> bool:
+        return self.contract.functions.hasVoted(proposalId, target_address).call(
+          {"from": from_address}
+        )
+
     def propose(
         self,
         targets: list[str],
@@ -101,6 +106,22 @@ class OpenJpDaoGovernorRepository(IGovernorRepository, IERC6372):
         return self.contract.functions.hashProposal(
             targets, values, calldatas, description_hash
         ).call({"from": from_address})
+
+    def castVote(self, proposalId: int, support: int, from_address: str) -> int:
+        tx_hash = self.contract.functions.castVote(
+          proposalId, support
+        ).transact({"from": from_address})
+
+        receipt = self.ethereum.get_transaction_receipt(tx_hash)
+
+        print("receipt")
+        print(receipt)
+        logs = self.contract.events.VoteCast.get_logs()
+        event = logs[0]
+        print("event.args")
+        print(event)
+
+        return 1
 
     def state(self, proposalId: int, from_address: str) -> int:
         return self.contract.functions.state(proposalId).call({"from": from_address})

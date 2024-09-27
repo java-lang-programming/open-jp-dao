@@ -10,15 +10,17 @@ from decentralized.usecase.votes.vote_add import VoteAdd
 #　こっちはproposal
 from decentralized.usecase.votes.vote_create import VoteCreate
 from decentralized.usecase.votes.vote_show import VoteShow
+from decentralized.usecase.votes.vote_cast import VoteCast
 from decentralized.responses.errors import Errors, ErrorCodes
 from decentralized.requests.nft import Nft
 from decentralized.requests.nonce import Nonce
 from decentralized.requests.verify import Verify
 from decentralized.requests.votes.votes_create import VoteCreateRequest
+from decentralized.requests.votes.votes_cast import VoteCastRequest
 from decentralized.requests.votes.votes_add import VoteAddRequest
 import secrets
 import string
-# from siwe import SiweMessage
+from siwe import SiweMessage
 
 from decentralized.exceptions.employee_authority_worker_nft_minted import (
     EmployeeAuthorityWorkerNFTMinted,
@@ -26,7 +28,7 @@ from decentralized.exceptions.employee_authority_worker_nft_minted import (
 from decentralized.exceptions.invalid_employee_authority_nft import (
     InvalidEmployeeAuthorityNFT,
 )
-
+from bunsan.ethereum.exceptions.governor.exception_governor_nonexistent_proposal import ExceptionGovernorNonexistentProposal
 
 app = FastAPI()
 
@@ -137,31 +139,31 @@ def nonce():
 # prams { message, stirng, signature: string, nonce: String, domain= string }
 # message.verify(signature, nonce="abcdef", domain="example.com"
 # session https://blog.hapins.net/entry/2023/03/05/113755
-# @app.post("/api/verify")
-# async def verify(verify: Verify):
-#     int_chain_id = 0
-#     try:
-#       int_chain_id = Chains.validate_chain_id(chain_id=verify.chain_id)
-#       print(int_chain_id)
-#     except Exception as e:
-#       print("ここ")  
-#       return Errors(code=ErrorCodes.INVALID_CHAIN_ID, message="chain_id error", detail=repr(e)).to_dict()
+@app.post("/api/verify")
+async def verify(verify: Verify):
+    int_chain_id = 0
+    try:
+      int_chain_id = Chains.validate_chain_id(chain_id=verify.chain_id)
+      print(int_chain_id)
+    except Exception as e:
+      print("ここ")  
+      return Errors(code=ErrorCodes.INVALID_CHAIN_ID, message="chain_id error", detail=repr(e)).to_dict()
 
-#     url = Chains.url_via_chain_id(chain_id=int_chain_id)
+    url = Chains.url_via_chain_id(chain_id=int_chain_id)
 
-#     ethereum = Ethereum(url=url, chain_id=int_chain_id)
-#     if not ethereum.is_connected():
-#       return Errors(code=ErrorCodes.NOT_CONNECTED_ETHEREUM, message="イーサリアムに接続できませんでした", detail="接続先のステータスを確認してください").to_dict()
+    ethereum = Ethereum(url=url, chain_id=int_chain_id)
+    if not ethereum.is_connected():
+      return Errors(code=ErrorCodes.NOT_CONNECTED_ETHEREUM, message="イーサリアムに接続できませんでした", detail="接続先のステータスを確認してください").to_dict()
 
-#     try:
-#         message = SiweMessage.from_message(message=verify.message)
-#         print(message)
-#         aaa = message.verify(verify.signature, nonce=verify.nonce, domain=verify.domain)
-#         print(aaa)
-#         #print("エラーe")message = SiweMessage(message=verify.message)
-#     except Exception as e:
-#         print("エラーe")
-#         return Errors(code=ErrorCodes.INVALID_CHAIN_ID, message="chain_id error", detail=repr(e)).to_dict()
+    try:
+        message = SiweMessage.from_message(message=verify.message)
+        print(message)
+        aaa = message.verify(verify.signature, nonce=verify.nonce, domain=verify.domain)
+        print(aaa)
+        #print("エラーe")message = SiweMessage(message=verify.message)
+    except Exception as e:
+        print("エラーe")
+        return Errors(code=ErrorCodes.INVALID_CHAIN_ID, message="chain_id error", detail=repr(e)).to_dict()
 
 #     # expiration_timeは1hってとこかな
 #     return {"status": "OK", "expiration_time": "aaaa"}
@@ -173,6 +175,7 @@ async def token_transfer(chain_id: str, voteCreate: VoteCreateRequest):
 
 
 # 投票を作成する
+# proposal_create
 # curl -X POST -H "Content-Type: application/json" -d '{"description": "test", "token_address":"0x5FbDB2315678afecb367f032d93F642f64180aa3", "call_data_type": 1, "chain_id":8545, "from_address": "0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266" }' http://localhost:8001/api/ethereum/8545/votes
 @app.post("/api/ethereum/{chain_id}/votes")
 async def vote_create(chain_id: str, voteCreate: VoteCreateRequest):
@@ -196,8 +199,19 @@ async def vote_create(chain_id: str, voteCreate: VoteCreateRequest):
 
     return result
 
+# enum ProposalState {
+#         Pending,  0
+#         Active,   1      proposal作成後にチェーンでトランザクションが実行されるとactiveになる deadline >= currentTimepoint
+#         Canceled,  2
+#         Defeated,  3     2回addしたらなった。
+#         Succeeded,4
+#         Queued, 5
+#         Expired, 6
+#         Executed 7
+#     }
 # curl -X GET -H "Content-Type: application/json" http://localhost:8001/api/ethereum/8545/address/0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266/votes/6575811453577265609264472254941757295222982262946132559213360139185348548097
-# 投票を取得する
+# 提案(投票)を取得する
+# https://github.com/OpenZeppelin/openzeppelin-contracts/blob/057d35a9eb363b4468d9cef69423879e3fa34e82/contracts/governance/IGovernor.sol#L16
 @app.get("/api/ethereum/{chain_id}/address/{address}/votes/{proposalId}")
 def vote_show(chain_id: str, address: str, proposalId: str, q: str = None):
     #　ここが全部同じなので共通化
@@ -222,7 +236,7 @@ def vote_show(chain_id: str, address: str, proposalId: str, q: str = None):
     return rsult
 
 # 0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266
-# curl -X POST -H "Content-Type: application/json" -d '{"to": "0x70997970C51812dc3A010C7d01b50e0d17dc79C8", "amount": 100 }' http://localhost:8001/api/ethereum/8545/address/0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266/addvote
+# curl -X POST -H "Content-Type: application/json" -d '{"to": "0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266", "amount": 100 }' http://localhost:8001/api/ethereum/8545/address/0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266/addvote
 # 投票用のトークンを付加する
 @app.post("/api/ethereum/{chain_id}/address/{address}/addvote")
 def vote_add(chain_id: str, address: str, voteAdd: VoteAddRequest):
@@ -246,6 +260,40 @@ def vote_add(chain_id: str, address: str, voteAdd: VoteAddRequest):
       return Errors(code=ErrorCodes.ERROR_VOTE_SHOW, message="vote show error", detail=repr(e)).to_dict()   
 
     return None
+
+# curl -X POST -H "Content-Type: application/json" -d '{"to": "0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266", "amount": 100 }' http://localhost:8001/api/ethereum/8545/address/0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266/votes/6575811453577265609264472254941757295222982262946132559213360139185348548097/cast
+@app.post("/api/ethereum/{chain_id}/address/{address}/votes/{proposalId}/cast")
+def vote_cast(chain_id: str, address: str, proposalId: str, voteCast: VoteCastRequest):
+    int_chain_id = 0
+    try:
+      int_chain_id = Chains.validate_chain_id(chain_id=chain_id)
+    except Exception as e: 
+      return Errors(code=ErrorCodes.INVALID_CHAIN_ID, message="chain_id error", detail=repr(e)).to_dict()
+
+    url = Chains.url_via_chain_id(chain_id=int_chain_id)
+
+    ethereum = Ethereum(url=url, chain_id=int_chain_id)
+    if not ethereum.is_connected():
+      return Errors(code=ErrorCodes.NOT_CONNECTED_ETHEREUM, message="イーサリアムに接続できませんでした", detail="接続先のステータスを確認してください").to_dict()
+
+    cast = VoteCast(ethereum=ethereum)
+    try:
+      cast.execute(request=voteCast, proposalId=proposalId, from_address=address)
+    except ExceptionGovernorNonexistentProposal as e:
+        return Errors(code=ErrorCodes.NOT_CONNECTED_ETHEREUM, message="proposalIdが存在しません", detail=repr(e)).to_dict() 
+    except Exception as e:
+        print(e)
+        index = e.message.find('GovernorNonexistentProposal')
+        if index > -1:
+          return Errors(code=ErrorCodes.ERROR_VOTE_SHOW, message="vote show error", detail=repr(e)).to_dict()
+
+    return None
+    
+
+
+
+
+
 
 #　投票する
 # @app.get("/api/ethereum/{chain_id}/address/{address}/votes/{proposalId}/cast")

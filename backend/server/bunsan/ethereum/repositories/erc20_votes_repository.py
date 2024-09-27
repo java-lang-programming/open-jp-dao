@@ -90,7 +90,7 @@ class ERC20VotesRepository(IERC20Metadata, IERC20, IERC5805, IERC6372):
             {"from": from_address}
         )
 
-    def CLOCK_MODE(from_address: str) -> str:
+    def CLOCK_MODE(self, from_address: str) -> str:
         return self.contract.functions.CLOCK_MODE().call(
             {"from": from_address}
         )
