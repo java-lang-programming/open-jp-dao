@@ -13,7 +13,7 @@ router = APIRouter()
 # 投票を作成する
 # proposal_create
 # curl -X POST -H "Content-Type: application/json" -d '{"description": "test", "token_address":"0x5FbDB2315678afecb367f032d93F642f64180aa3", "call_data_type": 1, "chain_id":8545, "from_address": "0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266" }' http://localhost:8001/api/ethereum/8545/votes
-@router.post("/api/ethereum/{chain_id}/votes")
+@router.post("/api/ethereum/{chain_id}/votes", tags=["votes"])
 async def vote_create(chain_id: str, voteCreate: VoteCreateRequest):
     int_chain_id = 0
     try:

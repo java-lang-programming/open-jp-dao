@@ -12,12 +12,8 @@ from decentralized.usecase.votes.vote_cast import VoteCast
 from decentralized.responses.errors import Errors, ErrorCodes
 from decentralized.requests.nft import Nft
 from decentralized.requests.nonce import Nonce
-from decentralized.requests.verify import Verify
 from decentralized.requests.votes.votes_cast import VoteCastRequest
-from routers import votes
-import secrets
-import string
-from siwe import SiweMessage
+from routers import votes, sessions
 
 from decentralized.exceptions.employee_authority_worker_nft_minted import (
     EmployeeAuthorityWorkerNFTMinted,
@@ -28,6 +24,7 @@ from decentralized.exceptions.invalid_employee_authority_nft import (
 from bunsan.ethereum.exceptions.governor.exception_governor_nonexistent_proposal import ExceptionGovernorNonexistentProposal
 
 app = FastAPI()
+app.include_router(sessions.router)
 app.include_router(votes.router)
 
 origins = [
@@ -125,43 +122,37 @@ def ethereum_balance(chain_id: str, address: str, q: str = None):
     balance = ethereum.ether_balance(user_address=address)
     return {"balance": balance}
 
-# curl -X POST -H "Content-Type: application/json" -d '{"address":"0A396F4ce6aB8827279cffFb92266", "chainId":8545 }' http://localhost:8001/api/nonce
-@app.get("/api/nonce")
-def nonce():
-    _ALPHANUMERICS = string.ascii_letters + string.digits
-    return {"nonce": "".join(secrets.choice(_ALPHANUMERICS) for _ in range(20))}
-
 # https://github.com/spruceid/siwe-quickstart/blob/main/03_complete_app/backend/src/index.js
 # https://github.com/spruceid/siwe-py
 # message=eip_4361_string)
 # prams { message, stirng, signature: string, nonce: String, domain= string }
 # message.verify(signature, nonce="abcdef", domain="example.com"
 # session https://blog.hapins.net/entry/2023/03/05/113755
-@app.post("/api/verify")
-async def verify(verify: Verify):
-    int_chain_id = 0
-    try:
-      int_chain_id = Chains.validate_chain_id(chain_id=verify.chain_id)
-      print(int_chain_id)
-    except Exception as e:
-      print("ここ")  
-      return Errors(code=ErrorCodes.INVALID_CHAIN_ID, message="chain_id error", detail=repr(e)).to_dict()
+# @app.post("/api/verify")
+# async def verify(verify: Verify):
+#     int_chain_id = 0
+#     try:
+#       int_chain_id = Chains.validate_chain_id(chain_id=verify.chain_id)
+#       print(int_chain_id)
+#     except Exception as e:
+#       print("ここ")  
+#       return Errors(code=ErrorCodes.INVALID_CHAIN_ID, message="chain_id error", detail=repr(e)).to_dict()
 
-    url = Chains.url_via_chain_id(chain_id=int_chain_id)
+#     url = Chains.url_via_chain_id(chain_id=int_chain_id)
 
-    ethereum = Ethereum(url=url, chain_id=int_chain_id)
-    if not ethereum.is_connected():
-      return Errors(code=ErrorCodes.NOT_CONNECTED_ETHEREUM, message="イーサリアムに接続できませんでした", detail="接続先のステータスを確認してください").to_dict()
+#     ethereum = Ethereum(url=url, chain_id=int_chain_id)
+#     if not ethereum.is_connected():
+#       return Errors(code=ErrorCodes.NOT_CONNECTED_ETHEREUM, message="イーサリアムに接続できませんでした", detail="接続先のステータスを確認してください").to_dict()
 
-    try:
-        message = SiweMessage.from_message(message=verify.message)
-        print(message)
-        aaa = message.verify(verify.signature, nonce=verify.nonce, domain=verify.domain)
-        print(aaa)
-        #print("エラーe")message = SiweMessage(message=verify.message)
-    except Exception as e:
-        print("エラーe")
-        return Errors(code=ErrorCodes.INVALID_CHAIN_ID, message="chain_id error", detail=repr(e)).to_dict()
+#     try:
+#         message = SiweMessage.from_message(message=verify.message)
+#         print(message)
+#         aaa = message.verify(verify.signature, nonce=verify.nonce, domain=verify.domain)
+#         print(aaa)
+#         #print("エラーe")message = SiweMessage(message=verify.message)
+#     except Exception as e:
+#         print("エラーe")
+#         return Errors(code=ErrorCodes.INVALID_CHAIN_ID, message="chain_id error", detail=repr(e)).to_dict()
 
 # enum ProposalState {
 #         Pending,  0
