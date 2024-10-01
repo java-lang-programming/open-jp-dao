@@ -5,9 +5,10 @@ import json
 from web3 import Web3
 
 from bunsan.ethereum.ethereum import Ethereum
-from bunsan.ethereum.repositories.erc20_votes_repository import (
-    ERC20VotesRepository
+from decentralized.infrastructures.ethereum.repogitories.open_jp_dao_governor_repository import (
+    OpenJpDaoGovernorRepository,
 )
+
 # 可変
 # 以下はhardhatを選択した場合
 url = "http://host.docker.internal:8545"
@@ -18,53 +19,53 @@ tagret_address_2 = "0x3C44CdDdB6a900fa2b585dd299e03d12FA4293BC"
 ethereum = Ethereum(url=url, chain_id=8545)
 print(ethereum.is_connected())
 
+proposalId = 6575811453577265609264472254941757295222982262946132559213360139185348548097
+
 
 # 繋がらなかったら、下には行かない
 
 # https://eips.ethereum.org/EIPS/eip-721
-votes = ERC20VotesRepository(ethereum=ethereum)
+dao = OpenJpDaoGovernorRepository(ethereum=ethereum)
+# castVote(self, proposalId: int, support: int, from_address: str) -> int
+try:
+    aaa = dao.castVote(proposalId=proposalId, support=1, from_address=from_address)
+except Exception as e:
+	print(e)
+	# proposalIdがおかしい
+	index = e.message.find('GovernorNonexistentProposal')
+	if index > -1:
+		print("aaa")
 
-mode = votes.CLOCK_MODE(from_address=from_address)
-print("mode")
-print(mode)
-clock = votes.clock(from_address=from_address)
-print("clock")
-print(clock)
-vote = votes.getPastVotes(tagret_address=from_address, timepoint=clock-1, from_address=from_address)
-print("past vote")
-print(vote)
+    # stateがおかしい
+	index2 = e.message.find('GovernorUnexpectedProposalState')
+	if index2 > -1:
+		print("っっb")
 
-from_address_balance = votes.balanceOf(target_address=from_address, from_address=from_address)
-tagret_address_1_balance = votes.balanceOf(target_address=tagret_address_1, from_address=from_address)
-
-print(from_address_balance)
-print(tagret_address_1_balance)
-
-if from_address_balance == 0:
-	votes.mint(target_address=from_address, amount=10000, from_address=from_address)
-
-tagret_address_1_vote = votes.getVotes(tagret_address=from_address, from_address=from_address)
-
-print("vote")
-print(tagret_address_1_vote)
-
-# clocl
-
-mode = votes.CLOCK_MODE(from_address=from_address)
-print("mode")
-print(mode)
-clock = votes.clock(from_address=from_address)
-print("clock")
-print(clock)
-vote = votes.getPastVotes(tagret_address=from_address, timepoint=clock-1, from_address=from_address)
-print("past vote")
-print(vote)
+	print(index)
+	print(index2)
+	
+    # GovernorNonexistentProposalと判断する方法が必要。
+    #raise e
 
 
-# print(tagret_address_1_vote)
+
+# GovernorNonexistentProposal
+
+# from_address_balance = votes.balanceOf(target_address=from_address, from_address=from_address)
+# tagret_address_1_balance = votes.balanceOf(target_address=tagret_address_1, from_address=from_address)
+
+# print(from_address_balance)
+# print(tagret_address_1_balance)
+
+# if from_address_balance == 0:
+# 	votes.mint(target_address=from_address, amount=10000, from_address=from_address)
+
+# tagret_address_1_vote = votes.getVotes(tagret_address=tagret_address_1, from_address=tagret_address_1)
+
+# # print(tagret_address_1_vote)
 
 # if tagret_address_1_vote > 0:
-	#　投票する
+# 	#　投票する
 	# votes.castvote
 
 

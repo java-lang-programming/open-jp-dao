@@ -61,7 +61,7 @@ class VoteShow:
                 },
                 "mata": {
                   "state": {
-                    "0": "Pending",
+                    "0": "Pending 次のトランザクション後の実行後にActiveになります。",
                     "1": "Active [deadline >= currentTimepoint]",
                     "2": "Canceled",
                     "3": "Defeated",
@@ -75,44 +75,3 @@ class VoteShow:
         except Exception as e:
             # GovernorNonexistentProposalと判断する方法が必要。
             raise e
-
-# ProposalState {
-# #         Pending,  0
-# #         Active,   1      proposal作成後にチェーンでトランザクションが実行されるとactiveになる deadline >= currentTimepoint
-# #         Canceled,  2
-# #         Defeated,  3     2回addしたらなった。
-# #         Succeeded,4
-# #         Queued, 5
-# #         Expired, 6
-# #         Executed 7
-# #     }
-
-# show
-
-# proposal_id
-
-
-# proposalSnapshot
-# proposalDeadline
-# proposalProposer
-
-# {
-
-#   voting {
-#     perood;
-#     Delay
-#   }
-
-#   quorum:
-
-#   proposal: {
-#     snapshot:
-#     deadline:
-#     Proposer:
-#   }
-
-#   proposalVotes
-# }
-
-
-# votingPeriod

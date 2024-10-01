@@ -261,7 +261,7 @@ def vote_add(chain_id: str, address: str, voteAdd: VoteAddRequest):
 
     return None
 
-# curl -X POST -H "Content-Type: application/json" -d '{"to": "0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266", "amount": 100 }' http://localhost:8001/api/ethereum/8545/address/0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266/votes/6575811453577265609264472254941757295222982262946132559213360139185348548097/cast
+# curl -X POST -H "Content-Type: application/json" -d '{"support": 1 }' http://localhost:8001/api/ethereum/8545/address/0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266/votes/6575811453577265609264472254941757295222982262946132559213360139185348548097/cast
 @app.post("/api/ethereum/{chain_id}/address/{address}/votes/{proposalId}/cast")
 def vote_cast(chain_id: str, address: str, proposalId: str, voteCast: VoteCastRequest):
     int_chain_id = 0
