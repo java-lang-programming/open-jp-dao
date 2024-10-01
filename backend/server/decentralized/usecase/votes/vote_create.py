@@ -7,6 +7,7 @@ from decentralized.infrastructures.ethereum.repogitories.open_jp_dao_governor_re
 from bunsan.ethereum.exceptions.governor.exception_snapshot import ExceptionSnapshot
 
 
+# proposalにする
 class VoteCreate:
     def __init__(self, ethereum: Ethereum):
         self.ethereum = ethereum

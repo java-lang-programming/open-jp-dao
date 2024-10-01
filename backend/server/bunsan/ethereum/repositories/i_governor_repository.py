@@ -8,6 +8,10 @@ import abc
 class IGovernorRepository(metaclass=abc.ABCMeta):
 
     @abc.abstractmethod
+    def hasVoted(self, proposalId: int, target_address: str, from_address: str) -> bool:
+        raise NotImplementedError()
+    
+    @abc.abstractmethod
     def propose(self, targets: list[str], values: list[int], calldatas: str, description: str, from_address: str) -> int:
         raise NotImplementedError()
 
@@ -26,7 +30,11 @@ class IGovernorRepository(metaclass=abc.ABCMeta):
 
     @abc.abstractmethod
     def hashProposal(self, targets: list[str], values: list[int], calldatas: str, description: str, from_address: str) -> int:
-        raise NotImplementedError()        
+        raise NotImplementedError()
+
+    @abc.abstractmethod
+    def castVote(self, proposalId: int, support: int, from_address: str) -> int:
+        raise NotImplementedError()
 
     @abc.abstractmethod
     def state(self, proposalId: int, from_address: str) -> int:

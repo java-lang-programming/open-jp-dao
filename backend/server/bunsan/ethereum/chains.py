@@ -8,7 +8,7 @@ class Chains:
     HARDHAT_CHAIN_NAME: str = "localhost"
     SEPOLIA_URL: str = "https://rpc.sepolia.org"
     SEPOLIA_CHAIN_ID: int = 11155111
-    SEPOLIA_CHAIN_NAME: int = "localhost"
+    SEPOLIA_CHAIN_NAME: int = "sepolia"
 
     @staticmethod
     def validate_chain_id(chain_id: str) -> int:
