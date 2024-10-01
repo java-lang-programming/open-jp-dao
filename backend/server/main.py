@@ -6,7 +6,6 @@ from decentralized.utils.chains import Chains
 from decentralized.exceptions.invalid_chain_id import InvalidChainID
 from decentralized.usecase.tokens import Tokens
 from decentralized.usecase.nfts.create import Create
-from decentralized.usecase.votes.vote_add import VoteAdd
 #　こっちはproposal
 from decentralized.usecase.votes.vote_create import VoteCreate
 from decentralized.usecase.votes.vote_show import VoteShow
@@ -17,7 +16,7 @@ from decentralized.requests.nonce import Nonce
 from decentralized.requests.verify import Verify
 from decentralized.requests.votes.votes_create import VoteCreateRequest
 from decentralized.requests.votes.votes_cast import VoteCastRequest
-from decentralized.requests.votes.votes_add import VoteAddRequest
+from routers import votes
 import secrets
 import string
 from siwe import SiweMessage
@@ -31,6 +30,7 @@ from decentralized.exceptions.invalid_employee_authority_nft import (
 from bunsan.ethereum.exceptions.governor.exception_governor_nonexistent_proposal import ExceptionGovernorNonexistentProposal
 
 app = FastAPI()
+app.include_router(votes.router)
 
 origins = [
     "http://localhost",
@@ -234,32 +234,6 @@ def vote_show(chain_id: str, address: str, proposalId: str, q: str = None):
       return Errors(code=ErrorCodes.ERROR_VOTE_SHOW, message="vote show error", detail=repr(e)).to_dict()   
 
     return rsult
-
-# 0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266
-# curl -X POST -H "Content-Type: application/json" -d '{"to": "0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266", "amount": 100 }' http://localhost:8001/api/ethereum/8545/address/0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266/addvote
-# 投票用のトークンを付加する
-@app.post("/api/ethereum/{chain_id}/address/{address}/addvote")
-def vote_add(chain_id: str, address: str, voteAdd: VoteAddRequest):
-    #　ここが全部同じなので共通化
-    int_chain_id = 0
-    try:
-      int_chain_id = Chains.validate_chain_id(chain_id=chain_id)
-    except Exception as e: 
-      return Errors(code=ErrorCodes.INVALID_CHAIN_ID, message="chain_id error", detail=repr(e)).to_dict()
-
-    url = Chains.url_via_chain_id(chain_id=int_chain_id)
-
-    ethereum = Ethereum(url=url, chain_id=int_chain_id)
-    if not ethereum.is_connected():
-      return Errors(code=ErrorCodes.NOT_CONNECTED_ETHEREUM, message="イーサリアムに接続できませんでした", detail="接続先のステータスを確認してください").to_dict()
-
-    add = VoteAdd(ethereum=ethereum)
-    try:
-      add.execute(request=voteAdd, from_address=address)
-    except Exception as e:
-      return Errors(code=ErrorCodes.ERROR_VOTE_SHOW, message="vote show error", detail=repr(e)).to_dict()   
-
-    return None
 
 # curl -X POST -H "Content-Type: application/json" -d '{"support": 1 }' http://localhost:8001/api/ethereum/8545/address/0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266/votes/6575811453577265609264472254941757295222982262946132559213360139185348548097/cast
 @app.post("/api/ethereum/{chain_id}/address/{address}/votes/{proposalId}/cast")

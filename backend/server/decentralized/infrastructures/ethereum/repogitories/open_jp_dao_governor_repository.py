@@ -48,7 +48,7 @@ class OpenJpDaoGovernorRepository(IGovernorRepository, IERC6372):
 
     def hasVoted(self, proposalId: int, target_address: str, from_address: str) -> bool:
         return self.contract.functions.hasVoted(proposalId, target_address).call(
-          {"from": from_address}
+            {"from": from_address}
         )
 
     def propose(
@@ -108,9 +108,9 @@ class OpenJpDaoGovernorRepository(IGovernorRepository, IERC6372):
         ).call({"from": from_address})
 
     def castVote(self, proposalId: int, support: int, from_address: str) -> int:
-        tx_hash = self.contract.functions.castVote(
-          proposalId, support
-        ).transact({"from": from_address})
+        tx_hash = self.contract.functions.castVote(proposalId, support).transact(
+            {"from": from_address}
+        )
 
         receipt = self.ethereum.get_transaction_receipt(tx_hash)
 

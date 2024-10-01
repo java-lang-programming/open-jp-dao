@@ -56,21 +56,21 @@ class VoteShow:
                     "proposer": proposalProposer,
                 },
                 "eip6372": {
-                  "clock": clock,
-                  "CLOCK_MODE": mode,
+                    "clock": clock,
+                    "CLOCK_MODE": mode,
                 },
                 "mata": {
-                  "state": {
-                    "0": "Pending 次のトランザクション後の実行後にActiveになります。",
-                    "1": "Active [deadline >= currentTimepoint]",
-                    "2": "Canceled",
-                    "3": "Defeated",
-                    "4": "Succeeded",
-                    "5": "Queued",
-                    "6": "Expired",
-                    "7": "Executed",
-                  }
-                }
+                    "state": {
+                        "0": "Pending 次のトランザクション後の実行後にActiveになります。",
+                        "1": "Active [deadline >= currentTimepoint]",
+                        "2": "Canceled",
+                        "3": "Defeated",
+                        "4": "Succeeded",
+                        "5": "Queued",
+                        "6": "Expired",
+                        "7": "Executed",
+                    }
+                },
             }
         except Exception as e:
             # GovernorNonexistentProposalと判断する方法が必要。
