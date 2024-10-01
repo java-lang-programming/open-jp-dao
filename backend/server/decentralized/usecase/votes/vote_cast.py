@@ -13,16 +13,18 @@ class VoteCast:
     # 　これは間違っている。
     # , address: str
     def execute(self, voteCast: VoteCastRequest, proposalId: int, from_address: str):
-
         # hasvoted
 
         # VoteTolen
         # targets = [voteCreate.]
         # 　固定
-        values = [0]
         openJpDaoRepo = OpenJpDaoGovernorRepository(ethereum=self.ethereum)
         try:
-            dao.castVote(proposalId=proposalId, support=voteCast.support, from_address=from_address)
+            openJpDaoRepo.castVote(
+                proposalId=proposalId,
+                support=voteCast.support,
+                from_address=from_address,
+            )
         except Exception as e:
             # GovernorNonexistentProposalと判断する方法が必要。
             raise e
