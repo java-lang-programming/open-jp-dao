@@ -12,6 +12,9 @@ class TestChains:
     int_chain_id = Chains.validate_chain_id(chain_id="11155111")
     assert int_chain_id == Chains.SEPOLIA_CHAIN_ID
 
+    int_chain_id = Chains.validate_chain_id(chain_id="1")
+    assert int_chain_id == Chains.MAIN_CHAIN_ID
+
     with pytest.raises(ExceptionInvalidChainID):
         Chains.validate_chain_id(chain_id="1111")
 
@@ -25,5 +28,8 @@ class TestChains:
     url = Chains.url_via_chain_id(chain_id=Chains.SEPOLIA_CHAIN_ID)
     assert url == Chains.SEPOLIA_URL
 
+    url = Chains.url_via_chain_id(chain_id=Chains.MAIN_CHAIN_ID)
+    assert url == Chains.MAIN_URL
+
     with pytest.raises(ExceptionInvalidChainID):
-        Chains.url_via_chain_id(chain_id=1)
+        Chains.url_via_chain_id(chain_id=2)

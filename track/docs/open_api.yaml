@@ -1,0 +1,81 @@
+openapi: 3.0.0
+info:
+  title: track API
+  version: '1.0'
+  description: rails trackのAPI
+servers:
+  - url: 'http://localhost:3000'
+tags:
+  - name: sessions
+    description: 認証
+  - name: dollaryen
+    description: ドル円
+paths:
+  '/apis/sessions/nonce':
+    get:
+      summary: nonce取得
+      tags:
+        - sessions
+      operationId: get-sessions-nonce
+      description: nonceを取得する
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SessionsNonceResult'
+          headers: {}
+  '/apis/sessions/verify':
+    post:
+      summary: 検証
+      tags:
+        - sessions
+      operationId: post-sessions-verify
+      description: ユーザーを検証
+      responses:
+        '201':
+          description: OK
+          headers: {}
+  '/apis/sessions/signout':
+    post:
+      summary: ログアウト
+      tags:
+        - sessions
+      operationId: post-sessions-signout
+      description: ログアウト
+      responses:
+        '201':
+          description: OK
+          headers: {}
+  '/apis/dollaryen/transactions':
+    post:
+      summary: ドル円トランザクションの保存
+      tags:
+        - dollaryen
+      operationId: post-dollaryen-transactions
+      description: ドル円トランザクション保存
+      responses:
+        '201':
+          description: OK
+          headers: {}
+  '/apis/dollaryen/transactions/:transaction_id':
+    get:
+      summary: ドル円トランザクション取得
+      tags:
+        - dollaryen
+      operationId: show-dollaryen-transactions
+      description: ドル円トランザクション取得
+      responses:
+        '201':
+          description: OK
+          headers: {}
+components:
+  schemas:
+    SessionsNonceResult:
+      title: sessions_nonce_result
+      properties:
+        nonce:
+          type: string
+      required:
+        - nonce

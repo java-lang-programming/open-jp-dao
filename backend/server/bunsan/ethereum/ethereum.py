@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from web3 import Web3
-from decentralized.infrastructures.ethereum.repogitories.base_contract_repository import (
+from bunsan.ethereum.repositories.base_contract_repository import (
     BaseContractRepository,
 )
 from bunsan.ethereum.chains import Chains

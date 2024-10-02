@@ -20,13 +20,12 @@ async def nonce():
     _ALPHANUMERICS = string.ascii_letters + string.digits
     return {"nonce": "".join(secrets.choice(_ALPHANUMERICS) for _ in range(20))}
 
-@router.post("/api/verify", tags=["sessions"])
+@router.post("/api/verify", tags=["sessions"], status_code=201)
 async def verify(verify: Verify):
     int_chain_id = 0
     try:
       int_chain_id = Chains.validate_chain_id(chain_id=verify.chain_id)
     except Exception as e:
-      print("ここ")  
       return Errors(code=ErrorCodes.INVALID_CHAIN_ID, message="chain_id error", detail=repr(e)).to_dict()
 
     url = Chains.url_via_chain_id(chain_id=int_chain_id)
@@ -38,8 +37,7 @@ async def verify(verify: Verify):
     try:
         message = SiweMessage.from_message(message=verify.message)
         print(message)
-        aaa = message.verify(verify.signature, nonce=verify.nonce, domain=verify.domain)
-        print(aaa)
+        message.verify(verify.signature, nonce=verify.nonce, domain=verify.domain)
         #print("エラーe")message = SiweMessage(message=verify.message)
     except Exception as e:
         print("エラーe")
