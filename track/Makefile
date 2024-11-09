@@ -10,6 +10,14 @@ dc_rm_pid:
 dc_dev:
 	make dc_rm_pid
 	bundle exec rails server -b 0.0.0.0
+rails_info:
+	bundle exec rails about
+zeitwerk_check:
+	bundle exec rails zeitwerk:check
+brakeman:
+	bundle exec brakeman
+yjit_enabled:
+	bundle exec rails r 'p RubyVM::YJIT.enabled?'
 mini_test:
 	bundle exec rails test
 rubocop:
