@@ -1,0 +1,46 @@
+openapi: 3.0.0
+info:
+  title: track API
+  version: '1.0'
+  description: rails trackのAPI
+servers:
+  - url: 'http://localhost:3000'
+tags:
+  - name: sessions
+    description: 認証
+paths:
+  '/apis/nonce':
+    get:
+      summary: nonce取得
+      tags:
+        - sessions
+      operationId: get-nonce
+      description: nonceを取得する
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NonceResult'
+          headers: {}
+  '/apis/verify':
+    post:
+      summary: 検証
+      tags:
+        - sessions
+      operationId: post-verify
+      description: ユーザーを検証
+      responses:
+        '201':
+          description: OK
+          headers: {}
+components:
+  schemas:
+    NonceResult:
+      title: nonce_result
+      properties:
+        nonce:
+          type: string
+      required:
+        - nonce

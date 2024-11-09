@@ -10,7 +10,7 @@ code_formatting:
 	make format
 	make lint
 unit_test:
-	poetry run pytest -s --cache-clear
+	poetry run pytest -s --cache-clear tests/bunsan
 launch_dev_server:
 	uvicorn main:app --reload --host=0.0.0.0
 lib_show:
