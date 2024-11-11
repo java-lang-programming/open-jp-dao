@@ -9,7 +9,7 @@ dc_rm_pid:
 	rm -f tmp/pids/server.pid
 dc_dev:
 	make dc_rm_pid
-	bundle exec rails server -b 0.0.0.0
+	SOLID_QUEUE_IN_PUMA=1 bundle exec rails server -b 0.0.0.0
 rails_info:
 	bundle exec rails about
 zeitwerk_check:
@@ -31,5 +31,19 @@ migrate:
 	bundle exec rails db:migrate
 rspec:
 	bundle exec rspec spec --backtrace
+log_clear:
+	bundle exec rails log:clear
+seed:
+	bundle exec rails db:seed
 # spec/models/files/
 # bundle exec rails generate rspec:model transaction_type
+sqlite3_open:
+	sqlite3 storage/development.sqlite3
+sqlite3_queue_open:
+	sqlite3 storage/development_queue.sqlite3
+sqlite3_chmod:
+	chmod 777 storage/development.sqlite3
+sqlite3_queue:
+	chmod 777 storage/development_queue.sqlite3
+solid_queue_start:
+	bundle exec rake solid_queue:start

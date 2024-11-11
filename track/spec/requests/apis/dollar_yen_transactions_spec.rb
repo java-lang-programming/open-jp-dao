@@ -134,4 +134,37 @@ RSpec.describe "Apis::DollarYenTransactions", type: :request do
       end
     end
   end
+
+  describe "Post /create" do
+    let(:addresses_eth) { create(:addresses_eth) }
+    let(:transaction_type1) { create(:transaction_type1, address: addresses_eth) }
+    # let(:transaction_type5) { create(:transaction_type5, address: addresses_eth) }
+    let(:dollar_yen_transaction43) { create(:dollar_yen_transaction43, transaction_type: transaction_type1, address: addresses_eth) }
+    # let(:dollar_yen_transaction44) { create(:dollar_yen_transaction44, transaction_type: transaction_type5, address: addresses_eth) }
+    let(:error_deposit_csv_path) { "#{Rails.root}/spec/files/uploads/dollar_yen_transaction_deposit_csv/error_deposit.csv" }
+
+    it "returns bad_request." do
+      # beforeデータ作成
+      dollar_yen_transaction43
+      post apis_dollaryen_transactions_csv_upload_path, params: { file: "", address_id: addresses_eth.id }
+      json = JSON.parse(response.body, symbolize_names: true)
+      expect(json).to eq({ errors: [ { msg: "ファイルが存在しません" } ] })
+      expect(response).to have_http_status(:bad_request)
+    end
+
+    it "returns bad_request." do
+      # beforeデータ作成
+      dollar_yen_transaction43
+      post apis_dollaryen_transactions_csv_upload_path, params: { file: fixture_file_upload(error_deposit_csv_path), address_id: addresses_eth.id }
+      json = JSON.parse(response.body, symbolize_names: true)
+      expect(json).to eq({ errors: [
+        { msg: [ "2行目のdateが入力されていません" ] },
+        { msg: [ "3行目のdateの値が不正です。yyyy/mm/dd形式で正しい日付を入力してください", "3行目のtransaction_typeが入力されていません" ] },
+        { msg: [ "4行目のdeposit_quantityの値が不正です。数値、もしくは小数点付きの数値を入力してください" ] },
+        { msg: [ "5行目のdeposit_rateが入力されていません" ] },
+        { msg: [ "6行目のdeposit_rateの値が不正です。数値、もしくは小数点付きの数値を入力してください" ] }
+      ] })
+      expect(response).to have_http_status(:bad_request)
+    end
+  end
 end

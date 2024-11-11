@@ -1,5 +1,3 @@
-require "csv"
-
 class Apis::Dollaryen::TransactionsController < ApplicationController
   def index
     # default
@@ -79,27 +77,26 @@ class Apis::Dollaryen::TransactionsController < ApplicationController
   # models csvsを要して使う
   # insertしてみる
   # まずは設計から
+  # 　一旦これで作成
+  # TODO
+  # uploadはsolid queで実行かな
   def csv_upload
     file = params[:file]
-    if file.present?
-      puts "fileだよ"
-      File.open(file, "r") do |file|
-        # puts file.empty?
-        # CSV.new(file, headers: true).each do |row|
-        #   puts "-----"
-        #   puts row
-        # end
-        # ファイルから一行ずつ
-        index = 0
-        CSV.foreach(file) do |row|
-          index = index + 1
-          next if index == 1
-          line = Files::DollarYenTransactionDepositCsv.new(row: row)
-          p line.inspect
-        end
-      end
+
+    unless file.present?
+      render json: { errors: [ { msg: "ファイルが存在しません" } ] }, status: :bad_request
+      return
     end
 
+    service = FileUploads::DollarYenTransactionDepositCsv.new(address_id: params[:address_id], file: file)
+    errors = service.validation_errors
+    if errors.present?
+      render json: { errors: errors }, status: :bad_request
+      return
+    end
     render status: :created
+  end
+
+  def csv_download
   end
 end

@@ -7,6 +7,8 @@ on:
       - develop
       - feature/backend/*
     paths-ignore:
+      - contracts/*
+      - docs/*
       - .gitignore
       - '**.md'
 

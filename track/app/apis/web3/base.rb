@@ -1,8 +1,8 @@
 module Web3
   class Base
-    CONFIG = APP_CONFIG["web3"]
-    BASE_URL = "http://#{CONFIG['host']}:#{CONFIG['port']}"
-    HEADERS = { "Content-Type" => "application/json" }
+    # CONFIG = APP_CONFIG["web3"]
+    # BASE_URL = "http://#{CONFIG['host']}:#{CONFIG['port']}"
+    # HEADERS = { "Content-Type" => "application/json" }
 
     def get(path, query = "")
       uri, http = initialize_http(path)
