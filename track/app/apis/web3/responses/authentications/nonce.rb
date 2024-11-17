@@ -1,5 +1,5 @@
 module Web3
-  module Repositories
+  module Responses
     module Authentications
       class Nonce < Web3::Base
         PATH = Web3::Url::NONCE_GET

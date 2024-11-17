@@ -39,6 +39,8 @@ docker exec -it devcontainer_wevb3-rails-dev-app_1 /bin/sh
 
 curl -X POST -F "file=@/Users/masayasuzuki/workplace/study/open-jp-dao/track/test.csv" http://localhost/3000/apis/dollaryen/transactions/csv_upload
 
-curl -X POST -F "file=@/Users/masayasuzuki/workplace/study/open-jp-dao/track/test.csv" http://localhost:3000/apis/dollaryen/transactions/csv_upload
+curl -X POST -F "file=@/Users/masayasuzuki/workplace/study/open-jp-dao/track/test_error_deposit_csv.csv" http://localhost:3000/apis/dollaryen/transactions/csv_upload
 
 curl  'http://localhost:3000/apis/dollaryen/transactions'
+
+bundle exec rails generate controller TransactionType

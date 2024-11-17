@@ -1,0 +1,72 @@
+name: track コードチェック&テスト
+
+on:
+  push:
+    branches:
+      - main
+      - develop
+      - feature/csv_rails
+    paths-ignore:
+      - contracts/*
+      - backend/*
+      - docs/*
+      - .gitignore
+      - '**.md'
+
+env:
+  BUNDLER_VESION: 2.5.15
+
+jobs:
+  ruby:
+    name: track check
+    runs-on: ubuntu-24.04
+    strategy:
+      matrix:
+        ruby-version: ["3.3.4"]
+    steps:
+      - name: Install packages
+        run: sudo apt-get update && sudo apt-get install --no-install-recommends -y libjemalloc2 sqlite3
+
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Ruby ${{ matrix.ruby-version }}
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: ${{ matrix.ruby-version }}
+          bundler-cache: true
+
+      - name: Install packages
+        run: gem install bundler -v $BUNDLER_VESION
+
+      - name: Bundle install
+        working-directory: track
+        run: make install
+
+      - name: rails info
+        working-directory: track
+        run: make rails_info
+
+      - name: zeitwerk check
+        working-directory: track
+        run: make zeitwerk_check
+
+      - name: yjit_enabled check
+        working-directory: track
+        run: make yjit_enabled
+
+      #　これは後で
+      # - name: Run brakeman
+      #   run: make brakeman
+
+      - name: Run ruboCop
+        working-directory: track
+        run: make rubocop
+
+      - name: Run database create
+        working-directory: track
+        run: make migrate
+
+      - name: Run Rspec
+        working-directory: track
+        run: make rspec
