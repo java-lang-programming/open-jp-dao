@@ -23,14 +23,15 @@ jobs:
     strategy:
       matrix:
         ruby-version: ["3.3.4"]
-    defaults:
-      run:
-        working-directory: ./track
+    # defaults:
+    #   run:
+    #     working-directory: ./track
     steps:
       - name: Install packages
         run: sudo apt-get update && sudo apt-get install --no-install-recommends -y libjemalloc2 sqlite3
 
       - name: Checkout code
+        working-directory: track
         uses: actions/checkout@v4
 
       - name: Set up Ruby ${{ matrix.ruby-version }}
@@ -43,7 +44,9 @@ jobs:
         run: gem install bundler -v $BUNDLER_VESION
 
       - name: Bundle install
+        working-directory: track
         run: |
+          pwd
           make install
 
       - name: rails info
