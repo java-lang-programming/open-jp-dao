@@ -41,19 +41,12 @@ jobs:
 
       - name: Bundle install
         working-directory: track
-        run: |
-          pwd
-          cd track
-          make install
+        run: make install
 
       - name: rails info
-        run: |
-          pwd
-          cd track
-          make rails_info
+        working-directory: track
+        run: make rails_info
 
       - name: zeitwerk check
-        run: |
-          pwd
-          cd track
-          make zeitwerk_check
+        working-directory: track
+        run: make zeitwerk_check
