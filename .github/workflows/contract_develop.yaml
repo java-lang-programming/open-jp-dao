@@ -1,4 +1,4 @@
-name: backend コードチェック&テスト
+name: コントラクト コードチェック&テスト
 
 on:
   push:
@@ -8,6 +8,7 @@ on:
       - feature/*
     paths-ignore:
       - backend/*
+      - track/*
       - docs/*
       - .gitignore
       - '**.md'
