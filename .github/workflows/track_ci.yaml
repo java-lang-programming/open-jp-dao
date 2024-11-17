@@ -23,15 +23,11 @@ jobs:
     strategy:
       matrix:
         ruby-version: ["3.3.4"]
-    # defaults:
-    #   run:
-    #     working-directory: ./track
     steps:
       - name: Install packages
         run: sudo apt-get update && sudo apt-get install --no-install-recommends -y libjemalloc2 sqlite3
 
       - name: Checkout code
-        working-directory: track
         uses: actions/checkout@v4
 
       - name: Set up Ruby ${{ matrix.ruby-version }}
@@ -47,10 +43,17 @@ jobs:
         working-directory: track
         run: |
           pwd
+          cd track
           make install
 
       - name: rails info
-        run: make rails_info
+        run: |
+          pwd
+          cd track
+          make rails_info
 
       - name: zeitwerk check
-        run: make zeitwerk_check
+        run: |
+          pwd
+          cd track
+          make zeitwerk_check
