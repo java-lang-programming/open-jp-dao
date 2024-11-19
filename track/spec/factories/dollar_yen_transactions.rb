@@ -23,6 +23,18 @@ FactoryBot.define do
     address { }
   end
 
+  factory :dollar_yen_transaction3, class: DollarYenTransaction do
+    transaction_type { }
+    date { '2020-09-29' }
+    deposit_rate { 104.35 }
+    deposit_quantity { 14.73 }
+    deposit_en { 1537 }
+    balance_quantity { 29.46 }
+    balance_rate { 105.227427 }
+    balance_en { 3100 }
+    address { }
+  end
+
   factory :dollar_yen_transaction43, class: DollarYenTransaction do
     transaction_type { }
     date { '2024-01-21' }

@@ -53,11 +53,11 @@ class Apis::Dollaryen::TransactionsController < ApplicationController
       end
 
       en = dyt.calculate_deposit_en if dyt.deposit?
-      withdrawal_rate = dyt.calculate_withdrawal_rate(target_date: target_date) if dyt.withdrawal?
-      withdrawal_en = dyt.calculate_withdrawal_en(target_date: target_date) if dyt.withdrawal?
+      withdrawal_rate = dyt.calculate_withdrawal_rate if dyt.withdrawal?
+      withdrawal_en = dyt.calculate_withdrawal_en if dyt.withdrawal?
       exchange_difference = dyt.calculate_exchange_difference(withdrawal_en: withdrawal_en) if dyt.withdrawal?
-      balance_quantity = dyt.calculate_balance_quantity(target_date: target_date)
-      balance_en = dyt.calculate_balance_en(target_date: target_date)
+      balance_quantity = dyt.calculate_balance_quantity
+      balance_en = dyt.calculate_balance_en
       balance_rate = dyt.calculate_balance_rate(balance_quantity: balance_quantity, balance_en: balance_en)
 
       dyt.deposit_en = en if dyt.deposit?
@@ -94,6 +94,17 @@ class Apis::Dollaryen::TransactionsController < ApplicationController
       render json: { errors: errors }, status: :bad_request
       return
     end
+
+    service.execute
+
+    # # 　100件を超えるデータはバックエンド
+    # if errors.size > 100
+    #   # 　キューに登録して終わり
+    # else
+    #   # 　リアルタイムでinsert
+    #   service.bulk_insert
+    # end
+
     render status: :created
   end
 

@@ -103,31 +103,56 @@ module Files
       end
     end
 
-    # def valid_deposit?(errors:)
-    #   unless @deposit_quantity.present?
-    #     errors << "#{@row_num}行目のdeposit_quantityが入力されていません"
-    #   else
-    #     if @transaction_type.present?
-    #       transaction_type = TransactionType.where(name: @transaction_type).first
-    #       if transaction_type.present?
-    #         dyt = DollarYenTransaction.new(transaction_type: transaction_type, deposit_quantity: @deposit_quantity, deposit_rate: @deposit_rate)
-    #         dyt.valid?
-    #         if dyt.errors.messages[:deposit_quantity].present?
-    #           errors << "#{@row_num}行目のdeposit_quantityが不正です"
-    #         end
-    #         if dyt.errors.messages[:deposit_rate].present?
-    #           errors << "#{@row_num}行目のdeposit_rateが不正です"
-    #         end
-    #       end
-    #     end
-    #   end
-    # end
+    # ユニークキーを取得
+    def unique_key
+      "#{@date}-#{@transaction_type}"
+    end
 
-    # 　トランザクションデータ作成
-    def make_dollar_yen_transactions
-      target_date = Date.new(2020, 4, 1)
-      transaction_type_id = 1
-      dyt = DollarYenTransaction.new(date: target_date, transaction_type: transaction_type_id, deposit_quantity: @deposit_quantity, deposit_rate: deposit_rate)
+    # ユニークキーハッシュを作成
+    def unique_key_hash(unique_key_hash:)
+      key = unique_key
+      unless unique_key_hash.key?(key)
+        rownums = []
+        rownums << @row_num
+        unique_key_hash = { key => { rownums: rownums } }
+      else
+        value = unique_key_hash[key]
+        rownums = value[:rownums]
+        rownums << @row_num
+        unique_key_hash = { unique_key => { rownums: rownums } }
+      end
+      unique_key_hash
+    end
+
+    def target_date
+      dates = @date.split("/")
+      Date.new(dates[0].to_i, dates[1].to_i, dates[2].to_i)
+    end
+
+    # DollarYenTransactionに変換
+    def to_dollar_yen_transaction(previous_dollar_yen_transactions: nil)
+      # 　オブジェクトの変換は共通化ができるはずなので、後でリファクタリング
+      address = Address.where(id: @address_id).first
+      transaction_type = TransactionType.where(name: @transaction_type, address_id: @address_id).first
+
+      dyt = DollarYenTransaction.new(
+        transaction_type: transaction_type,
+        date: target_date,
+        deposit_rate: BigDecimal(@deposit_rate),
+        deposit_quantity: BigDecimal(@deposit_quantity),
+        address: address
+      )
+
+      en = dyt.calculate_deposit_en if dyt.deposit?
+      balance_quantity = dyt.calculate_balance_quantity(previous_dollar_yen_transactions: previous_dollar_yen_transactions)
+      balance_en = dyt.calculate_balance_en(previous_dollar_yen_transactions: previous_dollar_yen_transactions)
+      balance_rate = dyt.calculate_balance_rate(balance_quantity: balance_quantity, balance_en: balance_en)
+
+      dyt.deposit_en = en if dyt.deposit?
+      dyt.balance_quantity = balance_quantity
+      dyt.balance_en = balance_en
+      dyt.balance_rate = balance_rate
+      dyt
     end
   end
 end
