@@ -202,4 +202,82 @@ RSpec.describe Files::DollarYenTransactionDepositCsv, type: :model do
       end
     end
   end
+
+  describe 'unique_key' do
+    let(:addresses_eth) { create(:addresses_eth) }
+
+    it 'should get unique_key.' do
+      row = [ "2020/04/01", "HDV配当入金", "10", "" ]
+      csv = Files::DollarYenTransactionDepositCsv.new(address_id: addresses_eth.id, row_num: 2, row: row)
+      expect(csv.unique_key).to eq("2020/04/01-HDV配当入金")
+    end
+  end
+
+  describe 'unique_key_hash' do
+    let(:addresses_eth) { create(:addresses_eth) }
+    it 'should get unique_key_hash.' do
+      h = {}
+      row = [ "2020/04/01", "HDV配当入金", "10", "" ]
+      csv = Files::DollarYenTransactionDepositCsv.new(address_id: addresses_eth.id, row_num: 2, row: row)
+      h = csv.unique_key_hash(unique_key_hash: h)
+      csv = Files::DollarYenTransactionDepositCsv.new(address_id: addresses_eth.id, row_num: 4, row: row)
+      h = csv.unique_key_hash(unique_key_hash: h)
+
+      expect(h).to eq({ "2020/04/01-HDV配当入金"=>{ rownums: [ 2, 4 ] } })
+    end
+  end
+
+  describe 'target_date' do
+    let(:addresses_eth) { create(:addresses_eth) }
+    it 'should get target_date of Date Type.' do
+      row = [ "2020/04/01", "HDV配当入金", "10", "" ]
+      csv = Files::DollarYenTransactionDepositCsv.new(address_id: addresses_eth.id, row_num: 2, row: row)
+
+      expect(csv.target_date).to eq(Date.new(2020, 4, 1))
+    end
+  end
+
+  describe 'to_dollar_yen_transaction' do
+    let(:addresses_eth) { create(:addresses_eth) }
+    let(:transaction_type1) { create(:transaction_type1, address: addresses_eth) }
+    let(:dollar_yen_transaction1) { create(:dollar_yen_transaction1, transaction_type: transaction_type1, address: addresses_eth) }
+    let(:dollar_yen_transaction2) { create(:dollar_yen_transaction2, transaction_type: transaction_type1, address: addresses_eth) }
+
+    # 　初回データ
+    it 'should get first data.' do
+      # transaction_type1の実体化
+      transaction_type1
+      row = [ "2020/04/01", "HDV配当入金", "3.97", "106.59" ]
+      csv = Files::DollarYenTransactionDepositCsv.new(address_id: addresses_eth.id, row_num: 2, row: row)
+      dollar_yen_transaction = csv.to_dollar_yen_transaction
+      expect(dollar_yen_transaction.transaction_type).to eq(transaction_type1)
+      expect(dollar_yen_transaction.date).to eq(Date.new(2020, 4, 1))
+      expect(dollar_yen_transaction.deposit_rate).to eq(dollar_yen_transaction1.deposit_rate)
+      expect(dollar_yen_transaction.deposit_quantity).to eq(dollar_yen_transaction1.deposit_quantity)
+      expect(dollar_yen_transaction.deposit_en).to eq(dollar_yen_transaction1.deposit_en)
+      expect(dollar_yen_transaction.balance_rate.truncate(6)).to eq(dollar_yen_transaction1.balance_rate.truncate(6))
+      expect(dollar_yen_transaction.balance_quantity.truncate(6)).to eq(dollar_yen_transaction1.balance_quantity.truncate(6))
+      expect(dollar_yen_transaction.balance_en.truncate(6)).to eq(dollar_yen_transaction1.balance_en.truncate(6))
+    end
+
+    # 　次のデータ
+    it 'should get next data.' do
+      # transaction_type1の実体化
+      transaction_type1
+      data_row1 = [ "2020/04/01", "HDV配当入金", "3.97", "106.59" ]
+      data_row2 = [ "2020/06/19", "HDV配当入金", "10.76", "105.95" ]
+      csv_line1 = Files::DollarYenTransactionDepositCsv.new(address_id: addresses_eth.id, row_num: 2, row: data_row1)
+      dollar_yen_transaction1 = csv_line1.to_dollar_yen_transaction
+      csv_line2 = Files::DollarYenTransactionDepositCsv.new(address_id: addresses_eth.id, row_num: 3, row: data_row2)
+      dollar_yen_transaction2 = csv_line2.to_dollar_yen_transaction(previous_dollar_yen_transactions: dollar_yen_transaction1)
+
+      expect(dollar_yen_transaction2.transaction_type).to eq(transaction_type1)
+      expect(dollar_yen_transaction2.date).to eq(Date.new(2020, 6, 19))
+      expect(dollar_yen_transaction2.deposit_rate).to eq(dollar_yen_transaction2.deposit_rate)
+      expect(dollar_yen_transaction2.deposit_en).to eq(dollar_yen_transaction2.deposit_en)
+      expect(dollar_yen_transaction2.balance_rate.truncate(6)).to eq(dollar_yen_transaction2.balance_rate.truncate(6))
+      expect(dollar_yen_transaction2.balance_quantity.truncate(6)).to eq(dollar_yen_transaction2.balance_quantity.truncate(6))
+      expect(dollar_yen_transaction2.deposit_en.truncate(6)).to eq(dollar_yen_transaction2.deposit_en.truncate(6))
+    end
+  end
 end

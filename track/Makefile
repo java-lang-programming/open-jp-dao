@@ -7,9 +7,10 @@ dc_stop:
 	docker-compose -f .devcontainer/compose.yaml stop
 dc_rm_pid:
 	rm -f tmp/pids/server.pid
+# SOLID_QUEUE_IN_PUMA=1 bundle exec rails server -b 0.0.0.0
 dc_dev:
 	make dc_rm_pid
-	SOLID_QUEUE_IN_PUMA=1 bundle exec rails server -b 0.0.0.0
+	bundle exec rails server -b 0.0.0.0
 rails_info:
 	bundle exec rails about
 zeitwerk_check:

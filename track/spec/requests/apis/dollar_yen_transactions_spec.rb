@@ -135,7 +135,7 @@ RSpec.describe "Apis::DollarYenTransactions", type: :request do
     end
   end
 
-  describe "Post /create" do
+  describe "Post /csv upload" do
     let(:addresses_eth) { create(:addresses_eth) }
     let(:transaction_type1) { create(:transaction_type1, address: addresses_eth) }
     # let(:transaction_type5) { create(:transaction_type5, address: addresses_eth) }

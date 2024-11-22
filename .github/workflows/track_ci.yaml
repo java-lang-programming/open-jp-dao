@@ -5,7 +5,7 @@ on:
     branches:
       - main
       - develop
-      - feature/csv_rails
+      - feature/*
     paths-ignore:
       - contracts/*
       - backend/*

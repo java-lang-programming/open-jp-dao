@@ -1,0 +1,57 @@
+<html>
+<body>
+<h1>外貨預金元帳(web)</h1>
+<p>トランザクション種別作成</p>
+<form action="" method="get" class="form-example">
+  <div>
+    <label for="start">取引日</label>
+    <br/>
+    <!-- min="2018-01-01" max="2018-12-31" -->
+    <input type="date" id="start" name="trip-start" value="2018-07-22" />
+  </div>
+  <label for="pet-select">取引内容</label>
+  <br/>
+  <select name="transaction_type" id="pet-select">
+    <option value="1">HDV配当入金</option>
+    <option value="2">VYM配当入金</option>
+    <option value="3">TLT配当入金</option>
+    <option value="4">住信SBI利子入金</option>
+    <option value="5">ドルを円に変換</option>
+  </select>
+  <div id="deposit">
+    <h2>預入</h2>
+    <div>
+      <label for="name">数量米ドル</label>
+      <input type="text" id="name" name="dollar" maxlength="8" size="10" />
+    </div>
+    <div>
+      <label for="name">レート</label>
+      <input type="text" id="name" name="rate" maxlength="8" size="10" />
+      <input type="button" value="自動入力"/>
+    </div>
+  </div>
+  <div class="form-example">
+    <input type="submit" value="登録" />
+  </div>
+  <div id="with_draw">
+    <h2>払出</h2>
+    <div>
+      <label for="name">数量米ドル</label>
+      <input type="text" id="name" name="dollar" maxlength="8" size="10" />
+    </div>
+  </div>
+  <div class="form-example">
+    <input type="submit" value="登録" />
+  </div>
+</form>
+
+</body>
+</html>
+<!--
+
+自動は
+
+logから取得して bulk insert
+
+
+-->

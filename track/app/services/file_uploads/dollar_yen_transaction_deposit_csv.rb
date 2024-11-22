@@ -1,43 +1,81 @@
-  # module Services
-  module FileUploads
-    class DollarYenTransactionDepositCsv
-      attr_accessor :file
 
-      def initialize(address_id:, file:)
-        @address_id = address_id
-        @file = file
+module FileUploads
+  class DollarYenTransactionDepositCsv
+    attr_accessor :file
+
+    def initialize(address_id:, file:)
+      @address_id = address_id
+      @file = file
+      @csvs = []
+    end
+
+    def validation_errors
+      csv_errors = []
+      unique_key_hash = {}
+      File.open(@file, "r") do |file|
+        row_num = 0
+        CSV.foreach(file) do |row|
+          row_num = row_num + 1
+          next if row_num == 1
+          csv = Files::DollarYenTransactionDepositCsv.new(address_id: @address_id, row_num: row_num, row: row)
+          # csv.make_unique_key
+          errors = csv.valid_errors
+          if errors.present?
+            csv_errors << errors
+          end
+
+          # ユニークデータチェックのためのハッシュ
+          unique_key_hash = csv.unique_key_hash(unique_key_hash: unique_key_hash)
+
+          @csvs << csv
+        end
       end
+      # csvのデータにエラーがある
+      return csv_errors.flat_map { |a| { msg: a } } if csv_errors.present?
+      unique_keys_errors = unique_keys_errors(unique_key_hash: unique_key_hash)
+      # ユニークでないキーがある
+      return unique_keys_errors.map { |a| { msg: a } } if unique_keys_errors.present?
+      []
+    end
 
-      def validation_errors
-        csv_errors = []
-        # unique_keys = []
-        File.open(@file, "r") do |file|
-          row_num = 0
-          CSV.foreach(file) do |row|
-            row_num = row_num + 1
-            next if row_num == 1
-            csv = Files::DollarYenTransactionDepositCsv.new(address_id: @address_id, row_num: row_num, row: row)
-            # csv.make_unique_key
-            errors = csv.valid_errors
-            if errors.present?
-              csv_errors << errors
-            end
-
-            # 一意なkeyを取得
-            # unique_key = csv.make_unique_key
-            # unique_keys << unique_key
+    # ユニークキー以外を取得
+    def unique_keys_errors(unique_key_hash:)
+      errors = []
+      unique_key_hash.map do |key, values|
+        # 重複エラーあり
+        if values[:rownums].size > 1
+          values[:rownums].each do |value|
+            data = key.split("-")
+            errors << "#{value}行目の#{data[0]}と#{data[1]}は重複しています"
           end
         end
-        return csv_errors.flat_map { |a| { msg: a } } if csv_errors.present?
-        # 　ここで配列と行列の数が同じかを判断する
-        []
+      end
+      errors
+    end
+
+    def make_dollar_yen_transactions
+      list = []
+      prev_dollar_yen_transaction = nil
+      @csvs.each_with_index do |item, idx|
+        dollar_yen_transaction = item.to_dollar_yen_transaction(previous_dollar_yen_transactions: prev_dollar_yen_transaction)
+        prev_dollar_yen_transaction = dollar_yen_transaction
+        list << dollar_yen_transaction
+      end
+      list
+    end
+
+    # TODO 並び替え
+    # update対応
+    def execute
+      unless @csvs.present?
+        errors = validation_errors
+        # 失敗
+        return false if errors.present?
       end
 
-      def uniqe_key
-      end
+      dollar_yen_transactions = make_dollar_yen_transactions
 
-      def bulk_insert
-      end
+      DollarYenTransaction.import dollar_yen_transactions, validate: false
     end
   end
-# end
+end

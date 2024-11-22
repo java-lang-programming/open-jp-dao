@@ -2,8 +2,9 @@ require 'rails_helper'
 
 # https://github.com/willnet/rspec-style-guide
 RSpec.describe DollarYenTransaction, type: :model do
-  # let(:addresses_eth) { create(:addresses_eth) }
-  # let(:transaction_type1) { create(:transaction_type1, address: addresses_eth) }
+  let(:addresses_eth) { create(:addresses_eth) }
+  let(:transaction_type1) { create(:transaction_type1, address: addresses_eth) }
+
 
   describe 'deposit?' do
     let(:addresses_eth) { create(:addresses_eth) }
@@ -148,12 +149,22 @@ RSpec.describe DollarYenTransaction, type: :model do
     let(:dollar_yen_transaction43) { create(:dollar_yen_transaction43, transaction_type: transaction_type2, address: addresses_eth) }
     let(:dollar_yen_transaction44) { create(:dollar_yen_transaction44, transaction_type: transaction_type5, address: addresses_eth) }
 
-    context '前の保存データがある' do
-      it 'should be OK.' do
+    context '前のデータからwithdrawal_rateを計算' do
+      # 　引数に指定した時は引数のデータを使う
+      it 'should calculate　withdrawal_rate when previous_dollar_yen_transactions arg is found.' do
         dollar_yen_transaction43
         target_date = Date.new(2024, 2, 1)
-        dyt = DollarYenTransaction.new(transaction_type: transaction_type5, withdrawal_quantity: 88)
-        withdrawal_rate = dyt.calculate_withdrawal_rate(target_date: target_date)
+        dyt = DollarYenTransaction.new(date: target_date, transaction_type: transaction_type5, withdrawal_quantity: 88, address: addresses_eth)
+        withdrawal_rate = dyt.calculate_withdrawal_rate(previous_dollar_yen_transactions: dollar_yen_transaction43)
+        expect(withdrawal_rate).to eq(dollar_yen_transaction44.withdrawal_rate)
+      end
+
+      # 　引数に指定しなかった時はデータベースから取得
+      it 'should calculate　withdrawal_rate when previous_dollar_yen_transactions arg is not found.' do
+        dollar_yen_transaction43
+        target_date = Date.new(2024, 2, 1)
+        dyt = DollarYenTransaction.new(date: target_date, transaction_type: transaction_type5, withdrawal_quantity: 88, address: addresses_eth)
+        withdrawal_rate = dyt.calculate_withdrawal_rate
         expect(withdrawal_rate).to eq(dollar_yen_transaction44.withdrawal_rate)
       end
     end
@@ -171,8 +182,8 @@ RSpec.describe DollarYenTransaction, type: :model do
       it 'should be OK.' do
         dollar_yen_transaction43
         target_date = Date.new(2024, 2, 1)
-        dyt = DollarYenTransaction.new(transaction_type: transaction_type5, withdrawal_quantity: 88)
-        withdrawal_en = dyt.calculate_withdrawal_en(target_date: target_date)
+        dyt = DollarYenTransaction.new(date: target_date, transaction_type: transaction_type5, withdrawal_quantity: 88, address: addresses_eth)
+        withdrawal_en = dyt.calculate_withdrawal_en
         expect(withdrawal_en.to_i).to eq(dollar_yen_transaction44.withdrawal_en.to_i)
       end
     end
@@ -197,6 +208,8 @@ RSpec.describe DollarYenTransaction, type: :model do
     end
   end
 
+
+  # 　次はmakeattriburte
   describe 'calculate_balance_quantity' do
     let(:addresses_eth) { create(:addresses_eth) }
     let(:transaction_type1) { create(:transaction_type1, address: addresses_eth) }
@@ -208,19 +221,29 @@ RSpec.describe DollarYenTransaction, type: :model do
     let(:dollar_yen_transaction44) { create(:dollar_yen_transaction44, transaction_type: transaction_type5, address: addresses_eth) }
 
     context '入金の数量データを作成' do
-      it 'should be first balance_quantity.' do
+      # 初回
+      it 'should be first balance_quantity when no arg.' do
         target_date = Date.new(2020, 4, 1)
         dyt = DollarYenTransaction.new(transaction_type: transaction_type1, date: target_date, deposit_rate: 106.59, deposit_quantity: 3.97, address: addresses_eth)
-        balance_quantity = dyt.calculate_balance_quantity(target_date: target_date)
+        balance_quantity = dyt.calculate_balance_quantity
         expect(balance_quantity).to eq(3.97)
       end
 
-      it 'should be next balance_quantity.' do
+      # 次データの引数なし
+      it 'should be next balance_quantity when no arg.' do
         # 　データの実態化
         dollar_yen_transaction1
         target_date = Date.new(2020, 4, 1)
         dyt = DollarYenTransaction.new(transaction_type: transaction_type1, date: target_date, deposit_rate: 105.95, deposit_quantity: 10.76, address: addresses_eth)
-        balance_quantity = dyt.calculate_balance_quantity(target_date: target_date)
+        balance_quantity = dyt.calculate_balance_quantity
+        expect(balance_quantity).to eq(dollar_yen_transaction2.balance_quantity)
+      end
+
+      # 次データの引数あり
+      it 'should be next balance_quantity.' do
+        target_date = Date.new(2020, 6, 19)
+        dyt = DollarYenTransaction.new(transaction_type: transaction_type1, date: target_date, deposit_rate: 105.95, deposit_quantity: 10.76, address: addresses_eth)
+        balance_quantity = dyt.calculate_balance_quantity(previous_dollar_yen_transactions: dollar_yen_transaction1)
         expect(balance_quantity).to eq(dollar_yen_transaction2.balance_quantity)
       end
     end
@@ -229,8 +252,8 @@ RSpec.describe DollarYenTransaction, type: :model do
       it 'should be balance_quantity.' do
         dollar_yen_transaction43
         target_date = Date.new(2024, 2, 1)
-        dyt = DollarYenTransaction.new(transaction_type: transaction_type5, withdrawal_quantity: 88)
-        balance_quantity = dyt.calculate_balance_quantity(target_date: target_date)
+        dyt = DollarYenTransaction.new(transaction_type: transaction_type5, date: target_date, withdrawal_quantity: 88, address: addresses_eth)
+        balance_quantity = dyt.calculate_balance_quantity
         expect(balance_quantity).to eq(dollar_yen_transaction44.balance_quantity)
       end
     end
@@ -243,19 +266,21 @@ RSpec.describe DollarYenTransaction, type: :model do
     let(:dollar_yen_transaction2) { create(:dollar_yen_transaction2, transaction_type: transaction_type1, address: addresses_eth) }
 
     context '残高円データを作成' do
-      it 'should be first balance_quantity.' do
+      # 初回
+      it 'should be first balance_quantity when no arg.' do
         target_date = Date.new(2020, 4, 1)
-        dyt = DollarYenTransaction.new(transaction_type: transaction_type1, date: target_date, deposit_rate: 106.59, deposit_quantity: 3.97, address: addresses_eth)
-        balance_en = dyt.calculate_balance_en(target_date: target_date)
-        expect(balance_en).to eq(423)
+        dyt1 = DollarYenTransaction.new(transaction_type: transaction_type1, date: target_date, deposit_rate: 106.59, deposit_quantity: 3.97, address: addresses_eth)
+        balance_en = dyt1.calculate_balance_en
+        expect(balance_en).to eq(dollar_yen_transaction1.balance_en)
       end
 
+      # 　次のデータ計算(引数なし)
       it 'should be next balance_en.' do
         # 　データの実態化
         dollar_yen_transaction1
-        target_date = Date.new(2020, 4, 1)
-        dyt = DollarYenTransaction.new(transaction_type: transaction_type1, date: target_date, deposit_rate: 105.95, deposit_quantity: 10.76, address: addresses_eth)
-        balance_en = dyt.calculate_balance_en(target_date: target_date)
+        target_date = Date.new(2020, 6, 19)
+        dyt2 = DollarYenTransaction.new(transaction_type: transaction_type1, date: target_date, deposit_rate: 105.95, deposit_quantity: 10.76, address: addresses_eth)
+        balance_en = dyt2.calculate_balance_en
         expect(balance_en).to eq(dollar_yen_transaction2.balance_en)
       end
     end
