@@ -49,6 +49,16 @@ paths:
           description: OK
           headers: {}
   '/apis/dollaryen/transactions':
+    get:
+      summary: ドル円トランザクション一覧取得
+      tags:
+        - dollaryen
+      operationId: list-dollaryen--transactions
+      description: ドル円トランザクション一覧取得
+      responses:
+        '201':
+          description: OK
+          headers: {}
     post:
       summary: ドル円トランザクションの保存
       tags:

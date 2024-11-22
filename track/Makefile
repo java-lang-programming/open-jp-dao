@@ -30,6 +30,8 @@ install:
 	bundle install
 migrate:
 	bundle exec rails db:migrate
+reset:
+	bundle exec rails db:reset
 rspec:
 	bundle exec rspec spec --backtrace
 log_clear:

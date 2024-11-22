@@ -1,13 +1,39 @@
 class Apis::Dollaryen::TransactionsController < ApplicationController
   def index
     # default
-    dollaryen_transactions = DollarYenTransaction.where(limit: 50, ofset: 0)
-    total = DollarYenTransaction.all.count
-    # dollaryen_transactions.map do |dollaryen_transaction|
+    limit = params[:limit]
+    limit = 50 unless limit.present?
+    offset = params[:offset]
+    offset = 0 unless offset.present?
 
-    # end
-    json = { total: total, dollaryen_transaction: dollaryen_transactions }
-    render json: json, status: :ok
+    # セッションで置き換える
+    address = params[:address]
+    address = Address.where(address: params[:address]).first
+    address_id = 0
+    address_id = address.id if address.present?
+
+    base_sql = DollarYenTransaction.where("address_id = ?", address_id)
+    total = base_sql.all.count
+    dollaryen_transactions = base_sql.limit(limit).offset(offset).order(date: :desc,  transaction_type_id: :asc)
+
+    # 　結果はhashでいい
+    # nilの場合もあるので関数かな。
+    # {a:1, b:2}
+    responses = dollaryen_transactions.map do |dollaryen_transaction|
+      {
+        date: dollaryen_transaction.date.strftime("%Y/%m/%d"),
+        deposit_rate: dollaryen_transaction.deposit_rate_on_screen,
+        deposit_quantity: dollaryen_transaction.deposit_quantity_on_screen,
+        deposit_en: dollaryen_transaction.deposit_en_screen,
+        withdrawal_rate: dollaryen_transaction.withdrawal_rate_on_screen,
+        withdrawal_quantity: dollaryen_transaction.withdrawal_quantity_on_screen,
+        withdrawal_en: dollaryen_transaction.withdrawal_en_on_screen,
+        balance_rate: dollaryen_transaction.balance_rate_on_screen,
+        balance_quantity: dollaryen_transaction.balance_quantity_on_screen,
+        balance_en: dollaryen_transaction.balance_en_on_screen
+      }
+    end
+    render json: { total: total, dollaryen_transactions: responses }, status: :ok
   end
 
   def show
@@ -19,6 +45,7 @@ class Apis::Dollaryen::TransactionsController < ApplicationController
     render json: dollaryen_transaction, status: :ok
   end
 
+  # TODO params[:address]はsessionに置き換える
   def create
     date = params[:date]
     if date.length != 10
@@ -88,7 +115,12 @@ class Apis::Dollaryen::TransactionsController < ApplicationController
       return
     end
 
-    service = FileUploads::DollarYenTransactionDepositCsv.new(address_id: params[:address_id], file: file)
+    address = params[:address]
+    address = Address.where(address: params[:address]).first
+    address_id = 0
+    address_id = address.id if address.present?
+
+    service = FileUploads::DollarYenTransactionDepositCsv.new(address_id: address_id, file: file)
     errors = service.validation_errors
     if errors.present?
       render json: { errors: errors }, status: :bad_request
@@ -106,8 +138,5 @@ class Apis::Dollaryen::TransactionsController < ApplicationController
     # end
 
     render status: :created
-  end
-
-  def csv_download
   end
 end

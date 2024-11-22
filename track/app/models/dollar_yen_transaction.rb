@@ -123,4 +123,62 @@ class DollarYenTransaction < ApplicationRecord
   def find_previous_dollar_yen_transactions
     DollarYenTransaction.latest_date(date, address_id)
   end
+
+  def deposit_rate_on_screen
+    return BigDecimal(deposit_rate).floor(2).to_f if deposit_rate.present?
+    nil
+  end
+
+  def deposit_quantity_on_screen
+    return BigDecimal(deposit_quantity).floor(2).to_f if deposit_quantity.present?
+    nil
+  end
+
+  # @return [float|nil] 画面で表示するdeposit
+  #
+  # deposit_enを表示する。データがない場合はnil
+  #
+  def deposit_en_screen
+    return BigDecimal(deposit_en).floor(2).to_f if deposit_en.present?
+    nil
+  end
+
+  # @return [float|nil] 画面で表示するwithdrawal_rate
+  #
+  # withdrawal_rateを表示する。データがない場合はnil
+  #
+  def withdrawal_rate_on_screen
+    return BigDecimal(withdrawal_rate).floor(2).to_f if withdrawal_rate.present?
+    nil
+  end
+
+  # @return [float|nil] 画面で表示するwithdrawal_quantity
+  #
+  # withdrawal_quantityを表示する。データがない場合はnil
+  #
+  def withdrawal_quantity_on_screen
+    return BigDecimal(withdrawal_quantity).floor(2).to_f if withdrawal_quantity.present?
+    nil
+  end
+
+  def withdrawal_en_on_screen
+    return BigDecimal(withdrawal_en).floor(2).to_f if withdrawal_en.present?
+    nil
+  end
+
+  def balance_rate_on_screen
+    return BigDecimal(balance_rate).floor(2).to_f if balance_rate.present?
+    nil
+  end
+
+  def balance_quantity_on_screen
+    return BigDecimal(balance_quantity).floor(2).to_f if balance_quantity.present?
+    nil
+  end
+
+
+  def balance_en_on_screen
+    return BigDecimal(balance_en).floor(2).to_f if balance_en.present?
+    nil
+  end
 end
