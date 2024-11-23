@@ -17,6 +17,12 @@ FactoryBot.define do
     address { }
   end
 
+  factory :transaction_type4, class: TransactionType do
+    name { "TLT配当入金" }
+    kind { 1 }
+    address { }
+  end
+
   factory :transaction_type5, class: TransactionType do
     name { "ドルを円に変換" }
     kind { 2 }

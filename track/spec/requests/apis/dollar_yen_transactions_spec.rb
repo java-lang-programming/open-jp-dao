@@ -1,6 +1,53 @@
 require 'rails_helper'
 
 RSpec.describe "Apis::DollarYenTransactions", type: :request do
+  # TODO list
+  describe "Get /list" do
+    let(:addresses_eth) { create(:addresses_eth) }
+    let(:transaction_type1) { create(:transaction_type1, address: addresses_eth) }
+    let(:dollar_yen_transaction1) { create(:dollar_yen_transaction1, transaction_type: transaction_type1, address: addresses_eth) }
+    let(:dollar_yen_transaction2) { create(:dollar_yen_transaction2, transaction_type: transaction_type1, address: addresses_eth) }
+    # let(:dollar_yen_transaction3) { create(:dollar_yen_transaction3, transaction_type: transaction_type1, address: addresses_eth) }
+
+    context "no data" do
+      it "returns http not_found" do
+        get apis_dollaryen_transactions_path
+        json = JSON.parse(response.body, symbolize_names: true)
+        expect(json).to eq({ total: 0, dollaryen_transactions: [] })
+        expect(response).to have_http_status(:ok)
+      end
+    end
+
+    context "find data" do
+      it "returns http ok" do
+        addresses_eth
+        dollar_yen_transaction1
+        dollar_yen_transaction2
+        # dollar_yen_transaction3
+        get apis_dollaryen_transactions_path, params: { address: addresses_eth.address, limit: 1, offset: 0 }
+        json = JSON.parse(response.body, symbolize_names: true)
+        expect(json).to eq({
+          total: 2,
+          dollaryen_transactions: [
+            {
+              date: "2020/06/19",
+              deposit_en: 1140.0,
+              deposit_quantity: 10.76,
+              deposit_rate: 105.95,
+              withdrawal_en: nil,
+              withdrawal_quantity: nil,
+              withdrawal_rate: nil,
+              balance_quantity: 14.73,
+              balance_rate: 106.10,
+              balance_en: 1563
+            }
+          ]
+        })
+        expect(response).to have_http_status(:ok)
+      end
+    end
+  end
+
   describe "Get /show" do
     let(:addresses_eth) { create(:addresses_eth) }
     let(:transaction_type1) { create(:transaction_type1, address: addresses_eth) }
@@ -138,15 +185,17 @@ RSpec.describe "Apis::DollarYenTransactions", type: :request do
   describe "Post /csv upload" do
     let(:addresses_eth) { create(:addresses_eth) }
     let(:transaction_type1) { create(:transaction_type1, address: addresses_eth) }
-    # let(:transaction_type5) { create(:transaction_type5, address: addresses_eth) }
+    let(:dollar_yen_transaction1) { create(:dollar_yen_transaction1, transaction_type: transaction_type1, address: addresses_eth) }
+    let(:dollar_yen_transaction2) { create(:dollar_yen_transaction2, transaction_type: transaction_type1, address: addresses_eth) }
+    let(:dollar_yen_transaction3) { create(:dollar_yen_transaction3, transaction_type: transaction_type1, address: addresses_eth) }
     let(:dollar_yen_transaction43) { create(:dollar_yen_transaction43, transaction_type: transaction_type1, address: addresses_eth) }
-    # let(:dollar_yen_transaction44) { create(:dollar_yen_transaction44, transaction_type: transaction_type5, address: addresses_eth) }
     let(:error_deposit_csv_path) { "#{Rails.root}/spec/files/uploads/dollar_yen_transaction_deposit_csv/error_deposit.csv" }
+    let(:deposit_three_csv_path) { "#{Rails.root}/spec/files/uploads/dollar_yen_transaction_deposit_csv/deposit_three_csv.csv" }
 
     it "returns bad_request." do
       # beforeデータ作成
       dollar_yen_transaction43
-      post apis_dollaryen_transactions_csv_upload_path, params: { file: "", address_id: addresses_eth.id }
+      post apis_dollaryen_transactions_csv_upload_path, params: { file: "", address: addresses_eth.address }
       json = JSON.parse(response.body, symbolize_names: true)
       expect(json).to eq({ errors: [ { msg: "ファイルが存在しません" } ] })
       expect(response).to have_http_status(:bad_request)
@@ -155,7 +204,7 @@ RSpec.describe "Apis::DollarYenTransactions", type: :request do
     it "returns bad_request." do
       # beforeデータ作成
       dollar_yen_transaction43
-      post apis_dollaryen_transactions_csv_upload_path, params: { file: fixture_file_upload(error_deposit_csv_path), address_id: addresses_eth.id }
+      post apis_dollaryen_transactions_csv_upload_path, params: { file: fixture_file_upload(error_deposit_csv_path), address: addresses_eth.address }
       json = JSON.parse(response.body, symbolize_names: true)
       expect(json).to eq({ errors: [
         { msg: [ "2行目のdateが入力されていません" ] },
@@ -165,6 +214,48 @@ RSpec.describe "Apis::DollarYenTransactions", type: :request do
         { msg: [ "6行目のdeposit_rateの値が不正です。数値、もしくは小数点付きの数値を入力してください" ] }
       ] })
       expect(response).to have_http_status(:bad_request)
+    end
+
+    it "returns created." do
+      transaction_type1
+      post apis_dollaryen_transactions_csv_upload_path, params: { file: fixture_file_upload(deposit_three_csv_path), address: addresses_eth.address }
+      expect(response).to have_http_status(:created)
+
+      dyts = DollarYenTransaction.where(address_id: addresses_eth.id)
+      # 数の確認
+      expect(dyts.size).to eq(3)
+
+      data1 = dyts[0]
+      data2 = dyts[1]
+      data3 = dyts[2]
+
+      # 1行目
+      expect(data1.transaction_type).to eq(transaction_type1)
+      expect(data1.date).to eq(dollar_yen_transaction1.date)
+      expect(data1.deposit_rate).to eq(dollar_yen_transaction1.deposit_rate)
+      expect(data1.deposit_quantity).to eq(dollar_yen_transaction1.deposit_quantity)
+      expect(data1.deposit_en).to eq(dollar_yen_transaction1.deposit_en)
+      expect(data1.balance_rate.truncate(6)).to eq(dollar_yen_transaction1.balance_rate.truncate(6))
+      expect(data1.balance_quantity.truncate(6)).to eq(dollar_yen_transaction1.balance_quantity.truncate(6))
+      expect(data1.balance_en.truncate(6)).to eq(dollar_yen_transaction1.balance_en.truncate(6))
+      # 2行目
+      expect(data2.transaction_type).to eq(transaction_type1)
+      expect(data2.date).to eq(dollar_yen_transaction2.date)
+      expect(data2.deposit_rate).to eq(dollar_yen_transaction2.deposit_rate)
+      expect(data2.deposit_quantity).to eq(dollar_yen_transaction2.deposit_quantity)
+      expect(data2.deposit_en).to eq(dollar_yen_transaction2.deposit_en)
+      expect(data2.balance_rate.truncate(6)).to eq(dollar_yen_transaction2.balance_rate.truncate(6))
+      expect(data2.balance_quantity.truncate(6)).to eq(dollar_yen_transaction2.balance_quantity.truncate(6))
+      expect(data2.balance_en.truncate(6)).to eq(dollar_yen_transaction2.balance_en.truncate(6))
+      # ３行目
+      expect(data3.transaction_type).to eq(transaction_type1)
+      expect(data3.date).to eq(dollar_yen_transaction3.date)
+      expect(data3.deposit_rate).to eq(dollar_yen_transaction3.deposit_rate)
+      expect(data3.deposit_quantity).to eq(dollar_yen_transaction3.deposit_quantity)
+      expect(data3.deposit_en).to eq(dollar_yen_transaction3.deposit_en)
+      expect(data3.balance_rate.truncate(6)).to eq(dollar_yen_transaction3.balance_rate.truncate(6))
+      expect(data3.balance_quantity.truncate(6)).to eq(dollar_yen_transaction3.balance_quantity.truncate(6))
+      expect(data3.balance_en.truncate(6)).to eq(dollar_yen_transaction3.balance_en.truncate(6))
     end
   end
 end

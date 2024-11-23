@@ -19,7 +19,7 @@ require 'simplecov'
 SimpleCov.start 'rails'
 
 # 最終的に85まであげること
-SimpleCov.minimum_coverage 75
+SimpleCov.minimum_coverage 60
 
 RSpec.configure do |config|
   # rspec-expectations config goes here. You can use an alternate

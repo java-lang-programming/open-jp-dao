@@ -328,4 +328,52 @@ RSpec.describe DollarYenTransaction, type: :model do
       end
     end
   end
+
+  describe 'deposit_rate_on_screen' do
+    let(:addresses_eth) { create(:addresses_eth) }
+    let(:transaction_type1) { create(:transaction_type1, address: addresses_eth) }
+    let(:transaction_type5) { create(:transaction_type5, address: addresses_eth) }
+    let(:dollar_yen_transaction1) { create(:dollar_yen_transaction1, transaction_type: transaction_type1, address: addresses_eth) }
+    let(:dollar_yen_transaction44) { create(:dollar_yen_transaction44, transaction_type: transaction_type5, address: addresses_eth) }
+
+    context '画面表示 deposit_rate' do
+      it 'should be deposit_rate_on_screen when data found.' do
+        expect(dollar_yen_transaction1.deposit_rate_on_screen).to eq(106.59)
+      end
+
+      it 'should be deposit_rate_on_screen when data not found.' do
+        expect(dollar_yen_transaction44.deposit_rate_on_screen).to be nil
+      end
+    end
+
+    context '画面表示 deposit_quantity' do
+      it 'should be deposit_quantity_on_screen when data found.' do
+        expect(dollar_yen_transaction1.deposit_quantity_on_screen).to eq(3.97)
+      end
+
+      it 'should be deposit_quantity_on_screen when data not found.' do
+        expect(dollar_yen_transaction44.deposit_quantity_on_screen).to be nil
+      end
+    end
+
+    context '画面表示 deposit_en' do
+      it 'should be deposit_en_screen when data found.' do
+        expect(dollar_yen_transaction1.deposit_en_screen).to eq(423)
+      end
+
+      it 'should be deposit_quantity_on_screen when data not found.' do
+        expect(dollar_yen_transaction44.deposit_en_screen).to be nil
+      end
+    end
+
+    context '画面表示 withdrawal_rate_on_screen' do
+      it 'should be withdrawal_rate_on_screen when data not found.' do
+        expect(dollar_yen_transaction1.withdrawal_rate_on_screen).to be nil
+      end
+
+      it 'should be withdrawal_rate_on_screen when data found.' do
+        expect(dollar_yen_transaction44.withdrawal_rate_on_screen).to eq(137.05)
+      end
+    end
+  end
 end
