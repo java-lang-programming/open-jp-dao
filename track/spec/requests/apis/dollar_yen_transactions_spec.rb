@@ -9,6 +9,7 @@ RSpec.describe "Apis::DollarYenTransactions", type: :request do
     let(:dollar_yen_transaction2) { create(:dollar_yen_transaction2, transaction_type: transaction_type1, address: addresses_eth) }
     # let(:dollar_yen_transaction3) { create(:dollar_yen_transaction3, transaction_type: transaction_type1, address: addresses_eth) }
 
+
     context "no data" do
       it "returns http not_found" do
         get apis_dollaryen_transactions_path
@@ -31,6 +32,7 @@ RSpec.describe "Apis::DollarYenTransactions", type: :request do
           dollaryen_transactions: [
             {
               date: "2020/06/19",
+              transaction_type_name: transaction_type1.name,
               deposit_en: 1140.0,
               deposit_quantity: 10.76,
               deposit_rate: 105.95,
