@@ -3,8 +3,8 @@ module FileUploads
   class DollarYenTransactionDepositCsv
     attr_accessor :file
 
-    def initialize(address_id:, file:)
-      @address_id = address_id
+    def initialize(address:, file:)
+      @address = address
       @file = file
       @csvs = []
     end
@@ -12,12 +12,13 @@ module FileUploads
     def validation_errors
       csv_errors = []
       unique_key_hash = {}
+      preload_records =  { address: @address, transaction_types: TransactionType.where(address_id: @address.id) }
       File.open(@file, "r") do |file|
         row_num = 0
         CSV.foreach(file) do |row|
           row_num = row_num + 1
           next if row_num == 1
-          csv = Files::DollarYenTransactionDepositCsv.new(address_id: @address_id, row_num: row_num, row: row)
+          csv = Files::DollarYenTransactionDepositCsv.new(address: @address, row_num: row_num, row: row, preload_records: preload_records)
           # csv.make_unique_key
           errors = csv.valid_errors
           if errors.present?

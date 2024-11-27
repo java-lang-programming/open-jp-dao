@@ -210,7 +210,7 @@ RSpec.describe "Apis::DollarYenTransactions", type: :request do
       json = JSON.parse(response.body, symbolize_names: true)
       expect(json).to eq({ errors: [
         { msg: [ "2行目のdateが入力されていません" ] },
-        { msg: [ "3行目のdateの値が不正です。yyyy/mm/dd形式で正しい日付を入力してください", "3行目のtransaction_typeが入力されていません" ] },
+        { msg: [ "3行目のdateの値が不正です。yyyy/mm/dd形式で正しい日付を入力してください", "3行目のtransaction_type_nameが入力されていません" ] },
         { msg: [ "4行目のdeposit_quantityの値が不正です。数値、もしくは小数点付きの数値を入力してください" ] },
         { msg: [ "5行目のdeposit_rateが入力されていません" ] },
         { msg: [ "6行目のdeposit_rateの値が不正です。数値、もしくは小数点付きの数値を入力してください" ] }

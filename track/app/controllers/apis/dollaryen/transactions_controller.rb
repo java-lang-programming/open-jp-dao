@@ -118,10 +118,8 @@ class Apis::Dollaryen::TransactionsController < ApplicationController
 
     address = params[:address]
     address = Address.where(address: params[:address]).first
-    address_id = 0
-    address_id = address.id if address.present?
 
-    service = FileUploads::DollarYenTransactionDepositCsv.new(address_id: address_id, file: file)
+    service = FileUploads::DollarYenTransactionDepositCsv.new(address: address, file: file)
     errors = service.validation_errors
     if errors.present?
       render json: { errors: errors }, status: :bad_request
