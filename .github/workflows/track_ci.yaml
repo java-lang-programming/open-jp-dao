@@ -56,6 +56,7 @@ jobs:
         run: make yjit_enabled
 
       - name: Run brakeman
+        working-directory: track
         run: make brakeman
 
       - name: Run ruboCop
