@@ -9,6 +9,7 @@ RSpec.describe "Apis::DollarYenTransactions", type: :request do
     let(:dollar_yen_transaction2) { create(:dollar_yen_transaction2, transaction_type: transaction_type1, address: addresses_eth) }
     # let(:dollar_yen_transaction3) { create(:dollar_yen_transaction3, transaction_type: transaction_type1, address: addresses_eth) }
 
+
     context "no data" do
       it "returns http not_found" do
         get apis_dollaryen_transactions_path
@@ -31,6 +32,7 @@ RSpec.describe "Apis::DollarYenTransactions", type: :request do
           dollaryen_transactions: [
             {
               date: "2020/06/19",
+              transaction_type_name: transaction_type1.name,
               deposit_en: 1140.0,
               deposit_quantity: 10.76,
               deposit_rate: 105.95,
@@ -208,7 +210,7 @@ RSpec.describe "Apis::DollarYenTransactions", type: :request do
       json = JSON.parse(response.body, symbolize_names: true)
       expect(json).to eq({ errors: [
         { msg: [ "2行目のdateが入力されていません" ] },
-        { msg: [ "3行目のdateの値が不正です。yyyy/mm/dd形式で正しい日付を入力してください", "3行目のtransaction_typeが入力されていません" ] },
+        { msg: [ "3行目のdateの値が不正です。yyyy/mm/dd形式で正しい日付を入力してください", "3行目のtransaction_type_nameが入力されていません" ] },
         { msg: [ "4行目のdeposit_quantityの値が不正です。数値、もしくは小数点付きの数値を入力してください" ] },
         { msg: [ "5行目のdeposit_rateが入力されていません" ] },
         { msg: [ "6行目のdeposit_rateの値が不正です。数値、もしくは小数点付きの数値を入力してください" ] }

@@ -43,9 +43,11 @@ class DollarYenTransaction < ApplicationRecord
     BigDecimal(previous_dollar_yen_transactions.balance_rate)
   end
 
-  def calculate_withdrawal_en
+  def calculate_withdrawal_en(previous_dollar_yen_transactions: nil)
     raise StandardError, "error!" unless transaction_type.withdrawal?
-    previous_dollar_yen_transactions = find_previous_dollar_yen_transactions
+    unless previous_dollar_yen_transactions.present?
+      previous_dollar_yen_transactions = find_previous_dollar_yen_transactions
+    end
     raise StandardError, "預入データが存在しない場合、払出データは計算できません" unless previous_dollar_yen_transactions.present?
     BigDecimal(withdrawal_quantity) * BigDecimal(previous_dollar_yen_transactions.balance_rate)
   end
@@ -89,7 +91,7 @@ class DollarYenTransaction < ApplicationRecord
         previous_dollar_yen_transactions = find_previous_dollar_yen_transactions
         raise StandardError, "error!" unless previous_dollar_yen_transactions.present?
       end
-      BigDecimal(previous_dollar_yen_transactions.balance_en) - calculate_withdrawal_en
+      BigDecimal(previous_dollar_yen_transactions.balance_en) - calculate_withdrawal_en(previous_dollar_yen_transactions: previous_dollar_yen_transactions)
     end
   end
 

@@ -12,7 +12,7 @@ class Apis::Dollaryen::TransactionsController < ApplicationController
     address_id = 0
     address_id = address.id if address.present?
 
-    base_sql = DollarYenTransaction.where("address_id = ?", address_id)
+    base_sql = DollarYenTransaction.preload(:transaction_type).where("address_id = ?", address_id)
     total = base_sql.all.count
     dollaryen_transactions = base_sql.limit(limit).offset(offset).order(date: :desc,  transaction_type_id: :asc)
 
@@ -22,6 +22,7 @@ class Apis::Dollaryen::TransactionsController < ApplicationController
     responses = dollaryen_transactions.map do |dollaryen_transaction|
       {
         date: dollaryen_transaction.date.strftime("%Y/%m/%d"),
+        transaction_type_name: dollaryen_transaction.transaction_type.name,
         deposit_rate: dollaryen_transaction.deposit_rate_on_screen,
         deposit_quantity: dollaryen_transaction.deposit_quantity_on_screen,
         deposit_en: dollaryen_transaction.deposit_en_screen,
@@ -117,10 +118,8 @@ class Apis::Dollaryen::TransactionsController < ApplicationController
 
     address = params[:address]
     address = Address.where(address: params[:address]).first
-    address_id = 0
-    address_id = address.id if address.present?
 
-    service = FileUploads::DollarYenTransactionDepositCsv.new(address_id: address_id, file: file)
+    service = FileUploads::DollarYenTransactionDepositCsv.new(address: address, file: file)
     errors = service.validation_errors
     if errors.present?
       render json: { errors: errors }, status: :bad_request

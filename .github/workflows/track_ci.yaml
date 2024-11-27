@@ -55,9 +55,9 @@ jobs:
         working-directory: track
         run: make yjit_enabled
 
-      #　これは後で
-      # - name: Run brakeman
-      #   run: make brakeman
+      - name: Run brakeman
+        working-directory: track
+        run: make brakeman
 
       - name: Run ruboCop
         working-directory: track
