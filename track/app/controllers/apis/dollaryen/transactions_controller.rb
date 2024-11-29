@@ -38,6 +38,7 @@ class Apis::Dollaryen::TransactionsController < ApplicationController
   end
 
   def show
+    puts params[:id]
     dollaryen_transaction = DollarYenTransaction.find_by(id: params[:id])
     unless dollaryen_transaction.present?
       render json: { errors: [ { msg: "データが存在しません。" } ] }, status: :not_found
@@ -125,6 +126,9 @@ class Apis::Dollaryen::TransactionsController < ApplicationController
       render json: { errors: errors }, status: :bad_request
       return
     end
+
+    # CsvImport
+
 
     service.execute
 

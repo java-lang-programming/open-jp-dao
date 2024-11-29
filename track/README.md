@@ -43,4 +43,5 @@ curl -X POST -F "file=@/Users/masayasuzuki/workplace/study/open-jp-dao/track/tes
 
 curl  'http://localhost:3000/apis/dollaryen/transactions'
 
-bundle exec rails generate controller TransactionType
+bundle exec rails generate controller apis/dollaryen/foreigne_exchange_gain
+bundle exec rails destroy controller apis/dollaryen/foreigne_exchange_gain

@@ -1,0 +1,75 @@
+<html>
+<body>
+<h1>外貨預金元帳(web)</h1>
+<p>為替差益を計算します</p>
+<p>年度を選択してください</p>
+<div id="search_form">
+  <label for="pet-select">年度</label>
+  <br/>
+  <select name="transaction_type" id="pet-select">
+    <option value="1">2021年</option>
+    <option value="2">2022年</option>
+    <option value="3">2023年</option>
+    <option value="4">2024年</option>
+    <option value="5">2025年</option>
+  </select>
+  <div class="form-example">
+    <input type="submit" value="計算" />
+  </div>
+</div>
+<div>
+  <p>2024年度の為替差益は</p>
+  <p>+8975円</p>
+  <p>です</p>
+</div>
+<h3>払出し一覧</h3>
+<table border="1">
+  <thead>
+  	<tr>
+      <th scope="col" rowspan="2">No</th>
+      <th scope="col" rowspan="2">取引日</th>
+      <th scope="col" rowspan="2">取引種類</th>
+  	  <th scope="col" colspan="3">払出</th>
+  	  <th scope="col" colspan="2">為替</th>
+  	</tr>
+    <tr>
+      <th scope="col">数量米ドル	</th>
+      <th scope="col">レート</th>
+      <th scope="col">円換算</th>
+      <th scope="col">数量日本円	</th>
+      <th scope="col">差額</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th scope="row">1</th> 
+      <th scope="row">2020/04/01</th>
+      <th scope="row">ドルを円に変換</th>	
+      <td>88</td>
+      <th>131.55</th>
+      <td>11577.16</td>
+      <td>12,918</td>
+      <th>1,341</th>
+    </tr>
+    <tr>
+      <th scope="row">2</th> 
+      <th scope="row">2020/04/01</th>
+      <th scope="row">ドルを円に変換</th> 
+      <td>72.1</td>
+      <th>133.37</th>
+      <td>9616.61</td>
+      <td>10,930</td>
+      <th>1,313</th>
+    </tr>
+  </tbody>
+</table>
+</body>
+</html>
+<!--
+
+自動は
+
+logから取得して bulk insert
+
+
+-->

@@ -2,6 +2,7 @@ Rails.application.routes.draw do
   namespace :apis do
     namespace :dollaryen do
       resources :transactions
+      resources :foreigne_exchange_gain
       post "transactions/csv_upload"
     end
 
