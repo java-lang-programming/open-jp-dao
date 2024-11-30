@@ -80,6 +80,28 @@ paths:
         '201':
           description: OK
           headers: {}
+  '/apis/dollaryen/transactions/csv_upload':
+    post:
+      summary: ドル円トランザクションcsvアップロード
+      tags:
+        - dollaryen
+      operationId: show-dollaryen-transactions
+      description: ドル円トランザクション取得
+      responses:
+        '204':
+          description: created
+          headers: {}
+  '/apis/dollaryen/foreigne_exchange_gain':
+    get:
+      summary: ドル円為替差益取得
+      tags:
+        - dollaryen
+      operationId: foreigne_exchange_gain
+      description: 為替差益取得
+      responses:
+        '201':
+          description: OK
+          headers: {}
 components:
   schemas:
     SessionsNonceResult:
