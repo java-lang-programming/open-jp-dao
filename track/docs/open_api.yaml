@@ -11,7 +11,7 @@ tags:
   - name: dollaryen
     description: ドル円
 paths:
-  '/apis/sessions/nonce':
+  /apis/sessions/nonce:
     get:
       summary: nonce取得
       tags:
@@ -25,6 +25,22 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/SessionsNonceResult'
+          headers: {}
+  /apis/sessions/signin:
+    post:
+      summary: ログイン(サインイン)
+      tags:
+        - sessions
+      operationId: post-sessions-signin
+      description: ユーザーログイン。ChainGateのverifyに接続します。
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SigninRequest'
+      responses:
+        '201':
+          description: OK
           headers: {}
   '/apis/sessions/verify':
     post:
@@ -85,7 +101,7 @@ paths:
       summary: ドル円トランザクションcsvアップロード
       tags:
         - dollaryen
-      operationId: show-dollaryen-transactions
+      operationId: csv-upload-dollaryen-transactions
       description: ドル円トランザクション取得
       responses:
         '204':
@@ -111,3 +127,20 @@ components:
           type: string
       required:
         - nonce
+    SigninRequest:
+      title: ログイン(サインイン)リクエスト
+      type: object
+      description: サインイン
+      properties:
+        address:
+          type: string
+        kind:
+          type: integer
+        chain_id:
+          type: integer
+        message:
+          type: string
+        signature:
+          type: string
+        domain:
+          type: string
