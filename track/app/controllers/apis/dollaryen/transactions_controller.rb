@@ -1,5 +1,30 @@
 class Apis::Dollaryen::TransactionsController < ApplicationController
+  # include ActionController::Cookies
+
   def index
+    # session情報を取得
+    # Current.session ||= find_session_by_cookie
+    # sessionでは以下の値が取れる
+    # まずはこれ
+
+    # cookies.signed.permanent[:session_id] = 1
+    # cookies.delete(:session_id)
+    # #の挙動
+    # puts cookies.signed[:session_id]
+
+
+
+    # const obj = { chain_id: chainId, message: message, signature: signature, nonce: nonce_result.nonce, domain:  domain};
+
+    # verify call
+
+    # これに必要なのが
+    #    chain_id: int
+    #  message: str
+    #  signature: str
+    #  nonce: str
+    #  domain: str
+
     # default
     limit = params[:limit]
     limit = 50 unless limit.present?
@@ -141,5 +166,9 @@ class Apis::Dollaryen::TransactionsController < ApplicationController
     # end
 
     render status: :created
+  end
+
+  def find_session_by_cookie
+    Session.find_by(id: cookies.signed[:session_id])
   end
 end

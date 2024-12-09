@@ -1,4 +1,6 @@
 Rails.application.routes.draw do
+  # resource :session
+  # resources :passwords, param: :token
   namespace :apis do
     namespace :dollaryen do
       resources :transactions
@@ -8,6 +10,7 @@ Rails.application.routes.draw do
 
     get "sessions/nonce"
     post "sessions/verify"
+    post "sessions/signin"
     post "sessions/signout"
   end
   # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html

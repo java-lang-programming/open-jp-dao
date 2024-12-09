@@ -49,7 +49,7 @@ module Track
     # セッションを使う
     # Sessionに値をセットしようとすると、以下が発生
     # ActionDispatch::Request::Session::DisabledSessionError: Your application has sessions disabled. To write to the session you must first configure a session store
-    config.middleware.use ActionDispatch::Session::CookieStore
+    # config.middleware.use ActionDispatch::Session::CookieStore
 
     # config.middleware.use ActionDispatch::ContentSecurityPolicy::Middleware
 

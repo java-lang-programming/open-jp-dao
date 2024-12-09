@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2024_10_15_004151) do
+ActiveRecord::Schema[8.0].define(version: 2024_11_30_100759) do
   create_table "addresses", force: :cascade do |t|
     t.string "address"
     t.integer "kind"
@@ -41,6 +41,19 @@ ActiveRecord::Schema[8.0].define(version: 2024_10_15_004151) do
     t.index ["transaction_type_id"], name: "index_dollar_yen_transactions_on_transaction_type_id"
   end
 
+  create_table "sessions", force: :cascade do |t|
+    t.integer "address_id", null: false
+    t.string "ip_address"
+    t.string "user_agent"
+    t.integer "chain_id"
+    t.string "message"
+    t.string "signature"
+    t.string "domain"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["address_id"], name: "index_sessions_on_address_id"
+  end
+
   create_table "transaction_types", force: :cascade do |t|
     t.string "name"
     t.integer "kind"
@@ -50,4 +63,6 @@ ActiveRecord::Schema[8.0].define(version: 2024_10_15_004151) do
     t.datetime "updated_at", null: false
     t.index ["address_id"], name: "index_transaction_types_on_address_id"
   end
+
+  add_foreign_key "sessions", "addresses"
 end
