@@ -7,8 +7,8 @@ class Apis::Dollaryen::TransactionsController < ApplicationController
     # sessionでは以下の値が取れる
     # まずはこれ
 
-    #cookies.signed.permanent[:session_id] = 1
-    #cookies.delete(:session_id)
+    # cookies.signed.permanent[:session_id] = 1
+    # cookies.delete(:session_id)
     # #の挙動
     # puts cookies.signed[:session_id]
 
