@@ -1,3 +1,5 @@
+# noceとsesson_idの名称 _hoge_nonce
+# 次 verifyのopena apiとエラーハンドリングとnonce実装
 class Apis::SessionsController < ApplicationController
   include ActionController::Cookies
   # https://zenn.dev/makoto00000/articles/843b7f164b4ddd
@@ -35,43 +37,48 @@ class Apis::SessionsController < ApplicationController
 
     # TODO railsのテストコードでsignedが対応されたらテストコードもリファクタリング
     # https://github.com/rails/rails/issues/53207
-    chain_id = params[:chain_id]
-    message = params[:message]
-    signature = params[:signature]
-    domain = params[:domain]
-    nonce = cookies.signed[:nonce]
+    session = Session.new(
+      address: address,
+      chain_id: params[:chain_id],
+      message: params[:message],
+      signature: params[:signature],
+      domain: params[:domain]
+    )
 
-    # 　せっしおからnonceを取得
-    data = {
-      chain_id: chain_id,
-      message: message,
-      signature: signature,
-      nonce: nonce,
-      domain: domain
-    }
+    # 値チェック
+    unless session.valid?
+      emsgs = session.errors.map do |e|
+        { msg: e.full_message }
+      end
+      render json: { errors: emsgs }, status: :bad_request
+      return
+    end
+
+    verify_params = session.make_verify_params(nonce: cookies.signed[:nonce])
 
     # 　気がついたエラーを修正
     # 　まずはここのログ
     # 　外部APIに対するログ
-    # origin
-    # 上記のadddress kindチェックメッセージ
     # noceとsesson_idの名称 _hoge_nonce
-    # apisでなくapi問題
-    # envファイルよみこmj
+    # envファイル読み込み
 
-    puts data
+    response = nil
+    begin
+      response = ChainGate::Repositories::Authentications::Verify.new(params: verify_params).fetch
+    rescue => e
+      logger.error(e.message)
+      render json: { errors: [ { msg: e } ] }, status: :unauthorized
+      return
+    end
 
-    response = ChainGate::Repositories::Authentications::Verify.new(params: data).fetch
-
-    status = response.status_code
-    if status == 201
+    if response.status_code == 201
       address.sessions.create!(
         user_agent: request.user_agent,
         ip_address: request.remote_ip,
-        chain_id: chain_id,
-        message: message,
-        signature: signature,
-        domain: domain).tap do |session|
+        chain_id: session.chain_id,
+        message: session.message,
+        signature: session.signature,
+        domain: session.domain).tap do |session|
         # Current.session = session
         cookies.signed.permanent[:session_id] = { value: session.id, httponly: true, same_site: :lax }
       end
@@ -88,6 +95,7 @@ class Apis::SessionsController < ApplicationController
     session_id = Rails.env.test? ? cookies[:session_id] : cookies.signed[:session_id]
     session = Session.find_by(id: session_id)
     unless session.present?
+      # TOD railsでログを出す
       render json: { errors: [ { msg: "権限がありません" } ] }, status: :unauthorized
       return
     end
@@ -98,26 +106,20 @@ class Apis::SessionsController < ApplicationController
     domain = session.domain
     nonce = Rails.env.test? ? cookies[:nonce] : cookies.signed[:nonce]
 
+    verify_params = verify_params.make_verify_params(nonce: nonce)
+    response = nil
+    begin
+      response = ChainGate::Repositories::Authentications::Verify.new(params: verify_params).fetch
+    rescue => e
+      logger.error(e.message)
+      render json: { errors: [ { msg: e } ] }, status: :unauthorized
+      return
+    end
 
-    # session.to
-
-    # data = {
-    #   chain_id: 1,
-    # }
-
-    # session.to_json
-
-
-    # data.to_json
-
-
-    # chain_id = params[:chain_id]
-    # message = params[:message]
-    # chain_id: chainId, message: message, signature: signature, nonce: nonce_result.nonce, domain:  domain
-
-    # cookies.delete(:session_id)
-    # cookies.signed.permanent[:session_id] = 1
-    # 　これは外を呼び出す
+    unless 201 == response.status_code
+      render json: { errors: [ { msg: "認証に失敗しました" } ] }, status: :unauthorized
+      return
+    end
 
     render status: :created
   end
