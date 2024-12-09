@@ -1,8 +1,11 @@
-module Web3
+require "net/http"
+
+module ChainGate
   class Base
     # CONFIG = APP_CONFIG["web3"]
     # BASE_URL = "http://#{CONFIG['host']}:#{CONFIG['port']}"
-    # HEADERS = { "Content-Type" => "application/json" }
+    BASE_URL = "http://host.docker.internal:8001"
+    HEADERS = { "Content-Type" => "application/json" }
 
     def get(path, query = "")
       uri, http = initialize_http(path)
@@ -22,6 +25,7 @@ module Web3
       begin
         http.post(uri.path, params.to_json, HEADERS)
       rescue StandardError => ex
+        logger.error(ex)
         throw ex
       end
     end

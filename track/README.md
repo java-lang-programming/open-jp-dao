@@ -41,6 +41,10 @@ curl -X POST -F "file=@/Users/masayasuzuki/workplace/study/open-jp-dao/track/tes
 
 curl -X POST -F "file=@/Users/masayasuzuki/workplace/study/open-jp-dao/track/test_error_deposit_csv.csv" http://localhost:3000/apis/dollaryen/transactions/csv_upload
 
+-F "file=@/Users/masayasuzuki/workplace/study/open-jp-dao/track/test_error_deposit_csv.csv"
+
+curl -X POST http://localhost:3000/session
+
 curl  'http://localhost:3000/apis/dollaryen/transactions'
 
 bundle exec rails generate controller apis/dollaryen/foreigne_exchange_gain

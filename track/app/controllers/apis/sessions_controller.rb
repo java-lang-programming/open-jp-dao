@@ -5,7 +5,7 @@ class Apis::SessionsController < ApplicationController
   # https://zenn.dev/makoto00000/articles/843b7f164b4ddd
   # https://office54.net/iot/programming/http-stateless-session セッションは的まえる
   def nonce
-    nonce = "abcdefghajklnlopqA"
+    nonce = Array.new(20) { [ *"a".."z", *"A".."Z" ].sample }.join
     cookies.signed.permanent[:nonce] = nonce
     render status: :ok, json: { nonce: nonce }
   end
