@@ -124,7 +124,6 @@ class Apis::SessionsController < ApplicationController
     render status: :created
   end
 
-  # これは間違いない
   def signout
     # Current.session.destroy
     cookies.delete(:session_id)

@@ -1,0 +1,2 @@
+class DollarYen < ApplicationRecord
+end

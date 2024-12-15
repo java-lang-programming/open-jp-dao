@@ -119,15 +119,18 @@ RSpec.describe "Apis::SessionsController", type: :request do
     end
   end
 
-  # /apis/verify
-  def mock_apis_verify(body:)
-    stub_request(:post, /api\/verify/).to_return(
-      status: 201,
-      body: body.to_json,
-      headers: {
-        "Cache-Control" => "public, max-age=86400"
-      }
-    )
+  describe "Post /signout" do
+    let(:addresses_eth) { create(:addresses_eth) }
+
+    context "success" do
+      # session_idなし
+      it "returns status code unauthorized." do
+        mock_apis_verify(body: {})
+        get apis_sessions_nonce_path
+        post apis_sessions_signin_path, params: { address: addresses_eth.address, kind: Address.kinds[:ethereum], chain_id: 1, message: "message", signature: "signature", domain: "aiueo.com" }
+        post apis_sessions_signout_path
+      end
+    end
   end
 
   # GODO factory

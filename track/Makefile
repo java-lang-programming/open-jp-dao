@@ -28,6 +28,8 @@ rubocop_auto_correct:
 install:
 	bundle config set --local path 'vendor/bundle'
 	bundle install
+outdated:
+	bundle outdated
 migrate:
 	bundle exec rails db:migrate
 reset:

@@ -42,7 +42,7 @@ paths:
         '201':
           description: OK
           headers: {}
-  '/apis/sessions/verify':
+  /apis/sessions/verify:
     post:
       summary: 検証
       tags:
@@ -53,7 +53,7 @@ paths:
         '201':
           description: OK
           headers: {}
-  '/apis/sessions/signout':
+  /apis/sessions/signout:
     post:
       summary: ログアウト
       tags:
