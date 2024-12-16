@@ -63,7 +63,6 @@ class Apis::Dollaryen::TransactionsController < ApplicationController
   end
 
   def show
-    puts params[:id]
     dollaryen_transaction = DollarYenTransaction.find_by(id: params[:id])
     unless dollaryen_transaction.present?
       render json: { errors: [ { msg: "データが存在しません。" } ] }, status: :not_found
@@ -134,7 +133,7 @@ class Apis::Dollaryen::TransactionsController < ApplicationController
   # 　一旦これで作成
   # TODO
   # uploadはsolid queで実行かな
-  def csv_upload
+  def csv_import
     file = params[:file]
 
     unless file.present?

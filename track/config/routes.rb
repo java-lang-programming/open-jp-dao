@@ -2,10 +2,16 @@ Rails.application.routes.draw do
   # resource :session
   # resources :passwords, param: :token
   namespace :apis do
+    resources :dollar_yens do
+      collection do
+        post "csv_import"
+      end
+    end
     namespace :dollaryen do
+      # post "csv_import"
       resources :transactions
       resources :foreigne_exchange_gain
-      post "transactions/csv_upload"
+      post "transactions/csv_import"
     end
 
     get "sessions/nonce"

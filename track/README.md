@@ -41,12 +41,19 @@ curl -X POST -F "file=@/Users/masayasuzuki/workplace/study/open-jp-dao/track/tes
 
 curl -X POST -F "file=@/Users/masayasuzuki/workplace/study/open-jp-dao/track/test_error_deposit_csv.csv" http://localhost:3000/apis/dollaryen/transactions/csv_upload
 
+curl -X POST -F "file=@/Users/masayasuzuki/workplace/study/open-jp-dao/track/dollar_yens.csv" http://localhost:3000/apis/dollar_yens/csv_import
+
+
 -F "file=@/Users/masayasuzuki/workplace/study/open-jp-dao/track/test_error_deposit_csv.csv"
 
 curl -X POST http://localhost:3000/session
 
 curl  'http://localhost:3000/apis/dollaryen/transactions'
 
-bundle exec rails generate controller apis/dollaryen
+bundle exec rails generate controller apis/dollar_yens
+bundle exec rails destroy controller apis/dollar_yen
 bundle exec rails destroy controller apis/dollaryen/foreigne_exchange_gain
 bundle exec rails generate model DollarYen date:date:uniq dollar_yen_nakane:
+
+
+bundle exec rails generate job dollar_yen_csv_import --queue csv

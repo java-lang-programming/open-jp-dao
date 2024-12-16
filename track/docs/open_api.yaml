@@ -118,6 +118,17 @@ paths:
         '201':
           description: OK
           headers: {}
+  /apis/dollar_yens/csv_import:
+    post:
+      summary: ドル円csvインポート
+      tags:
+        - dollaryen
+      operationId: csv-import-dollaryen
+      description: ドル円csv import
+      responses:
+        '204':
+          description: created
+          headers: {}
 components:
   schemas:
     SessionsNonceResult:
