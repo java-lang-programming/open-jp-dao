@@ -1,4 +1,4 @@
-.PHONY: dc_build dc_up dc_stop dc_rm_pid dc_dev mini_test rubocop rubocop_auto_correct install
+.PHONY: dc_build dc_up dc_stop dc_rm_pid dc_dev_with_que dc_dev mini_test rubocop rubocop_auto_correct install
 dc_build:
 	docker-compose -f .devcontainer/compose.yaml build
 dc_up:
@@ -7,7 +7,9 @@ dc_stop:
 	docker-compose -f .devcontainer/compose.yaml stop
 dc_rm_pid:
 	rm -f tmp/pids/server.pid
-# SOLID_QUEUE_IN_PUMA=1 bundle exec rails server -b 0.0.0.0
+dc_dev_with_que:
+	make dc_rm_pid
+	SOLID_QUEUE_IN_PUMA=1 bundle exec rails server -b 0.0.0.0
 dc_dev:
 	make dc_rm_pid
 	bundle exec rails server -b 0.0.0.0

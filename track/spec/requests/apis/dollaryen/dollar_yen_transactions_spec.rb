@@ -184,7 +184,7 @@ RSpec.describe "Apis::DollarYenTransactions", type: :request do
     end
   end
 
-  describe "Post /csv upload" do
+  describe "Post /csv import" do
     let(:addresses_eth) { create(:addresses_eth) }
     let(:transaction_type1) { create(:transaction_type1, address: addresses_eth) }
     let(:dollar_yen_transaction1) { create(:dollar_yen_transaction1, transaction_type: transaction_type1, address: addresses_eth) }
@@ -197,7 +197,7 @@ RSpec.describe "Apis::DollarYenTransactions", type: :request do
     it "returns bad_request." do
       # beforeデータ作成
       dollar_yen_transaction43
-      post apis_dollaryen_transactions_csv_upload_path, params: { file: "", address: addresses_eth.address }
+      post apis_dollaryen_transactions_csv_import_path, params: { file: "", address: addresses_eth.address }
       json = JSON.parse(response.body, symbolize_names: true)
       expect(json).to eq({ errors: [ { msg: "ファイルが存在しません" } ] })
       expect(response).to have_http_status(:bad_request)
@@ -206,7 +206,7 @@ RSpec.describe "Apis::DollarYenTransactions", type: :request do
     it "returns bad_request." do
       # beforeデータ作成
       dollar_yen_transaction43
-      post apis_dollaryen_transactions_csv_upload_path, params: { file: fixture_file_upload(error_deposit_csv_path), address: addresses_eth.address }
+      post apis_dollaryen_transactions_csv_import_path, params: { file: fixture_file_upload(error_deposit_csv_path), address: addresses_eth.address }
       json = JSON.parse(response.body, symbolize_names: true)
       expect(json).to eq({ errors: [
         { msg: [ "2行目のdateが入力されていません" ] },
@@ -220,7 +220,7 @@ RSpec.describe "Apis::DollarYenTransactions", type: :request do
 
     it "returns created." do
       transaction_type1
-      post apis_dollaryen_transactions_csv_upload_path, params: { file: fixture_file_upload(deposit_three_csv_path), address: addresses_eth.address }
+      post apis_dollaryen_transactions_csv_import_path, params: { file: fixture_file_upload(deposit_three_csv_path), address: addresses_eth.address }
       expect(response).to have_http_status(:created)
 
       dyts = DollarYenTransaction.where(address_id: addresses_eth.id)

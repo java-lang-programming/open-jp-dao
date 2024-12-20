@@ -71,5 +71,21 @@ module FileUploads
 
       DollarYen.import dollar_yens, validate: false
     end
+
+    def async_execute
+      File.open(@file, "r") do |file|
+        row_num = 0
+        CSV.foreach(file) do |row|
+          row_num = row_num + 1
+          next if row_num == 1
+          csv = Files::DollarYenCsv.new(row_num: row_num, row: row)
+          @csvs << csv
+        end
+      end
+
+      dollar_yens = make_dollar_yens
+
+      DollarYen.import dollar_yens, validate: false
+    end
   end
 end
