@@ -41,6 +41,8 @@ curl -X POST -F "file=@/Users/masayasuzuki/workplace/study/open-jp-dao/track/tes
 
 curl -X POST -F "file=@/Users/masayasuzuki/workplace/study/open-jp-dao/track/test_error_deposit_csv.csv" http://localhost:3000/apis/dollaryen/transactions/csv_upload
 
+curl -X POST -F "file=@/Users/masayasuzuki/workplace/study/open-jp-dao/track/dollar_yens.csv" -H "Content-Type: application/json" -d '{"address":"0x00001E868c62FA205d38BeBaB7B903322A4CC89D"}' http://localhost:3000/apis/dollar_yens/csv_import
+
 curl -X POST -F "file=@/Users/masayasuzuki/workplace/study/open-jp-dao/track/dollar_yens.csv" http://localhost:3000/apis/dollar_yens/csv_import
 
 
@@ -57,3 +59,10 @@ bundle exec rails generate model DollarYen date:date:uniq dollar_yen_nakane:
 
 
 bundle exec rails generate job dollar_yen_csv_import --queue csv
+
+bundle exec rails generate model Job job_name:string summary:text
+
+ドル円のcsvをimportします
+ドル円取引のcsvをimportします
+
+bundle exec rails generate model ImportFile job_id:integer address_id:integer

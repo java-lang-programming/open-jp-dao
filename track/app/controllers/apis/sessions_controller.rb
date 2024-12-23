@@ -92,7 +92,8 @@ class Apis::SessionsController < ApplicationController
 
   # post
   def verify
-    session_id = Rails.env.test? ? cookies[:session_id] : cookies.signed[:session_id]
+    # session_id = Rails.env.test? ? cookies[:session_id] : cookies.signed[:session_id]
+    session_id = cookies.signed[:session_id]
     session = Session.find_by(id: session_id)
     unless session.present?
       # TOD railsでログを出す
@@ -104,9 +105,9 @@ class Apis::SessionsController < ApplicationController
     message = session.message
     signature = session.signature
     domain = session.domain
-    nonce = Rails.env.test? ? cookies[:nonce] : cookies.signed[:nonce]
 
-    verify_params = verify_params.make_verify_params(nonce: nonce)
+    verify_params = session.make_verify_params(nonce: cookies.signed[:nonce])
+
     response = nil
     begin
       response = ChainGate::Repositories::Authentications::Verify.new(params: verify_params).fetch

@@ -118,6 +118,17 @@ paths:
         '201':
           description: OK
           headers: {}
+  /apis/dollar_yens:
+    post:
+      summary: ドル円取得
+      tags:
+        - dollaryen
+      operationId: dollar_yens_index
+      description: ドル円取得
+      responses:
+        '200':
+          description: OK
+          headers: {}
   /apis/dollar_yens/csv_import:
     post:
       summary: ドル円csvインポート

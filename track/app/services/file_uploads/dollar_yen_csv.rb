@@ -72,8 +72,8 @@ module FileUploads
       DollarYen.import dollar_yens, validate: false
     end
 
-    def async_execute
-      File.open(@file, "r") do |file|
+    def async_execute_on_active_job(import_file:)
+      import_file.file.open do |file|
         row_num = 0
         CSV.foreach(file) do |row|
           row_num = row_num + 1
