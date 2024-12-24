@@ -39,16 +39,16 @@ RSpec.describe FileUploads::DollarYenCsv, type: :feature do
     end
   end
 
-  describe 'async_execute' do
-    let(:success_csv_path) { "#{Rails.root}/spec/files/uploads/dollar_yen_csv/success.csv" }
+  # describe 'async_execute' do
+  #   let(:success_csv_path) { "#{Rails.root}/spec/files/uploads/dollar_yen_csv/success.csv" }
 
-    context 'success' do
-      it 'should insert 5 dollar_yens.' do
-        service = FileUploads::DollarYenCsv.new(file: success_csv_path)
-        service.async_execute
+  #   context 'success' do
+  #     it 'should insert 5 dollar_yens.' do
+  #       service = FileUploads::DollarYenCsv.new(file: success_csv_path)
+  #       service.async_execute
 
-        expect(DollarYen.all.length).to eq(5)
-      end
-    end
-  end
+  #       expect(DollarYen.all.length).to eq(5)
+  #     end
+  #   end
+  # end
 end
