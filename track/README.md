@@ -52,7 +52,7 @@ curl -X POST http://localhost:3000/session
 
 curl  'http://localhost:3000/apis/dollaryen/transactions'
 
-bundle exec rails generate controller apis/dollar_yens
+bundle exec rails generate controller apis/transaction_types
 bundle exec rails destroy controller apis/dollar_yen
 bundle exec rails destroy controller apis/dollaryen/foreigne_exchange_gain
 bundle exec rails generate model DollarYen date:date:uniq dollar_yen_nakane:
