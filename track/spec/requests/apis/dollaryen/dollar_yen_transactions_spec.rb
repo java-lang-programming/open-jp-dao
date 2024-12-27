@@ -9,6 +9,12 @@ RSpec.describe "Apis::DollarYenTransactions", type: :request do
     let(:dollar_yen_transaction2) { create(:dollar_yen_transaction2, transaction_type: transaction_type1, address: addresses_eth) }
     # let(:dollar_yen_transaction3) { create(:dollar_yen_transaction3, transaction_type: transaction_type1, address: addresses_eth) }
 
+    before do
+      # sigin処理
+      mock_apis_verify(body: {})
+      get apis_sessions_nonce_path
+      post apis_sessions_signin_path, params: { address: addresses_eth.address, kind: Address.kinds[:ethereum], chain_id: 1, message: "message", signature: "signature", domain: "aiueo.com" }
+    end
 
     context "no data" do
       it "returns http not_found" do
@@ -80,6 +86,13 @@ RSpec.describe "Apis::DollarYenTransactions", type: :request do
     let(:dollar_yen_transaction43) { create(:dollar_yen_transaction43, transaction_type: transaction_type1, address: addresses_eth) }
     let(:dollar_yen_transaction44) { create(:dollar_yen_transaction44, transaction_type: transaction_type5, address: addresses_eth) }
 
+    before do
+      # sigin処理
+      mock_apis_verify(body: {})
+      get apis_sessions_nonce_path
+      post apis_sessions_signin_path, params: { address: addresses_eth.address, kind: Address.kinds[:ethereum], chain_id: 1, message: "message", signature: "signature", domain: "aiueo.com" }
+    end
+
     context "date" do
       it "returns http bad_request1" do
         post apis_dollaryen_transactions_path, params: { transaction_type_id: 1, date: '20200401', deposit_rate: 106.59, deposit_quantity: 10.09 }
@@ -107,15 +120,15 @@ RSpec.describe "Apis::DollarYenTransactions", type: :request do
     end
 
     # address
-    context "address" do
-      # transaction_type
-      it "returns http bad_request4" do
-        post apis_dollaryen_transactions_path, params: { transaction_type_id: transaction_type1.id, date: '2020-04-01', address: 'asasad' }
-        json = JSON.parse(response.body, symbolize_names: true)
-        expect(json).to eq({ errors: [ { msg: "addressが存在しません。" } ] })
-        expect(response).to have_http_status(:bad_request)
-      end
-    end
+    # context "address" do
+    #   # transaction_type
+    #   it "returns http bad_request4" do
+    #     post apis_dollaryen_transactions_path, params: { transaction_type_id: transaction_type1.id, date: '2020-04-01', address: 'asasad' }
+    #     json = JSON.parse(response.body, symbolize_names: true)
+    #     expect(json).to eq({ errors: [ { msg: "addressが存在しません。" } ] })
+    #     expect(response).to have_http_status(:bad_request)
+    #   end
+    # end
 
     context "deposite" do
       context "model validate" do
@@ -193,6 +206,13 @@ RSpec.describe "Apis::DollarYenTransactions", type: :request do
     let(:dollar_yen_transaction43) { create(:dollar_yen_transaction43, transaction_type: transaction_type1, address: addresses_eth) }
     let(:error_deposit_csv_path) { "#{Rails.root}/spec/files/uploads/dollar_yen_transaction_deposit_csv/error_deposit.csv" }
     let(:deposit_three_csv_path) { "#{Rails.root}/spec/files/uploads/dollar_yen_transaction_deposit_csv/deposit_three_csv.csv" }
+
+    before do
+      # sigin処理
+      mock_apis_verify(body: {})
+      get apis_sessions_nonce_path
+      post apis_sessions_signin_path, params: { address: addresses_eth.address, kind: Address.kinds[:ethereum], chain_id: 1, message: "message", signature: "signature", domain: "aiueo.com" }
+    end
 
     it "returns bad_request." do
       # beforeデータ作成

@@ -1,5 +1,5 @@
 class Apis::Dollaryen::TransactionsController < ApplicationController
-  # include ActionController::Cookies
+  before_action :verify_v2, only: [ :index, :create, :csv_import ]
 
   def index
     # session情報を取得
@@ -32,12 +32,10 @@ class Apis::Dollaryen::TransactionsController < ApplicationController
     offset = 0 unless offset.present?
 
     # セッションで置き換える
-    address = params[:address]
-    address = Address.where(address: params[:address]).first
-    address_id = 0
-    address_id = address.id if address.present?
+    session = find_session_by_cookie
+    address = Address.where(address: session.address.address).first
 
-    base_sql = DollarYenTransaction.preload(:transaction_type).where("address_id = ?", address_id)
+    base_sql = DollarYenTransaction.preload(:transaction_type).where("address_id = ?", address.id)
     total = base_sql.all.count
     dollaryen_transactions = base_sql.limit(limit).offset(offset).order(date: :desc,  transaction_type_id: :asc)
 
@@ -71,7 +69,6 @@ class Apis::Dollaryen::TransactionsController < ApplicationController
     render json: dollaryen_transaction, status: :ok
   end
 
-  # TODO params[:address]はsessionに置き換える
   def create
     date = params[:date]
     if date.length != 10
@@ -90,7 +87,9 @@ class Apis::Dollaryen::TransactionsController < ApplicationController
         return
       end
 
-      address = Address.where(address: params[:address]).first
+      session = find_session_by_cookie
+      address = Address.where(address: session.address.address).first
+
       unless address.present?
         render json: { errors: [ { msg: "addressが存在しません。" } ] }, status: :bad_request
         return
@@ -141,8 +140,8 @@ class Apis::Dollaryen::TransactionsController < ApplicationController
       return
     end
 
-    address = params[:address]
-    address = Address.where(address: params[:address]).first
+    session = find_session_by_cookie
+    address = Address.where(address: session.address.address).first
 
     service = FileUploads::DollarYenTransactionDepositCsv.new(address: address, file: file)
     errors = service.validation_errors
@@ -165,9 +164,5 @@ class Apis::Dollaryen::TransactionsController < ApplicationController
     # end
 
     render status: :created
-  end
-
-  def find_session_by_cookie
-    Session.find_by(id: cookies.signed[:session_id])
   end
 end

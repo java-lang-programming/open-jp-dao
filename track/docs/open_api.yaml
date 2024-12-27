@@ -64,11 +64,11 @@ paths:
         '201':
           description: OK
           headers: {}
-  '/apis/dollaryen/transactions':
+  /apis/dollaryen/transactions:
     get:
       summary: ドル円トランザクション一覧取得
       tags:
-        - dollaryen
+        - dollar_yens_transactions
       operationId: list-dollaryen--transactions
       description: ドル円トランザクション一覧取得
       responses:
@@ -78,9 +78,14 @@ paths:
     post:
       summary: ドル円トランザクションの保存
       tags:
-        - dollaryen
+        - dollar_yens_transactions
       operationId: post-dollaryen-transactions
       description: ドル円トランザクション保存
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DollarYenTransactionsRequestBody'
       responses:
         '201':
           description: OK
@@ -111,7 +116,7 @@ paths:
     get:
       summary: ドル円為替差益取得
       tags:
-        - dollaryen
+        - dollar_yens_foreigne_exchange_gain
       operationId: foreigne_exchange_gain
       description: 為替差益取得
       responses:
@@ -119,27 +124,57 @@ paths:
           description: OK
           headers: {}
   /apis/dollar_yens:
-    post:
+    get:
       summary: ドル円取得
       tags:
-        - dollaryen
+        - dollar_yens
+      parameters:
+        - schema:
+            type: string
+          name: date
+          in: query
+          required: false
       operationId: dollar_yens_index
       description: ドル円取得
       responses:
         '200':
           description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DollarYensResponse'
           headers: {}
   /apis/dollar_yens/csv_import:
     post:
       summary: ドル円csvインポート
       tags:
-        - dollaryen
+        - dollar_yens
       operationId: csv-import-dollaryen
       description: ドル円csv import
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/DollarYensCsvImportRequestBody'
       responses:
         '204':
           description: created
           headers: {}
+  /apis/transaction_types:
+    get:
+      summary: 取引種別取得
+      tags:
+        - transaction_types
+      operationId: transaction_types_index
+      description: 取引種別取得
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TransactionTypesResponse'
+          headers: {}    
 components:
   schemas:
     SessionsNonceResult:
@@ -166,3 +201,62 @@ components:
           type: string
         domain:
           type: string
+    DollarYenTransactionsRequestBody:
+      title: ドル円トランザクションリクエスト
+      type: object
+      description: ドル円トランザクション
+      properties:
+        date:
+          type: string
+        transaction_type_id:
+          type: integer
+        deposit_rate:
+          type: number
+        deposit_quantity:
+          type: number
+        withdrawal_quantity:
+          type: number
+        exchange_en:
+          type: number
+    DollarYensResponse:
+      title: ドル円一覧結果
+      properties:
+        total:
+          type: integer
+        dolla_yens:
+          items:
+            type: object
+            properties:
+              date:
+                type: string
+              dollar_yen_nakane:
+                type: string
+      required:
+        - total
+        - dollar_yens
+    DollarYensCsvImportRequestBody:
+      title: ドル円csv importリクエスト
+      properties:
+        file:
+          type: string
+          format: binary
+      required:
+        - file
+    TransactionTypesResponse:
+      title: 取引種別取得
+      properties:
+        total:
+          type: integer
+        transaction_types:
+          items:
+            type: object
+            properties:
+              name:
+                type: string
+              kind:
+                type: string
+              kind_name:
+                type: string
+      required:
+        - total
+        - transaction_types

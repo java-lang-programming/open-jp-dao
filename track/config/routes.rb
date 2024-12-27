@@ -7,6 +7,7 @@ Rails.application.routes.draw do
         post "csv_import"
       end
     end
+    resources :transaction_types
     namespace :dollaryen do
       # post "csv_import"
       resources :transactions
