@@ -15,3 +15,5 @@ launch_dev_server:
 	uvicorn main:app --reload --host=0.0.0.0
 lib_show:
 	poetry show
+outdated:
+	poetry show --outdated
