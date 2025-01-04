@@ -84,7 +84,7 @@ Job.create!(
 puts "Job作成終了"
 
 puts "ドル円マスタ投入"
-csv_dollar_yen_path = Rails.root.join("db", "seeds", "dollar_yens_2024.csv") 
+csv_dollar_yen_path = Rails.root.join("db", "seeds", "dollar_yens_2024.csv")
 service = FileUploads::DollarYenCsv.new(file: csv_dollar_yen_path)
 service.execute
 

@@ -43,6 +43,7 @@ RSpec.describe "Apis::TransactionTypes", type: :request do
           total: 1,
           transaction_types: [
             {
+              id: transaction_type1.id,
               name: transaction_type1.name,
               kind: 1,
               kind_name: "預入"

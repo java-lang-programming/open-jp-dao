@@ -51,7 +51,7 @@ class Apis::DollarYensController < ApplicationController
 
     # https://railsguides.jp/active_storage_overview.html
     # 保存 ステータスも。
-    import_file = ImportFile.new(address: address, job: job)
+    import_file = ImportFile.new(address: address, job: job, status: ImportFile.statuses[:ready])
     import_file.file.attach(file)
     import_file.save
 
@@ -59,6 +59,8 @@ class Apis::DollarYensController < ApplicationController
       DollarYenCsvImportJob.perform_later(import_file_id: import_file.id)
     rescue => e
       logger.error "DollarYenCsvImportJobに失敗しました: #{e}"
+      import_file.status = ImportFile.statuses[:failure]
+      import_file.save
       # ログを解析して拾えること
       # https://zenn.dev/greendrop/articles/2024-11-07-de79415b55bff0
     end
