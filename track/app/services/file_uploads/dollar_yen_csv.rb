@@ -3,6 +3,7 @@ module FileUploads
   class DollarYenCsv
     attr_accessor :file
 
+    # TODO file_pathにしないとぱっと見でわからない
     def initialize(file:)
       @file = file
       @csvs = []
