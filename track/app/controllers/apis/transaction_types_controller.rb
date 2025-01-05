@@ -10,6 +10,7 @@ class Apis::TransactionTypesController < ApplicationController
 
     responses = base_transaction_types.map do |o|
       {
+        id: o.id,
         name: o.name,
         kind: o.kind_before_type_cast,
         kind_name: o.kind_name

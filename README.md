@@ -24,3 +24,4 @@
 ## ガバナンス 
 
 - ガバナンス -  contracts/src/contracts/OpenJpDaoGovernor.sol
+

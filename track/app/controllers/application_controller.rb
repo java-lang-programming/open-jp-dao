@@ -2,8 +2,9 @@ class ApplicationController < ActionController::API
   include ActionController::Cookies
 
   def find_session_by_cookie
-   Session.find_by(id: cookies.signed[:session_id])
+    Session.find_by(id: cookies.signed[:session_id])
   end
+
   # include Authentication
   def verify_v2
     session = find_session_by_cookie

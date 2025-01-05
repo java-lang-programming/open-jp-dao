@@ -3,6 +3,9 @@ class DollarYenCsvImportJob < ApplicationJob
 
   def perform(import_file_id:)
     import_file = ImportFile.find(import_file_id)
+    import_file.status = ImportFile.statuses[:in_progress]
+    import_file.save
+
     # puts import_file.file.path
     # https://stackoverflow.com/questions/48749767/rails-read-csv-file-data-with-active-storage
 
@@ -29,5 +32,8 @@ class DollarYenCsvImportJob < ApplicationJob
     # 　ちょっと設計がおかしい。。。。
     service = FileUploads::DollarYenCsv.new(file: nil)
     service.async_execute_on_active_job(import_file: import_file)
+
+    import_file.status = ImportFile.statuses[:completed]
+    import_file.save
   end
 end

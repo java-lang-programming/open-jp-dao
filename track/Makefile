@@ -1,4 +1,4 @@
-.PHONY: dc_build dc_up dc_stop dc_rm_pid dc_dev_with_que dc_dev mini_test rubocop rubocop_auto_correct install
+.PHONY: dc_build dc_up dc_stop dc_rm_pid dc_dev_with_que dc_dev mini_test rubocop rubocop_auto_correct bundle_install outdated dev_init
 dc_build:
 	docker-compose -f .devcontainer/compose.yaml build
 dc_up:
@@ -11,8 +11,15 @@ dc_dev_with_que:
 	make dc_rm_pid
 	SOLID_QUEUE_IN_PUMA=1 bundle exec rails server -b 0.0.0.0
 dc_dev:
+	make log_clear
 	make dc_rm_pid
-	bundle exec rails server -b 0.0.0.0
+	RAILS_ENV=development bundle exec rails db:reset
+	SOLID_QUEUE_IN_PUMA=1 RAILS_ENV=development bundle exec rails server -b 0.0.0.0
+dc_prod:
+	make log_clear
+	make dc_rm_pid
+	RAILS_ENV=production bundle exec rails db:reset
+	SOLID_QUEUE_IN_PUMA=1 RAILS_ENV=production bundle exec rails server -b 0.0.0.0
 rails_info:
 	bundle exec rails about
 zeitwerk_check:
@@ -27,7 +34,8 @@ rubocop:
 	bundle exec rubocop
 rubocop_auto_correct:
 	bundle exec rubocop --auto-correct
-install:
+bundle_install:
+	bundle config set frozen false
 	bundle config set --local path 'vendor/bundle'
 	bundle install
 outdated:
