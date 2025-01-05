@@ -41,7 +41,7 @@ jobs:
 
       - name: Bundle install
         working-directory: track
-        run: make install
+        run: make bundle_install
 
       - name: rails info
         working-directory: track
