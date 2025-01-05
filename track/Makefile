@@ -1,4 +1,4 @@
-.PHONY: dc_build dc_up dc_stop dc_rm_pid dc_dev_with_que dc_dev mini_test rubocop rubocop_auto_correct install dev_init
+.PHONY: dc_build dc_up dc_stop dc_rm_pid dc_dev_with_que dc_dev mini_test rubocop rubocop_auto_correct bundle_install outdated dev_init
 dc_build:
 	docker-compose -f .devcontainer/compose.yaml build
 dc_up:
@@ -34,7 +34,8 @@ rubocop:
 	bundle exec rubocop
 rubocop_auto_correct:
 	bundle exec rubocop --auto-correct
-install:
+bundle_install:
+	bundle config set frozen false
 	bundle config set --local path 'vendor/bundle'
 	bundle install
 outdated:
