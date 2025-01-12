@@ -131,4 +131,16 @@ class Apis::SessionsController < ApplicationController
     cookies.delete(:nonce)
     render status: :created
   end
+
+  # ユーザー情報を取得
+  def user
+    session = find_session_by_cookie
+    unless session.present?
+      # TOD railsでログを出す
+      render json: { errors: [ { msg: "権限がありません" } ] }, status: :unauthorized
+      return
+    end
+
+    render json: { address: session.address.address, network: session.network, last_login: session.last_login }, status: :ok
+  end
 end

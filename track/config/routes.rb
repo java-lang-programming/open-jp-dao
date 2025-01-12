@@ -19,6 +19,7 @@ Rails.application.routes.draw do
     post "sessions/verify"
     post "sessions/signin"
     post "sessions/signout"
+    get "sessions/user"
   end
   # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
 
