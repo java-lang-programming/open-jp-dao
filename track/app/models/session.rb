@@ -1,6 +1,7 @@
 class Session < ApplicationRecord
   ETHEREUM_SEPOLIA = 11155111
   ETHEREUM_MAINNET = 1
+  POLYGON_MAINNET = 137
   # belongs_to :user
   belongs_to :address
 
@@ -23,7 +24,7 @@ class Session < ApplicationRecord
   def network
     return "Ethereum Sepolia" if chain_id == Session::ETHEREUM_SEPOLIA
     return "Ethereum Mainnet" if chain_id == Session::ETHEREUM_MAINNET
-    # return "Polygon Mainnet" if chain_id == 137
+    return "Polygon Mainnet" if chain_id == Session::POLYGON_MAINNET
     # return "Base" if chain_id == 8453
     ""
   end
