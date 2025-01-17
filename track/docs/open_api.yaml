@@ -64,6 +64,21 @@ paths:
         '201':
           description: OK
           headers: {}
+  /apis/sessions/user:
+    get:
+      summary: ユーザー情報
+      tags:
+        - sessions
+      operationId: get-sessions-user
+      description: ユーザー情報取得
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SessionsUserResponse'
+          headers: {}
   /apis/dollaryen/transactions:
     get:
       summary: ドル円トランザクション一覧取得
@@ -174,7 +189,22 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/TransactionTypesResponse'
-          headers: {}    
+          headers: {}
+  /apis/notifications/index:
+    get:
+      summary: 通知取得
+      tags:
+        - notifications
+      operationId: notifications_index
+      description: 通知取得
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotificationsIndexResponse'
+          headers: {}
 components:
   schemas:
     SessionsNonceResult:
@@ -184,6 +214,25 @@ components:
           type: string
       required:
         - nonce
+    SessionsUserResponse:
+      title: sessions_user_result
+      properties:
+        address:
+          type: string
+        network:
+          type: string
+        last_login:
+          type: string
+    NotificationsIndexResponse:
+      title: notifications_index
+      properties:
+        notification:
+          type: object
+          properties:
+            id:
+              type: string
+            message:
+              type: string     
     SigninRequest:
       title: ログイン(サインイン)リクエスト
       type: object
