@@ -2,6 +2,7 @@ Rails.application.routes.draw do
   # resource :session
   # resources :passwords, param: :token
   namespace :apis do
+    get "notifications/index"
     resources :dollar_yens do
       collection do
         post "csv_import"
