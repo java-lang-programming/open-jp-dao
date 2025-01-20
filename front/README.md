@@ -20,6 +20,10 @@ npm 10.7.0
 ```
 cd open-dao
 docker-compose build
+
+or
+
+make dc_build 
 ```
 
 ## コンテナに入る
@@ -127,6 +131,7 @@ make dc_dev
 4. front
 
 
+make dc_up
 cdd sample
 cd sample
 

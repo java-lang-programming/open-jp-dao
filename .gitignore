@@ -3,4 +3,7 @@
 .env
 
 **/__pycache__/**
-**/front/**
+**/front/src/.pnpm-store/**
+**/front/src/open-dao/**
+**/front/src/sample/sample/.next/**
+**/front/src/sample/sample/node_modules/**

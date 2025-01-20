@@ -1,0 +1,13 @@
+version: '3.7'
+services:
+  open-dao-front-dev:
+    build:
+      context: ..
+      dockerfile: .devcontainer/Dockerfile
+    image: open-dao-front-dev
+    container_name: open-dao-front-dev
+    tty: true
+    volumes:
+      - ../src/:/app/src/
+    ports:
+      - "3010:3000"

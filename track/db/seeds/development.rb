@@ -89,3 +89,13 @@ service = FileUploads::DollarYenCsv.new(file: csv_dollar_yen_path)
 service.execute
 
 puts "ドル円マスタ投入完了"
+
+puts "お知らせ(header)作成"
+
+Notification.create!(
+   message: "2021/01/12にメンテナンス作業でサービスが利用ができなくなります",
+   start_at: Time.now,
+   end_at: Time.now.tomorrow,
+   priority: 1
+
+)
