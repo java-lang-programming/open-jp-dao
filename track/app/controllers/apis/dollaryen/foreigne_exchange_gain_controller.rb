@@ -1,11 +1,10 @@
 class Apis::Dollaryen::ForeigneExchangeGainController < ApplicationController
+  before_action :verify_v2, only: [ :index ]
+
+  # ここのユーザー取得から
   def index
-    address = params[:address]
-    address = Address.where(address: params[:address]).first
-    unless address.present?
-      render json: { errors: [ { msg: "ユーザー情報が取得できませんでした。ログインしてください" } ] }, status: :bad_request
-      return
-    end
+    session = find_session_by_cookie
+    address = Address.where(address: session.address.address).first
 
     # ない場合は現在のデフォルト。あとは1900 - 2100までにしておく
     year = params[:year]

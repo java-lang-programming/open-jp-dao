@@ -137,6 +137,10 @@ paths:
       responses:
         '201':
           description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DollarYensForeigneExchangeGainResponse'
           headers: {}
   /apis/dollar_yens:
     get:
@@ -291,6 +295,38 @@ components:
           format: binary
       required:
         - file
+    DollarYensForeigneExchangeGainResponse:
+      title: ドル円為替差益
+      type: object
+      properties:
+        date:
+          type: object
+          properties:
+            start_date:
+              type: string
+            end_date:
+              type: string
+        data:
+          type: object
+          properties:
+            total:
+              type: integer
+            dollaryen_transactions:
+              items:
+                type: object
+                properties:
+                  date:
+                    type: string
+                  transaction_type_name:
+                    type: string
+                  withdrawal_rate:
+                    type: number
+                  withdrawal_quantity:
+                    type: number
+                  withdrawal_en:
+                    type: number
+        foreign_exchange_gain:
+          type: number
     TransactionTypesResponse:
       title: 取引種別取得
       properties:
