@@ -1,4 +1,7 @@
 class Session < ApplicationRecord
+  ETHEREUM_SEPOLIA = 11155111
+  ETHEREUM_MAINNET = 1
+  POLYGON_MAINNET = 137
   # belongs_to :user
   belongs_to :address
 
@@ -15,5 +18,18 @@ class Session < ApplicationRecord
       nonce: nonce,
       domain: domain
     }
+  end
+
+  # https://chainlist.org/
+  def network
+    return "Ethereum Sepolia" if chain_id == Session::ETHEREUM_SEPOLIA
+    return "Ethereum Mainnet" if chain_id == Session::ETHEREUM_MAINNET
+    return "Polygon Mainnet" if chain_id == Session::POLYGON_MAINNET
+    # return "Base" if chain_id == 8453
+    ""
+  end
+
+  def last_login
+    created_at.strftime("%Y/%m/%d %H:%M:%S")
   end
 end

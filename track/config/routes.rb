@@ -2,6 +2,7 @@ Rails.application.routes.draw do
   # resource :session
   # resources :passwords, param: :token
   namespace :apis do
+    get "notifications/index"
     resources :dollar_yens do
       collection do
         post "csv_import"
@@ -19,6 +20,7 @@ Rails.application.routes.draw do
     post "sessions/verify"
     post "sessions/signin"
     post "sessions/signout"
+    get "sessions/user"
   end
   # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
 

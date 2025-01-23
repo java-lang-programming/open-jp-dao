@@ -133,6 +133,38 @@ RSpec.describe "Apis::SessionsController", type: :request do
     end
   end
 
+  describe "Get /user" do
+    context "failure" do
+      # session_idなし
+      it "returns status code unauthorized." do
+        get apis_sessions_user_path
+        expect(response).to have_http_status(:unauthorized)
+        json = JSON.parse(response.body, symbolize_names: true)
+        expect(json).to eq({ errors: [ { msg: "権限がありません" } ] })
+      end
+    end
+
+    context "success" do
+      let(:addresses_eth) { create(:addresses_eth) }
+
+      before do
+        # sigin処理
+        mock_apis_verify(body: {})
+        get apis_sessions_nonce_path
+        post apis_sessions_signin_path, params: { address: addresses_eth.address, kind: Address.kinds[:ethereum], chain_id: Session::ETHEREUM_SEPOLIA, message: "message", signature: "signature", domain: "aiueo.com" }
+      end
+
+      it "returns status code ok." do
+        get apis_sessions_user_path
+        expect(response).to have_http_status(:ok)
+        json = JSON.parse(response.body, symbolize_names: true)
+        expect(json[:address]).to eq(addresses_eth.address)
+        expect(json[:network]).to eq("Ethereum Sepolia")
+        expect(json[:last_login].size).to eq(19)
+      end
+    end
+  end
+
   # GODO factory
   def dummy
     # {"chain_id":"11155111","message":"http://localhost:3010 wants you to sign in with your Ethereum account:\n0x91582E868c62FA205d38BeBaB7B903322A4CC89D\n\nSign in with Ethereum to the app.\n\nURI: http://localhost:3010\nVersion: 1\nChain ID: 11155111\nNonce: abcdefghajklnlopqA\nIssued At: 2024-12-08T00:02:16.652Z","signature":"0xebf27824d7df2bfeaf69104a306aa3e178616d1903e6136f0eccb18fc05b97fc53dd030ede83131415d1beb089962809dd376067f76cce9d688cee7e9c3760371b","nonce":"abcdefghajklnlopqA","domain":"localhost:3010"}
