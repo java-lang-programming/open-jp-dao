@@ -132,6 +132,7 @@ class Apis::Dollaryen::TransactionsController < ApplicationController
   # 　一旦これで作成
   # TODO
   # uploadはsolid queで実行かな
+  # TODO ASYNCNIに置き換える
   def csv_import
     file = params[:file]
 

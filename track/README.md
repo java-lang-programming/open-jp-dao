@@ -53,16 +53,21 @@ curl -X POST http://localhost:3000/session
 curl  'http://localhost:3000/apis/dollaryen/transactions'
 
 bundle exec rails generate controller apis/transaction_types
+bundle exec rails generate controller apis/notifications index
 bundle exec rails destroy controller apis/dollar_yen
 bundle exec rails destroy controller apis/dollaryen/foreigne_exchange_gain
 bundle exec rails generate model DollarYen date:date:uniq dollar_yen_nakane:
+bundle exec rails generate model ApplicationError environment_id: integer log:text
 
 
 bundle exec rails generate job dollar_yen_csv_import --queue csv
 
 bundle exec rails generate model Job job_name:string summary:text
+bundle exec rails generate model Notification message:string start_date:timestamp end_date:timestamp
 
 ドル円のcsvをimportします
 ドル円取引のcsvをimportします
 
 bundle exec rails generate model ImportFile job_id:integer address_id:integer
+
+次

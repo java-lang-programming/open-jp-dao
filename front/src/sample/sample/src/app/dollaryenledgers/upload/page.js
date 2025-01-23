@@ -60,7 +60,7 @@ export default function Home() {
     formData.append('address', '0x00001E868c62FA205d38BeBaB7B903322A4CC89D');
     const apiBaseUrl = "http://localhost:3000"
     try {
-      const response = await fetch(`${apiBaseUrl}/apis/dollaryen/transactions/csv_upload`, {
+      const response = await fetch(`${apiBaseUrl}/apis/dollaryen/transactions/csv_import`, {
         method: 'POST',
         body: formData,
         mode: 'cors'

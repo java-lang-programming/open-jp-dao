@@ -2,6 +2,7 @@
 
 import { use } from "react";
 import { useEffect, useState } from 'react';
+import Link from 'next/link';
 import "./foreign_exchange_gain_index.css";
 import { fetchUser } from "../repo/sessions";
 import { fetchNotificationHeader } from "../repo/notifications";
@@ -69,8 +70,9 @@ export default function Header() {
           <div>
             <ul className="header2_nav">
               <li>
-                <a href="#"
-                  className="header2_nav_li">Home</a>
+                <Link href="/">
+                  Home
+                </Link>
               </li>
               <li>
                 <a href="#"
@@ -92,10 +94,12 @@ export default function Header() {
       {
         (header.notification) && (
           <section className="information">
-            <p>{ header.notification.notification.message }</p>
+            <div>
+              <span className="information_kind">New</span>
+              <span>{ header.notification.notification.message }</span>
+            </div>
           </section>
         )
-
       }
     </div>
   );
