@@ -78,5 +78,12 @@ module FileUploads
 
       DollarYenTransaction.import dollar_yen_transactions, validate: false
     end
+
+    # 非同期
+    # def async_execute_on_active_job(import_file:)
+    #   @csvs = import_file.make_csvs_dollar_yens_transactions
+    #   dollar_yen_transactions = make_dollar_yen_transactions
+    #   DollarYenTransaction.import dollar_yen_transactions, validate: false
+    # end
   end
 end
