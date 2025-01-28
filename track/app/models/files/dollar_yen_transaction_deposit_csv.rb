@@ -211,6 +211,7 @@ module Files
 
     # DollarYenTransactionに変換
     def to_dollar_yen_transaction(previous_dollar_yen_transactions: nil)
+      @transaction_type ||= find_transaction_type
       dyt = DollarYenTransaction.new(
         transaction_type: @transaction_type,
         date: target_date,
@@ -253,6 +254,17 @@ module Files
           @transaction_type ||= TransactionType.where(name: @transaction_type_name, address_id: @address.id).first
         end
       end
+    end
+
+    def self.make_dollar_yen_transactions(csvs:)
+      dollar_yen_transactionss = []
+      prev_dollar_yen_transaction = nil
+      csvs.each_with_index do |item, idx|
+        dollar_yen_transaction = item.to_dollar_yen_transaction(previous_dollar_yen_transactions: prev_dollar_yen_transaction)
+        prev_dollar_yen_transaction = dollar_yen_transaction
+        dollar_yen_transactionss << dollar_yen_transaction
+      end
+      dollar_yen_transactionss
     end
   end
 end

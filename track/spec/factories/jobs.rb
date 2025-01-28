@@ -5,6 +5,7 @@ FactoryBot.define do
   end
 
   factory :job_2, class: Job do
+    id { Job::DOLLAR_YENS_TRANSACTIONS_CSV_IMPORT }
     name { "ドル円取引csvimport" }
     summary { "ドル円取引のcsvをimportします" }
   end

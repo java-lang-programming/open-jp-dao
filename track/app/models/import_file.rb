@@ -5,15 +5,18 @@ class ImportFile < ApplicationRecord
 
   has_one_attached :file
 
-  # validateはなし
+  # TODO 将来的にはjobによって切り分ける
   def make_csvs_dollar_yens_transactions
-    preload_records =  { address: address, transaction_types: TransactionType.where(address_id: address.id) }
+    preload_records =  { address: address, transaction_types: address.transaction_types }
     csvs = []
-    CSV.foreach(file) do |row|
-      row_num = row_num + 1
-      next if row_num == 1
-      csv = Files::DollarYenTransactionDepositCsv.new(address: target_address, row_num: row_num, row: row, preload_records: preload_records)
-      csvs << csv
+    file.open do |file|
+      row_num = 0
+      CSV.foreach(file.open) do |row|
+        row_num = row_num + 1
+        next if row_num == 1
+        csv = Files::DollarYenTransactionDepositCsv.new(address: address, row_num: row_num, row: row, preload_records: preload_records)
+        csvs << csv
+      end
     end
     csvs
   end

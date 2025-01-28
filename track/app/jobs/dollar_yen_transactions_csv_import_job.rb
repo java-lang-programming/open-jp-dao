@@ -12,17 +12,11 @@ class DollarYenTransactionsCsvImportJob < ApplicationJob
       import_file.status = ImportFile.statuses[:in_progress]
       import_file.save
 
-      # csv取得データ
+      # csvデータをcsvオブジェクト一覧にする
       csvs = import_file.make_csvs_dollar_yens_transactions
-
-      list = []
-      prev_dollar_yen_transaction = nil
-      csvs.each_with_index do |item, idx|
-        dollar_yen_transaction = item.to_dollar_yen_transaction(previous_dollar_yen_transactions: prev_dollar_yen_transaction)
-        prev_dollar_yen_transaction = dollar_yen_transaction
-        list << dollar_yen_transaction
-      end
-
+      # DB用データに変換
+      dollar_yen_transactions = Files::DollarYenTransactionDepositCsv.make_dollar_yen_transactions(csvs: csvs)
+      # bulk insert
       DollarYenTransaction.import dollar_yen_transactions, validate: false
 
       import_file.status = ImportFile.statuses[:completed]

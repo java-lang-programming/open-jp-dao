@@ -50,8 +50,6 @@ log_clear:
 	bundle exec rails log:clear
 seed:
 	bundle exec rails db:seed
-# spec/models/files/
-# bundle exec rails generate rspec:model transaction_type
 sqlite3_open:
 	sqlite3 storage/development.sqlite3
 sqlite3_queue_open:
