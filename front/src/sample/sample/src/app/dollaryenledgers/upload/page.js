@@ -57,19 +57,21 @@ export default function Home() {
     console.log(file);
     const formData = new FormData();
     formData.append('file', file);
-    formData.append('address', '0x00001E868c62FA205d38BeBaB7B903322A4CC89D');
+    // formData.append('address', '0x00001E868c62FA205d38BeBaB7B903322A4CC89D');
     const apiBaseUrl = "http://localhost:3000"
     try {
       const response = await fetch(`${apiBaseUrl}/apis/dollaryen/transactions/csv_import`, {
         method: 'POST',
         body: formData,
-        mode: 'cors'
+        mode: 'cors',
+        credentials: 'include'
       });
       if (response.status !== 201) {
         const json = await response.json();
         setErrors(json);
       }
     } catch (error) {
+      alert(error);
       console.error(error.message);
     }
   }

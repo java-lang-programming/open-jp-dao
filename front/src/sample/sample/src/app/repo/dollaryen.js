@@ -21,7 +21,7 @@ export const fetchForeigneExchangeGain = ()=> {
  */
 export const postDollaryensTransactionsCsvImport = (body) => {
   return fetch(`${ApiBaseUrl}/apis/dollaryen/transactions/csv_import`, {
-    method: "GET",
+    method: 'POST',
     headers: {
       'Content-Type': 'application/json',
     },
