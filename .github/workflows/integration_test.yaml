@@ -1,25 +1,32 @@
-name: backend コードチェック&テスト
+name: 結合テスト コードチェック&テスト
 
 on:
   push:
     branches:
       - main
       - develop
-      - feature
+      - feature/*
     paths-ignore:
       - contracts/*
-      - track/*
+      - backend/*
       - docs/*
+      - mock/*
       - .gitignore
       - '**.md'
 
+#　やること
+# 0. 
+# 1. backendを動かす(接続先はdev)
+# 2. trackを動かす
+# 3. frontからtrackを呼び出す
+
 jobs:
-  check:
-    name: backend check
+  launch_backend_server:
+    name: launch backend server
     runs-on: ubuntu-24.04
     strategy:
       matrix:
-        python-version: ["3.12", "3.13"]
+        python-version: ["3.12"]
     steps:
       - uses: actions/checkout@v4
       - name: Set up Python ${{ matrix.python-version }}
@@ -32,15 +39,10 @@ jobs:
           cd backend/server
           pip install poetry
           poetry config virtualenvs.in-project false && poetry config installer.parallel false && poetry config virtualenvs.create false && poetry install --no-root
-      - name: check python code formatting
+      - name: launch backend application at background
         run: |
           cd backend/server
-          make code_formatting
-      - name: unit test
+          make launch_pro_server
+      - name: wait wevox-rbac launching go app.
         run: |
-          cd backend/server
-          make unit_test
-      # - name: tarvern test
-      #   run: |
-      #     cd backend/server
-      #     make code_formatting
+          ./backend/server/scripts/wait_launch_server.sh
