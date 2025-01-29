@@ -61,6 +61,9 @@ bundle exec rails generate model ApplicationError environment_id: integer log:te
 
 
 bundle exec rails generate job dollar_yen_csv_import --queue csv
+bundle exec rails generate job dollar_yen_transactions_csv_import --queue csv
+
+DollarYenTransactionDepositCsv
 
 bundle exec rails generate model Job job_name:string summary:text
 bundle exec rails generate model Notification message:string start_date:timestamp end_date:timestamp

@@ -718,4 +718,100 @@ RSpec.describe Files::DollarYenTransactionDepositCsv, type: :model do
       expect(csv_line1.transaction_type).to eq(transaction_type1)
     end
   end
+
+  describe 'make_dollar_yen_transactions' do
+    let(:addresses_eth) { create(:addresses_eth) }
+    let(:transaction_type1) { create(:transaction_type1, address: addresses_eth) }
+    let(:transaction_type5) { create(:transaction_type5, address: addresses_eth) }
+    let(:dollar_yen_transaction1) { create(:dollar_yen_transaction1, transaction_type: transaction_type1, address: addresses_eth) }
+    let(:dollar_yen_transaction2) { create(:dollar_yen_transaction2, transaction_type: transaction_type1, address: addresses_eth) }
+    let(:dollar_yen_transaction3) { create(:dollar_yen_transaction3, transaction_type: transaction_type1, address: addresses_eth) }
+    let(:deposit_three_csv_path) { "#{Rails.root}/spec/files/uploads/dollar_yen_transaction_deposit_csv/deposit_three_csv.csv" }
+    let(:deposit_and_withdrawal_csv_path) { "#{Rails.root}/spec/files/uploads/dollar_yen_transaction_deposit_csv/deposit_and_withdrawal.csv" }
+    let(:job_2) { create(:job_2) }
+    let(:import_file) { create(:import_file, address: addresses_eth, job: job_2) }
+
+    context 'make_dollar_yen_transactions' do
+      # 3行分のデータを作成して確認
+      it 'should get dollar_yen_transactions.' do
+        transaction_type1
+
+        file = File.new(deposit_three_csv_path)
+        import_file.file.attach(file)
+        import_file.save
+
+        csvs = import_file.make_csvs_dollar_yens_transactions
+        dollar_yen_transactions = Files::DollarYenTransactionDepositCsv.make_dollar_yen_transactions(csvs: csvs)
+
+        expect(dollar_yen_transactions.size).to eq(3)
+        data1 = dollar_yen_transactions[0]
+        data2 = dollar_yen_transactions[1]
+        data3 = dollar_yen_transactions[2]
+        # 1行目
+        expect(data1.transaction_type).to eq(transaction_type1)
+        expect(data1.date).to eq(dollar_yen_transaction1.date)
+        expect(data1.deposit_rate).to eq(dollar_yen_transaction1.deposit_rate)
+        expect(data1.deposit_quantity).to eq(dollar_yen_transaction1.deposit_quantity)
+        expect(data1.deposit_en).to eq(dollar_yen_transaction1.deposit_en)
+        expect(data1.balance_rate.truncate(6)).to eq(dollar_yen_transaction1.balance_rate.truncate(6))
+        expect(data1.balance_quantity.truncate(6)).to eq(dollar_yen_transaction1.balance_quantity.truncate(6))
+        expect(data1.balance_en.truncate(6)).to eq(dollar_yen_transaction1.balance_en.truncate(6))
+        # 2行目
+        expect(data2.transaction_type).to eq(transaction_type1)
+        expect(data2.date).to eq(dollar_yen_transaction2.date)
+        expect(data2.deposit_rate).to eq(dollar_yen_transaction2.deposit_rate)
+        expect(data2.deposit_quantity).to eq(dollar_yen_transaction2.deposit_quantity)
+        expect(data2.deposit_en).to eq(dollar_yen_transaction2.deposit_en)
+        expect(data2.balance_rate.truncate(6)).to eq(dollar_yen_transaction2.balance_rate.truncate(6))
+        expect(data2.balance_quantity.truncate(6)).to eq(dollar_yen_transaction2.balance_quantity.truncate(6))
+        expect(data2.balance_en.truncate(6)).to eq(dollar_yen_transaction2.balance_en.truncate(6))
+        # ３行目
+        expect(data3.transaction_type).to eq(transaction_type1)
+        expect(data3.date).to eq(dollar_yen_transaction3.date)
+        expect(data3.deposit_rate).to eq(dollar_yen_transaction3.deposit_rate)
+        expect(data3.deposit_quantity).to eq(dollar_yen_transaction3.deposit_quantity)
+        expect(data3.deposit_en).to eq(dollar_yen_transaction3.deposit_en)
+        expect(data3.balance_rate.truncate(6)).to eq(dollar_yen_transaction3.balance_rate.truncate(6))
+        expect(data3.balance_quantity.truncate(6)).to eq(dollar_yen_transaction3.balance_quantity.truncate(6))
+        expect(data3.balance_en.truncate(6)).to eq(dollar_yen_transaction3.balance_en.truncate(6))
+
+        import_file.file.purge
+        FileUtils.rm_rf(ActiveStorage::Blob.service.root)
+      end
+
+      # 両方
+      it 'should get dollar_yen_transactions when deposit and withdrawal.' do
+        transaction_type1
+        transaction_type5
+
+        file = File.new(deposit_and_withdrawal_csv_path)
+        import_file.file.attach(file)
+        import_file.save
+
+        csvs = import_file.make_csvs_dollar_yens_transactions
+        dollar_yen_transactions = Files::DollarYenTransactionDepositCsv.make_dollar_yen_transactions(csvs: csvs)
+
+        expect(dollar_yen_transactions.size).to eq(4)
+
+        data1 = dollar_yen_transactions[0]
+        data2 = dollar_yen_transactions[1]
+        data3 = dollar_yen_transactions[2]
+        data4 = dollar_yen_transactions[3]
+
+        # 1行目
+        expect(data1.transaction_type).to eq(transaction_type1)
+        expect(data1.date).to eq(dollar_yen_transaction1.date)
+        expect(data1.deposit_rate).to eq(dollar_yen_transaction1.deposit_rate)
+        expect(data1.deposit_quantity).to eq(dollar_yen_transaction1.deposit_quantity)
+        expect(data1.deposit_en).to eq(dollar_yen_transaction1.deposit_en)
+        expect(data1.balance_rate.truncate(6)).to eq(dollar_yen_transaction1.balance_rate.truncate(6))
+        expect(data1.balance_quantity.truncate(6)).to eq(dollar_yen_transaction1.balance_quantity.truncate(6))
+        expect(data1.balance_en.truncate(6)).to eq(dollar_yen_transaction1.balance_en.truncate(6))
+
+        # TODO 2行目以降のチェック
+        import_file.file.purge
+        FileUtils.rm_rf(ActiveStorage::Blob.service.root)
+      end
+    end
+  end
 end

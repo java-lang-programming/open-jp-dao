@@ -1,7 +1,6 @@
 require 'rails_helper'
 
 RSpec.describe "Apis::DollarYenTransactions", type: :request do
-  # TODO list
   describe "Get /list" do
     let(:addresses_eth) { create(:addresses_eth) }
     let(:transaction_type1) { create(:transaction_type1, address: addresses_eth) }
@@ -204,6 +203,7 @@ RSpec.describe "Apis::DollarYenTransactions", type: :request do
     let(:dollar_yen_transaction2) { create(:dollar_yen_transaction2, transaction_type: transaction_type1, address: addresses_eth) }
     let(:dollar_yen_transaction3) { create(:dollar_yen_transaction3, transaction_type: transaction_type1, address: addresses_eth) }
     let(:dollar_yen_transaction43) { create(:dollar_yen_transaction43, transaction_type: transaction_type1, address: addresses_eth) }
+    let(:job_2) { create(:job_2) }
     let(:error_deposit_csv_path) { "#{Rails.root}/spec/files/uploads/dollar_yen_transaction_deposit_csv/error_deposit.csv" }
     let(:deposit_three_csv_path) { "#{Rails.root}/spec/files/uploads/dollar_yen_transaction_deposit_csv/deposit_three_csv.csv" }
 
@@ -240,7 +240,11 @@ RSpec.describe "Apis::DollarYenTransactions", type: :request do
 
     it "returns created." do
       transaction_type1
-      post apis_dollaryen_transactions_csv_import_path, params: { file: fixture_file_upload(deposit_three_csv_path), address: addresses_eth.address }
+      job_2
+
+      perform_enqueued_jobs do
+        post apis_dollaryen_transactions_csv_import_path, params: { file: fixture_file_upload(deposit_three_csv_path), address: addresses_eth.address }
+      end
       expect(response).to have_http_status(:created)
 
       dyts = DollarYenTransaction.where(address_id: addresses_eth.id)

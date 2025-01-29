@@ -125,14 +125,8 @@ class Apis::Dollaryen::TransactionsController < ApplicationController
     render status: :created
   end
 
-  # TODO csvはmodelでやる。
-  # models csvsを要して使う
-  # insertしてみる
-  # まずは設計から
-  # 　一旦これで作成
-  # TODO
-  # uploadはsolid queで実行かな
-  # TODO ASYNCNIに置き換える
+  # TODO エラーの場合なども詳細にする
+  # 　ここのrspecを修正 jobのテストも追加すること
   def csv_import
     file = params[:file]
 
@@ -151,18 +145,24 @@ class Apis::Dollaryen::TransactionsController < ApplicationController
       return
     end
 
-    # CsvImport
+    job = Job.find(Job::DOLLAR_YENS_TRANSACTIONS_CSV_IMPORT)
+    address = Address.where(address: session.address.address).first
 
+    # https://railsguides.jp/active_storage_overview.html
+    # 保存 ステータスも。
+    import_file = ImportFile.new(address: address, job: job, status: ImportFile.statuses[:ready])
+    import_file.file.attach(file)
+    import_file.save
 
-    service.execute
-
-    # # 　100件を超えるデータはバックエンド
-    # if errors.size > 100
-    #   # 　キューに登録して終わり
-    # else
-    #   # 　リアルタイムでinsert
-    #   service.bulk_insert
-    # end
+    begin
+      DollarYenTransactionsCsvImportJob.perform_later(import_file_id: import_file.id)
+    rescue => e
+      logger.error "DollarYensTransactionsCsvImportJobに失敗しました: #{e}"
+      return
+      # TODO
+      # ログを解析して拾えること
+      # https://zenn.dev/greendrop/articles/2024-11-07-de79415b55bff0
+    end
 
     render status: :created
   end

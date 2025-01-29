@@ -8,7 +8,7 @@ class DollarYenCsvImportJob < ApplicationJob
 
     # TODO リトライ。ログ。エラーハンドリングなども実装する
     # 引数をfile pathにする
-    # 　ちょっと設計がおかしい。。。。
+    #  ちょっと設計がおかしい。。。。
     service = FileUploads::DollarYenCsv.new(file: nil)
     service.async_execute_on_active_job(import_file: import_file)
 
