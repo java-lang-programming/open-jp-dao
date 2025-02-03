@@ -71,7 +71,7 @@ RSpec.describe "Apis::Dollaryen::ForeigneExchangeGains", type: :request do
           expect(json[:date][:start_date]).to eq(start_date)
           expect(json[:date][:end_date]).to eq(end_date)
           expect(json[:data][:total]).to eq(1)
-          expect(json[:foreign_exchange_gain]).to eq("857.0")
+          expect(json[:foreign_exchange_gain]).to eq(857.0)
         end
       end
     end

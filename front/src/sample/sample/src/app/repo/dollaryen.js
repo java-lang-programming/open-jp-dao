@@ -4,8 +4,12 @@ const ApiBaseUrl = "http://localhost:3000"
  * @description rails apiに接続してForeigneExchangeGainを取得する
  * @function 
  */
-export const fetchForeigneExchangeGain = ()=> {
-  return fetch(`${ApiBaseUrl}/apis/dollaryen/foreigne_exchange_gain`, {
+export const fetchForeigneExchangeGain = (year) => {
+  let query = ""
+  if (year) {
+    query = "?year=" + year
+  }
+  return fetch(`${ApiBaseUrl}/apis/dollaryen/foreigne_exchange_gain${query}`, {
     method: "GET",
     headers: {
       'Content-Type': 'application/json',

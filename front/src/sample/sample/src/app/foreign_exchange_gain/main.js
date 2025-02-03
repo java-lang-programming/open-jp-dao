@@ -15,32 +15,68 @@ import Header from "../components/header";
 // https://docs.metamask.io/wallet/how-to/connect/
 // https://docs.metamask.io/wallet/reference/eth_requestaccounts/
 export default function Main() {
-  let init_data = {}
-  init_data.transactions = {'data': {'total': 0}};
+  // 関数にする usecases/foreign_exchange_gain
+  let date = new Date();
+  let current_year = date.getFullYear();
+  const years = [];
+  for (let i = 0; i < 5; i++) {
+    let temp_year = current_year - i
+    years.push(temp_year);
+  }
+
+
+
+  let init_data = {'transactions': {'data': {'total': 0} }}
   const [data, setData] = useState(init_data);
 
-  const fetchForeigneExchangeGainData = async() => {
+  const fetchForeigneExchangeGainData = async(year) => {
     try {
-      const res = await fetchForeigneExchangeGain()
+      const res = await fetchForeigneExchangeGain(year)
       const res_status = await res.status
       if (res_status == 200) {
         const res_json = await res.json();
         const result = {}
         result.transactions = res_json;
+        result.year = year
+        console.log(result);
         setData(result);
       }
     } catch (error) {
+      // ここでエラーをキャッチすること
+      alert(error);
       console.error(error.message);
     }
-
   }
 
+  const onChangeYear = (e) => {
+    const year = e.target.value;
+    fetchForeigneExchangeGainData(year);
+  }
+
+  // onClick
+
   useEffect(() => {
-    fetchForeigneExchangeGainData();    
+    fetchForeigneExchangeGainData(current_year);    
   }, []);
 
   return (
     <div>
+      <section id="nendo">
+        <label for="countries" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">為替差益を表示したい年度を選択してください</label>
+        <select onChange={(e) => { onChangeYear(e) }} id="countries" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+        { (years.map((year, index) =>
+          <option value={ year }>{ year }</option>
+        )) }
+        </select>
+      </section>
+      { (data.transactions.date) && (
+        <div>
+          <br/>
+          <h2 className="text-base/7 font-semibold text-indigo-600">{ data.year }年為替差益<a href="./">▶️</a></h2>
+          <p className="mt-2 text-pretty text-4xl font-semibold tracking-tight text-gray-900 sm:text-5xl lg:text-balance">{ data.transactions.foreign_exchange_gain }円</p>
+          <p clasclassNames="mt-6 text-lg/8 text-gray-600">*確定申告について</p>
+        </div>
+      )}
       { (data.transactions.data.total > 0) && (
         <div className="mx-auto mt-16 max-w-2xl sm:mt-20 lg:mt-24 lg:max-w-4xl">
           <div className="relative overflow-x-auto">
@@ -71,52 +107,31 @@ export default function Main() {
                       </tr>
                   </thead>
                   <tbody>
+                      { (data.transactions.data.dollaryen_transactions.map((dollaryen_transaction, index) =>
                       <tr className="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
                           <th scope="row" className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
-                              2024/02/01
+                              {dollaryen_transaction.date}
                           </th>
                           <td className="px-6 py-4">
-                              ドルを円に変換
+                              {dollaryen_transaction.transaction_type_name}
                           </td>
                           <td className="px-6 py-4">
-                              88
+                              {dollaryen_transaction.withdrawal_quantity}
                           </td>
                           <td className="px-6 py-4">
-                              131.55
+                              ${dollaryen_transaction.withdrawal_rate}
                           </td>
                           <td className="px-6 py-4">
-                              11577.16
+                              ${dollaryen_transaction.withdrawal_en}
                           </td>
                           <td className="px-6 py-4">
-                              12,918
+                              ￥{dollaryen_transaction.exchange_en}
                           </td>
                           <td className="px-6 py-4">
-                              +1,341
+                              ￥{dollaryen_transaction.exchange_difference}
                           </td>
                       </tr>
-                      <tr className="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
-                          <th scope="row" className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
-                              2024/04/05
-                          </th>
-                          <td className="px-6 py-4">
-                              ドルを円に変換
-                          </td>
-                          <td className="px-6 py-4">
-                              $72.1
-                          </td>
-                          <td className="px-6 py-4">
-                              133.37
-                          </td>
-                          <td className="px-6 py-4">
-                              ￥9616.61
-                          </td>
-                          <td className="px-6 py-4">
-                              ￥10,930
-                          </td>
-                          <td className="px-6 py-4">
-                              +￥1,313
-                          </td>
-                      </tr>
+                      )) }
                   </tbody>
               </table>
           </div>

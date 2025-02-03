@@ -36,10 +36,12 @@ class Apis::Dollaryen::ForeigneExchangeGainController < ApplicationController
         transaction_type_name: dollaryen_transaction.transaction_type.name,
         withdrawal_rate: dollaryen_transaction.withdrawal_rate_on_screen,
         withdrawal_quantity: dollaryen_transaction.withdrawal_quantity_on_screen,
-        withdrawal_en: dollaryen_transaction.withdrawal_en_on_screen
+        withdrawal_en: dollaryen_transaction.withdrawal_en_on_screen,
+        exchange_en: dollaryen_transaction.exchange_en_on_screen,
+        exchange_difference: dollaryen_transaction.exchange_difference_on_screen
       }
     end
 
-    render json: { date: { start_date: start_date.strftime("%Y-%m-%d"), end_date: end_date.strftime("%Y-%m-%d") }, data: { total: total, dollaryen_transactions: responses }, foreign_exchange_gain: foreign_exchange_gain }, status: :ok
+    render json: { date: { start_date: start_date.strftime("%Y-%m-%d"), end_date: end_date.strftime("%Y-%m-%d") }, data: { total: total, dollaryen_transactions: responses }, foreign_exchange_gain: foreign_exchange_gain.floor(2).to_f }, status: :ok
   end
 end

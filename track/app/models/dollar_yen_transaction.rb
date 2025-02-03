@@ -168,6 +168,16 @@ class DollarYenTransaction < ApplicationRecord
     nil
   end
 
+  def exchange_en_on_screen
+    return BigDecimal(exchange_en).floor(2).to_f if exchange_en.present?
+    nil
+  end
+
+  def exchange_difference_on_screen
+    return BigDecimal(exchange_difference).floor(2).to_f if exchange_difference.present?
+    nil
+  end
+
   def balance_rate_on_screen
     return BigDecimal(balance_rate).floor(2).to_f if balance_rate.present?
     nil
