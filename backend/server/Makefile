@@ -19,3 +19,5 @@ lib_show:
 	poetry show
 outdated:
 	poetry show --outdated
+library_update:
+	poetry update
