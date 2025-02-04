@@ -132,6 +132,9 @@ make dc_dev
 
 
 make dc_up
+
+docker exec -it open-dao-front-dev /bin/sh
+
 cdd sample
 cd sample
 

@@ -15,3 +15,21 @@ updates:
     labels:
       - 'dependencies'
       - 'ruby'
+  # - package-ecosystem: pip
+  #   directory: '/backend'
+  #   schedule:
+  #     interval: monthly
+  #     timezone: Asia/Tokyo
+  #   groups:
+  #     dependencies:
+  #       patterns:
+  #         - "*"
+  #   allow:
+  #     - dependency-type: direct
+  #     - dependency-type: indirect
+  #   ignore:
+  #     - dependency-name: "*"
+  #       update-types: [ "version-update:semver-major" ]
+  #   labels:
+  #     - 'dependencies'
+  #     - 'python'
