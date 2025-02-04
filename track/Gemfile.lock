@@ -100,7 +100,7 @@ GEM
     diff-lcs (1.5.1)
     docile (1.4.1)
     drb (2.2.1)
-    erubi (1.13.0)
+    erubi (1.13.1)
     et-orbi (1.2.11)
       tzinfo
     factory_bot (6.5.1)
