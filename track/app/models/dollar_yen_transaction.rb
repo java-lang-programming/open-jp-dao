@@ -3,6 +3,7 @@ class DollarYenTransaction < ApplicationRecord
   belongs_to :address
 
   scope :latest_date, ->(target_date, adddress_id) { where("date <= ?", target_date).where("address_id = ?", adddress_id).order("id").first }
+  scope :find_by_date_and_transaction_type_id, ->(target_date, transaction_type_id) { where(date: target_date).where(transaction_type_id: transaction_type_id) }
 
   # validates :date, presence: true
   # https://railsguides.jp/active_record_validations.html#%E3%82%AB%E3%82%B9%E3%82%BF%E3%83%A0%E3%83%A1%E3%82%BD%E3%83%83%E3%83%89

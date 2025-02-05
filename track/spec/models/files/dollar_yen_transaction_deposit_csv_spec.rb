@@ -719,6 +719,41 @@ RSpec.describe Files::DollarYenTransactionDepositCsv, type: :model do
     end
   end
 
+  describe 'create_dollar_yen_transaction' do
+    let(:addresses_eth) { create(:addresses_eth) }
+    let(:transaction_type1) { create(:transaction_type1, address: addresses_eth) }
+    let(:dollar_yen_transaction1) { create(:dollar_yen_transaction1, address: addresses_eth, transaction_type: transaction_type1) }
+
+    context '既存データなし' do
+      it "should be new dollar_yen_transaction object" do
+        transaction_type1
+
+        data_row1 = [ "2020/04/01", "HDV配当入金", "3.97", "106.59", "", "" ]
+        csv = Files::DollarYenTransactionDepositCsv.new(address: addresses_eth, row_num: 2, row: data_row1)
+        dollar_yen_transaction = csv.create_dollar_yen_transaction
+
+        # idは存在しない
+        expect(dollar_yen_transaction.id).to be nil
+        expect(dollar_yen_transaction.date).to eq(Date.new(2020, 4, 1))
+        expect(dollar_yen_transaction.transaction_type).to eq(transaction_type1)
+      end
+    end
+
+    context '既存データあり' do
+      it "should be get dollar_yen_transaction object" do
+        dollar_yen_transaction1
+
+        data_row1 = [ "2020/04/01", "HDV配当入金", "3.97", "106.59", "", "" ]
+        csv = Files::DollarYenTransactionDepositCsv.new(address: addresses_eth, row_num: 2, row: data_row1)
+        dollar_yen_transaction = csv.create_dollar_yen_transaction
+
+        # idは存在しない
+        expect(dollar_yen_transaction.id).to eq(dollar_yen_transaction1.id)
+        expect(dollar_yen_transaction).to eq(dollar_yen_transaction1)
+      end
+    end
+  end
+
   describe 'make_dollar_yen_transactions' do
     let(:addresses_eth) { create(:addresses_eth) }
     let(:transaction_type1) { create(:transaction_type1, address: addresses_eth) }

@@ -20,4 +20,17 @@ class ImportFile < ApplicationRecord
     end
     csvs
   end
+
+  # 最新のトランザジョンより古いデータが含まれているか
+  def include_past_dollar_yen_transaction?(csvs:)
+    # 最新のトランザクション
+    latest_dollar_yen_transaction = DollarYenTransaction.where("address_id = ?", address.id).order("date").order("id").first
+    return false unless latest_dollar_yen_transaction.present?
+    latest_date = latest_dollar_yen_transaction.date
+
+    csvs.each do |csv|
+      return true if csv.target_date.before? latest_date
+    end
+    false
+  end
 end

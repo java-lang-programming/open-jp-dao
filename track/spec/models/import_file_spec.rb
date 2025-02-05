@@ -50,4 +50,93 @@ RSpec.describe ImportFile, type: :model do
       FileUtils.rm_rf(ActiveStorage::Blob.service.root)
     end
   end
+
+  describe 'include_past_dollar_yen_transaction?' do
+    let(:transaction_type1) { create(:transaction_type1, address: addresses_eth) }
+    let(:transaction_type5) { create(:transaction_type5, address: addresses_eth) }
+    let(:dollar_yen_transaction2) { create(:dollar_yen_transaction2, transaction_type: transaction_type1, address: addresses_eth) }
+    let(:deposit_and_withdrawal_2020_05_01_csv_path) { "#{Rails.root}/spec/files/uploads/dollar_yen_transaction_deposit_csv/deposit_and_withdrawal_2020_05_01.csv" }
+    let(:deposit_and_withdrawal_2020_06_19_csv_path) { "#{Rails.root}/spec/files/uploads/dollar_yen_transaction_deposit_csv/deposit_and_withdrawal_2020_06_19.csv" }
+    let(:deposit_and_withdrawal_2020_10_29_csv_path) { "#{Rails.root}/spec/files/uploads/dollar_yen_transaction_deposit_csv/deposit_and_withdrawal_2020_10_29.csv" }
+
+
+    # 　既存データがない時はfalse
+    it 'should be false when registerd dollar_yen_transactions data not found.' do
+      transaction_type1
+      transaction_type5
+      # dollar_yen_transaction2
+
+      file = File.new(deposit_and_withdrawal_csv_path)
+      import_file.file.attach(file)
+      import_file.save
+
+      csvs = import_file.make_csvs_dollar_yens_transactions
+
+      past_dollar_yen_transaction = import_file.include_past_dollar_yen_transaction?(csvs: csvs)
+      expect(past_dollar_yen_transaction).to be false
+
+      import_file.file.purge
+      FileUtils.rm_rf(ActiveStorage::Blob.service.root)
+    end
+
+    # 既存データ(過去データ)がある
+    context 'registerd dollar_yen_transactions' do
+      # 過去のデータのcsvデータがある時はtrue
+      it 'should be true when csv includes past date.' do
+        transaction_type1
+        transaction_type5
+        dollar_yen_transaction2
+
+        file = File.new(deposit_and_withdrawal_2020_05_01_csv_path)
+        import_file.file.attach(file)
+        import_file.save
+
+        csvs = import_file.make_csvs_dollar_yens_transactions
+
+        past_dollar_yen_transaction = import_file.include_past_dollar_yen_transaction?(csvs: csvs)
+        expect(past_dollar_yen_transaction).to be true
+
+        import_file.file.purge
+        FileUtils.rm_rf(ActiveStorage::Blob.service.root)
+      end
+
+      # 過去のデータのcsvデータがない時はfalse
+      it 'should be false when csv not includes past date.' do
+        transaction_type1
+        transaction_type5
+        dollar_yen_transaction2
+
+        file = File.new(deposit_and_withdrawal_2020_10_29_csv_path)
+        import_file.file.attach(file)
+        import_file.save
+
+        csvs = import_file.make_csvs_dollar_yens_transactions
+
+        past_dollar_yen_transaction = import_file.include_past_dollar_yen_transaction?(csvs: csvs)
+        expect(past_dollar_yen_transaction).to be false
+
+        import_file.file.purge
+        FileUtils.rm_rf(ActiveStorage::Blob.service.root)
+      end
+
+      # 同じ日のデータのcsvデータの時はfalse
+      it 'should be false when csv is same date.' do
+        transaction_type1
+        transaction_type5
+        dollar_yen_transaction2
+
+        file = File.new(deposit_and_withdrawal_2020_06_19_csv_path)
+        import_file.file.attach(file)
+        import_file.save
+
+        csvs = import_file.make_csvs_dollar_yens_transactions
+
+        past_dollar_yen_transaction = import_file.include_past_dollar_yen_transaction?(csvs: csvs)
+        expect(past_dollar_yen_transaction).to be false
+
+        import_file.file.purge
+        FileUtils.rm_rf(ActiveStorage::Blob.service.root)
+      end
+    end
+  end
 end
