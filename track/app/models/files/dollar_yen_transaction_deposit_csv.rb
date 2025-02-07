@@ -209,14 +209,18 @@ module Files
       Date.new(dates[0].to_i, dates[1].to_i, dates[2].to_i)
     end
 
+    # 　登録済みならtrue, でなければfalse
+    # def already_registered?
+    #   find_transaction_type
+    #   dollar_yen_transaction = DollarYenTransaction.find_by_date_and_transaction_type_id(@date, transaction_type)
+    # end
+
     # DollarYenTransactionに変換
     def to_dollar_yen_transaction(previous_dollar_yen_transactions: nil)
       @transaction_type ||= find_transaction_type
-      dyt = DollarYenTransaction.new(
-        transaction_type: @transaction_type,
-        date: target_date,
-        address: address
-      )
+
+      # ここの速度が気になる
+      dyt = create_dollar_yen_transaction
 
       # 変数格納
       dyt.deposit_rate = BigDecimal(@deposit_rate) if dyt.deposit?
@@ -254,6 +258,22 @@ module Files
           @transaction_type ||= TransactionType.where(name: @transaction_type_name, address_id: @address.id).first
         end
       end
+    end
+
+    # DollarYenTransactionを作成する
+    def create_dollar_yen_transaction
+      @transaction_type ||= find_transaction_type
+      date = target_date
+
+      dyt = address.dollar_yen_transactions.where(date: date).where(transaction_type: @transaction_type).first
+      unless dyt.present?
+        dyt = DollarYenTransaction.new(
+          transaction_type: @transaction_type,
+          date: date,
+          address: address
+        )
+      end
+      dyt
     end
 
     def self.make_dollar_yen_transactions(csvs:)

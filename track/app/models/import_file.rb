@@ -21,10 +21,12 @@ class ImportFile < ApplicationRecord
     csvs
   end
 
+  # 　別のクラウというかサービス
   # 最新のトランザジョンより古いデータが含まれているか
   def include_past_dollar_yen_transaction?(csvs:)
     # 最新のトランザクション
-    latest_dollar_yen_transaction = DollarYenTransaction.where("address_id = ?", address.id).order("date").order("id").first
+    latest_dollar_yen_transaction = address.dollar_yen_transactions.order("date").order("id").last
+    # latest_dollar_yen_transaction = DollarYenTransaction.where("address_id = ?", address.id).order("date").order("id").first
     return false unless latest_dollar_yen_transaction.present?
     latest_date = latest_dollar_yen_transaction.date
 
@@ -32,5 +34,11 @@ class ImportFile < ApplicationRecord
       return true if csv.target_date.before? latest_date
     end
     false
+  end
+
+  # 一番古い日付を取得
+  # service/ドル円取引csvimportやな
+  def get_oldest_date(csvs:)
+    csvs.map(&:target_date).min
   end
 end

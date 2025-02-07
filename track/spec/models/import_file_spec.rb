@@ -59,7 +59,6 @@ RSpec.describe ImportFile, type: :model do
     let(:deposit_and_withdrawal_2020_06_19_csv_path) { "#{Rails.root}/spec/files/uploads/dollar_yen_transaction_deposit_csv/deposit_and_withdrawal_2020_06_19.csv" }
     let(:deposit_and_withdrawal_2020_10_29_csv_path) { "#{Rails.root}/spec/files/uploads/dollar_yen_transaction_deposit_csv/deposit_and_withdrawal_2020_10_29.csv" }
 
-
     # 　既存データがない時はfalse
     it 'should be false when registerd dollar_yen_transactions data not found.' do
       transaction_type1
@@ -137,6 +136,21 @@ RSpec.describe ImportFile, type: :model do
         import_file.file.purge
         FileUtils.rm_rf(ActiveStorage::Blob.service.root)
       end
+    end
+  end
+
+  describe 'get_oldest_date' do
+    it 'should be oldtest date' do
+      file = File.new(deposit_and_withdrawal_csv_path)
+      import_file.file.attach(file)
+      import_file.save
+
+      csvs = import_file.make_csvs_dollar_yens_transactions
+      oldest_date = import_file.get_oldest_date(csvs: csvs)
+
+      expect(oldest_date).to eq(Date.new(2020, 4, 1))
+
+      FileUtils.rm_rf(ActiveStorage::Blob.service.root)
     end
   end
 end

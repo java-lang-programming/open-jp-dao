@@ -21,15 +21,6 @@ class DollarYenTransaction < ApplicationRecord
     transaction_type.withdrawal?
   end
 
-  def date_valid(target_date:)
-    begin
-      Date.parse(target_date)
-      true
-    rescue => e
-      false
-    end
-  end
-
   # 円換算(小数点切り捨て)
   def calculate_deposit_en
     (BigDecimal(deposit_rate) * BigDecimal(deposit_quantity)).floor
@@ -97,16 +88,16 @@ class DollarYenTransaction < ApplicationRecord
   end
 
   # 属性データを作成
-  def make_data
-    att_data_h = {}
-    en = calculate_deposit_en if deposit?
-    att_data_h = att_data_h.merge({ deposit_en: en })
-    withdrawal_rate = calculate_withdrawal_rate if withdrawal?
-    att_data_h = att_data_h.merge({ withdrawal_rate: withdrawal_rate })
-    balance_quantity = dyt.calculate_balance_quantity
-    att_data_h = att_data_h.merge({ balance_quantity: balance_quantity })
-    att_data_h
-  end
+  # def make_data
+  #   att_data_h = {}
+  #   en = calculate_deposit_en if deposit?
+  #   att_data_h = att_data_h.merge({ deposit_en: en })
+  #   withdrawal_rate = calculate_withdrawal_rate if withdrawal?
+  #   att_data_h = att_data_h.merge({ withdrawal_rate: withdrawal_rate })
+  #   balance_quantity = dyt.calculate_balance_quantity
+  #   att_data_h = att_data_h.merge({ balance_quantity: balance_quantity })
+  #   att_data_h
+  # end
 
   # 為替差益計算
   def self.calculate_foreign_exchange_gain(start_date:, end_date:)
@@ -193,5 +184,92 @@ class DollarYenTransaction < ApplicationRecord
   def balance_en_on_screen
     return BigDecimal(balance_en).floor(2).to_f if balance_en.present?
     nil
+  end
+
+  # csv import用のデータに変換
+  # date,transaction_type,deposit_quantity,deposit_rate,withdrawal_quantity,exchange_en
+  def to_csv_import_format
+    line_data = []
+    # date
+    line_data << date.strftime("%Y/%m/%d")
+    # transaction_type
+    line_data << transaction_type.name
+
+    if deposit_quantity.present?
+      line_data << deposit_quantity.to_f
+    else
+      line_data << nil
+    end
+
+    if deposit_rate.present?
+      line_data << deposit_rate.to_f
+    else
+      line_data << nil
+    end
+
+    if withdrawal_quantity.present?
+      line_data << withdrawal_quantity.to_i
+    else
+      line_data << nil
+    end
+
+    if exchange_en.present?
+      line_data << exchange_en.to_i
+    else
+      line_data << nil
+    end
+    line_data
+  end
+
+  # csv export用のデータに変換
+  # date,transaction_type,deposit_quantity,deposit_rate,deposit_en
+  def to_csv_export_format
+    line_data = []
+    # date
+    line_data << date.strftime("%Y/%m/%d")
+    # transaction_type
+    line_data << transaction_type.name
+
+    if deposit_quantity.present?
+      line_data << deposit_quantity.to_f
+    else
+      line_data << nil
+    end
+
+    if deposit_rate.present?
+      line_data << deposit_rate.to_f
+    else
+      line_data << nil
+    end
+
+    if deposit_en.present?
+      line_data << deposit_en.to_f
+    else
+      line_data << nil
+    end
+
+    if withdrawal_quantity.present?
+      line_data << withdrawal_quantity.to_f
+    else
+      line_data << nil
+    end
+
+    if withdrawal_rate.present?
+      line_data << withdrawal_rate.to_f
+    else
+      line_data << nil
+    end
+
+    if withdrawal_en.present?
+      line_data << withdrawal_en.to_f
+    else
+      line_data << nil
+    end
+
+    line_data << balance_quantity.to_f
+    line_data << balance_rate.to_f
+    line_data << balance_en.to_f
+
+    line_data
   end
 end
