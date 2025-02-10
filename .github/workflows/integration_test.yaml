@@ -14,6 +14,9 @@ on:
       - .gitignore
       - '**.md'
 
+env:
+  BUNDLER_VESION: 2.5.15
+
 #　やること
 # 0. 
 # 1. backendを動かす(接続先はdev)
@@ -21,12 +24,13 @@ on:
 # 3. frontからtrackを呼び出す
 
 jobs:
-  launch_backend_server:
-    name: launch backend server
+  launch_server:
+    name: launch web3 backend and rails server
     runs-on: ubuntu-24.04
     strategy:
       matrix:
-        python-version: ["3.12"]
+        python-version: ["3.13"]
+        ruby-version: ["3.4.1"]
     steps:
       - uses: actions/checkout@v4
       - name: Set up Python ${{ matrix.python-version }}
@@ -46,3 +50,19 @@ jobs:
       - name: wait wevox-rbac launching go app.
         run: |
           ./backend/server/scripts/wait_launch_server.sh
+
+      - name: Install ruby(rails) packages
+        run: sudo apt-get update && sudo apt-get install --no-install-recommends -y libjemalloc2 sqlite3
+
+      - name: Set up Ruby ${{ matrix.ruby-version }}
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: ${{ matrix.ruby-version }}
+          bundler-cache: true
+
+      - name: Install packages
+        run: gem install bundler -v $BUNDLER_VESION
+
+      - name: Bundle install production
+        working-directory: track
+        run: make bundle_install_production
