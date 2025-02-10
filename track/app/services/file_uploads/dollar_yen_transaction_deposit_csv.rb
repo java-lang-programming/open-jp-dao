@@ -9,6 +9,9 @@ module FileUploads
       @csvs = []
     end
 
+    # チェック内容
+    # csvのデータにエラーがある
+    # ユニークキー
     def validation_errors
       csv_errors = []
       unique_key_hash = {}

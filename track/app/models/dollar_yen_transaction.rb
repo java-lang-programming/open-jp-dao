@@ -13,6 +13,21 @@ class DollarYenTransaction < ApplicationRecord
   validates :withdrawal_quantity, numericality: true, if: :withdrawal?
   validates :exchange_en, numericality: true, if: :withdrawal?
 
+  # 取引日   数量米ドル レート 円換算 数量米ドル レート 円換算 数量米ドル レート 円換算
+  EXPORT_CSV_COLUMN_NAMES = %i[
+    date
+    transaction_type
+    deposit_quantity
+    deposit_rate
+    deposit_en
+    withdrawal_quantity
+    withdrawal_rate
+    withdrawal_en
+    balance_quantity
+    balance_rate
+    balance_en
+  ]
+
   def deposit?
     transaction_type.deposit?
   end
@@ -112,6 +127,21 @@ class DollarYenTransaction < ApplicationRecord
     end
 
     { sum: reuslt, withdrawal_transactions: withdrawal_transactions }
+  end
+
+  # csv importを作成する
+  # これはaddressクラスかな。。。
+  def self.make_csv_import_file(address:, csv_file_path:)
+    csv_data = CSV.generate do |csv|
+      column_names = Files::DollarYenTransactionDepositCsv::COLUMN_NAMES
+      csv << column_names
+
+      address.dollar_yen_transactions.order("date").order("date").each do |dollar_yen_transaction|
+        csv << dollar_yen_transaction.to_csv_import_format
+      end
+    end.chomp
+    # ファイルのパスとcsvデータを指定して、csvファイル作成
+    File.write(csv_file_path, csv_data)
   end
 
   def find_previous_dollar_yen_transactions
@@ -243,7 +273,7 @@ class DollarYenTransaction < ApplicationRecord
     end
 
     if deposit_en.present?
-      line_data << deposit_en.to_f
+      line_data << deposit_en.to_i
     else
       line_data << nil
     end

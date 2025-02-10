@@ -12,7 +12,7 @@ module Files
     # date  transaction_type  deposit_quantity  deposit_rate  withdrawal_quantity exchange_en
     COLUMN_NAMES = %i[
       date
-      transaction_type_name
+      transaction_type
       deposit_quantity
       deposit_rate
       withdrawal_quantity

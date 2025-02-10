@@ -1,0 +1,4 @@
+date,transaction_type,deposit_quantity,deposit_rate,deposit_en,withdrawal_quantity,withdrawal_rate,withdrawal_en,balance_quantity,balance_rate,balance_en
+2020/04/01,HDV配当入金,3.97,106.59,423,,,,3.97,106.5491183879093,423.0
+2020/06/19,HDV配当入金,10.76,105.95,1140,,,,14.73,106.1099796334012,1563.0
+2020/09/29,HDV配当入金,14.73,104.35,1537,,,,29.46,105.2274270196877,3100.0
