@@ -56,37 +56,5 @@ module FileUploads
       end
       errors
     end
-
-    def make_dollar_yen_transactions
-      list = []
-      prev_dollar_yen_transaction = nil
-      @csvs.each_with_index do |item, idx|
-        dollar_yen_transaction = item.to_dollar_yen_transaction(previous_dollar_yen_transactions: prev_dollar_yen_transaction)
-        prev_dollar_yen_transaction = dollar_yen_transaction
-        list << dollar_yen_transaction
-      end
-      list
-    end
-
-    # TODO 並び替え
-    # update対応
-    def execute
-      unless @csvs.present?
-        errors = validation_errors
-        # 失敗
-        return false if errors.present?
-      end
-
-      dollar_yen_transactions = make_dollar_yen_transactions
-
-      DollarYenTransaction.import dollar_yen_transactions, validate: false
-    end
-
-    # 非同期
-    # def async_execute_on_active_job(import_file:)
-    #   @csvs = import_file.make_csvs_dollar_yens_transactions
-    #   dollar_yen_transactions = make_dollar_yen_transactions
-    #   DollarYenTransaction.import dollar_yen_transactions, validate: false
-    # end
   end
 end

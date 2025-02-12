@@ -1,5 +1,4 @@
 class CreateDollarYenTransactions < ActiveRecord::Migration[7.2]
-  # 　全部追加しよう。名称も
   def change
     create_table :dollar_yen_transactions do |t|
       t.references :transaction_type
@@ -20,5 +19,6 @@ class CreateDollarYenTransactions < ActiveRecord::Migration[7.2]
 
       t.timestamps
     end
+    add_index :dollar_yen_transactions, [ :transaction_type_id, :date ], unique: true
   end
 end

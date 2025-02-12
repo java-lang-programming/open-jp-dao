@@ -1,7 +1,6 @@
 
 module CsvImports
   class DollarYensTransactions
-
     GENERATE_KIND_INSERT = "insert"
     GENERATE_KIND_UPSERT = "upsert"
 
@@ -10,7 +9,7 @@ module CsvImports
     end
 
     # csvs [Files::]
-    def upsert_dollar_yen_transaction_csvs(csvs: csvs)
+    def upsert_dollar_yen_transaction_csvs(csvs:)
       # その日以前のデータを取得してきてdollar_yen_transactionsを作成する
       oldest_date = @import_file.get_oldest_date(csvs: csvs)
       # 以前データより新しいやつは更新が必要なので取得(再計算が必要なデータ)
@@ -45,7 +44,7 @@ module CsvImports
         csvs = upsert_dollar_yen_transaction_csvs(csvs: csvs)
       end
       dollar_yen_transactions = Files::DollarYenTransactionDepositCsv.make_dollar_yen_transactions(csvs: csvs)
-      {type: type, dollar_yens_transactions: dollar_yen_transactions}
+      { type: type, dollar_yens_transactions: dollar_yen_transactions }
     end
 
     # データより新しいやつは更新が必要なので取得(再計算が必要なデータ)
@@ -56,8 +55,7 @@ module CsvImports
     # Files::DollarYenTransactionDepositCsvのオブジェクトに変換
     def to_files_dollar_yen_transactions_csv(recalculation_need_dollar_yen_transactions:, preload_records:)
       recalculation_need_dollar_yen_transactions.map do |dollar_yen_transaction|
-        row = dollar_yen_transaction.to_csv_import_format
-        Files::DollarYenTransactionDepositCsv.new(address: preload_records[:address], row_num: -1, row: row, preload_records: preload_records)
+        dollar_yen_transaction.to_files_dollar_yen_transaction_csv(row_num: -1, preload_records: preload_records)
       end
     end
   end

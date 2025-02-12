@@ -22,6 +22,7 @@ module Files
     # cache transaction_typeが必要
     attr_accessor :address, :row_num, :date, :transaction_type_name, :deposit_quantity, :deposit_rate, :withdrawal_quantity, :exchange_en, :transaction_type, :preload_records
 
+    # FIX preload_reofrdにaddressいる？
     # addressとtransactionはcacheを引数で渡すべき
     def initialize(address:, row_num:, row:, preload_records: {})
       @address = address
@@ -209,13 +210,10 @@ module Files
       Date.new(dates[0].to_i, dates[1].to_i, dates[2].to_i)
     end
 
-    # 　登録済みならtrue, でなければfalse
-    # def already_registered?
-    #   find_transaction_type
-    #   dollar_yen_transaction = DollarYenTransaction.find_by_date_and_transaction_type_id(@date, transaction_type)
-    # end
-
-    # DollarYenTransactionに変換
+    # Files::DollarYenTransactionDepositCsvをDollarYenTransactionに変換する
+    #
+    # @param previous_dollar_yen_transactions [Files::DollarYenTransactionDepositCsv or nil] csvのファイルオブジェクト
+    # @return [DollarYenTransaction] DollarYenTransaction
     def to_dollar_yen_transaction(previous_dollar_yen_transactions: nil)
       @transaction_type ||= find_transaction_type
 
@@ -223,12 +221,12 @@ module Files
       dyt = create_dollar_yen_transaction
 
       # 変数格納
-      dyt.deposit_rate = BigDecimal(@deposit_rate) if dyt.deposit?
-      dyt.deposit_quantity = BigDecimal(@deposit_quantity) if dyt.deposit?
-      dyt.withdrawal_quantity = BigDecimal(@withdrawal_quantity) if dyt.withdrawal?
-      dyt.exchange_en = BigDecimal(@exchange_en) if dyt.withdrawal?
+      dyt.deposit_rate = BigDecimal(@deposit_rate.to_s) if dyt.deposit?
+      # puts "ここにはきてる"
+      dyt.deposit_quantity = BigDecimal(@deposit_quantity.to_s) if dyt.deposit?
+      dyt.withdrawal_quantity = BigDecimal(@withdrawal_quantity.to_s) if dyt.withdrawal?
+      dyt.exchange_en = BigDecimal(@exchange_en.to_s) if dyt.withdrawal?
 
-      # 値を計算
       en = dyt.calculate_deposit_en if dyt.deposit?
       withdrawal_rate = dyt.calculate_withdrawal_rate(previous_dollar_yen_transactions: previous_dollar_yen_transactions) if dyt.withdrawal?
       withdrawal_en = dyt.calculate_withdrawal_en(previous_dollar_yen_transactions: previous_dollar_yen_transactions) if dyt.withdrawal?
@@ -265,24 +263,28 @@ module Files
       @transaction_type ||= find_transaction_type
       date = target_date
 
+      new_dyt = DollarYenTransaction.new(
+        transaction_type: @transaction_type,
+        date: date,
+        address: address
+      )
+
       dyt = address.dollar_yen_transactions.where(date: date).where(transaction_type: @transaction_type).first
-      unless dyt.present?
-        dyt = DollarYenTransaction.new(
-          transaction_type: @transaction_type,
-          date: date,
-          address: address
-        )
-      end
-      dyt
+      new_dyt.id = dyt.id if dyt.present?
+      new_dyt
     end
 
+    # Array[Files::DollarYenTransactionDepositCsv]をArray[DollarYenTransaction]に変換する
+    #
+    # @param csvs [Array[Files::DollarYenTransactionDepositCsv]] csvのファイルオブジェクト一覧
+    # @return [Array[DollarYenTransaction]] DollarYenTransactionの一覧
     def self.make_dollar_yen_transactions(csvs:)
       dollar_yen_transactionss = []
       prev_dollar_yen_transaction = nil
       csvs.each_with_index do |item, idx|
         dollar_yen_transaction = item.to_dollar_yen_transaction(previous_dollar_yen_transactions: prev_dollar_yen_transaction)
-        prev_dollar_yen_transaction = dollar_yen_transaction
         dollar_yen_transactionss << dollar_yen_transaction
+        prev_dollar_yen_transaction = dollar_yen_transaction
       end
       dollar_yen_transactionss
     end

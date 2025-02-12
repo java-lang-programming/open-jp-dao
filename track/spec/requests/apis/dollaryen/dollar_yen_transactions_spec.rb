@@ -83,7 +83,6 @@ RSpec.describe "Apis::DollarYenTransactions", type: :request do
     let(:transaction_type1) { create(:transaction_type1, address: addresses_eth) }
     let(:transaction_type5) { create(:transaction_type5, address: addresses_eth) }
     let(:dollar_yen_transaction43) { create(:dollar_yen_transaction43, transaction_type: transaction_type1, address: addresses_eth) }
-    let(:dollar_yen_transaction44) { create(:dollar_yen_transaction44, transaction_type: transaction_type5, address: addresses_eth) }
 
     before do
       # sigin処理
@@ -118,17 +117,6 @@ RSpec.describe "Apis::DollarYenTransactions", type: :request do
       end
     end
 
-    # address
-    # context "address" do
-    #   # transaction_type
-    #   it "returns http bad_request4" do
-    #     post apis_dollaryen_transactions_path, params: { transaction_type_id: transaction_type1.id, date: '2020-04-01', address: 'asasad' }
-    #     json = JSON.parse(response.body, symbolize_names: true)
-    #     expect(json).to eq({ errors: [ { msg: "addressが存在しません。" } ] })
-    #     expect(response).to have_http_status(:bad_request)
-    #   end
-    # end
-
     context "deposite" do
       context "model validate" do
         it "returns http bad_request4" do
@@ -148,6 +136,8 @@ RSpec.describe "Apis::DollarYenTransactions", type: :request do
 
     # withdrawal
     context "withdrawal" do
+      let(:dollar_yen_transaction44) { build(:dollar_yen_transaction44, transaction_type: transaction_type5, address: addresses_eth) }
+
       context "model validate" do
         it "returns http bad_request when Withdrawal quantity is nil." do
           # transaction_type1の場合だけ
@@ -183,9 +173,11 @@ RSpec.describe "Apis::DollarYenTransactions", type: :request do
       it "created data" do
         # beforeデータ作成
         dollar_yen_transaction43
+
         post apis_dollaryen_transactions_path, params: { transaction_type_id: transaction_type5.id, date: '2024-02-01', withdrawal_quantity: 88, exchange_en: 12918, address: addresses_eth.address }
         data = DollarYenTransaction.where.not(id: dollar_yen_transaction43.id).first
         expect(response).to have_http_status(:created)
+
         expect(data.withdrawal_quantity).to eq(dollar_yen_transaction44.withdrawal_quantity)
         expect(data.exchange_en).to eq(dollar_yen_transaction44.exchange_en)
         expect(BigDecimal(data.exchange_difference).round).to eq(BigDecimal(dollar_yen_transaction44.exchange_difference).round)
@@ -199,9 +191,9 @@ RSpec.describe "Apis::DollarYenTransactions", type: :request do
   describe "Post /csv import" do
     let(:addresses_eth) { create(:addresses_eth) }
     let(:transaction_type1) { create(:transaction_type1, address: addresses_eth) }
-    let(:dollar_yen_transaction1) { create(:dollar_yen_transaction1, transaction_type: transaction_type1, address: addresses_eth) }
-    let(:dollar_yen_transaction2) { create(:dollar_yen_transaction2, transaction_type: transaction_type1, address: addresses_eth) }
-    let(:dollar_yen_transaction3) { create(:dollar_yen_transaction3, transaction_type: transaction_type1, address: addresses_eth) }
+    let(:dollar_yen_transaction1) { build(:dollar_yen_transaction1, transaction_type: transaction_type1, address: addresses_eth) }
+    let(:dollar_yen_transaction2) { build(:dollar_yen_transaction2, transaction_type: transaction_type1, address: addresses_eth) }
+    let(:dollar_yen_transaction3) { build(:dollar_yen_transaction3, transaction_type: transaction_type1, address: addresses_eth) }
     let(:dollar_yen_transaction43) { create(:dollar_yen_transaction43, transaction_type: transaction_type1, address: addresses_eth) }
     let(:job_2) { create(:job_2) }
     let(:error_deposit_csv_path) { "#{Rails.root}/spec/files/uploads/dollar_yen_transaction_deposit_csv/error_deposit.csv" }

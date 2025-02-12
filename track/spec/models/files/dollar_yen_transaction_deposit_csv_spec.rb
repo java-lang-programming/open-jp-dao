@@ -754,9 +754,11 @@ RSpec.describe Files::DollarYenTransactionDepositCsv, type: :model do
     end
   end
 
+
   describe 'make_dollar_yen_transactions' do
     let(:addresses_eth) { create(:addresses_eth) }
     let(:transaction_type1) { create(:transaction_type1, address: addresses_eth) }
+    let(:transaction_type2) { create(:transaction_type2, address: addresses_eth) }
     let(:transaction_type5) { create(:transaction_type5, address: addresses_eth) }
     let(:dollar_yen_transaction1) { create(:dollar_yen_transaction1, transaction_type: transaction_type1, address: addresses_eth) }
     let(:dollar_yen_transaction2) { create(:dollar_yen_transaction2, transaction_type: transaction_type1, address: addresses_eth) }
@@ -765,6 +767,10 @@ RSpec.describe Files::DollarYenTransactionDepositCsv, type: :model do
     let(:deposit_and_withdrawal_csv_path) { "#{Rails.root}/spec/files/uploads/dollar_yen_transaction_deposit_csv/deposit_and_withdrawal.csv" }
     let(:job_2) { create(:job_2) }
     let(:import_file) { create(:import_file, address: addresses_eth, job: job_2) }
+    let(:deposit_series_csv_path) { "#{Rails.root}/spec/files/uploads/dollar_yen_transaction_deposit_csv/deposit_series_csv.csv" }
+    let(:deposit_series_1_csv_path) { "#{Rails.root}/spec/files/uploads/dollar_yen_transaction_deposit_csv/deposit_series_1.csv" }
+    let(:deposit_series_2_csv_path) { "#{Rails.root}/spec/files/uploads/dollar_yen_transaction_deposit_csv/deposit_series_2.csv" }
+
 
     context 'make_dollar_yen_transactions' do
       # 3行分のデータを作成して確認
