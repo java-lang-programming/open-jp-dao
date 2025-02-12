@@ -229,14 +229,23 @@ RSpec.describe DollarYenTransaction, type: :model do
         expect(balance_quantity).to eq(3.97)
       end
 
-      # 次データの引数なし
-      it 'should be next balance_quantity when no arg.' do
-        # 　データの実態化
-        dollar_yen_transaction1
+      # 次データなしで以前のデータもない場合
+      it 'should be next balance_quantity when no prev data and no db data.' do
         target_date = Date.new(2020, 4, 1)
         dyt = DollarYenTransaction.new(transaction_type: transaction_type1, date: target_date, deposit_rate: 105.95, deposit_quantity: 10.76, address: addresses_eth)
         balance_quantity = dyt.calculate_balance_quantity
-        expect(balance_quantity).to eq(dollar_yen_transaction2.balance_quantity)
+        expect(balance_quantity).to eq(dyt.deposit_quantity)
+      end
+
+      # 次データなしで以前のデータがある場合
+      it 'should be next balance_quantity when no prev data and db data found.' do
+        # 以前のデータを作成
+        dollar_yen_transaction1
+
+        target_date = Date.new(2020, 6, 19)
+        dyt = DollarYenTransaction.new(transaction_type: transaction_type1, date: target_date, deposit_rate: 105.95, deposit_quantity: 10.76, address: addresses_eth)
+        balance_quantity = dyt.calculate_balance_quantity
+        expect(balance_quantity).to eq(dollar_yen_transaction1.balance_quantity + dyt.deposit_quantity)
       end
 
       # 次データの引数あり
@@ -266,7 +275,7 @@ RSpec.describe DollarYenTransaction, type: :model do
     let(:dollar_yen_transaction2) { create(:dollar_yen_transaction2, transaction_type: transaction_type1, address: addresses_eth) }
 
     context '残高円データを作成' do
-      # 初回
+      # 引数なしで以前のデータがない場合
       it 'should be first balance_quantity when no arg.' do
         target_date = Date.new(2020, 4, 1)
         dyt1 = DollarYenTransaction.new(transaction_type: transaction_type1, date: target_date, deposit_rate: 106.59, deposit_quantity: 3.97, address: addresses_eth)
@@ -274,7 +283,18 @@ RSpec.describe DollarYenTransaction, type: :model do
         expect(balance_en).to eq(dollar_yen_transaction1.balance_en)
       end
 
-      # 　次のデータ計算(引数なし)
+      # 引数なしで以前のデータがある場合
+      it 'should be next balance_en when no prev data and db data found.' do
+        # 以前のデータを作成
+        dollar_yen_transaction1
+
+        target_date = Date.new(2020, 6, 19)
+        dyt = DollarYenTransaction.new(transaction_type: transaction_type1, date: target_date, deposit_rate: 105.95, deposit_quantity: 10.76, address: addresses_eth)
+        balance_quantity = dyt.calculate_balance_en
+        expect(balance_quantity).to eq(dollar_yen_transaction1.balance_en + dyt.calculate_deposit_en)
+      end
+
+      #  次のデータ計算(引数なし)
       it 'should be next balance_en.' do
         # 　データの実態化
         dollar_yen_transaction1
@@ -283,6 +303,19 @@ RSpec.describe DollarYenTransaction, type: :model do
         balance_en = dyt2.calculate_balance_en
         expect(balance_en).to eq(dollar_yen_transaction2.balance_en)
       end
+
+      # テスト(というか設計がおかしい)
+      # 次データの引数あり
+      # it 'should be next balance_en.' do
+      #   target_date = Date.new(2020, 6, 19)
+      #   dyt = DollarYenTransaction.new(transaction_type: transaction_type1, date: target_date, deposit_rate: 105.95, deposit_quantity: 10.76, address: addresses_eth)
+      #   row = dyt.to_csv_import_format
+      #   preload_records = { address: addresses_eth, transaction_types: addresses_eth.transaction_types }
+      #   csv = Files::DollarYenTransactionDepositCsv.new(address: addresses_eth, row_num: -1, row: row, preload_records: preload_records)
+      #   previous_dollar_yen_transactions = csv.to_dollar_yen_transaction
+      #   balance_quantity = dyt.calculate_balance_en(previous_dollar_yen_transactions: previous_dollar_yen_transactions)
+      #   expect(balance_quantity).to eq(dyt.calculate_balance_en)
+      # end
     end
   end
 
@@ -373,6 +406,46 @@ RSpec.describe DollarYenTransaction, type: :model do
 
       it 'should be withdrawal_rate_on_screen when data found.' do
         expect(dollar_yen_transaction44.withdrawal_rate_on_screen).to eq(137.05)
+      end
+    end
+  end
+
+  describe 'to_csv_import_format' do
+    let(:addresses_eth) { create(:addresses_eth) }
+    let(:transaction_type1) { create(:transaction_type1, address: addresses_eth) }
+    let(:transaction_type5) { create(:transaction_type5, address: addresses_eth) }
+    let(:dollar_yen_transaction1) { create(:dollar_yen_transaction1, transaction_type: transaction_type1, address: addresses_eth) }
+    let(:dollar_yen_transaction44) { create(:dollar_yen_transaction44, transaction_type: transaction_type5, address: addresses_eth) }
+
+    context 'import用のcsvデータを作成する' do
+      it 'should be cvs data when deposit data.' do
+        csv_data = dollar_yen_transaction1.to_csv_import_format
+        expect(csv_data).to eq([ "2020/04/01", "HDV配当入金", "3.97", "106.59", nil, nil ])
+      end
+
+      it 'should be cvs data when withdrawal data.' do
+        csv_data = dollar_yen_transaction44.to_csv_import_format
+        expect(csv_data).to eq([ "2024/02/01", "ドルを円に変換", nil, nil, "88", "12918" ])
+      end
+    end
+  end
+
+  describe 'to_csv_export_format' do
+    let(:addresses_eth) { create(:addresses_eth) }
+    let(:transaction_type1) { create(:transaction_type1, address: addresses_eth) }
+    let(:transaction_type5) { create(:transaction_type5, address: addresses_eth) }
+    let(:dollar_yen_transaction1) { create(:dollar_yen_transaction1, transaction_type: transaction_type1, address: addresses_eth) }
+    let(:dollar_yen_transaction44) { create(:dollar_yen_transaction44, transaction_type: transaction_type5, address: addresses_eth) }
+
+    context 'export用のcsvデータを作成する' do
+      it 'should be cvs data when deposit data.' do
+        csv_data = dollar_yen_transaction1.to_csv_export_format
+        expect(csv_data).to eq([ "2020/04/01", "HDV配当入金", 3.97, 106.59, 423, nil, nil, nil, 3.97, 106.5491184, 423.0 ])
+      end
+
+      it 'should be cvs data when withdrawal data.' do
+        csv_data = dollar_yen_transaction44.to_csv_export_format
+        expect(csv_data).to eq([ "2024/02/01", "ドルを円に変換", nil, nil, nil, 88.0, 137.0555585, 12060.88915, 657.88, 137.0569101, 90166.11085 ])
       end
     end
   end

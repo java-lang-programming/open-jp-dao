@@ -12,12 +12,16 @@ class DollarYenTransactionsCsvImportJob < ApplicationJob
       import_file.status = ImportFile.statuses[:in_progress]
       import_file.save
 
-      # csvデータをcsvオブジェクト一覧にする
-      csvs = import_file.make_csvs_dollar_yens_transactions
-      # DB用データに変換
-      dollar_yen_transactions = Files::DollarYenTransactionDepositCsv.make_dollar_yen_transactions(csvs: csvs)
-      # bulk insert
-      DollarYenTransaction.import dollar_yen_transactions, validate: false
+      ci = CsvImports::DollarYensTransactions.new(import_file: import_file)
+      dollar_yens_transactions = ci.generate_dollar_yens_transactions
+
+      if dollar_yens_transactions[:type] == CsvImports::DollarYensTransactions::GENERATE_KIND_INSERT
+        DollarYenTransaction.import dollar_yens_transactions[:dollar_yens_transactions], validate: true
+      elsif dollar_yens_transactions[:type] == CsvImports::DollarYensTransactions::GENERATE_KIND_UPSERT
+        DollarYenTransaction.import dollar_yens_transactions[:dollar_yens_transactions], on_duplicate_key_update: { conflict_target: [ :id ], columns: [ :deposit_rate, :deposit_quantity, :deposit_en, :balance_rate, :balance_quantity, :balance_en ] },  validate: true
+      else
+        raise Exception("unexpected type")
+      end
 
       import_file.status = ImportFile.statuses[:completed]
       import_file.save
