@@ -40,8 +40,8 @@ ActiveRecord::Schema[8.0].define(version: 2025_01_13_235613) do
   end
 
   create_table "addresses", force: :cascade do |t|
-    t.string "address"
-    t.integer "kind"
+    t.string "address", null: false
+    t.integer "kind", null: false
     t.datetime "deleted_at"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
@@ -66,6 +66,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_01_13_235613) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["address_id"], name: "index_dollar_yen_transactions_on_address_id"
+    t.index ["transaction_type_id", "date"], name: "index_dollar_yen_transactions_on_transaction_type_id_and_date", unique: true
     t.index ["transaction_type_id"], name: "index_dollar_yen_transactions_on_transaction_type_id"
   end
 
