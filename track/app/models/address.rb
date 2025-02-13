@@ -3,6 +3,7 @@ class Address < ApplicationRecord
   has_many :transaction_types, dependent: :destroy
   has_many :dollar_yen_transactions, dependent: :destroy
   has_many :sessions, dependent: :destroy
+  has_many :import_files, dependent: :destroy
 
   validates :address, presence: true
 
