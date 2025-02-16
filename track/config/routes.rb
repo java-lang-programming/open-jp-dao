@@ -15,6 +15,9 @@ Rails.application.routes.draw do
       resources :transactions
       resources :foreigne_exchange_gain
       post "transactions/csv_import"
+      # dollar_yens_transactiosn/hogeかも。。。
+      post "transactions/csv_import_download"
+      resources :downloads, only: [ :show ]
     end
 
     get "sessions/nonce"

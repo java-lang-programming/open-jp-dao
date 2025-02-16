@@ -131,4 +131,15 @@ RSpec.describe Job, type: :model do
       end
     end
   end
+
+  describe 'make_file_name' do
+    let(:addresses_eth) { create(:addresses_eth) }
+
+    context 'file_pathを作成' do
+      it 'should be file_name.' do
+        file_name = addresses_eth.make_file_name
+        expect(file_name).to match(/#{addresses_eth.address}/)
+      end
+    end
+  end
 end

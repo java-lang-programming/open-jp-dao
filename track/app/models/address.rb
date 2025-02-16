@@ -8,6 +8,11 @@ class Address < ApplicationRecord
   validates :address, presence: true
 
   def generate_dollar_yen_transactions_csv_import_file(output_csv_file_path:)
+    csv_data = generate_dollar_yen_transactions_csv_import_data
+    File.write(output_csv_file_path, csv_data)
+  end
+
+  def generate_dollar_yen_transactions_csv_import_data
     csv_data = CSV.generate do |csv|
       column_names = Files::DollarYenTransactionDepositCsv::COLUMN_NAMES
       csv << column_names
@@ -16,8 +21,6 @@ class Address < ApplicationRecord
         csv << dollar_yen_transaction.to_csv_import_format
       end
     end.chomp
-    # ファイルのパスとcsvデータを指定して、csvファイル作成
-    File.write(output_csv_file_path, csv_data)
   end
 
   def generate_dollar_yen_transactions_csv_export_import_file(output_csv_file_path:)
@@ -31,6 +34,11 @@ class Address < ApplicationRecord
     end.chomp
     # ファイルのパスとcsvデータを指定して、csvファイル作成
     File.write(output_csv_file_path, csv_data)
+  end
+
+  # ファイル名を作成
+  def make_file_name
+    "#{address}_#{Time.now.strftime("%Y%m%d%H%M%S")}.csv"
   end
 
   class << self
