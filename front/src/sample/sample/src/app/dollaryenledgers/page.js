@@ -4,6 +4,7 @@ import localFont from "next/font/local";
 // import "./../globals.css";
 import Link from 'next/link';
 import React, {useEffect, useState} from 'react';
+import { fetchTransactions, downloadCsvExport, downloadCsvImport } from "../repo/dollaryen";
 
 
 const geistSans = localFont({
@@ -25,13 +26,8 @@ export default function Home() {
 
   // address=0x00001E868c62FA205d38BeBaB7B903322A4CC89Dz
   const fetchList = async() => {
-    const apiBaseUrl = "http://localhost:3000"
     try {
-      const response = await fetch(`${apiBaseUrl}/apis/dollaryen/transactions`, {
-        method: 'GET',
-        mode: 'cors',
-        credentials: 'include',
-      });
+      const response = await fetchTransactions()
       const json = await response.json();
       if (response.status === 200) {
         setTotal(json["total"]);
@@ -43,6 +39,7 @@ export default function Home() {
       console.error(error.message);
     }
   }
+
 
   useEffect(() => {
     fetchList()
@@ -56,7 +53,9 @@ export default function Home() {
       <Link href="/transaction_types/create">取引種別作成</Link><br/>
       <Link href="/dollaryenledgers/create">外貨預金元帳ドル円作成</Link><br/>
       <Link href="/dollaryenledgers/1">外貨預金元帳ドル円詳細</Link><br/>
-      <Link href="/dollaryenledgers/upload">外貨預金元帳ドル円csvアップロード</Link>
+      <Link href="/dollaryenledgers/upload">外貨預金元帳ドル円csvアップロード</Link><br />
+      <Link href={downloadCsvExport}>外貨預金元帳ドル円csv exportダウンロード</Link><br/>
+      <Link href={downloadCsvImport}>外貨預金元帳ドル円csv importダウンロード</Link>
       <hr />
       <table border="2">
         <thead>

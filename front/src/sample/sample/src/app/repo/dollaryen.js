@@ -1,6 +1,21 @@
 const ApiBaseUrl = "http://localhost:3000"
 
 /**
+ * @description rails apiに接続してtransactionsを取得する
+ * @function 
+ */
+export const fetchTransactions = () => {
+  return fetch(`${ApiBaseUrl}/apis/dollaryen/transactions`, {
+    method: "GET",
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    mode: 'cors',
+    credentials: 'include'
+  }) 
+}
+
+/**
  * @description rails apiに接続してForeigneExchangeGainを取得する
  * @function 
  */
@@ -34,3 +49,7 @@ export const postDollaryensTransactionsCsvImport = (body) => {
     credentials: 'include'
   })
 }
+
+export const downloadCsvExport = `${ApiBaseUrl}/apis/dollaryen/downloads/csv_export`
+export const downloadCsvImport = `${ApiBaseUrl}/apis/dollaryen/downloads/csv_import`
+
