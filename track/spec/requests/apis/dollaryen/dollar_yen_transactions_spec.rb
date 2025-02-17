@@ -6,7 +6,6 @@ RSpec.describe "Apis::DollarYenTransactions", type: :request do
     let(:transaction_type1) { create(:transaction_type1, address: addresses_eth) }
     let(:dollar_yen_transaction1) { create(:dollar_yen_transaction1, transaction_type: transaction_type1, address: addresses_eth) }
     let(:dollar_yen_transaction2) { create(:dollar_yen_transaction2, transaction_type: transaction_type1, address: addresses_eth) }
-    # let(:dollar_yen_transaction3) { create(:dollar_yen_transaction3, transaction_type: transaction_type1, address: addresses_eth) }
 
     before do
       # sigin処理

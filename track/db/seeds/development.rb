@@ -83,9 +83,14 @@ Job.create!(
 
 puts "Job作成終了"
 
-puts "ドル円マスタ投入"
-csv_dollar_yen_path = Rails.root.join("db", "seeds", "dollar_yens_2024.csv")
-service = FileUploads::DollarYenCsv.new(file: csv_dollar_yen_path)
+puts "ドル円2024マスタ投入"
+csv_dollar_yen_2024_path = Rails.root.join("db", "seeds", "dollar_yens_2024.csv")
+service = FileUploads::DollarYenCsv.new(file: csv_dollar_yen_2024_path)
+service.execute
+
+puts "ドル円2025マスタ投入"
+csv_dollar_yen_2025_path = Rails.root.join("db", "seeds", "dollar_yens_2025.csv")
+service = FileUploads::DollarYenCsv.new(file: csv_dollar_yen_2025_path)
 service.execute
 
 puts "ドル円マスタ投入完了"
@@ -97,5 +102,16 @@ Notification.create!(
    start_at: Time.now,
    end_at: Time.now.tomorrow,
    priority: 1
-
 )
+
+# 　csv importようにテストデータ
+puts "トランザクションデータ"
+import_file = ImportFile.new(address: address, job: job, status: ImportFile.statuses[:ready])
+test_deposit_csv_dev_path = Rails.root.join("test_deposit_csv_dev.csv")
+puts test_deposit_csv_dev_path
+file = File.new(test_deposit_csv_dev.csv)
+import_file.file.attach(file)
+import_file.save
+
+DollarYenTransactionsCsvImportJob.perform_later(import_file_id: import_file.id)
+puts "トランザクションデータ作成完了"

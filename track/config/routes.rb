@@ -2,6 +2,7 @@ Rails.application.routes.draw do
   # resource :session
   # resources :passwords, param: :token
   namespace :apis do
+    get "import_files/index"
     get "notifications/index"
     resources :dollar_yens do
       collection do
@@ -10,10 +11,10 @@ Rails.application.routes.draw do
     end
     resources :transaction_types
     namespace :dollaryen do
-      # post "csv_import"
       resources :transactions
       resources :foreigne_exchange_gain
       post "transactions/csv_import"
+      resources :downloads, only: [ :show ]
     end
 
     get "sessions/nonce"

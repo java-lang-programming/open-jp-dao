@@ -102,8 +102,7 @@ class Apis::Dollaryen::TransactionsController < ApplicationController
     render status: :created
   end
 
-  # TODO エラーの場合なども詳細にする
-  # 　ここのrspecを修正 jobのテストも追加すること
+  # TODO エラーの場合も詳細にする
   def csv_import
     file = params[:file]
 
