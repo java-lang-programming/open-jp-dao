@@ -105,13 +105,13 @@ Notification.create!(
 )
 
 # 　csv importようにテストデータ
-puts "トランザクションデータ"
-import_file = ImportFile.new(address: address, job: job, status: ImportFile.statuses[:ready])
-test_deposit_csv_dev_path = Rails.root.join("test_deposit_csv_dev.csv")
-puts test_deposit_csv_dev_path
-file = File.new(test_deposit_csv_dev.csv)
-import_file.file.attach(file)
-import_file.save
+# puts "トランザクションデータ"
+# import_file = ImportFile.new(address: address, job: job, status: ImportFile.statuses[:ready])
+# test_deposit_csv_dev_path = Rails.root.join("test_deposit_csv_dev.csv")
+# puts test_deposit_csv_dev_path
+# file = File.new(test_deposit_csv_dev.csv)
+# import_file.file.attach(file)
+# import_file.save
 
-DollarYenTransactionsCsvImportJob.perform_later(import_file_id: import_file.id)
-puts "トランザクションデータ作成完了"
+# DollarYenTransactionsCsvImportJob.perform_later(import_file_id: import_file.id)
+# puts "トランザクションデータ作成完了"
