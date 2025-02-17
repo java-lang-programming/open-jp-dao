@@ -24,6 +24,11 @@ class Address < ApplicationRecord
   end
 
   def generate_dollar_yen_transactions_csv_export_import_file(output_csv_file_path:)
+    csv_data = generate_dollar_yen_transactions_csv_export_import_data
+    File.write(output_csv_file_path, csv_data)
+  end
+
+  def generate_dollar_yen_transactions_csv_export_import_data
     csv_data = CSV.generate do |csv|
       column_names = []
       csv << DollarYenTransaction::EXPORT_CSV_COLUMN_NAMES
@@ -32,8 +37,6 @@ class Address < ApplicationRecord
         csv << dollar_yen_transaction.to_csv_export_format
       end
     end.chomp
-    # ファイルのパスとcsvデータを指定して、csvファイル作成
-    File.write(output_csv_file_path, csv_data)
   end
 
   # ファイル名を作成

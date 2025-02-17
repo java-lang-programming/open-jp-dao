@@ -6,7 +6,6 @@ RSpec.describe "Apis::DollarYenTransactions", type: :request do
     let(:transaction_type1) { create(:transaction_type1, address: addresses_eth) }
     let(:dollar_yen_transaction1) { create(:dollar_yen_transaction1, transaction_type: transaction_type1, address: addresses_eth) }
     let(:dollar_yen_transaction2) { create(:dollar_yen_transaction2, transaction_type: transaction_type1, address: addresses_eth) }
-    # let(:dollar_yen_transaction3) { create(:dollar_yen_transaction3, transaction_type: transaction_type1, address: addresses_eth) }
 
     before do
       # sigin処理
@@ -274,31 +273,6 @@ RSpec.describe "Apis::DollarYenTransactions", type: :request do
       expect(data3.balance_rate.truncate(6)).to eq(dollar_yen_transaction3.balance_rate.truncate(6))
       expect(data3.balance_quantity.truncate(6)).to eq(dollar_yen_transaction3.balance_quantity.truncate(6))
       expect(data3.balance_en.truncate(6)).to eq(dollar_yen_transaction3.balance_en.truncate(6))
-    end
-  end
-
-  # TODO path
-  # get /apis/dollaryen/transactions/downloads/csv_import(.:format)
-  # get /apis/dollaryen/transactions/downloads/csv_export(.:format)
-  # get /apis/dollaryen/transactions/downloads/pdf(.:format)
-  describe "Get /csv_import_download" do
-    let(:addresses_eth) { create(:addresses_eth) }
-    let(:transaction_type1) { create(:transaction_type1, address: addresses_eth) }
-    let(:dollar_yen_transaction1) { create(:dollar_yen_transaction1, transaction_type: transaction_type1, address: addresses_eth) }
-
-    before do
-      # sigin処理
-      mock_apis_verify(body: {})
-      get apis_sessions_nonce_path
-      post apis_sessions_signin_path, params: { address: addresses_eth.address, kind: Address.kinds[:ethereum], chain_id: 1, message: "message", signature: "signature", domain: "aiueo.com" }
-    end
-
-    it "returns created." do
-      dollar_yen_transaction1
-
-      post apis_dollaryen_transactions_csv_import_download_path
-      expect(response.headers["Content-Type"]).to include "text/csv"
-      expect(response.body).to eq("date,transaction_type,deposit_quantity,deposit_rate,withdrawal_quantity,exchange_en\n2020/04/01,HDV配当入金,3.97,106.59,,")
     end
   end
 end

@@ -1,5 +1,5 @@
 class Apis::Dollaryen::TransactionsController < ApplicationController
-  before_action :verify_v2, only: [ :index, :create, :csv_import, :csv_import_download ]
+  before_action :verify_v2, only: [ :index, :create, :csv_import ]
 
   def index
     # default
@@ -102,8 +102,7 @@ class Apis::Dollaryen::TransactionsController < ApplicationController
     render status: :created
   end
 
-  # TODO エラーの場合なども詳細にする
-  # 　ここのrspecを修正 jobのテストも追加すること
+  # TODO エラーの場合も詳細にする
   def csv_import
     file = params[:file]
 
@@ -143,20 +142,4 @@ class Apis::Dollaryen::TransactionsController < ApplicationController
 
     render status: :created
   end
-
-  # 　url変更前に描き切る
-  def csv_import_download
-    session = find_session_by_cookie
-    address = session.address
-
-    send_data(
-      session.address.generate_dollar_yen_transactions_csv_import_data,
-      filename: session.address.make_file_name,
-      disposition: "attachment",
-      type: :csv
-    )
-  end
-
-  # def csv_export_download
-  # end
 end

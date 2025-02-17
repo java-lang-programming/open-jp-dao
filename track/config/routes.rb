@@ -11,12 +11,9 @@ Rails.application.routes.draw do
     end
     resources :transaction_types
     namespace :dollaryen do
-      # post "csv_import"
       resources :transactions
       resources :foreigne_exchange_gain
       post "transactions/csv_import"
-      # dollar_yens_transactiosn/hogeかも。。。
-      post "transactions/csv_import_download"
       resources :downloads, only: [ :show ]
     end
 
