@@ -1,5 +1,5 @@
 # Make sure RUBY_VERSION matches the Ruby version in .ruby-version
-ARG RUBY_VERSION=3.4.1
+ARG RUBY_VERSION=3.4.2
 FROM ruby:$RUBY_VERSION As dev_builder
 
 ENV LANG C.UTF-8
