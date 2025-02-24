@@ -410,6 +410,19 @@ RSpec.describe DollarYenTransaction, type: :model do
     end
   end
 
+  describe 'balance_en_on_screen' do
+    let(:addresses_eth) { create(:addresses_eth) }
+    let(:transaction_type5) { create(:transaction_type5, address: addresses_eth) }
+    let(:dollar_yen_transaction44) { create(:dollar_yen_transaction44, transaction_type: transaction_type5, address: addresses_eth) }
+
+    context '画面表示 balance_en_on_screen' do
+      # 端数の処理は切り捨て
+      it 'should be balance_en_on_screen when data is decimal point.' do
+        expect(dollar_yen_transaction44.balance_en_on_screen).to eq(90166)
+      end
+    end
+  end
+
   describe 'to_csv_import_format' do
     let(:addresses_eth) { create(:addresses_eth) }
     let(:transaction_type1) { create(:transaction_type1, address: addresses_eth) }

@@ -1,6 +1,10 @@
 Rails.application.routes.draw do
   # resource :session
   # resources :passwords, param: :token
+
+  # TODO root
+  get "top" => "top#index"
+
   namespace :apis do
     get "import_files/index"
     get "notifications/index"
@@ -23,6 +27,17 @@ Rails.application.routes.draw do
     post "sessions/signout"
     get "sessions/user"
   end
+
+  resources :dollar_yen_transactions do
+    collection do
+      get "csv_upload"
+      post "csv_import"
+    end
+  end
+
+  resources :import_files, only: [ :index ]
+
+
   # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
 
   # Reveal health status on /up that returns 200 if the app boots with no exceptions, otherwise 500.

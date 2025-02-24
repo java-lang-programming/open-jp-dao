@@ -1,0 +1,38 @@
+<header>
+  <div className="header1">
+    <div>
+      <a href="#" className="header1_site_name">WanWan</a>
+    </div>
+    <nav
+      className="header1_nav">
+      <div>
+        <% if user.present? %>
+          <button className="btn_sign">ログアウト</button>
+        <% end %>
+      </div>
+    </nav>
+  </div>
+
+  <div className="header2">
+    <div>
+      <ul className="header2_nav">
+        <li>
+          <Link href="/">
+            Home
+          </Link>
+        </li>
+        <li>
+          <a href="#"
+            className="header2_nav_li">お知らせ・ご案内</a>
+        </li>
+      </ul>
+    </div>
+  </div>
+    
+  <div className="header3">
+    <div className="header3_item"><%= user[:address] %></div>
+    <div className="header3_item"><%= user[:network] %></div>
+    <div className="header3_item">最終ログイン:<%= user[:last_login] %></div>
+  </div>
+
+</header>

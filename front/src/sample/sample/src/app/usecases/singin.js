@@ -16,7 +16,7 @@ import { SiweMessage } from 'siwe';
 //  * @function 
 //  */
 export const makeMessage = (scheme, domain, origin, address, chainId, nonce)=> {
-  const statement = 'Sign in with Ethereum to the app.';
+  const statement = 'Sign in with Ethereum to the WanWan.';
       
   const siweMessage = new SiweMessage({
     scheme,

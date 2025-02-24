@@ -116,6 +116,10 @@ GEM
     hashdiff (1.1.2)
     i18n (1.14.6)
       concurrent-ruby (~> 1.0)
+    importmap-rails (2.1.0)
+      actionpack (>= 6.0.0)
+      activesupport (>= 6.0.0)
+      railties (>= 6.0.0)
     io-console (0.8.0)
     irb (1.15.1)
       pp (>= 0.6.0)
@@ -171,6 +175,11 @@ GEM
     pp (0.6.2)
       prettyprint
     prettyprint (0.2.0)
+    propshaft (1.1.0)
+      actionpack (>= 7.0.0)
+      activesupport (>= 7.0.0)
+      rack
+      railties (>= 7.0.0)
     psych (5.2.3)
       date
       stringio
@@ -298,6 +307,9 @@ GEM
     stringio (3.1.2)
     thor (1.3.2)
     timeout (0.4.2)
+    turbo-rails (2.0.11)
+      actionpack (>= 6.0.0)
+      railties (>= 6.0.0)
     tzinfo (2.0.6)
       concurrent-ruby (~> 1.0)
     unicode-display_width (2.6.0)
@@ -337,6 +349,8 @@ DEPENDENCIES
   debug
   factory_bot
   factory_bot_rails
+  importmap-rails
+  propshaft
   puma (>= 5.0)
   rack-cors
   rails (~> 8.0.0)
@@ -345,6 +359,7 @@ DEPENDENCIES
   simplecov
   solid_queue (~> 1.0)
   sqlite3 (>= 1.4)
+  turbo-rails
   tzinfo-data
   webmock
 

@@ -147,12 +147,12 @@ class DollarYenTransaction < ApplicationRecord
     nil
   end
 
-  # @return [float|nil] 画面で表示するdeposit
+  # @return [Integer|nil] 画面で表示するdeposit 円換算
   #
-  # deposit_enを表示する。データがない場合はnil
+  # deposit_enを表示する。小数点以下の数を切り捨てて整数にする。データがない場合はnil
   #
   def deposit_en_screen
-    return BigDecimal(deposit_en).floor(2).to_f if deposit_en.present?
+    return BigDecimal(deposit_en).floor(0).to_i if deposit_en.present?
     nil
   end
 
@@ -199,9 +199,10 @@ class DollarYenTransaction < ApplicationRecord
     nil
   end
 
-
+  # @return [Integer|nil] 残帳簿価格 円換算
+  # 小数点以下の数を切り捨てて整数にする
   def balance_en_on_screen
-    return BigDecimal(balance_en).floor(2).to_f if balance_en.present?
+    return BigDecimal(balance_en).floor(0).to_i if balance_en.present?
     nil
   end
 

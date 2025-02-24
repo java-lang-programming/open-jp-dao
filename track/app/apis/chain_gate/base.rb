@@ -24,9 +24,9 @@ module ChainGate
       uri, http = initialize_http(path)
       begin
         http.post(uri.path, params.to_json, HEADERS)
-      rescue StandardError => ex
-        logger.error(ex)
-        throw ex
+      rescue => e
+        logger.error(e)
+        raise e
       end
     end
 
