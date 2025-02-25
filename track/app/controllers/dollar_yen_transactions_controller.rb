@@ -10,7 +10,7 @@ class DollarYenTransactionsController < ApplicationViewController
     offset = params[:offset]
     offset = 0 unless offset.present?
 
-    @user = user
+    header_session
     # @notification = { message: "aaaaaaaaaa" }
 
     base_sql = @session.address.dollar_yen_transactions.preload(:transaction_type)
@@ -20,8 +20,27 @@ class DollarYenTransactionsController < ApplicationViewController
     @dollaryen_transactions = base_sql.limit(limit).offset(offset).order(date: :desc,  transaction_type_id: :asc)
   end
 
+  def new
+    header_session
+  end
+
+  def edit
+    header_session
+  end
+
+
+
+  def confirm_comfirm
+
+  end
+
+  # 作成
+  def create
+
+  end
+
   def csv_upload
-    @user = user
+    header_session
   end
 
   def csv_import
@@ -64,4 +83,10 @@ class DollarYenTransactionsController < ApplicationViewController
       # https://zenn.dev/greendrop/articles/2024-11-07-de79415b55bff0
     end
   end
+
+  private
+
+    def header_session
+      @user = user
+    end
 end

@@ -1,0 +1,106 @@
+/** メディアクエリmin-sizeは小さい順に書く**/
+/** メディアクエリはモバイルファーストで記載する **/
+
+
+/** スクリーンサイズが640px以上の場合に適用 **/
+@media (min-width: 640px) {
+  .container {
+    max-width: 640px;
+  }
+}
+
+@media (min-width: 768px) {
+  .container {
+    max-width: 768px;
+  }
+}
+
+@media (min-width: 1024px) {
+  .container {
+    max-width: 1024px;
+  }
+}
+
+@media(min-width: 1280px) {
+  .container {
+    max-width: 1280px;
+  }
+}
+
+/* 一番上の header */
+.header_nav_first {
+  display: flex;
+  padding: 1.25rem;
+  margin-left: auto;
+  margin-right: auto;
+  background-color: #FDF5E6;
+}
+
+.header_nav_first .left_side {
+  display: flex;
+  align-items: center;
+}
+
+.header_nav_first .left_side .site_name {
+  font-weight: 700;
+  font-size: 1.125rem;
+  line-height: 1.75rem;
+  text-decoration: inherit; 
+}
+
+.header_nav_first .nav {
+  margin-left:auto;  
+}
+
+.header_nav_first .nav .btn_session {
+  border-width: 1px;
+  border-radius: 0.75rem;
+  padding-top: 0.75rem;
+  padding-bottom: 0.75rem;
+}
+
+/* 2行目のheader */
+.header_nav_second {
+  display: flex;
+  padding: 1.00rem;
+  margin-left: auto;
+  margin-right: auto;
+  background-color: rgb(249 250 251 / 1);
+}
+
+.header_nav_second .ul_nav {
+  display: inline-flex;
+  list-style-type: none; 
+}
+
+.header_nav_second .ul_nav .li_nav {
+  margin-left: 20px;
+  margin-right: 20px;
+}
+
+.header_nav_second .ul_nav .li_nav .li_nav_link {
+  text-decoration: none;
+}
+
+.header_nav_second .ul_nav .li_nav .li_nav_link:hover {
+  color:black;
+  text-decoration: underline;
+}
+
+.header_session {
+  display: flex;
+  padding: 1.25rem;
+  margin-left: auto;
+  margin-right: auto;
+  justify-content:space-between;
+}
+
+.header_session .item {
+  margin-right: 10px;
+}
+
+.information {
+  text-align: center;
+  padding-top: 1rem;
+  padding-bottom: 1rem;
+}

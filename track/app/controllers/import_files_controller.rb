@@ -22,7 +22,7 @@ class ImportFilesController < ApplicationViewController
     @import_files = base_sql.order(created_at: :desc).map do |import_file|
       {
         id: import_file.id,
-        date: import_file.created_at.strftime("%Y/%m/%d"),
+        date: import_file.created_at.strftime("%Y/%m/%d %H:%M:%S"),
         job_name: import_file.job.name,
         status: import_file.status_on_screen
       }

@@ -5,7 +5,10 @@
 <% end %>
 
 <p>ドル円外貨預金元帳</p>
-<a href="./dollar_yen_transactions/csv_upload">ドル円外貨預金元帳csvアップロード</a>
+<hr/>
+<p><a href="./dollar_yen_transactions/csv_upload">ドル円外貨預金元帳csvアップロード</a></p>
+<p><%= link_to "ドル円外貨預金元帳データ作成", new_dollar_yen_transaction_path %></p>
+<hr/>
 <p>全<%= @total %>件</p>
 <% if @total > 0 %>
       <table border="2">
@@ -37,14 +40,14 @@
               <th scope="row"><%= index + 1 %></th> 
               <th scope="row"><%= dollaryen_transaction.date.strftime("%Y/%m/%d")  %></th>
               <th scope="row"><%= dollaryen_transaction.transaction_type.name %></th>
-              <th scope="row"><%= dollaryen_transaction.deposit_rate_on_screen %></th>
-              <td><%= dollaryen_transaction.deposit_quantity_on_screen %></td>
+              <th scope="row"><%= dollaryen_transaction.deposit_quantity_on_screen %></th>
+              <td><%= dollaryen_transaction.deposit_rate_on_screen %></td>
               <td><%= dollaryen_transaction.deposit_en_screen %></td>
               <td><%= dollaryen_transaction.withdrawal_rate_on_screen %></td>
               <td><%= dollaryen_transaction.withdrawal_quantity_on_screen %></td>
               <td><%= dollaryen_transaction.withdrawal_en_on_screen %></td>
-              <td><%= dollaryen_transaction.balance_rate_on_screen %></td>
               <td><%= dollaryen_transaction.balance_quantity_on_screen %></td>
+              <td><%= dollaryen_transaction.balance_rate_on_screen %></td>
               <td><%= dollaryen_transaction.balance_en_on_screen %></td>
               <td><input type="button" value="編集"/></td>
               <td><input type="button" value="削除"/></td>

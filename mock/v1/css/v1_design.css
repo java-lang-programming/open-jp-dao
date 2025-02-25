@@ -33,70 +33,69 @@
   padding: 1.25rem;
   margin-left: auto;
   margin-right: auto;
-  margin-top: auto;
-  margin-bottom: auto;
-
-  /** 左側(iconとサイト名) **/
-  .left_side {
-    display: flex;
-    align-items: center;
-
-    /** サイト名 **/
-    .site_name {
-      font-weight: 700;
-      font-size: 1.125rem;
-      line-height: 1.75rem;
-      text-decoration: inherit; 
-    }
-  }
-
-  /** ナビゲーション 右寄 **/
-  .nav {
-    margin-left:auto;
-  }
+  background-color: #FDF5E6;
 }
 
-
-.header1_nav {
-  margin-left:auto;
+.header_nav_first .left_side {
+  display: flex;
+  align-items: center;
 }
 
-.btn_sign {
+.header_nav_first .left_side .site_name {
+  font-weight: 700;
+  font-size: 1.125rem;
+  line-height: 1.75rem;
+  text-decoration: inherit; 
+}
+
+.header_nav_first .nav {
+  margin-left:auto;  
+}
+
+.header_nav_first .nav .btn_session {
   border-width: 1px;
   border-radius: 0.75rem;
   padding-top: 0.75rem;
   padding-bottom: 0.75rem;
 }
 
-.header2 {
+/* 2行目のheader */
+.header_nav_second {
   display: flex;
-  padding: 1.25rem;
+  padding: 1.00rem;
   margin-left: auto;
   margin-right: auto;
-  --tw-bg-opacity: 1;
-  background-color: rgb(249 250 251 / var(--tw-bg-opacity, 1));
+  background-color: rgb(249 250 251 / 1);
 }
 
-.header2_nav {
+.header_nav_second .ul_nav {
   display: inline-flex;
-  list-style-type: none;
+  list-style-type: none; 
 }
 
-.header2_nav_li {
+.header_nav_second .ul_nav .li_nav {
   margin-left: 20px;
   margin-right: 20px;
 }
 
-.header3 {
+.header_nav_second .ul_nav .li_nav .li_nav_link {
+  text-decoration: none;
+}
+
+.header_nav_second .ul_nav .li_nav .li_nav_link:hover {
+  color:black;
+  text-decoration: underline;
+}
+
+.header_session {
   display: flex;
   padding: 1.25rem;
   margin-left: auto;
   margin-right: auto;
-  --tw-bg-opacity: 1;
   justify-content:space-between;
 }
 
-.header3_item {
+.header_session .item {
   margin-right: 10px;
 }
 

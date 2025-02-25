@@ -14,6 +14,7 @@
             <th scope="col" class="px-6 py-3">実行日</th>
             <th scope="col" class="px-6 py-3">タスク</th>
             <th scope="col" class="px-6 py-3">ステータス</th>
+            <th scope="col" class="px-6 py-3">確認</th>
           </tr>
         </thead>
         <tbody>
@@ -26,9 +27,8 @@
                 <td class="px-6 py-4">
                     <%= import_file_h[:job_name] %>
                 </td>
-                <td class="px-6 py-4">
-                    <%= import_file_h[:status] %>
-                </td>
+                <td class="px-6 py-4"><%= import_file_h[:status] %></td>
+                <td class="px-6 py-4"><%= link_to "ドル円外貨預金元帳", dollar_yen_transactions_path %></td>
             </tr>
           <% end %>
         </tbody>        

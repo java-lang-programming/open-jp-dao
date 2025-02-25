@@ -1,38 +1,33 @@
 <header>
-  <div className="header1">
-    <div>
-      <a href="#" className="header1_site_name">WanWan</a>
-    </div>
-    <nav
-      className="header1_nav">
+  <!-- header 1行目 -->
+  <div class="header_nav_first">
+    <div class="left_side"><a href="#" class="site_name">WanWan</a></div>
+    
+    <!-- navigation -->
+    <nav class="nav">
       <div>
-        <% if user.present? %>
-          <button className="btn_sign">ログアウト</button>
-        <% end %>
+        <button class="btn_session">ログアウト</button>
       </div>
     </nav>
   </div>
 
-  <div className="header2">
+  <!-- header 2行目-->
+  <div class="header_nav_second">
     <div>
-      <ul className="header2_nav">
-        <li>
-          <Link href="/">
-            Home
-          </Link>
+      <ul class="ul_nav">
+        <li class="li_nav">
+          <a href="#" class="li_nav_link">Home</a>
         </li>
-        <li>
-          <a href="#"
-            className="header2_nav_li">お知らせ・ご案内</a>
+        <li class="li_nav"><a href="#" class="li_nav_link">お知らせ・ご案内</a>
         </li>
       </ul>
     </div>
   </div>
-    
-  <div className="header3">
-    <div className="header3_item"><%= user[:address] %></div>
-    <div className="header3_item"><%= user[:network] %></div>
-    <div className="header3_item">最終ログイン:<%= user[:last_login] %></div>
+
+  <div class="header_session">
+    <div class="item"><%= user[:address] %></div>
+    <div class="item"><%= user[:network] %></div>
+    <div class="item">最終ログイン:&nbsp;<%= user[:last_login] %></div>
   </div>
 
 </header>
