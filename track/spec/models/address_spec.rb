@@ -142,4 +142,55 @@ RSpec.describe Job, type: :model do
       end
     end
   end
+
+  describe 'recalculation_need_dollar_yen_transactions' do
+    let(:addresses_eth) { create(:addresses_eth) }
+    let(:transaction_type1) { create(:transaction_type1, address: addresses_eth) }
+    let(:dollar_yen_transaction1) { create(:dollar_yen_transaction1, transaction_type: transaction_type1, address: addresses_eth) }
+    let(:dollar_yen_transaction2) { create(:dollar_yen_transaction2, transaction_type: transaction_type1, address: addresses_eth) }
+    let(:dollar_yen_transaction3) { create(:dollar_yen_transaction3, transaction_type: transaction_type1, address: addresses_eth) }
+
+    context '既存データがない場合' do
+      it 'should be 0.' do
+        target_date = "2020-12-18"
+        dollar_yen_transactions = addresses_eth.recalculation_need_dollar_yen_transactions(target_date: target_date)
+        expect(dollar_yen_transactions.count).to eq(0)
+      end
+    end
+
+    context '既存データがある場合' do
+      # target_dateより新しいデータがない場合(最新の場合)
+      it 'should be 0.' do
+        dollar_yen_transaction1
+        dollar_yen_transaction2
+        dollar_yen_transaction3
+
+        target_date = "2020-12-18"
+        dollar_yen_transactions = addresses_eth.recalculation_need_dollar_yen_transactions(target_date: target_date)
+        expect(dollar_yen_transactions.count).to eq(0)
+      end
+
+      # dollar_yen_transaction2とdollar_yen_transaction3の間の日付
+      it 'should be 1.' do
+        dollar_yen_transaction1
+        dollar_yen_transaction2
+        dollar_yen_transaction3
+
+        target_date = "2020-09-29"
+        dollar_yen_transactions = addresses_eth.recalculation_need_dollar_yen_transactions(target_date: target_date)
+        expect(dollar_yen_transactions.count).to eq(1)
+      end
+
+      # dollar_yen_transaction2と同じ日付(境界データ)
+      it 'should be 2.' do
+        dollar_yen_transaction1
+        dollar_yen_transaction2
+        dollar_yen_transaction3
+
+        target_date = "2020-06-19"
+        dollar_yen_transactions = addresses_eth.recalculation_need_dollar_yen_transactions(target_date: target_date)
+        expect(dollar_yen_transactions.count).to eq(2)
+      end
+    end
+  end
 end

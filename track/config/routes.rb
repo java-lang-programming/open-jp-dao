@@ -32,6 +32,7 @@ Rails.application.routes.draw do
     collection do
       get "csv_upload"
       post "csv_import"
+      post "create_confirmation"
     end
   end
 

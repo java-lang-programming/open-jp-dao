@@ -44,6 +44,11 @@ class Address < ApplicationRecord
     "#{address}_#{Time.now.strftime("%Y%m%d%H%M%S")}.csv"
   end
 
+  # target_dateにより影響を受ける再計算が必要な取引データ一覧
+  def recalculation_need_dollar_yen_transactions(target_date:)
+    dollar_yen_transactions.where("date >= ?", target_date)
+  end
+
   class << self
     def kind_errors(kind: nil)
       errors = []
