@@ -222,7 +222,6 @@ module Files
 
       # 変数格納
       dyt.deposit_rate = BigDecimal(@deposit_rate.to_s) if dyt.deposit?
-      # puts "ここにはきてる"
       dyt.deposit_quantity = BigDecimal(@deposit_quantity.to_s) if dyt.deposit?
       dyt.withdrawal_quantity = BigDecimal(@withdrawal_quantity.to_s) if dyt.withdrawal?
       dyt.exchange_en = BigDecimal(@exchange_en.to_s) if dyt.withdrawal?

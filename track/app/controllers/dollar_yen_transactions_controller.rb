@@ -22,6 +22,83 @@ class DollarYenTransactionsController < ApplicationViewController
 
   def new
     header_session
+    set_view_var
+    @dollar_yen_transaction = DollarYenTransaction.new
+  end
+
+  # 作成確認
+  # TODOここで
+  def create_confirmation
+    header_session
+    # dollar_yen_transactions_pathの繊維の時はいらない
+    set_view_var
+
+    request = params.require(:dollar_yen_transaction).permit(:date, :transaction_type, :deposit_quantity, :deposit_rate)
+
+    @dollar_yen_transaction = DollarYenTransaction.new
+    @dollar_yen_transaction.transaction_type =  @session.address.transaction_types.where(id: request[:transaction_type]).first
+    @errors = {}
+    # 　エラー　空白以外のエラーはない
+    unless request[:date].present?
+      @errors[:date] = "日付は必須入力です"
+      # 　ここは共通化やな
+      set_view_var
+      render "new"
+      return
+    end
+
+    # 　外に出す
+    temp_date = request[:date].split("-")
+    date = Date.new(temp_date[0].to_i, temp_date[1].to_i, temp_date[2].to_i)
+    @dollar_yen_transaction.date =  date
+
+    unless request[:deposit_quantity].present?
+      @errors[:date] = "deposit_quantityは必須入力です"
+      render "new"
+      return
+    else
+      # TODO try catch
+      # 　数値にできること
+      bg_deposit_quantity = BigDecimal(request[:deposit_quantity])
+      @dollar_yen_transaction.deposit_quantity = bg_deposit_quantity
+    end
+
+    unless request[:deposit_rate].present?
+      @errors[:deposit_rate] = "deposit_rateは必須入力です"
+      render "new"
+      return
+    else
+      # TODO try catch
+      # 　数値にできること
+      bg_deposit_rate = BigDecimal(request[:deposit_rate])
+      @dollar_yen_transaction.deposit_rate = bg_deposit_rate
+    end
+
+    preload_records = @session.preload_records
+    recalculation_need_count = @session.address.recalculation_need_dollar_yen_transactions(target_date: @dollar_yen_transaction.date).count
+    # 影響ないデータはそのまま更新して一覧画面
+    if recalculation_need_count == 0
+      csv = @dollar_yen_transaction.to_files_dollar_yen_transaction_csv(row_num: -1, preload_records: preload_records)
+      dollar_yen_transaction = csv.to_dollar_yen_transaction(previous_dollar_yen_transactions: nil)
+      if dollar_yen_transaction.save
+        puts dollar_yen_transaction.inspect
+        # 　リダイレクト時にデータを取得?
+        redirect_to dollar_yen_transactions_path, flash: { info: "取引データを追加しました" }
+      else
+        render "new"
+      end
+      return
+    end
+
+    if recalculation_need_count > 50
+      @message = "#{params[:date]}以降の取引データが#{recalculation_need_count}件あります。これらを含めて再計算が実行されます。データが多いのでこの処理は非同期で実行します。実行してもよろしいですか。"
+    else
+      @message = "#{params[:date]}以降の取引データが#{recalculation_need_count}件あります。これらを含めて再計算が実行されます。実行してもよろしいですか。"
+    end
+  end
+
+  # 作成
+  def create
   end
 
   def edit
@@ -30,14 +107,7 @@ class DollarYenTransactionsController < ApplicationViewController
 
 
 
-  def confirm_comfirm
 
-  end
-
-  # 作成
-  def create
-
-  end
 
   def csv_upload
     header_session
@@ -88,5 +158,9 @@ class DollarYenTransactionsController < ApplicationViewController
 
     def header_session
       @user = user
+    end
+
+    def set_view_var
+      @transaction_types = @session.address.transaction_types
     end
 end

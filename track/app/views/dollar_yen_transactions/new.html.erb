@@ -4,30 +4,24 @@
   <%= render "layouts/header", user: @user %>
 <% end %>
 
-<%= form_with url: create_confirmation_dollar_yen_transactions_path, class:"form_transaction" do |form|  %>
+<%= form_with model: @dollar_yen_transaction, url: create_confirmation_dollar_yen_transactions_path, class:"form_transaction" do |form|  %>
+
   <div class="tw_mb-5">
     <label class="form_label">日付*</label>
-    <input datepicker id="default-datepicker" type="text" class="form_input" placeholder="Select date" required>
+    <%= form.text_field :date, class: "form_input", id: "default-datepicker", placeholder: "Select date", required: true %>
   </div>
   <div class="tw_mb-5">
     <label for="transaction_kind" class="form_label">取引種別*</label>
-    <select id="transaction_kind" class="form_input
-    ">
-      <option selected>Choose a country</option>
-      <option value="US">United States</option>
-      <option value="CA">Canada</option>
-      <option value="FR">France</option>
-      <option value="DE">Germany</option>
-    </select>
+    <%= form.select :transaction_type, @transaction_types.collect { |c| [c.name, c.id] }, {}, { class: "form_input" } %>
   </div>
   <div class="tw_mb-5">
     <!-- エラーとOKの場合のcssを作成する -->
     <label for="en_dollar_value" class="form_label">数量米ドル*</label>
-    <input type="text" id="en_dollar_value" class="form_input form_input_ok" required />
+    <%= form.text_field :deposit_quantity, class: "form_input", id: "default-datepicker", placeholder: "預入数量米ドル", required: true %>
   </div>
   <div class="tw_mb-5">
     <label for="jp_en_rate" class="form_label">レート* </label>
-    <input type="text" id="jp_en_rate" class="form_input" required />
+    <%= form.text_field :deposit_rate, class: "form_input", id: "default-datepicker", placeholder: "預入レート", required: true %>
   </div>
   <div class="form_checkbox_section">
     <!-- flex items-center  -->

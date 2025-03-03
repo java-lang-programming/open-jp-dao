@@ -16,7 +16,6 @@ module CsvImports
       address = @import_file.address
 
       recalculation_need_dollar_yen_transactions = address.recalculation_need_dollar_yen_transactions(target_date: oldest_date)
-      # recalculation_need_dollar_yen_transactions = recalculation_need_dollar_yen_transactions(address: address, oldest_date: oldest_date)
 
       preload_records = { address: address, transaction_types: address.transaction_types }
 
