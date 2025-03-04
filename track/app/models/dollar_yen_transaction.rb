@@ -302,6 +302,30 @@ class DollarYenTransaction < ApplicationRecord
     Files::DollarYenTransactionDepositCsv.new(address: preload_records[:address], row_num: row_num, row: to_csv_import_format, preload_records: preload_records)
   end
 
+  # リクエストの処理
+  # def re(request)
+
+  # end
+
+  # 更新用のdollar_yen_transactions一覧を作成する
+  #
+  # @return [Array[DollarYenTransaction]] DollarYenTransaction一覧オブジェクト
+  def generate_upsert_dollar_yens_transactions
+    # 共通化する
+    preload_records = { address: address, transaction_types: address.transaction_types }
+    # 再計算が必要なデータ
+    recalculation_need_dollar_yen_transactions = address.recalculation_need_dollar_yen_transactions(target_date: date)
+
+    existing_csvs = recalculation_need_dollar_yen_transactions.map do |dollar_yen_transaction|
+      dollar_yen_transaction.to_files_dollar_yen_transaction_csv(row_num: -1, preload_records: preload_records)
+    end
+
+    # 今回のcsvと更新が必要な登録済みのデータをmerge
+    upsert_csvs = [ to_files_dollar_yen_transaction_csv(row_num: -1, preload_records: preload_records) ].concat(existing_csvs)
+    # 再計算
+    Files::DollarYenTransactionDepositCsv.make_dollar_yen_transactions(csvs: upsert_csvs)
+  end
+
   private
 
     # 残帳簿価格で呼び出し 以前のデータをデータベース経由で数量米ドルを取得する

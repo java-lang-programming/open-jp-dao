@@ -5,7 +5,6 @@ RSpec.describe DollarYenTransaction, type: :model do
   let(:addresses_eth) { create(:addresses_eth) }
   let(:transaction_type1) { create(:transaction_type1, address: addresses_eth) }
 
-
   describe 'deposit?' do
     let(:addresses_eth) { create(:addresses_eth) }
     let(:transaction_type1) { create(:transaction_type1, address: addresses_eth) }
@@ -459,6 +458,26 @@ RSpec.describe DollarYenTransaction, type: :model do
       it 'should be cvs data when withdrawal data.' do
         csv_data = dollar_yen_transaction44.to_csv_export_format
         expect(csv_data).to eq([ "2024/02/01", "ドルを円に変換", nil, nil, nil, 88.0, 137.0555585, 12060.88915, 657.88, 137.0569101, 90166.11085 ])
+      end
+    end
+  end
+
+  describe 'generate_upsert_dollar_yens_transactions' do
+    let(:addresses_eth) { create(:addresses_eth) }
+    let(:transaction_type1) { create(:transaction_type1, address: addresses_eth) }
+    let(:dollar_yen_transaction1) { create(:dollar_yen_transaction1, transaction_type: transaction_type1, address: addresses_eth) }
+    let(:dollar_yen_transaction3) { create(:dollar_yen_transaction3, transaction_type: transaction_type1, address: addresses_eth) }
+    let(:dollar_yen_transaction2) { build(:dollar_yen_transaction2, transaction_type: transaction_type1, address: addresses_eth) }
+
+    context 'export用のcsvデータを作成する' do
+      it 'should be cvs data when deposit data.' do
+        dollar_yen_transaction1
+        dollar_yen_transaction3
+
+        dollar_yens_transactions = dollar_yen_transaction2.generate_upsert_dollar_yens_transactions()
+        expect(dollar_yens_transactions.size).to eq(2)
+        expect(dollar_yens_transactions[0].date).to eq(Date.new(2020, 6, 19))
+        expect(dollar_yens_transactions[1].date).to eq(Date.new(2020, 9, 29))
       end
     end
   end

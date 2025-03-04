@@ -1,5 +1,5 @@
 class DollarYenTransactionsController < ApplicationViewController
-  before_action :verify, only: [ :index, :csv_upload, :csv_import ]
+  before_action :verify, only: [ :index, :new, :create_confirmation, :csv_upload, :csv_import ]
 
   # https://railsguides.jp/action_controller_overview.html
   # https://weseek.co.jp/tech/1211/
@@ -81,9 +81,9 @@ class DollarYenTransactionsController < ApplicationViewController
       csv = @dollar_yen_transaction.to_files_dollar_yen_transaction_csv(row_num: -1, preload_records: preload_records)
       dollar_yen_transaction = csv.to_dollar_yen_transaction(previous_dollar_yen_transactions: nil)
       if dollar_yen_transaction.save
-        puts dollar_yen_transaction.inspect
         # 　リダイレクト時にデータを取得?
         redirect_to dollar_yen_transactions_path, flash: { info: "取引データを追加しました" }
+        return
       else
         render "new"
       end
@@ -91,14 +91,39 @@ class DollarYenTransactionsController < ApplicationViewController
     end
 
     if recalculation_need_count > 50
-      @message = "#{params[:date]}以降の取引データが#{recalculation_need_count}件あります。これらを含めて再計算が実行されます。データが多いのでこの処理は非同期で実行します。実行してもよろしいですか。"
+      @message = "#{params[:dollar_yen_transaction][:date]}以降の取引データが#{recalculation_need_count}件あります。これらの取引を含めて再計算が実行されます。データが多いのでこの処理は非同期で実行します。実行してもよろしいですか。"
     else
-      @message = "#{params[:date]}以降の取引データが#{recalculation_need_count}件あります。これらを含めて再計算が実行されます。実行してもよろしいですか。"
+      @message = "#{params[:dollar_yen_transaction][:date]}以降の取引データが#{recalculation_need_count}件あります。これらの取引を含めて再計算が実行されます。実行してもよろしいですか。"
     end
   end
 
   # 作成
   def create
+    header_session
+
+    request = params.require(:dollar_yen_transaction).permit(:date, :transaction_type, :deposit_quantity, :deposit_rate)
+
+    # これは共通処理だ
+    temp_date = request[:date].split("-")
+    date = Date.new(temp_date[0].to_i, temp_date[1].to_i, temp_date[2].to_i)
+    dollar_yen_transaction.date = date
+
+    dollar_yen_transaction.transaction_type =  @session.address.transaction_types.where(id: request[:transaction_type]).first
+
+    bg_deposit_quantity = BigDecimal(request[:deposit_quantity])
+    dollar_yen_transaction.deposit_quantity = bg_deposit_quantity
+
+    bg_deposit_rate = BigDecimal(request[:deposit_rate])
+    dollar_yen_transaction.deposit_rate = bg_deposit_rate
+
+    if recalculation_need_count > 50
+      puts "非同期"
+      DollarYenTransactionsUpdateJob.perform_later(dollar_yen_transaction: dollar_yen_transaction)
+    else
+      puts "同期"
+      DollarYenTransactionsUpdateJob.perform_now(dollar_yen_transaction: dollar_yen_transaction)
+      redirect_to dollar_yen_transactions_path, flash: { info: "取引データを追加しました" }
+    end
   end
 
   def edit

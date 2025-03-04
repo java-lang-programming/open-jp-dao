@@ -33,18 +33,36 @@ class ApplicationViewController < ActionController::Base
     Session.find_by(id: cookies.signed[:session_id])
   end
 
+  # 毎回は良くない
+  # 24時間を超えたら認証にする。時間は外だし
+  # 2週間で強制ログイン
   def verify
     @session ||= find_session_by_cookie
     raise NotFoundSession unless @session.present?
 
-    chain_id = @session.chain_id
-    message = @session.message
-    signature = @session.signature
-    domain = @session.domain
+    # puts "@session.update_at"
+    # puts @session.updated_at
+    # next_updated_at = @session.updated_at + 1.day
+    # puts "next_updated_at"
+    # puts next_updated_at
+    # now = DateTime.now
+    # if now > next_updated_at
+    #   puts "24時間経ったので再チェック"
+    # else
+    #   puts "まだ24時間経ってない"
+
+    # end
+
+
+    # chain_id = @session.chain_id
+    # message = @session.message
+    # signature = @session.signature
+    # domain = @session.domain
     verify_params = @session.make_verify_params(nonce: cookies.signed[:nonce])
 
     response = nil
     begin
+      # 調子が悪い場合はsessionのみで良いようにコードを変更する
       response = ChainGate::Repositories::Authentications::Verify.new(params: verify_params).fetch
     rescue => e
       logger.error(e.message)
