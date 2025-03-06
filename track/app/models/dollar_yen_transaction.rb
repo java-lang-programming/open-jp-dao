@@ -302,11 +302,6 @@ class DollarYenTransaction < ApplicationRecord
     Files::DollarYenTransactionDepositCsv.new(address: preload_records[:address], row_num: row_num, row: to_csv_import_format, preload_records: preload_records)
   end
 
-  # リクエストの処理
-  # def re(request)
-
-  # end
-
   # 更新用のdollar_yen_transactions一覧を作成する
   #
   # @return [Array[DollarYenTransaction]] DollarYenTransaction一覧オブジェクト

@@ -8,6 +8,9 @@
 <hr/>
 <p><a href="./dollar_yen_transactions/csv_upload">ドル円外貨預金元帳csvアップロード</a></p>
 <p><%= link_to "ドル円外貨預金元帳データ作成", new_dollar_yen_transaction_path %></p>
+<% if flash[:notice] %>
+  <div class="alert alert-success"><%= notice %></div>
+<% end %>
 <hr/>
 <p>全<%= @total %>件</p>
 <% if @total > 0 %>

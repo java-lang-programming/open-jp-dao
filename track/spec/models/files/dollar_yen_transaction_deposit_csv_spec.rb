@@ -1,7 +1,6 @@
 require 'rails_helper'
 
 # https://github.com/willnet/rspec-style-guide
-
 RSpec.describe Files::DollarYenTransactionDepositCsv, type: :model do
   describe 'transaction_type_name_errors' do
     let(:addresses_eth) { create(:addresses_eth) }

@@ -50,7 +50,29 @@ RSpec.describe "DollarYenTransactions", type: :request do
 
       it "should get not data." do
         get dollar_yen_transactions_path
+        body = response.body
+        expect(body).to include 'ドル円外貨預金元帳'
         expect(response.body).to include '全0件'
+      end
+    end
+  end
+
+  describe "GET /new" do
+    let(:addresses_eth) { create(:addresses_eth) }
+
+    context 'success' do
+      before do
+        # sigin処理
+        mock_apis_verify(body: {})
+        get apis_sessions_nonce_path
+        post apis_sessions_signin_path, params: { address: addresses_eth.address, kind: Address.kinds[:ethereum], chain_id: 1, message: "message", signature: "signature", domain: "aiueo.com" }
+      end
+
+      it "should get not data when date is not found." do
+        get new_dollar_yen_transaction_path
+        body = response.body
+        expect(body).to include 'ドル円外貨預金元帳 新規作成'
+        expect(body).to include addresses_eth.address
       end
     end
   end
@@ -67,11 +89,12 @@ RSpec.describe "DollarYenTransactions", type: :request do
         post apis_sessions_signin_path, params: { address: addresses_eth.address, kind: Address.kinds[:ethereum], chain_id: 1, message: "message", signature: "signature", domain: "aiueo.com" }
       end
 
+      # validareエラー
       it "should get not data when date is not found." do
-        # date: "2022-01-01",
         post create_confirmation_dollar_yen_transactions_path, params: { dollar_yen_transaction: { transaction_type: "1", deposit_quantity: "100.10", deposit_rate: "130.32" } }
       end
 
+      # 　初回データの作成
       it "should get not data when date is not found." do
         transaction_type1
         post create_confirmation_dollar_yen_transactions_path, params: { dollar_yen_transaction: { date: "2022-01-01", transaction_type: "1", deposit_quantity: "100.10", deposit_rate: "130.32" } }

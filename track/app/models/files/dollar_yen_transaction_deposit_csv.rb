@@ -50,21 +50,23 @@ module Files
     end
 
     def valid_date?(errors:)
-      if @date.present?
-        dates = @date.split("/")
-        size = dates.length
-        if size != 3
-          errors << "#{@row_num}行目のdateのフォーマットが不正です。yyyy/mm/dd形式で入力してください"
-        elsif size == 3
-          begin
-            Date.new(dates[0].to_i, dates[1].to_i, dates[2].to_i)
-          rescue => e
-            errors << "#{@row_num}行目のdateの値が不正です。yyyy/mm/dd形式で正しい日付を入力してください"
-          end
-        end
-      else
-        errors << "#{@row_num}行目のdateが入力されていません"
-      end
+      # date:, errors: [], row_num: -1
+      Validators::DollarYensTransaction.date_errors(date: @date, errors: errors, row_num: @row_num)
+      # if @date.present?
+      #   dates = @date.split("/")
+      #   size = dates.length
+      #   if size != 3
+      #     errors << "#{@row_num}行目のdateのフォーマットが不正です。yyyy/mm/dd形式で入力してください"
+      #   elsif size == 3
+      #     begin
+      #       Date.new(dates[0].to_i, dates[1].to_i, dates[2].to_i)
+      #     rescue => e
+      #       errors << "#{@row_num}行目のdateの値が不正です。yyyy/mm/dd形式で正しい日付を入力してください"
+      #     end
+      #   end
+      # else
+      #   errors << "#{@row_num}行目のdateが入力されていません"
+      # end
     end
 
     # @param errors [Array] エラーメッセージを格納する配列

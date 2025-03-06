@@ -481,4 +481,21 @@ RSpec.describe DollarYenTransaction, type: :model do
       end
     end
   end
+
+  # describe 'custom_date_validate' do
+  #   context 'export用のcsvデータを作成する' do
+  #     it 'should be cvs data when deposit data.' do
+  #       dollar_yen_transaction = DollarYenTransaction.new(date: "2200/01/02")
+
+  #       dollar_yen_transaction.custom_date_validate
+  #       # dollar_yen_transaction1
+  #       # dollar_yen_transaction3
+
+  #       # dollar_yens_transactions = dollar_yen_transaction2.generate_upsert_dollar_yens_transactions()
+  #       # expect(dollar_yens_transactions.size).to eq(2)
+  #       # expect(dollar_yens_transactions[0].date).to eq(Date.new(2020, 6, 19))
+  #       # expect(dollar_yens_transactions[1].date).to eq(Date.new(2020, 9, 29))
+  #     end
+  #   end
+  # end
 end

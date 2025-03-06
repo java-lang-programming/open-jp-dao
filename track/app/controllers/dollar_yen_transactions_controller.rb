@@ -1,5 +1,5 @@
 class DollarYenTransactionsController < ApplicationViewController
-  before_action :verify, only: [ :index, :new, :create_confirmation, :csv_upload, :csv_import ]
+  before_action :verify, only: [ :index, :new, :create_confirmation, :create, :csv_upload, :csv_import ]
 
   # https://railsguides.jp/action_controller_overview.html
   # https://weseek.co.jp/tech/1211/
@@ -35,44 +35,21 @@ class DollarYenTransactionsController < ApplicationViewController
 
     request = params.require(:dollar_yen_transaction).permit(:date, :transaction_type, :deposit_quantity, :deposit_rate)
 
-    @dollar_yen_transaction = DollarYenTransaction.new
-    @dollar_yen_transaction.transaction_type =  @session.address.transaction_types.where(id: request[:transaction_type]).first
-    @errors = {}
-    # 　エラー　空白以外のエラーはない
-    unless request[:date].present?
-      @errors[:date] = "日付は必須入力です"
-      # 　ここは共通化やな
+    req = Requests::DollarYensTransaction.new
+    @error = req.error(request: request)
+
+    if @error.present?
       set_view_var
+      @dollar_yen_transaction = DollarYenTransaction.new
+      @dollar_yen_transaction.transaction_type =  @session.address.transaction_types.where(id: request[:transaction_type]).first
+      @dollar_yen_transaction.date = request[:date]
+      @dollar_yen_transaction.deposit_quantity = request[:deposit_quantity]
+      @dollar_yen_transaction.deposit_rate = request[:deposit_rate]
       render "new"
       return
     end
 
-    # 　外に出す
-    temp_date = request[:date].split("-")
-    date = Date.new(temp_date[0].to_i, temp_date[1].to_i, temp_date[2].to_i)
-    @dollar_yen_transaction.date =  date
-
-    unless request[:deposit_quantity].present?
-      @errors[:date] = "deposit_quantityは必須入力です"
-      render "new"
-      return
-    else
-      # TODO try catch
-      # 　数値にできること
-      bg_deposit_quantity = BigDecimal(request[:deposit_quantity])
-      @dollar_yen_transaction.deposit_quantity = bg_deposit_quantity
-    end
-
-    unless request[:deposit_rate].present?
-      @errors[:deposit_rate] = "deposit_rateは必須入力です"
-      render "new"
-      return
-    else
-      # TODO try catch
-      # 　数値にできること
-      bg_deposit_rate = BigDecimal(request[:deposit_rate])
-      @dollar_yen_transaction.deposit_rate = bg_deposit_rate
-    end
+    @dollar_yen_transaction = reqest_to_dollar_yen_transaction(request: request)
 
     preload_records = @session.preload_records
     recalculation_need_count = @session.address.recalculation_need_dollar_yen_transactions(target_date: @dollar_yen_transaction.date).count
@@ -82,7 +59,7 @@ class DollarYenTransactionsController < ApplicationViewController
       dollar_yen_transaction = csv.to_dollar_yen_transaction(previous_dollar_yen_transactions: nil)
       if dollar_yen_transaction.save
         # 　リダイレクト時にデータを取得?
-        redirect_to dollar_yen_transactions_path, flash: { info: "取引データを追加しました" }
+        redirect_to dollar_yen_transactions_path, flash: { notice: "取引データを追加しました" }
         return
       else
         render "new"
@@ -102,27 +79,14 @@ class DollarYenTransactionsController < ApplicationViewController
     header_session
 
     request = params.require(:dollar_yen_transaction).permit(:date, :transaction_type, :deposit_quantity, :deposit_rate)
+    dollar_yen_transaction = reqest_to_dollar_yen_transaction(request: request)
 
-    # これは共通処理だ
-    temp_date = request[:date].split("-")
-    date = Date.new(temp_date[0].to_i, temp_date[1].to_i, temp_date[2].to_i)
-    dollar_yen_transaction.date = date
-
-    dollar_yen_transaction.transaction_type =  @session.address.transaction_types.where(id: request[:transaction_type]).first
-
-    bg_deposit_quantity = BigDecimal(request[:deposit_quantity])
-    dollar_yen_transaction.deposit_quantity = bg_deposit_quantity
-
-    bg_deposit_rate = BigDecimal(request[:deposit_rate])
-    dollar_yen_transaction.deposit_rate = bg_deposit_rate
-
+    recalculation_need_count = @session.address.recalculation_need_dollar_yen_transactions(target_date: dollar_yen_transaction.date).count
     if recalculation_need_count > 50
-      puts "非同期"
       DollarYenTransactionsUpdateJob.perform_later(dollar_yen_transaction: dollar_yen_transaction)
     else
-      puts "同期"
       DollarYenTransactionsUpdateJob.perform_now(dollar_yen_transaction: dollar_yen_transaction)
-      redirect_to dollar_yen_transactions_path, flash: { info: "取引データを追加しました" }
+      redirect_to dollar_yen_transactions_path, flash: { notice: "取引データを更新・追加しました" }
     end
   end
 
@@ -187,5 +151,18 @@ class DollarYenTransactionsController < ApplicationViewController
 
     def set_view_var
       @transaction_types = @session.address.transaction_types
+    end
+
+    # エラーがない前提でリクエストをdollar_yen_transactionにする
+    def reqest_to_dollar_yen_transaction(request:)
+      dollar_yen_transaction = DollarYenTransaction.new
+      splited_date = request[:date].split("-")
+      date = Date.new(splited_date[0].to_i, splited_date[1].to_i, splited_date[2].to_i)
+      dollar_yen_transaction.date = date
+      dollar_yen_transaction.address = @session.address
+      dollar_yen_transaction.transaction_type = @session.address.transaction_types.where(id: request[:transaction_type]).first
+      dollar_yen_transaction.deposit_quantity = BigDecimal(request[:deposit_quantity])
+      dollar_yen_transaction.deposit_rate = BigDecimal(request[:deposit_rate])
+      dollar_yen_transaction
     end
 end

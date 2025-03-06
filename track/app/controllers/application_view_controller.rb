@@ -54,10 +54,6 @@ class ApplicationViewController < ActionController::Base
     # end
 
 
-    # chain_id = @session.chain_id
-    # message = @session.message
-    # signature = @session.signature
-    # domain = @session.domain
     verify_params = @session.make_verify_params(nonce: cookies.signed[:nonce])
 
     response = nil
