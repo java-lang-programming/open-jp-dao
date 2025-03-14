@@ -40,5 +40,10 @@ module Requests
       end
       error
     end
+
+    def to_date(request:)
+      splited_date = request[:date].split("-")
+      Date.new(splited_date[0].to_i, splited_date[1].to_i, splited_date[2].to_i)
+    end
   end
 end

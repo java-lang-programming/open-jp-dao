@@ -52,8 +52,8 @@
               <td><%= dollaryen_transaction.balance_quantity_on_screen %></td>
               <td><%= dollaryen_transaction.balance_rate_on_screen %></td>
               <td><%= dollaryen_transaction.balance_en_on_screen %></td>
-              <td><input type="button" value="編集"/></td>
-              <td><input type="button" value="削除"/></td>
+              <td><%= link_to "編集", edit_dollar_yen_transaction_path(dollaryen_transaction) %></td>
+              <td><%= link_to "削除", delete_confirmation_dollar_yen_transaction_path(dollaryen_transaction) %></td>
             </tr>
           <% end %>
         </tbody>        

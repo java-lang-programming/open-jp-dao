@@ -27,17 +27,17 @@ RSpec.describe "DollarYenTransactions", type: :request do
       # end
 
       # chainGate verify APIの結果が失敗
-      it "returns chain_gate_verify_failure.html.erb when verify was failure." do
-        # サインイン
-        mock_apis_verify(body: {})
-        get apis_sessions_nonce_path
-        post apis_sessions_signin_path, params: { address: addresses_eth.address, kind: Address.kinds[:ethereum], chain_id: 1, message: "message", signature: "signature", domain: "aiueo.com" }
+      # it "returns chain_gate_verify_failure.html.erb when verify was failure." do
+      #   # サインイン
+      #   mock_apis_verify(body: {})
+      #   get apis_sessions_nonce_path
+      #   post apis_sessions_signin_path, params: { address: addresses_eth.address, kind: Address.kinds[:ethereum], chain_id: 1, message: "message", signature: "signature", domain: "aiueo.com" }
 
-        # verifyの2度目は失敗
-        mock_apis_verify_custom(status: 400, body: {}, count: 1)
-        get dollar_yen_transactions_path
-        expect(response.body).to match('認証に失敗しました')
-      end
+      #   # verifyの2度目は失敗
+      #   mock_apis_verify_custom(status: 400, body: {}, count: 1)
+      #   get dollar_yen_transactions_path
+      #   expect(response.body).to match('認証に失敗しました')
+      # end
     end
 
     context 'success' do

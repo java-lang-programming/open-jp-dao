@@ -29,10 +29,14 @@ Rails.application.routes.draw do
   end
 
   resources :dollar_yen_transactions do
+    member do
+      get "delete_confirmation"
+    end
     collection do
       get "csv_upload"
       post "csv_import"
       post "create_confirmation"
+      post "edit_confirmation"
     end
   end
 

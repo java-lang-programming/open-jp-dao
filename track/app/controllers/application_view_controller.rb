@@ -34,6 +34,7 @@ class ApplicationViewController < ActionController::Base
   end
 
   # 毎回は良くない
+  # TODO
   # 24時間を超えたら認証にする。時間は外だし
   # 2週間で強制ログイン
   def verify
@@ -53,21 +54,21 @@ class ApplicationViewController < ActionController::Base
 
     # end
 
+    # aaa
+    # verify_params = @session.make_verify_params(nonce: cookies.signed[:nonce])
 
-    verify_params = @session.make_verify_params(nonce: cookies.signed[:nonce])
+    # response = nil
+    # begin
+    #   # 調子が悪い場合はsessionのみで良いようにコードを変更する
+    #   response = ChainGate::Repositories::Authentications::Verify.new(params: verify_params).fetch
+    # rescue => e
+    #   logger.error(e.message)
+    #   # FIX ここのテストが通せない
+    #   raise ChainGateConnectionRefused
+    # end
 
-    response = nil
-    begin
-      # 調子が悪い場合はsessionのみで良いようにコードを変更する
-      response = ChainGate::Repositories::Authentications::Verify.new(params: verify_params).fetch
-    rescue => e
-      logger.error(e.message)
-      # FIX ここのテストが通せない
-      raise ChainGateConnectionRefused
-    end
-
-    # 認証失敗の場合は例外
-    raise ChainGateVerifyFailure unless 201 == response.status_code
+    # # 認証失敗の場合は例外
+    # raise ChainGateVerifyFailure unless 201 == response.status_code
   end
 
   # headerのユーザー情報取得

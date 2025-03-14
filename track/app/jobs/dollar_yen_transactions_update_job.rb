@@ -1,4 +1,5 @@
 # 　ドル円取引の更新
+# TODO テスト
 class DollarYenTransactionsUpdateJob < ApplicationJob
   queue_as :csv
 
@@ -7,9 +8,11 @@ class DollarYenTransactionsUpdateJob < ApplicationJob
     raise exception
   end
 
-  def perform(dollar_yen_transaction:)
+  def perform(dollar_yen_transaction:, kind:)
     begin
-      dollar_yens_transactions = dollar_yen_transaction.generate_upsert_dollar_yens_transactions()
+      dollar_yens_transactions = dollar_yen_transaction.generate_upsert_dollar_yens_transactions(kind: kind)
+      # 　ここからトランザクション
+      dollar_yen_transaction.destroy if kind == "delete"
       DollarYenTransaction.import dollar_yens_transactions, on_duplicate_key_update: { conflict_target: [ :id ], columns: [ :deposit_rate, :deposit_quantity, :deposit_en, :balance_rate, :balance_quantity, :balance_en ] },  validate: true
     rescue => e
       puts e

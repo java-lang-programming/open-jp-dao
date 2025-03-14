@@ -15,7 +15,7 @@ module CsvImports
       # 以前データより新しいやつは更新が必要なので取得(再計算が必要なデータ)
       address = @import_file.address
 
-      recalculation_need_dollar_yen_transactions = address.recalculation_need_dollar_yen_transactions(target_date: oldest_date)
+      recalculation_need_dollar_yen_transactions = address.recalculation_need_dollar_yen_transactions_create(target_date: oldest_date)
 
       preload_records = { address: address, transaction_types: address.transaction_types }
 
