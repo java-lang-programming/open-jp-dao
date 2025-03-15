@@ -80,6 +80,10 @@ RSpec.describe "DollarYenTransactions", type: :request do
   describe "POST /create_confirmation" do
     let(:addresses_eth) { create(:addresses_eth) }
     let(:transaction_type1) { create(:transaction_type1, address: addresses_eth) }
+    let(:dollar_yen_transaction1) { create(:dollar_yen_transaction1, transaction_type: transaction_type1, address: addresses_eth) }
+    let(:dollar_yen_transaction2) { create(:dollar_yen_transaction2, transaction_type: transaction_type1, address: addresses_eth) }
+    let(:dollar_yen_transaction3) { create(:dollar_yen_transaction3, transaction_type: transaction_type1, address: addresses_eth) }
+    # let(:dollar_yen_transaction1_same_day) { create(:dollar_yen_transaction1, transaction_type: transaction_type2, address: addresses_eth) }
 
     context 'success' do
       before do
@@ -94,12 +98,45 @@ RSpec.describe "DollarYenTransactions", type: :request do
         post create_confirmation_dollar_yen_transactions_path, params: { dollar_yen_transaction: { transaction_type: "1", deposit_quantity: "100.10", deposit_rate: "130.32" } }
       end
 
-      # 　初回データの作成
+      # 初回データの作成
       it "should get not data when date is not found." do
         transaction_type1
         post create_confirmation_dollar_yen_transactions_path, params: { dollar_yen_transaction: { date: "2022-01-01", transaction_type: "1", deposit_quantity: "100.10", deposit_rate: "130.32" } }
         expect(addresses_eth.dollar_yen_transactions.count).to eq(1)
       end
+
+      context '確認画面へ' do
+        # 追加データで50件以下の既存データを更新する
+        it "should get update message when 再計算 date is found." do
+          dollar_yen_transaction1
+          dollar_yen_transaction3
+
+          # dollar_yen_transaction2を追加
+          post create_confirmation_dollar_yen_transactions_path, params: { dollar_yen_transaction: { date: "2020-06-19", transaction_type: "1", deposit_quantity: "10.76", deposit_rate: "105.95" } }
+
+          expect(response.body).to include '取引データが1件あります'
+        end
+
+        # 追加データで50件を超える既存データを更新する
+        it "should get not data when 再計算 date is 50件を超える." do
+          dollar_yen_transaction2
+          base_date = dollar_yen_transaction2.date
+          50.times do
+            base_date = base_date.tomorrow
+            post create_confirmation_dollar_yen_transactions_path, params: { dollar_yen_transaction: { date: base_date.strftime("%Y-%m-%d"), transaction_type: "1", deposit_quantity: "10.76", deposit_rate: "105.95" } }
+          end
+
+          # dollar_yen_transaction2を追加
+          post create_confirmation_dollar_yen_transactions_path, params: { dollar_yen_transaction: { date: "2020-06-18", transaction_type: "1", deposit_quantity: "10.76", deposit_rate: "105.95" } }
+
+          expect(response.body).to include '2020-06-18以降の取引データが51件あります'
+        end
+      end
+
+
+
+
+      #
     end
   end
 end

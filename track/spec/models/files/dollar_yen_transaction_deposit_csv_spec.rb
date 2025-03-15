@@ -676,9 +676,9 @@ RSpec.describe Files::DollarYenTransactionDepositCsv, type: :model do
         expect(calc_dollar_yen_transaction2.deposit_rate).to be nil
         expect(calc_dollar_yen_transaction2.deposit_quantity).to be nil
         expect(calc_dollar_yen_transaction2.deposit_en).to be nil
-        expect(calc_dollar_yen_transaction2.withdrawal_rate.truncate(7).to_f).to eq(106.5491184)
+        expect(calc_dollar_yen_transaction2.withdrawal_rate.truncate(7).to_f).to eq(106.5491183)
         expect(calc_dollar_yen_transaction2.withdrawal_quantity).to eq(2)
-        expect(calc_dollar_yen_transaction2.withdrawal_en.truncate(7).to_f).to eq(213.0982368)
+        expect(calc_dollar_yen_transaction2.withdrawal_en.truncate(7).to_f).to eq(213.0982367)
         expect(calc_dollar_yen_transaction2.exchange_en).to eq(250)
         expect(calc_dollar_yen_transaction2.exchange_difference.truncate(7).to_f).to eq(36.9017632)
       end

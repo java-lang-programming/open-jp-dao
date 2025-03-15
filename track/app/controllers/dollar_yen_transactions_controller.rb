@@ -61,9 +61,8 @@ class DollarYenTransactionsController < ApplicationViewController
         # 　リダイレクト時にデータを取得?
         redirect_to dollar_yen_transactions_path, flash: { notice: "取引データを追加しました" }
         return
-      else
-        render "new"
       end
+      render "new"
       return
     end
 

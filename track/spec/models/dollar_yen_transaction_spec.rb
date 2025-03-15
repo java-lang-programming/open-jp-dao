@@ -452,7 +452,7 @@ RSpec.describe DollarYenTransaction, type: :model do
     context 'export用のcsvデータを作成する' do
       it 'should be cvs data when deposit data.' do
         csv_data = dollar_yen_transaction1.to_csv_export_format
-        expect(csv_data).to eq([ "2020/04/01", "HDV配当入金", 3.97, 106.59, 423, nil, nil, nil, 3.97, 106.5491184, 423.0 ])
+        expect(csv_data).to eq([ "2020/04/01", "HDV配当入金", 3.97, 106.59, 423, nil, nil, nil, 3.97, 106.5491183879093, 423.0 ])
       end
 
       it 'should be cvs data when withdrawal data.' do

@@ -51,8 +51,6 @@ RSpec.describe DollarYenTransactionsCsvImportJob, type: :job do
     end
   end
 
-  # キューの確認
-
   # https://qiita.com/necojackarc/items/b4a8ac682efeb1f62e74
   # リトライ
 
