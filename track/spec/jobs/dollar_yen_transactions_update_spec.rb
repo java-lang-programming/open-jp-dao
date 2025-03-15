@@ -18,7 +18,7 @@ RSpec.describe DollarYenTransactionsUpdateJob, type: :job do
     let(:master_export_master_csv_path) { "#{Rails.root}/spec/files/dollar_yen_transactions/master_export.csv" }
 
     # 日付データの重複なしでの途中追加
-    it 'should be success.' do
+    it 'should be success when data is added.' do
       dollar_yen_transaction1
       dollar_yen_transaction3
       dollar_yen_transaction4
@@ -54,7 +54,7 @@ RSpec.describe DollarYenTransactionsUpdateJob, type: :job do
     end
 
     # 　日付が重なるパターン
-    it 'should be success.' do
+    it 'should be success when date is same.' do
       dollar_yen_transaction1 = build(:dollar_yen_transaction1, transaction_type: transaction_type1, address: addresses_eth)
       dollar_yen_transaction1.date = Date.new(2020, 6, 19)
       dollar_yen_transaction1.save
@@ -94,7 +94,41 @@ RSpec.describe DollarYenTransactionsUpdateJob, type: :job do
       expect(expects[2]).to eq(created[2].to_csv_export_format.join(','))
     end
 
-    # 　3. 一番最初のデータを変更
+    # 他のデータを作成後、最初のデータを作成する
+    it 'should be success when first data is create.' do
+      dollar_yen_transaction2_same_day_1
+      dollar_yen_transaction3
+      dollar_yen_transaction4
+
+      # 1番目のデータを通過
+      dollar_yen_transaction = DollarYenTransaction.new
+      date = Date.new(2020, 4, 1)
+      dollar_yen_transaction.date = date
+      dollar_yen_transaction.address = addresses_eth
+      dollar_yen_transaction.transaction_type = transaction_type1
+      dollar_yen_transaction.deposit_quantity = BigDecimal("3.97")
+      dollar_yen_transaction.deposit_rate = BigDecimal("106.59")
+
+      # 作成&upsert
+      DollarYenTransactionsUpdateJob.perform_now(dollar_yen_transaction: dollar_yen_transaction, kind: DollarYenTransaction::KIND_CREATE)
+
+      created = addresses_eth.dollar_yen_transactions.order(date: :asc).order(date: :asc).order(id: :asc)
+
+      future_gadgets = CSV.read(master_export_master_csv_path)
+      row_index = 0
+      expects = []
+      future_gadgets.each do |fg|
+        row_index = row_index + 1
+        next if row_index == 1
+        csv = Files::DollarYenTransactionExportCsv.new(row: fg)
+        expects << csv.line_to_s
+      end
+
+      expect(expects[0]).to eq(created[0].to_csv_export_format.join(','))
+      expect(expects[1]).to eq(created[1].to_csv_export_format.join(','))
+      expect(expects[2]).to eq(created[2].to_csv_export_format.join(','))
+      expect(expects[3]).to eq(created[3].to_csv_export_format.join(','))
+    end
   end
 
   # https://qiita.com/necojackarc/items/b4a8ac682efeb1f62e74
