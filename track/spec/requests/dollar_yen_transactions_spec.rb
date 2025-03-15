@@ -132,11 +132,57 @@ RSpec.describe "DollarYenTransactions", type: :request do
           expect(response.body).to include '2020-06-18以降の取引データが51件あります'
         end
       end
+    end
+  end
 
+  describe "POST /create" do
+    let(:addresses_eth) { create(:addresses_eth) }
+    let(:transaction_type1) { create(:transaction_type1, address: addresses_eth) }
+    let(:dollar_yen_transaction1) { create(:dollar_yen_transaction1, transaction_type: transaction_type1, address: addresses_eth) }
+    let(:dollar_yen_transaction2) { create(:dollar_yen_transaction2, transaction_type: transaction_type1, address: addresses_eth) }
+    let(:dollar_yen_transaction3) { create(:dollar_yen_transaction3, transaction_type: transaction_type1, address: addresses_eth) }
+    let(:dollar_yen_transaction4) { create(:dollar_yen_transaction4, transaction_type: transaction_type1, address: addresses_eth) }
 
+    context 'success' do
+      before do
+        # sigin処理
+        mock_apis_verify(body: {})
+        get apis_sessions_nonce_path
+        post apis_sessions_signin_path, params: { address: addresses_eth.address, kind: Address.kinds[:ethereum], chain_id: 1, message: "message", signature: "signature", domain: "aiueo.com" }
+      end
 
+      # データ途中に日付を投入
+      it "should be success." do
+        dollar_yen_transaction1
+        dollar_yen_transaction3
+        dollar_yen_transaction4
 
-      #
+        post dollar_yen_transactions_path, params: { dollar_yen_transaction: { date: "2020-06-19", transaction_type: "1", deposit_quantity: "10.76", deposit_rate: "105.95" } }
+        expect(response.status).to eq(302)
+      end
+    end
+  end
+
+  describe "get /edit" do
+    let(:addresses_eth) { create(:addresses_eth) }
+    let(:transaction_type1) { create(:transaction_type1, address: addresses_eth) }
+    let(:dollar_yen_transaction1) { create(:dollar_yen_transaction1, transaction_type: transaction_type1, address: addresses_eth) }
+
+    context 'success' do
+      before do
+        # sigin処理
+        mock_apis_verify(body: {})
+        get apis_sessions_nonce_path
+        post apis_sessions_signin_path, params: { address: addresses_eth.address, kind: Address.kinds[:ethereum], chain_id: 1, message: "message", signature: "signature", domain: "aiueo.com" }
+      end
+
+      # 画面遷移
+      it "should be success." do
+        dollar_yen_transaction1
+
+        get edit_dollar_yen_transaction_path(dollar_yen_transaction1)
+        expect(response.status).to eq(200)
+      end
     end
   end
 end

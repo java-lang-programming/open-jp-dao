@@ -80,7 +80,7 @@ class DollarYenTransactionsController < ApplicationViewController
     request = params.require(:dollar_yen_transaction).permit(:date, :transaction_type, :deposit_quantity, :deposit_rate)
     dollar_yen_transaction = reqest_to_dollar_yen_transaction(request: request)
 
-    recalculation_need_count = @session.address.recalculation_need_dollar_yen_transactions_create(target_date: @dollar_yen_transaction.date).count
+    recalculation_need_count = @session.address.recalculation_need_dollar_yen_transactions_create(target_date: dollar_yen_transaction.date).count
     if recalculation_need_count > 50
       DollarYenTransactionsUpdateJob.perform_later(dollar_yen_transaction: dollar_yen_transaction, kind: DollarYenTransaction::KIND_CREATE)
     else
