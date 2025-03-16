@@ -106,8 +106,6 @@ class DollarYenTransactionsController < ApplicationViewController
     req = Requests::DollarYensTransaction.new
     @error = req.error(request: request)
 
-    # 　数値の更新でなければ更新不要だな。。。。
-
     if @error.present?
       set_view_var
       @dollar_yen_transaction = DollarYenTransaction.new
@@ -115,30 +113,36 @@ class DollarYenTransactionsController < ApplicationViewController
       @dollar_yen_transaction.date = request[:date]
       @dollar_yen_transaction.deposit_quantity = request[:deposit_quantity]
       @dollar_yen_transaction.deposit_rate = request[:deposit_rate]
-      render "edit"
-      return
+      return render "edit"
     end
 
-    @dollar_yen_transaction = address.transaction_types.where(id: request[:id]).first
-    @dollar_yen_transaction.transaction_type =  @session.address.transaction_types.where(id: request[:transaction_type]).first
-    @dollar_yen_transaction.date = req.to_date(request: request)
+    @dollar_yen_transaction = address.dollar_yen_transactions.where(id: request[:id]).first
     @dollar_yen_transaction.deposit_quantity = BigDecimal(request[:deposit_quantity])
     @dollar_yen_transaction.deposit_rate = BigDecimal(request[:deposit_rate])
 
-    recalculation_need_count = address.recalculation_need_dollar_yen_transactions(target_date: @dollar_yen_transaction.date, exclude_ids: [ @dollar_yen_transaction.id ]).count
+    recalculation_need_count = address.recalculation_need_dollar_yen_transactions_update(target_date: @dollar_yen_transaction.date, id: @dollar_yen_transaction.id).count
 
     # 最新データだけの場合はそのまま更新
-    if recalculation_need_count == 1
+    if recalculation_need_count == 0
       csv = @dollar_yen_transaction.to_files_dollar_yen_transaction_csv(row_num: -1, preload_records: @session.preload_records)
-      dollar_yen_transaction = csv.to_dollar_yen_transaction(previous_dollar_yen_transactions: nil)
-      if dollar_yen_transaction.save
+      dollar_yen_transaction = csv.to_dollar_yen_transaction(previous_dollar_yen_transactions: address.base_dollar_yen_transaction_update(target_date: @dollar_yen_transaction.date, id: @dollar_yen_transaction.id))
+      # 　TODO ここでswap(ますはこれから)
+      @dollar_yen_transaction.deposit_en = dollar_yen_transaction.deposit_en
+      @dollar_yen_transaction.withdrawal_rate = dollar_yen_transaction.withdrawal_rate
+      @dollar_yen_transaction.withdrawal_quantity = dollar_yen_transaction.withdrawal_quantity
+      @dollar_yen_transaction.withdrawal_en = dollar_yen_transaction.withdrawal_en
+      @dollar_yen_transaction.balance_rate = dollar_yen_transaction.balance_rate
+      @dollar_yen_transaction.balance_quantity = dollar_yen_transaction.balance_quantity
+      @dollar_yen_transaction.balance_en = dollar_yen_transaction.balance_en
+      @dollar_yen_transaction.exchange_en = dollar_yen_transaction.exchange_en
+      @dollar_yen_transaction.exchange_difference = dollar_yen_transaction.exchange_difference
+
+      if @dollar_yen_transaction.save
         # 　リダイレクト時にデータを取得?
         redirect_to dollar_yen_transactions_path, flash: { notice: "取引データを更新しました" }
         return
-      else
-        render "edit"
       end
-      return
+      return "edit"
     end
 
     if recalculation_need_count > 50
@@ -160,7 +164,13 @@ class DollarYenTransactionsController < ApplicationViewController
     dollar_yen_transaction.deposit_quantity = BigDecimal(request[:deposit_quantity])
     dollar_yen_transaction.deposit_rate = BigDecimal(request[:deposit_rate])
 
-    recalculation_need_count = address.recalculation_need_dollar_yen_transactions(target_date: dollar_yen_transaction.date, exclude_ids: [ dollar_yen_transaction.id ]).count
+    recalculation_need_count = address.recalculation_need_dollar_yen_transactions_update(target_date: @dollar_yen_transaction.date, id: @dollar_yen_transaction.id).count
+    if recalculation_need_count > 50
+      DollarYenTransactionsUpdateJob.perform_later(dollar_yen_transaction: dollar_yen_transaction, kind: DollarYenTransaction::KIND_UPDATE)
+    else
+      DollarYenTransactionsUpdateJob.perform_now(dollar_yen_transaction: dollar_yen_transaction, kind: DollarYenTransaction::KIND_UPDATE)
+      redirect_to dollar_yen_transactions_path, flash: { notice: "取引データを更新・追加しました" }
+    end
   end
 
   def delete_confirmation
@@ -170,7 +180,7 @@ class DollarYenTransactionsController < ApplicationViewController
 
     @dollar_yen_transaction = address.dollar_yen_transactions.where(id: params[:id]).first
 
-    recalculation_need_count = address.recalculation_need_dollar_yen_transactions_delete(target_date: @dollar_yen_transaction.date, id: @dollar_yen_transaction.id).count
+    recalculation_need_count = address.recalculation_need_dollar_yen_transactions_update(target_date: @dollar_yen_transaction.date, id: @dollar_yen_transaction.id).count
 
     if recalculation_need_count == 0
       @dollar_yen_transaction.destroy
@@ -202,19 +212,11 @@ class DollarYenTransactionsController < ApplicationViewController
     # 　これだけ外に出す必要がある
     recalculation_need_count = recalculation_dollar_yen_transactions.count
 
-    # 　これがprev = dollar_yen_transaction
-    # llopで回す
-    # 　削除 & upsert
-    #  delete
-    # dollar_yen_transaction.generate_upsert_dollar_yens_transactions() {
-
-
-    # }
 
     if recalculation_need_count > 50
-      DollarYenTransactionsUpdateJob.perform_later(dollar_yen_transaction: dollar_yen_transaction, kind: "delete")
+      DollarYenTransactionsUpdateJob.perform_later(dollar_yen_transaction: dollar_yen_transaction, kind: DollarYenTransaction::KIND_DELETE)
     else
-      DollarYenTransactionsUpdateJob.perform_now(dollar_yen_transaction: dollar_yen_transaction, kind: "delete")
+      DollarYenTransactionsUpdateJob.perform_now(dollar_yen_transaction: dollar_yen_transaction, kind: DollarYenTransaction::KIND_DELETE)
       redirect_to dollar_yen_transactions_path, flash: { notice: "取引データを削除し、変更があるデータを再計算しました" }
     end
   end

@@ -109,6 +109,18 @@ class DollarYenTransaction < ApplicationRecord
     end
   end
 
+  def calculate(dollar_yen_transaction:)
+    dollar_yen_transaction.deposit_en = dollar_yen_transaction.calculate_deposit_en if dollar_yen_transaction.deposit?
+    dollar_yen_transaction.withdrawal_rate = dollar_yen_transaction.calculate_withdrawal_rate(previous_dollar_yen_transactions: previous_dollar_yen_transactions) if dollar_yen_transaction.withdrawal?
+    dollar_yen_transaction
+  end
+  # def calculate(previous_dollar_yen_transactions: nil)
+  #   @deposit_en = calculate_deposit_en if deposit?
+  #   puts deposit?
+  #   puts calculate_deposit_en.inspect
+  #   # self
+  # end
+
   # 為替差益計算
   def self.calculate_foreign_exchange_gain(start_date:, end_date:)
     transactions = DollarYenTransaction.where(date: [ start_date..end_date ])

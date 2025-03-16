@@ -72,6 +72,10 @@ class Address < ApplicationRecord
     dollar_yen_transactions
   end
 
+  # 更新時に再計算が必要なdollar_yen_transactions
+  #
+  # @param target_date [Date] 日付
+  # @param id [Integer] 更新対象のid
   # @return [Array[DollarYenTransaction]] 更新時に再計算が必要なdollar_yen_transactions
   def recalculation_need_dollar_yen_transactions_update(target_date:, id: nil)
     recalculation_need_dollar_yen_transactions_delete(target_date: target_date, id: id)
@@ -93,6 +97,11 @@ class Address < ApplicationRecord
     dollar_yen_transactions.where("date <= ?", target_date).where.not(id: id).where("id < ?", id).order(date: :asc).order(id: :asc).last
   end
 
+  # 更新時に再計算対象の1つ手前のdollar_yen_transactionを返す
+  #
+  # @param target_date [Date] 日付
+  # @param id [Integer] 更新対象のid
+  # @return [DollarYenTransaction | nil] 更新時に再計算対象の1つ手前のdollar_yen_transactions
   def base_dollar_yen_transaction_update(target_date:, id:)
     base_dollar_yen_transaction_delete(target_date: target_date, id: id)
   end

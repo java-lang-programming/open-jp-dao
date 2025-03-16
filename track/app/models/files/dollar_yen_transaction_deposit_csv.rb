@@ -214,7 +214,7 @@ module Files
 
     # Files::DollarYenTransactionDepositCsvをDollarYenTransactionに変換する
     #
-    # @param previous_dollar_yen_transactions [Files::DollarYenTransactionDepositCsv or nil] csvのファイルオブジェクト
+    # @param previous_dollar_yen_transactions [DollarYenTransaction or nil] csvのファイルオブジェクト
     # @return [DollarYenTransaction] DollarYenTransaction
     def to_dollar_yen_transaction(previous_dollar_yen_transactions: nil)
       @transaction_type ||= find_transaction_type
