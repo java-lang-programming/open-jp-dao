@@ -4,9 +4,8 @@
   <%= render "layouts/header", user: @user %>
 <% end %>
 <p>日付と取引種別の変更はできません。日付と取引種別を変更したい場合は、削除してから新しいデータを作成してください。</p>
-<%= form_with model: @dollar_yen_transaction, url: edit_confirmation_dollar_yen_transactions_path, class:"form_transaction" do |form|  %>
+<%= form_with model: @dollar_yen_transaction, url: edit_confirmation_dollar_yen_transaction_path(@dollar_yen_transaction), data: { turbo: false }, method: :put, class:"form_transaction" do |form|  %>
 
-  <%= form.hidden_field :id %>
   <div class="tw_mb-5">
     <label class="form_label">日付*</label>
     <%= form.text_field :date, class: "form_input", id: "default-datepicker", placeholder: "Select date", readonly: true %>

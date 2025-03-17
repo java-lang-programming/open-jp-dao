@@ -1,7 +1,7 @@
 class DollarYenTransactionsController < ApplicationViewController
-  before_action :verify, only: [ :index, :new, :create_confirmation, :create, :delete_confirmation, :destroy, :csv_upload, :csv_import ]
+  before_action :verify, only: [ :index, :new, :create_confirmation, :create, :edit, :edit_confirmation, :update, :delete_confirmation, :destroy, :csv_upload, :csv_import ]
 
-  skip_before_action :verify_authenticity_token, only: [ :destroy ]
+  skip_before_action :verify_authenticity_token, only: [ :update, :destroy ]
   # https://railsguides.jp/action_controller_overview.html
   # https://weseek.co.jp/tech/1211/
   def index
@@ -71,6 +71,8 @@ class DollarYenTransactionsController < ApplicationViewController
     else
       @message = "#{params[:dollar_yen_transaction][:date]}以降の取引データが#{recalculation_need_count}件あります。これらの取引を含めて再計算が実行されます。実行してもよろしいですか。"
     end
+
+    render :create_confirmation
   end
 
   # 作成
@@ -101,7 +103,7 @@ class DollarYenTransactionsController < ApplicationViewController
     set_view_var
     address = @session.address
 
-    request = params.require(:dollar_yen_transaction).permit(:id, :date, :transaction_type, :deposit_quantity, :deposit_rate)
+    request = params.require(:dollar_yen_transaction).permit(:date, :transaction_type, :deposit_quantity, :deposit_rate)
 
     req = Requests::DollarYensTransaction.new
     @error = req.error(request: request)
@@ -116,7 +118,7 @@ class DollarYenTransactionsController < ApplicationViewController
       return render "edit"
     end
 
-    @dollar_yen_transaction = address.dollar_yen_transactions.where(id: request[:id]).first
+    @dollar_yen_transaction = address.dollar_yen_transactions.where(id: params[:id]).first
     @dollar_yen_transaction.deposit_quantity = BigDecimal(request[:deposit_quantity])
     @dollar_yen_transaction.deposit_rate = BigDecimal(request[:deposit_rate])
 
@@ -142,7 +144,7 @@ class DollarYenTransactionsController < ApplicationViewController
         redirect_to dollar_yen_transactions_path, flash: { notice: "取引データを更新しました" }
         return
       end
-      return "edit"
+      return :edit
     end
 
     if recalculation_need_count > 50
@@ -157,14 +159,14 @@ class DollarYenTransactionsController < ApplicationViewController
 
     request = params.require(:dollar_yen_transaction).permit(:id, :date, :transaction_type, :deposit_quantity, :deposit_rate)
 
-    req = Requests::DollarYensTransaction.new
-    @error = req.error(request: request)
+    # req = Requests::DollarYensTransaction.new
+    # @error = req.error(request: request)
 
     dollar_yen_transaction = address.dollar_yen_transactions.where(id: params[:id]).first
     dollar_yen_transaction.deposit_quantity = BigDecimal(request[:deposit_quantity])
     dollar_yen_transaction.deposit_rate = BigDecimal(request[:deposit_rate])
 
-    recalculation_need_count = address.recalculation_need_dollar_yen_transactions_update(target_date: @dollar_yen_transaction.date, id: @dollar_yen_transaction.id).count
+    recalculation_need_count = address.recalculation_need_dollar_yen_transactions_update(target_date: dollar_yen_transaction.date, id: dollar_yen_transaction.id).count
     if recalculation_need_count > 50
       DollarYenTransactionsUpdateJob.perform_later(dollar_yen_transaction: dollar_yen_transaction, kind: DollarYenTransaction::KIND_UPDATE)
     else

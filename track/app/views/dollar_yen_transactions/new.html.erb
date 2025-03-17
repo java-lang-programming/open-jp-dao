@@ -4,7 +4,7 @@
   <%= render "layouts/header", user: @user %>
 <% end %>
 
-<%= form_with model: @dollar_yen_transaction, url: create_confirmation_dollar_yen_transactions_path, class:"form_transaction" do |form|  %>
+<%= form_with model: @dollar_yen_transaction, url: create_confirmation_dollar_yen_transactions_path, data: { turbo: false }, class:"form_transaction" do |form|  %>
 
   <div class="tw_mb-5">
     <label class="form_label">日付*</label>
@@ -34,7 +34,7 @@
     <label for="jp_en" class="form_label">日本円</label>
     <input type="text" id="jp_en" class="form_input form_input_ng" required />
   </div>
-  <button type="submit" class="btn_submit">登録</button>
+  <%= form.submit '登録' %>
 <% end %>
 
 
