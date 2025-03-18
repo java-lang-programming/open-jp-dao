@@ -246,7 +246,7 @@ RSpec.describe "DollarYenTransactions", type: :request do
     end
   end
 
-  describe "put /edit" do
+  describe "put /update" do
     let(:addresses_eth) { create(:addresses_eth) }
     let(:transaction_type1) { create(:transaction_type1, address: addresses_eth) }
     let(:dollar_yen_transaction1) { create(:dollar_yen_transaction1, transaction_type: transaction_type1, address: addresses_eth) }
@@ -270,6 +270,75 @@ RSpec.describe "DollarYenTransactions", type: :request do
 
         put dollar_yen_transaction_path(dollar_yen_transaction2), params: { dollar_yen_transaction: { id: dollar_yen_transaction2.id, date: "2020-06-19", transaction_type: "1", deposit_quantity: "10.76", deposit_rate: "105.95" } }
         updated = addresses_eth.dollar_yen_transactions.where(id: dollar_yen_transaction2.id).first
+        expect(response.status).to eq(302)
+      end
+    end
+  end
+
+  # TODO methodをdeleteに変更
+  describe "delete /delete_confirmation" do
+    let(:addresses_eth) { create(:addresses_eth) }
+    let(:transaction_type1) { create(:transaction_type1, address: addresses_eth) }
+    let(:dollar_yen_transaction1) { create(:dollar_yen_transaction1, transaction_type: transaction_type1, address: addresses_eth) }
+    let(:dollar_yen_transaction2) { create(:dollar_yen_transaction2, transaction_type: transaction_type1, address: addresses_eth) }
+    let(:dollar_yen_transaction3) { create(:dollar_yen_transaction3, transaction_type: transaction_type1, address: addresses_eth) }
+    let(:master_export_master_csv_path) { "#{Rails.root}/spec/files/dollar_yen_transactions/master_export.csv" }
+
+    context 'success' do
+      before do
+        # sigin処理
+        mock_apis_verify(body: {})
+        get apis_sessions_nonce_path
+        post apis_sessions_signin_path, params: { address: addresses_eth.address, kind: Address.kinds[:ethereum], chain_id: 1, message: "message", signature: "signature", domain: "aiueo.com" }
+      end
+
+      # 削除
+      it "should be success and deleted." do
+        dollar_yen_transaction1
+        dollar_yen_transaction2
+        dollar_yen_transaction3
+
+        get delete_confirmation_dollar_yen_transaction_path(dollar_yen_transaction3)
+        deleted = addresses_eth.dollar_yen_transactions.where(id: dollar_yen_transaction3.id).first
+        expect(deleted).to be nil
+        expect(response.status).to eq(302)
+      end
+
+      it "should be success." do
+        dollar_yen_transaction1
+        dollar_yen_transaction2
+        dollar_yen_transaction3
+
+        get delete_confirmation_dollar_yen_transaction_path(dollar_yen_transaction2)
+
+        expect(response.body).to include '2020-06-19以降の取引データが1件あります'
+      end
+    end
+  end
+
+  describe "delete /destroy" do
+    let(:addresses_eth) { create(:addresses_eth) }
+    let(:transaction_type1) { create(:transaction_type1, address: addresses_eth) }
+    let(:dollar_yen_transaction1) { create(:dollar_yen_transaction1, transaction_type: transaction_type1, address: addresses_eth) }
+    let(:dollar_yen_transaction2) { create(:dollar_yen_transaction2, transaction_type: transaction_type1, address: addresses_eth) }
+    let(:dollar_yen_transaction3) { create(:dollar_yen_transaction3, transaction_type: transaction_type1, address: addresses_eth) }
+    let(:master_export_master_csv_path) { "#{Rails.root}/spec/files/dollar_yen_transactions/master_export.csv" }
+
+    context 'success' do
+      before do
+        # sigin処理
+        mock_apis_verify(body: {})
+        get apis_sessions_nonce_path
+        post apis_sessions_signin_path, params: { address: addresses_eth.address, kind: Address.kinds[:ethereum], chain_id: 1, message: "message", signature: "signature", domain: "aiueo.com" }
+      end
+
+      # 削除
+      it "should be success and deleted." do
+        dollar_yen_transaction1
+        dollar_yen_transaction2
+        dollar_yen_transaction3
+
+        delete dollar_yen_transaction_path(dollar_yen_transaction2)
         expect(response.status).to eq(302)
       end
     end

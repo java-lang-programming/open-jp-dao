@@ -182,8 +182,7 @@ class DollarYenTransactionsController < ApplicationViewController
 
     @dollar_yen_transaction = address.dollar_yen_transactions.where(id: params[:id]).first
 
-    recalculation_need_count = address.recalculation_need_dollar_yen_transactions_update(target_date: @dollar_yen_transaction.date, id: @dollar_yen_transaction.id).count
-
+    recalculation_need_count = address.recalculation_need_dollar_yen_transactions_delete(target_date: @dollar_yen_transaction.date, id: @dollar_yen_transaction.id).count
     if recalculation_need_count == 0
       @dollar_yen_transaction.destroy
       redirect_to dollar_yen_transactions_path, flash: { notice: "取引データを削除しました" }
@@ -209,12 +208,7 @@ class DollarYenTransactionsController < ApplicationViewController
     base_dollar_yen_transaction = address.base_dollar_yen_transaction_delete(target_date: dollar_yen_transaction.date, id: dollar_yen_transaction.id)
 
     # 再計算が必要な取引
-    recalculation_dollar_yen_transactions = address.recalculation_need_dollar_yen_transactions_delete(target_date: dollar_yen_transaction.date, id: dollar_yen_transaction.id)
-
-    # 　これだけ外に出す必要がある
-    recalculation_need_count = recalculation_dollar_yen_transactions.count
-
-
+    recalculation_need_count = address.recalculation_need_dollar_yen_transactions_delete(target_date: dollar_yen_transaction.date, id: dollar_yen_transaction.id).count
     if recalculation_need_count > 50
       DollarYenTransactionsUpdateJob.perform_later(dollar_yen_transaction: dollar_yen_transaction, kind: DollarYenTransaction::KIND_DELETE)
     else
