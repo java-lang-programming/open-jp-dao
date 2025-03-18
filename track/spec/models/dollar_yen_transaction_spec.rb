@@ -5,7 +5,6 @@ RSpec.describe DollarYenTransaction, type: :model do
   let(:addresses_eth) { create(:addresses_eth) }
   let(:transaction_type1) { create(:transaction_type1, address: addresses_eth) }
 
-
   describe 'deposit?' do
     let(:addresses_eth) { create(:addresses_eth) }
     let(:transaction_type1) { create(:transaction_type1, address: addresses_eth) }
@@ -410,6 +409,19 @@ RSpec.describe DollarYenTransaction, type: :model do
     end
   end
 
+  describe 'balance_en_on_screen' do
+    let(:addresses_eth) { create(:addresses_eth) }
+    let(:transaction_type5) { create(:transaction_type5, address: addresses_eth) }
+    let(:dollar_yen_transaction44) { create(:dollar_yen_transaction44, transaction_type: transaction_type5, address: addresses_eth) }
+
+    context '画面表示 balance_en_on_screen' do
+      # 端数の処理は切り捨て
+      it 'should be balance_en_on_screen when data is decimal point.' do
+        expect(dollar_yen_transaction44.balance_en_on_screen).to eq(90166)
+      end
+    end
+  end
+
   describe 'to_csv_import_format' do
     let(:addresses_eth) { create(:addresses_eth) }
     let(:transaction_type1) { create(:transaction_type1, address: addresses_eth) }
@@ -440,12 +452,163 @@ RSpec.describe DollarYenTransaction, type: :model do
     context 'export用のcsvデータを作成する' do
       it 'should be cvs data when deposit data.' do
         csv_data = dollar_yen_transaction1.to_csv_export_format
-        expect(csv_data).to eq([ "2020/04/01", "HDV配当入金", 3.97, 106.59, 423, nil, nil, nil, 3.97, 106.5491184, 423.0 ])
+        expect(csv_data).to eq([ "2020/04/01", "HDV配当入金", 3.97, 106.59, 423, nil, nil, nil, 3.97, 106.5491183879093, 423.0 ])
       end
 
       it 'should be cvs data when withdrawal data.' do
         csv_data = dollar_yen_transaction44.to_csv_export_format
         expect(csv_data).to eq([ "2024/02/01", "ドルを円に変換", nil, nil, nil, 88.0, 137.0555585, 12060.88915, 657.88, 137.0569101, 90166.11085 ])
+      end
+    end
+  end
+
+  describe 'generate_upsert_dollar_yens_transactions' do
+    let(:addresses_eth) { create(:addresses_eth) }
+    let(:transaction_type1) { create(:transaction_type1, address: addresses_eth) }
+    let(:transaction_type2) { create(:transaction_type2, address: addresses_eth) }
+    let(:transaction_type3) { create(:transaction_type3, address: addresses_eth) }
+    let(:transaction_type4) { create(:transaction_type4, address: addresses_eth) }
+    let(:dollar_yen_transaction1) { create(:dollar_yen_transaction1, transaction_type: transaction_type1, address: addresses_eth) }
+    let(:dollar_yen_transaction1_same_day) { create(:dollar_yen_transaction1, transaction_type: transaction_type2, address: addresses_eth) }
+    let(:dollar_yen_transaction2_same_day_1) { create(:dollar_yen_transaction2, transaction_type: transaction_type1, address: addresses_eth) }
+    let(:dollar_yen_transaction2_same_day_2) { create(:dollar_yen_transaction2, transaction_type: transaction_type2, address: addresses_eth) }
+    let(:dollar_yen_transaction2_same_day_3) { create(:dollar_yen_transaction2, transaction_type: transaction_type3, address: addresses_eth) }
+    let(:dollar_yen_transaction2_same_day_4) { create(:dollar_yen_transaction2, transaction_type: transaction_type4, address: addresses_eth) }
+    let(:dollar_yen_transaction3) { create(:dollar_yen_transaction3, transaction_type: transaction_type1, address: addresses_eth) }
+    let(:dollar_yen_transaction4) { create(:dollar_yen_transaction4, transaction_type: transaction_type1, address: addresses_eth) }
+
+    context 'create' do
+      # 日付が重複していない
+      # 途中にデータを入れる
+      # create
+      it 'should get dollar_yens_transactions when kind is create and data is not duplicate.' do
+        dollar_yen_transaction1
+        # 新規作成
+        create_dollar_yen_transaction2 = build(:dollar_yen_transaction2, transaction_type: transaction_type1, address: addresses_eth)
+        dollar_yen_transaction3
+
+        dollar_yens_transactions = create_dollar_yen_transaction2.generate_upsert_dollar_yens_transactions(kind: DollarYenTransaction::KIND_CREATE)
+        expect(dollar_yens_transactions.size).to eq(2)
+
+        # 日付の順番を確認。計算結果はto_dollar_yen_transactionで確認
+        expect(dollar_yens_transactions[0].date).to eq(Date.new(2020, 6, 19))
+        expect(dollar_yens_transactions[1].date).to eq(dollar_yen_transaction3.date)
+      end
+
+      # 日付が重複している
+      # 途中にデータを入れる
+      it 'should get dollar_yens_transactions when kind is create and data is not duplicate.' do
+        dollar_yen_transaction1
+        dollar_yen_transaction2_same_day_1
+        dollar_yen_transaction2_same_day_2
+        # これを追加予定
+        create_ollar_yen_transaction2_same_day_3 = build(:dollar_yen_transaction2, transaction_type: transaction_type1, address: addresses_eth)
+        dollar_yen_transaction2_same_day_4
+        dollar_yen_transaction3
+        dollar_yen_transaction4
+
+        dollar_yens_transactions = create_ollar_yen_transaction2_same_day_3.generate_upsert_dollar_yens_transactions(kind: DollarYenTransaction::KIND_CREATE)
+        expect(dollar_yens_transactions.size).to eq(3)
+
+        # 日付の順番を確認。計算結果はto_dollar_yen_transactionで確認
+        expect(dollar_yens_transactions[0].date).to eq(create_ollar_yen_transaction2_same_day_3.date)
+        expect(dollar_yens_transactions[1].date).to eq(dollar_yen_transaction3.date)
+        expect(dollar_yens_transactions[2].date).to eq(dollar_yen_transaction4.date)
+      end
+    end
+
+    context 'update' do
+      # 日付が重複していない
+      # 途中のデータを更新
+      # update
+      it 'should get dollar_yens_transactions when kind is update and data is not duplicate.' do
+        dollar_yen_transaction1
+        # 　更新対象
+        dollar_yen_transaction2_same_day_1
+        dollar_yen_transaction3
+
+        dollar_yen_transaction2_same_day_1.deposit_quantity = 50
+
+        dollar_yens_transactions = dollar_yen_transaction2_same_day_1.generate_upsert_dollar_yens_transactions(kind: DollarYenTransaction::KIND_UPDATE)
+        expect(dollar_yens_transactions.size).to eq(2)
+
+        # 日付の順番を確認。計算結果はto_dollar_yen_transactionで確認
+        expect(dollar_yens_transactions[0].date).to eq(dollar_yen_transaction2_same_day_1.date)
+        expect(dollar_yens_transactions[0].id).to eq(dollar_yen_transaction2_same_day_1.id)
+        expect(dollar_yens_transactions[1].date).to eq(dollar_yen_transaction3.date)
+        expect(dollar_yens_transactions[1].id).to eq(dollar_yen_transaction3.id)
+      end
+
+      # 日付が重複している
+      # 途中データを更新
+      it 'should get dollar_yens_transactions when kind is update and data is not duplicate.' do
+        dollar_yen_transaction1
+        dollar_yen_transaction2_same_day_1
+        dollar_yen_transaction2_same_day_2
+        # これを追加予定
+        dollar_yen_transaction2_same_day_3
+        dollar_yen_transaction2_same_day_4
+        dollar_yen_transaction3
+        dollar_yen_transaction4
+
+
+        dollar_yen_transaction2_same_day_3.deposit_quantity = 50
+
+        dollar_yens_transactions = dollar_yen_transaction2_same_day_3.generate_upsert_dollar_yens_transactions(kind: DollarYenTransaction::KIND_UPDATE)
+        expect(dollar_yens_transactions.size).to eq(4)
+
+        # 日付とidの順番を確認。計算結果はto_dollar_yen_transactionで確認
+        expect(dollar_yens_transactions[0].date).to eq(dollar_yen_transaction2_same_day_3.date)
+        expect(dollar_yens_transactions[0].id).to eq(dollar_yen_transaction2_same_day_3.id)
+        expect(dollar_yens_transactions[1].date).to eq(dollar_yen_transaction2_same_day_4.date)
+        expect(dollar_yens_transactions[1].id).to eq(dollar_yen_transaction2_same_day_4.id)
+        expect(dollar_yens_transactions[2].date).to eq(dollar_yen_transaction3.date)
+        expect(dollar_yens_transactions[2].id).to eq(dollar_yen_transaction3.id)
+        expect(dollar_yens_transactions[3].date).to eq(dollar_yen_transaction4.date)
+        expect(dollar_yens_transactions[3].id).to eq(dollar_yen_transaction4.id)
+      end
+    end
+
+    context 'delete' do
+      # 日付が重複していない
+      # 途中のデータを更新
+      # update
+      it 'should get dollar_yens_transactions when kind is delete and data is not duplicate.' do
+        dollar_yen_transaction1
+        # 削除対象
+        dollar_yen_transaction2_same_day_1
+        dollar_yen_transaction3
+
+        dollar_yens_transactions = dollar_yen_transaction2_same_day_1.generate_upsert_dollar_yens_transactions(kind: DollarYenTransaction::KIND_DELETE)
+        expect(dollar_yens_transactions.size).to eq(1)
+
+        # 日付の順番を確認。計算結果はto_dollar_yen_transactionで確認
+        expect(dollar_yens_transactions[0].date).to eq(dollar_yen_transaction3.date)
+        expect(dollar_yens_transactions[0].id).to eq(dollar_yen_transaction3.id)
+      end
+
+      # 日付が重複している
+      # 途中データを削除
+      it 'should get dollar_yens_transactions when kind is delete and data is not duplicate.' do
+        dollar_yen_transaction1
+        dollar_yen_transaction2_same_day_1
+        dollar_yen_transaction2_same_day_2
+        # これを削除
+        dollar_yen_transaction2_same_day_3
+        dollar_yen_transaction2_same_day_4
+        dollar_yen_transaction3
+        dollar_yen_transaction4
+
+        dollar_yens_transactions = dollar_yen_transaction2_same_day_3.generate_upsert_dollar_yens_transactions(kind: DollarYenTransaction::KIND_DELETE)
+        expect(dollar_yens_transactions.size).to eq(3)
+
+        # 日付とidの順番を確認。計算結果はto_dollar_yen_transactionで確認
+        expect(dollar_yens_transactions[0].date).to eq(dollar_yen_transaction2_same_day_4.date)
+        expect(dollar_yens_transactions[0].id).to eq(dollar_yen_transaction2_same_day_4.id)
+        expect(dollar_yens_transactions[1].date).to eq(dollar_yen_transaction3.date)
+        expect(dollar_yens_transactions[1].id).to eq(dollar_yen_transaction3.id)
+        expect(dollar_yens_transactions[2].date).to eq(dollar_yen_transaction4.date)
+        expect(dollar_yens_transactions[2].id).to eq(dollar_yen_transaction4.id)
       end
     end
   end

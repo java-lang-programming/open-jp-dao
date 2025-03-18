@@ -1,0 +1,190 @@
+/** メディアクエリmin-sizeは小さい順に書く**/
+/** モバイルファーストで記載する **/
+/** TODO リファクタ var **/
+
+
+/** スクリーンサイズが640px以上の場合に適用 **/
+@media (min-width: 640px) {
+  .container {
+    max-width: 640px;
+  }
+}
+
+@media (min-width: 768px) {
+  .container {
+    max-width: 768px;
+  }
+}
+
+@media (min-width: 1024px) {
+  .container {
+    max-width: 1024px;
+  }
+}
+
+@media(min-width: 1280px) {
+  .container {
+    max-width: 1280px;
+  }
+}
+
+/* 一番上の header */
+.header_nav_first {
+  display: flex;
+  padding: 1.25rem;
+  margin-left: auto;
+  margin-right: auto;
+  background-color: #FDF5E6;
+}
+
+.header_nav_first .left_side {
+  display: flex;
+  align-items: center;
+}
+
+.header_nav_first .left_side .site_name {
+  font-weight: 700;
+  font-size: 1.125rem;
+  line-height: 1.75rem;
+  text-decoration: inherit; 
+}
+
+.header_nav_first .nav {
+  margin-left:auto;  
+}
+
+.header_nav_first .nav .btn_session {
+  border-width: 1px;
+  border-radius: 0.75rem;
+  padding-top: 0.75rem;
+  padding-bottom: 0.75rem;
+}
+
+/* 2行目のheader */
+.header_nav_second {
+  display: flex;
+  padding: 1.00rem;
+  margin-left: auto;
+  margin-right: auto;
+  background-color: rgb(249 250 251 / 1);
+}
+
+.header_nav_second .ul_nav {
+  display: inline-flex;
+  list-style-type: none; 
+}
+
+.header_nav_second .ul_nav .li_nav {
+  margin-left: 20px;
+  margin-right: 20px;
+}
+
+.header_nav_second .ul_nav .li_nav .li_nav_link {
+  text-decoration: none;
+}
+
+.header_nav_second .ul_nav .li_nav .li_nav_link:hover {
+  color:black;
+  text-decoration: underline;
+}
+
+.header_session {
+  display: flex;
+  padding: 1.25rem;
+  margin-left: auto;
+  margin-right: auto;
+  justify-content:space-between;
+}
+
+.header_session .item {
+  margin-right: 10px;
+}
+
+.information {
+  text-align: center;
+  padding-top: 1rem;
+  padding-bottom: 1rem;
+}
+
+/** フォームの基本 **/
+.form_transaction {
+  max-width: 24rem;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.tw_mb-5 {
+  margin-bottom: 1.25rem;
+}
+
+/** block mb-2 text-sm font-medium text-gray-900 dark:text-white **/
+.form_label {
+  --tw-text-opacity: 1;
+  color: rgb(17 24 39 / 1);
+  font-weight: 500;
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+  display: block;
+  margin-bottom: 0.5rem;
+}
+
+/** bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 **/
+.form_input {
+  color: rgb(17 24 39 / 1);
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+  padding: 0.625rem;
+  background-color: rgb(249 250 251 / 1);
+  border-color: rgb(209 213 219 / 1);
+  border-width: 1px;
+  border-radius: 0.5rem;
+  width: 100%;
+  display: block;
+  border-style: solid;
+  box-sizing: border-box;
+}
+
+.form_input_ok {
+  border: 1px solid green;
+}
+
+.form_input_ng {
+  border: 1px solid red;
+}
+
+.form_checkbox {
+  background-color: rgb(249 250 251 / 1);
+  border-color: rgb(209 213 219 / 1);
+  border-width: 1px;
+  border-radius: 0.125rem;
+  width: 1rem;
+  height: 1rem;
+  box-sizing: border-box;
+  border-style: solid;
+}
+
+.form_checkbox_section {
+  align-items: flex-start;
+  display: flex;
+  margin-bottom: 1.25rem;
+}
+
+/** text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800 **/
+.btn_submit {
+  color: rgb(255 255 255 / 1);
+  font-weight: 500;
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+  text-align: center;
+  padding-top: 0.625rem;
+  padding-bottom: 0.625rem;
+  padding-left: 1.25rem;
+  padding-right: 1.25rem;
+  background-color: rgb(29 78 216 / 1);
+  border-radius: 0.5rem;
+  cursor: pointer;
+  box-sizing: border-box;
+  border-width: 0;
+  border-style: solid;
+  border-color: #e5e7eb;
+}

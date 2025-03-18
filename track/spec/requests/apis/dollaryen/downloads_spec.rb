@@ -31,7 +31,7 @@ RSpec.describe "Apis::Dollaryen::Downloads", type: :request do
         get apis_dollaryen_download_path("csv_export")
         expect(response).to have_http_status(:success)
         expect(response.headers["Content-Type"]).to include "text/csv"
-        expect(response.body).to eq("date,transaction_type,deposit_quantity,deposit_rate,deposit_en,withdrawal_quantity,withdrawal_rate,withdrawal_en,balance_quantity,balance_rate,balance_en\n2020/04/01,HDV配当入金,3.97,106.59,423,,,,3.97,106.5491184,423.0")
+        expect(response.body).to eq("date,transaction_type,deposit_quantity,deposit_rate,deposit_en,withdrawal_quantity,withdrawal_rate,withdrawal_en,balance_quantity,balance_rate,balance_en\n2020/04/01,HDV配当入金,3.97,106.59,423,,,,3.97,106.5491183879093,423.0")
       end
     end
   end

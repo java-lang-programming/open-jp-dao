@@ -50,6 +50,8 @@ module Files
     end
 
     def valid_date?(errors:)
+      # date:, errors: [], row_num: -1
+      # Validators::DollarYensTransaction.date_errors(date: @date, errors: errors, row_num: @row_num)
       if @date.present?
         dates = @date.split("/")
         size = dates.length
@@ -212,7 +214,7 @@ module Files
 
     # Files::DollarYenTransactionDepositCsvをDollarYenTransactionに変換する
     #
-    # @param previous_dollar_yen_transactions [Files::DollarYenTransactionDepositCsv or nil] csvのファイルオブジェクト
+    # @param previous_dollar_yen_transactions [DollarYenTransaction or nil] csvのファイルオブジェクト
     # @return [DollarYenTransaction] DollarYenTransaction
     def to_dollar_yen_transaction(previous_dollar_yen_transactions: nil)
       @transaction_type ||= find_transaction_type
@@ -222,7 +224,6 @@ module Files
 
       # 変数格納
       dyt.deposit_rate = BigDecimal(@deposit_rate.to_s) if dyt.deposit?
-      # puts "ここにはきてる"
       dyt.deposit_quantity = BigDecimal(@deposit_quantity.to_s) if dyt.deposit?
       dyt.withdrawal_quantity = BigDecimal(@withdrawal_quantity.to_s) if dyt.withdrawal?
       dyt.exchange_en = BigDecimal(@exchange_en.to_s) if dyt.withdrawal?
@@ -277,10 +278,11 @@ module Files
     # Array[Files::DollarYenTransactionDepositCsv]をArray[DollarYenTransaction]に変換する
     #
     # @param csvs [Array[Files::DollarYenTransactionDepositCsv]] csvのファイルオブジェクト一覧
+    # @param prev_dollar_yen_transaction [DollarYenTransaction | nil] DollarYenTransactionオブジェクト
     # @return [Array[DollarYenTransaction]] DollarYenTransactionの一覧
-    def self.make_dollar_yen_transactions(csvs:)
+    def self.make_dollar_yen_transactions(csvs:, prev_dollar_yen_transaction: nil)
       dollar_yen_transactionss = []
-      prev_dollar_yen_transaction = nil
+      prev_dollar_yen_transaction = prev_dollar_yen_transaction
       csvs.each_with_index do |item, idx|
         dollar_yen_transaction = item.to_dollar_yen_transaction(previous_dollar_yen_transactions: prev_dollar_yen_transaction)
         dollar_yen_transactionss << dollar_yen_transaction

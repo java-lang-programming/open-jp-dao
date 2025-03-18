@@ -6,7 +6,7 @@ FactoryBot.define do
     deposit_quantity { 3.97 }
     deposit_en { 423 }
     balance_quantity { 3.97 }
-    balance_rate { 106.5491184 }
+    balance_rate { 106.5491183879093 }
     balance_en { 423 }
     address { }
   end
@@ -18,7 +18,7 @@ FactoryBot.define do
     deposit_quantity { 10.76 }
     deposit_en { 1140 }
     balance_quantity { 14.73 }
-    balance_rate { 106.1099796 }
+    balance_rate { 106.1099796334012 }
     balance_en { 1563 }
     address { }
   end
@@ -30,8 +30,20 @@ FactoryBot.define do
     deposit_quantity { 14.73 }
     deposit_en { 1537 }
     balance_quantity { 29.46 }
-    balance_rate { 105.227427 }
+    balance_rate { 105.2274270196877 }
     balance_en { 3100 }
+    address { }
+  end
+
+  factory :dollar_yen_transaction4, class: DollarYenTransaction do
+    transaction_type { }
+    date { '2020-12-18' }
+    deposit_rate { 102.26 }
+    deposit_quantity { 20.61 }
+    deposit_en { 2107 }
+    balance_quantity { 50.07 }
+    balance_rate { 103.9944078290393 }
+    balance_en { 5207 }
     address { }
   end
 

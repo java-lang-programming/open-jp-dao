@@ -48,6 +48,7 @@ migrate:
 	bundle exec rails db:migrate
 reset:
 	bundle exec rails db:reset
+# spec/requests/import_files_spec.rb
 rspec:
 	bundle exec rspec spec --backtrace
 log_clear:

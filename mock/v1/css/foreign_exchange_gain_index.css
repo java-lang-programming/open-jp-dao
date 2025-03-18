@@ -1,3 +1,26 @@
+/** メディアクエリmin-sizeは小さい順に書く**/
+/** モバイルファーストで記載する **/
+
+
+/** スクリーンサイズが640px以上の場合に適用 **/
+@media (min-width: 640px) {
+  .container {
+    max-width: 640px;
+  }
+}
+
+@media (min-width: 768px) {
+  .container {
+    max-width: 768px;
+  }
+}
+
+@media (min-width: 1024px) {
+  .container {
+    max-width: 1024px;
+  }
+}
+
 @media(min-width: 1280px) {
   .container {
     max-width: 1280px;
@@ -5,20 +28,34 @@
 }
 
 /* 一番上の header */
-.header1 {
+.header_nav_first {
   display: flex;
   padding: 1.25rem;
   margin-left: auto;
   margin-right: auto;
+  margin-top: auto;
+  margin-bottom: auto;
+
+  /** 左側(iconとサイト名) **/
+  .left_side {
+    display: flex;
+    align-items: center;
+
+    /** サイト名 **/
+    .site_name {
+      font-weight: 700;
+      font-size: 1.125rem;
+      line-height: 1.75rem;
+      text-decoration: inherit; 
+    }
+  }
+
+  /** ナビゲーション 右寄 **/
+  .nav {
+    margin-left:auto;
+  }
 }
 
-/* 一番上の headerのサイト名 */
-.header1_site_name {
-  font-weight: 700;
-  font-size: 1.125rem;
-  line-height: 1.75rem;
-  text-decoration: inherit;
-}
 
 .header1_nav {
   margin-left:auto;

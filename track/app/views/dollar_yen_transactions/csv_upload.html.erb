@@ -1,0 +1,22 @@
+<% content_for :title do %>WanWan ドル円外貨預金元帳 csvアップロード<% end %>
+
+<% content_for :header do %>
+  <%= render "layouts/header", user: @user %>
+<% end %>
+
+<p>ドル円外貨預金元帳 csv upload</p>
+<% if flash[:errors].present? %>
+  <ul>
+    <% flash[:errors].each do |message| %>
+      <li><%= message %></li>
+    <% end %>
+  </ul>
+<% end %>
+<%= form_with url: csv_import_dollar_yen_transactions_path, multipart: true do |form|  %>
+  <div>
+    <%= form.file_field :file %>
+  </div>
+  <div>
+    <%= form.submit '送信' %>
+  </div>
+<% end %>

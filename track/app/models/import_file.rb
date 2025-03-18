@@ -21,7 +21,6 @@ class ImportFile < ApplicationRecord
     csvs
   end
 
-  # 　別のクラウというかサービス
   # 最新のトランザジョンより古いデータが含まれているか
   def include_past_dollar_yen_transaction?(csvs:)
     # 最新のトランザクション
@@ -40,5 +39,21 @@ class ImportFile < ApplicationRecord
   # service/ドル円取引csvimportやな
   def get_oldest_date(csvs:)
     csvs.map(&:target_date).min
+  end
+
+  # @return [String] 画面表示ステータス
+  def status_on_screen
+    case status
+    when "ready"
+      "準備中"
+    when "in_progress"
+      "実行中"
+    when "failure"
+      "失敗"
+    when "completed"
+      "完了"
+    else
+      "エラー"
+    end
   end
 end

@@ -153,4 +153,29 @@ RSpec.describe ImportFile, type: :model do
       FileUtils.rm_rf(ActiveStorage::Blob.service.root)
     end
   end
+
+  describe 'get_oldest_date' do
+    let(:addresses_eth) { create(:addresses_eth) }
+    let(:job_2) { create(:job_2) }
+    let(:import_file) { create(:import_file, address: addresses_eth, job: job_2) }
+    let(:import_file_in_progress) { create(:import_file_in_progress, address: addresses_eth, job: job_2) }
+    let(:import_file_completed) { create(:import_file_completed, address: addresses_eth, job: job_2) }
+    let(:import_file_failure) { create(:import_file_failure, address: addresses_eth, job: job_2) }
+
+    it 'should be 準備中 when status is ready.' do
+      expect(import_file.status_on_screen).to eq('準備中')
+    end
+
+    it 'should be 準備中 when status is in_progress.' do
+      expect(import_file_in_progress.status_on_screen).to eq('実行中')
+    end
+
+    it 'should be 準備中 when status is completed.' do
+      expect(import_file_completed.status_on_screen).to eq('完了')
+    end
+
+    it 'should be 準備中 when status is failure.' do
+      expect(import_file_failure.status_on_screen).to eq('失敗')
+    end
+  end
 end

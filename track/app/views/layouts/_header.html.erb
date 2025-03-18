@@ -1,0 +1,33 @@
+<header>
+  <!-- header 1行目 -->
+  <div class="header_nav_first">
+    <div class="left_side"><a href="#" class="site_name">WanWan</a></div>
+    
+    <!-- navigation -->
+    <nav class="nav">
+      <div>
+        <button class="btn_session">ログアウト</button>
+      </div>
+    </nav>
+  </div>
+
+  <!-- header 2行目-->
+  <div class="header_nav_second">
+    <div>
+      <ul class="ul_nav">
+        <li class="li_nav">
+          <a href="#" class="li_nav_link">Home</a>
+        </li>
+        <li class="li_nav"><a href="#" class="li_nav_link">お知らせ・ご案内</a>
+        </li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="header_session">
+    <div class="item"><%= user[:address] %></div>
+    <div class="item"><%= user[:network] %></div>
+    <div class="item">最終ログイン:&nbsp;<%= user[:last_login] %></div>
+  </div>
+
+</header>

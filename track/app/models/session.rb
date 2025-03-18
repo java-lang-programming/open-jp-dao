@@ -32,4 +32,8 @@ class Session < ApplicationRecord
   def last_login
     created_at.strftime("%Y/%m/%d %H:%M:%S")
   end
+
+  def preload_records
+    { address: address, transaction_types: address.transaction_types }
+  end
 end

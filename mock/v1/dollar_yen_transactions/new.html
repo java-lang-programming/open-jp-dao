@@ -1,0 +1,51 @@
+<!doctype html>
+<html>
+<head>
+  <!-- https://v1.tailwindcss.com/components/alerts -->
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <!-- <script src="https://cdn.tailwindcss.com"></script>-->
+  <link rel="stylesheet" type="text/css" href="../css/v1_design.css" />
+</head>
+<body>
+<h1>外貨預金元帳作成</h1>
+<form class="form_transaction">
+  <div class="tw_mb-5">
+    <label class="form_label">日付*</label>
+    <input datepicker id="default-datepicker" type="text" class="form_input" placeholder="Select date">
+  </div>
+  <div class="tw_mb-5">
+    <label for="transaction_kind" class="form_label">取引種別*</label>
+    <select id="transaction_kind" class="form_input
+    ">
+      <option selected>Choose a country</option>
+      <option value="US">United States</option>
+      <option value="CA">Canada</option>
+      <option value="FR">France</option>
+      <option value="DE">Germany</option>
+    </select>
+  </div>
+  <div class="tw_mb-5">
+    <!-- エラーとOKの場合のcssを作成する -->
+    <label for="en_dollar_value" class="form_label">数量米ドル*</label>
+    <input type="text" id="en_dollar_value" class="form_input form_input_ok" required />
+  </div>
+  <div class="tw_mb-5">
+    <label for="jp_en_rate" class="form_label">レート* </label>
+    <input type="text" id="jp_en_rate" class="form_input" required />
+  </div>
+  <div class="form_checkbox_section">
+    <!-- flex items-center  -->
+    <div class="h-5">
+      <input id="auto_rate" type="checkbox" value="" class="form_checkbox" required />
+    </div>
+    <label for="auto_rate" class="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300">ドル円レート自動反映</label>
+  </div>
+  <div class="tw_mb-5">
+    <label for="jp_en" class="form_label">日本円</label>
+    <input type="text" id="jp_en" class="form_input form_input_ng" required />
+  </div>
+  <button type="submit" class="btn_submit">登録</button>
+</form>
+</body>
+</html>

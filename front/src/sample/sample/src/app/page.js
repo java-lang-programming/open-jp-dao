@@ -8,7 +8,7 @@ import Link from 'next/link';
 import "./login.css";
 import { fetchSessionsNonce, postSessionsSignin } from "./repo/sessions";
 import { makeMessage } from "./usecases/singin";
-import { ForeignExchangeGainIndex } from "./page_urls";
+import { ForeignExchangeGainIndex, DollarYenTransactionsIndex } from "./page_urls";
 import { useRouter } from 'next/navigation'
 
 
@@ -140,7 +140,7 @@ export default function Home() {
 
       const verify_status = await res.status
       if (verify_status == 201) {
-        router.push(ForeignExchangeGainIndex)
+        router.push(DollarYenTransactionsIndex)
         // setAddress(address)
         return
       }

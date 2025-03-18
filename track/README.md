@@ -32,6 +32,8 @@ make dc_up
 ##　コンテナに入る
 
 ```
+rails-new --devcontainer --database=sqlite3
+docker exec -it wanwan-create /bin/sh
 docker exec -it devcontainer_wevb3-rails-dev-app_1 /bin/sh
 ```
 
@@ -74,3 +76,11 @@ bundle exec rails generate model Notification message:string start_date:timestam
 bundle exec rails generate model ImportFile job_id:integer address_id:integer
 
 次
+
+sessionとトランザクションでviewを試す。
+
+bundle exec rails generate controller dollar_yen_transactions
+bundle exec rails generate controller transaction_types
+bundle exec rails generate controller import_files
+bundle exec rails generate controller top
+
