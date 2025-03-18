@@ -80,6 +80,7 @@ bundle exec rails generate model ImportFile job_id:integer address_id:integer
 sessionとトランザクションでviewを試す。
 
 bundle exec rails generate controller dollar_yen_transactions
+bundle exec rails generate controller transaction_types
 bundle exec rails generate controller import_files
 bundle exec rails generate controller top
 
