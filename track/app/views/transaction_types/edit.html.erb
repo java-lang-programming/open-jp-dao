@@ -1,0 +1,28 @@
+<% content_for :title do %>WanWan 取引種別更新<% end %>
+
+<% content_for :header do %>
+  <%= render "layouts/header", user: @user %>
+<% end %>
+
+<section>
+<div class="bg-white py-24">
+<%= form_with model: @transaction_type, url: transaction_type_path(@transaction_type), data: { turbo: false }, method: :put, class:"form_transaction" do |form|  %>
+
+  <div class="tw_mb-5">
+    <label for="name" class="form_label">名称*</label>
+    <%= form.text_field :name, class: "form_input", placeholder: "名称", required: true %>
+  </div>
+  <div class="tw_mb-5">
+    <label for="kind" class="form_label">取引種別*
+    <% if @dollar_yen_transactions_count > 0 %>
+      取引があるので取引種別の変更はできません。取引種別を変更したい場合は、関連する取引データを削除してください。</label>
+      <%= form.select :kind, @kinds.collect { |c| [c[:name], c[:id]] }, {}, { class: "form_input", disabled: true } %>
+    <% else %>
+      </label>
+      <%= form.select :kind, @kinds.collect { |c| [c[:name], c[:id]] }, {}, { class: "form_input", disabled: false } %>
+    <% end %>
+  </div>
+  <button type="submit" class="btn_submit">更新</button>
+<% end %>
+</div>
+</section>
