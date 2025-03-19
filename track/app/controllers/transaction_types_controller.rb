@@ -46,12 +46,12 @@ class TransactionTypesController < ApplicationViewController
   def destroy
     @user = user
 
+    transaction_type = @session.address.transaction_types.where(id: params[:id]).first
     dollar_yen_transactions_count = @session.address.dollar_yen_transactions.where(transaction_type_id: params[:id]).count
     if dollar_yen_transactions_count > 0
-      return redirect_to transaction_types_path, notice: "#{transaction_type.name}の取引データが存在します。取引データを削除してから取引種別を削除してください"
+      return redirect_to transaction_types_path, notice: transaction_type.name + "の取引データが存在します。取引データを削除してから取引種別を削除してください"
     end
 
-    transaction_type = @session.address.transaction_types.where(id: params[:id]).first
     transaction_type.destroy
 
     redirect_to transaction_types_path, notice: "#{transaction_type.name}を削除しました"
