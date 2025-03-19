@@ -40,6 +40,7 @@ Rails.application.routes.draw do
       # post "edit_confirmation"
     end
   end
+  resources :transaction_types
 
   resources :import_files, only: [ :index ]
 
