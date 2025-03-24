@@ -4,83 +4,7 @@
   <!-- https://v1.tailwindcss.com/components/alerts -->
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link rel="stylesheet" type="text/css" href="../css/foreign_exchange_gain_index.css" />
-  <!--<style type="text/css">
-    @media(min-width: 1280px) {
-      .container {
-        max-width: 1280px;
-      }
-    }
-
-    /* 一番上の header */
-    .header1 {
-      display: flex;
-      padding: 1.25rem;
-      margin-left: auto;
-      margin-right: auto;
-    }
-
-    /* 一番上の headerのサイト名 */
-    .header1_site_name {
-      font-weight: 700;
-      font-size: 1.125rem;
-      line-height: 1.75rem;
-      text-decoration: inherit;
-    }
-
-    .header1_nav {
-      margin-left:auto;
-    }
-
-    .btn_sign {
-      border-width: 1px;
-      border-radius: 0.75rem;
-      padding-top: 0.75rem;
-      padding-bottom: 0.75rem;
-    }
-
-    .header2 {
-      display: flex;
-      padding: 1.25rem;
-      margin-left: auto;
-      margin-right: auto;
-      --tw-bg-opacity: 1;
-      background-color: rgb(249 250 251 / var(--tw-bg-opacity, 1));
-    }
-
-    .header2_nav {
-      display: inline-flex;
-      list-style-type: none;
-    }
-
-    .header2_nav_li {
-      margin-left: 20px;
-      margin-right: 20px;
-
-    }
-
-    .main {
-      padding-top: 6rem;
-      padding-bottom: 6rem;
-      padding-left: 1.25rem;
-      padding-right: 1.25rem;
-    }
-
-    .main_content {
-      --tw-bg-opacity: 1;
-      background-color: rgb(243 244 246 / var(--tw-bg-opacity, 1));
-      border-radius: 0.5rem;
-      padding: 2rem;
-    }
-
-    .information {
-      text-align: center;
-      padding-top: 1rem;
-      padding-bottom: 1rem;
-    }
-
-
-  </style>-->
+  <link rel="stylesheet" type="text/css" href="../css/v1_design.css" />
 </head>
 <body>
   <!-- ここで全体のコンテナを囲む-->
@@ -136,62 +60,71 @@
 
   <section class="main">
     <div class="main_data">
+      <div>
+          <!-- https://www.material-tailwind.com/docs/html/select -->
+          <select class="bg-transparent placeholder:text-slate-400 text-slate-700 text-sm border border-slate-200 rounded pl-3 pr-8 py-2 transition duration-300 ease focus:outline-none focus:border-slate-400 hover:border-slate-400 shadow-sm focus:shadow-md  cursor-pointer mr-4">
+            <option>2023</option>
+            <option>2024</option>
+            <option>2025</option>
+          </select>年
+          <button type="submit" class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 rounded-lg text-sm px-4 py-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">検索</button>
+      </div>
       <div class="main_data">
-        <h2>2025年為替差益</h2>
+        <h2>為替差益</h2>
         <p class="main_text_size">+100,000円</p>
         <p class="mt-6 text-lg/8 text-gray-600">*確定申告について</p>
       </div>
 
       <!-- 一覧 -->
-      <div class="mx-auto mt-16 max-w-2xl sm:mt-20 lg:mt-24 lg:max-w-4xl">
-        <div class="relative overflow-x-auto">
-            <table class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
-                <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
-                    <tr>
-                        <th scope="col" class="px-6 py-3">
+      <div class="mx-auto">
+        <div class="table_parent_1">
+            <table class="table_main_1">
+                <thead class="thead_main_1">
+                    <tr class="thead_tr_1">
+                        <th scope="col" class="tr_th_1">
                             取引日
                         </th>
-                        <th scope="col" class="px-6 py-3">
+                        <th scope="col" class="tr_th_1">
                             取引種別
                         </th>
-                        <th scope="col" class="px-6 py-3">
+                        <th scope="col" class="tr_th_1">
                             数量米ドル
                         </th>
-                        <th scope="col" class="px-6 py-3">
+                        <th scope="col" class="tr_th_1">
                             レート(ドル/円)
                         </th>
-                        <th scope="col" class="px-6 py-3">
+                        <th scope="col" class="tr_th_1">
                             円換算(円)
                         </th>
-                        <th scope="col" class="px-6 py-3">
+                        <th scope="col" class="tr_th_1">
                             出金(円)
                         </th>
-                        <th scope="col" class="px-6 py-3">
+                        <th scope="col" class="tr_th_1">
                             差益(円)
                         </th>
                     </tr>
                 </thead>
                 <tbody>
-                    <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
-                        <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+                    <tr class="tbody_tr_1">
+                        <th scope="row" class="tbody_tr_th_1">
                             2024/02/01
                         </th>
-                        <td class="px-6 py-4">
+                        <td class="tbody_tr_td_1">
                             ドルを円に変換
                         </td>
-                        <td class="px-6 py-4">
+                        <td class="tbody_tr_td_1">
                             88
                         </td>
-                        <td class="px-6 py-4">
+                        <td class="tbody_tr_td_1">
                             131.55
                         </td>
-                        <td class="px-6 py-4">
+                        <td class="tbody_tr_td_1">
                             11577.16
                         </td>
-                        <td class="px-6 py-4">
+                        <td class="tbody_tr_td_1">
                             12,918
                         </td>
-                        <td class="px-6 py-4">
+                        <td class="tbody_tr_td_1">
                             +1,341
                         </td>
                     </tr>

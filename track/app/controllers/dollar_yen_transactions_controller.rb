@@ -1,5 +1,5 @@
 class DollarYenTransactionsController < ApplicationViewController
-  before_action :verify, only: [ :index, :new, :create_confirmation, :create, :edit, :edit_confirmation, :update, :delete_confirmation, :destroy, :csv_upload, :csv_import ]
+  before_action :verify, only: [ :index, :new, :create_confirmation, :create, :edit, :edit_confirmation, :update, :delete_confirmation, :destroy, :foreign_exchange_gain, :csv_upload, :csv_import ]
 
   skip_before_action :verify_authenticity_token, only: [ :update, :destroy ]
   # https://railsguides.jp/action_controller_overview.html
@@ -215,6 +215,63 @@ class DollarYenTransactionsController < ApplicationViewController
       DollarYenTransactionsUpdateJob.perform_now(dollar_yen_transaction: dollar_yen_transaction, kind: DollarYenTransaction::KIND_DELETE)
       redirect_to dollar_yen_transactions_path, flash: { notice: "取引データを削除し、変更があるデータを再計算しました" }
     end
+  end
+
+  def foreign_exchange_gain
+    header_session
+
+    address = @session.address
+
+    base_sql = address.dollar_yen_transactions
+    @dollar_yen_transactions_total = base_sql.all.count
+    render :foreign_exchange_gain if @dollar_yen_transactions_total == 0
+
+    # データのある年度を取得 sqlite3のみ(postgres:EXTRACT(year FROM date))
+    years = base_sql.order(date: :desc).distinct.pluck(Arel.sql("strftime('%Y', date)"))
+    @years = years.map do |year|
+      [ year.to_s, name: year ]
+    end
+
+    year = params[:year]
+    year = Date.today.year unless year.present?
+    @year = year.to_s
+
+    # http://localhost:3000/apis/dollaryen/foreigne_exchange_gain?address=0x00001E868c62FA205d38BeBaB7B903322A4CC89D?year=2024
+    transaction_type_ids = TransactionType.where(kind: TransactionType.kinds[:withdrawal]).where(address_id: address.id).map do |t|
+      t.id
+    end
+
+    unless transaction_type_ids.present?
+      render json: { errors: [ { msg: "withdrawalの取引種別が存在しません" } ] }, status: :bad_request
+      return
+    end
+
+    # ここでwithdrawalを取得
+    start_date = Time.new(year, 1, 1)
+    end_date = Time.new(year, 12, 31)
+
+    dollaryen_transactions = address.dollar_yen_transactions.preload(:transaction_type).where(transaction_type_id: transaction_type_ids).where(date: (start_date..end_date))
+    @total = dollaryen_transactions.count
+
+    # 為替差額
+    foreign_exchange_gain = dollaryen_transactions.inject (0) { |sum, t| sum += t.exchange_difference }
+    @foreign_exchange_gain = foreign_exchange_gain.floor(2).to_f
+
+    @responses = dollaryen_transactions.map do |dollaryen_transaction|
+      {
+        date: dollaryen_transaction.date.strftime("%Y/%m/%d"),
+        transaction_type_name: dollaryen_transaction.transaction_type.name,
+        withdrawal_rate: dollaryen_transaction.withdrawal_rate_on_screen,
+        withdrawal_quantity: dollaryen_transaction.withdrawal_quantity_on_screen,
+        withdrawal_en: dollaryen_transaction.withdrawal_en_on_screen,
+        exchange_en: dollaryen_transaction.exchange_en_on_screen,
+        exchange_difference: dollaryen_transaction.exchange_difference_on_screen
+      }
+    end
+
+    @start_date = start_date.strftime("%Y-%m-%d")
+    @end_date = end_date.strftime("%Y-%m-%d")
+    # render json: { date: { start_date: start_date.strftime("%Y-%m-%d"), end_date: end_date.strftime("%Y-%m-%d") }, data: { total: total, dollaryen_transactions: responses }, foreign_exchange_gain: foreign_exchange_gain.floor(2).to_f }, status: :ok
   end
 
   def csv_upload
