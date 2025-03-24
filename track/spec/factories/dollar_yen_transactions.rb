@@ -75,4 +75,22 @@ FactoryBot.define do
     balance_en { 90166.11085 }
     address { }
   end
+
+
+  factory :dollar_yen_transaction51, class: DollarYenTransaction do
+    transaction_type { }
+    date { '2024-04-05' }
+    deposit_rate { nil }
+    deposit_quantity { nil }
+    deposit_en { nil }
+    withdrawal_rate { 133.378789 }
+    withdrawal_quantity { 72.1 }
+    withdrawal_en { 9616.610688 }
+    exchange_en { 10930 }
+    exchange_difference { 1313 }
+    balance_quantity { 657.58 }
+    balance_rate { 133.378789 }
+    balance_en { 87707.22408 }
+    address { }
+  end
 end

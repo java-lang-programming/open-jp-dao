@@ -237,13 +237,8 @@ class DollarYenTransactionsController < ApplicationViewController
     @year = year.to_s
 
     # http://localhost:3000/apis/dollaryen/foreigne_exchange_gain?address=0x00001E868c62FA205d38BeBaB7B903322A4CC89D?year=2024
-    transaction_type_ids = TransactionType.where(kind: TransactionType.kinds[:withdrawal]).where(address_id: address.id).map do |t|
+    transaction_type_ids = address.transaction_types.where(kind: TransactionType.kinds[:withdrawal]).map do |t|
       t.id
-    end
-
-    unless transaction_type_ids.present?
-      render json: { errors: [ { msg: "withdrawalの取引種別が存在しません" } ] }, status: :bad_request
-      return
     end
 
     # ここでwithdrawalを取得
