@@ -1,0 +1,71 @@
+<% content_for :title do %>WanWan 為替差益<% end %>
+
+<% content_for :header do %>
+  <%= render "layouts/header", user: @user %>
+<% end %>
+
+<h2>為替差益</h2>
+<% if @dollar_yen_transactions_total > 0 %>
+  <section class="main">
+    <div class="main_data">
+      <div>
+        <%= form_tag(foreign_exchange_gain_dollar_yen_transactions_path,:method => 'get') do %>
+          <%= select_tag(:year, options_for_select(@years, :selected=> @year), class: 'bg-transparent placeholder:text-slate-400 text-slate-700 text-sm border border-slate-200 rounded pl-3 pr-8 py-2 transition duration-300 ease focus:outline-none focus:border-slate-400 hover:border-slate-400 shadow-sm focus:shadow-md  cursor-pointer mr-4') %>年
+　　　     <%= submit_tag '検索', :name => nil, class: 'text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 rounded-lg text-sm px-4 py-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800' %>
+        <% end %>
+      </div>
+      <div class="main_data">
+        <p class="main_text_size"><%= @foreign_exchange_gain %>円</p>
+        <p class="mt-6 text-lg/8 text-gray-600">*確定申告について</p>
+      </div>
+    </div>
+
+    <div class="mx-auto">
+      <p>全<%= @total %>件</p>
+      <div class="table_parent_1">
+        <table class="table_main_1">
+          <thead class="thead_main_1">
+            <tr class="thead_tr_1">
+              <th scope="col" class="tr_th_1">
+                  取引日
+              </th>
+              <th scope="col" class="tr_th_1">
+                  取引種別
+              </th>
+              <th scope="col" class="tr_th_1">
+                  数量米ドル
+              </th>
+              <th scope="col" class="tr_th_1">
+                  レート(ドル/円)
+              </th>
+              <th scope="col" class="tr_th_1">
+                  円換算(円)
+              </th>
+              <th scope="col" class="tr_th_1">
+                  出金(円)
+              </th>
+              <th scope="col" class="tr_th_1">
+                  差益(円)
+              </th>
+            </tr>
+          </thead>
+            <tbody>
+              <% @responses.each_with_index do |response, index| %>
+                <tr class="tbody_tr_1">
+                  <th scope="row" class="tbody_tr_th_1"><%= response[:date] %></th>
+                  <td class="tbody_tr_td_1"><%= response[:transaction_type_name] %></td>
+                  <td class="tbody_tr_td_1"><%= response[:withdrawal_quantity] %></td>
+                  <td class="tbody_tr_td_1">$<%= response[:withdrawal_rate] %></td>
+                  <td class="tbody_tr_td_1">￥<%= response[:withdrawal_en] %></td>
+                  <td class="tbody_tr_td_1">￥<%= response[:exchange_en] %></td>
+                  <td class="tbody_tr_td_1">￥<%= response[:exchange_difference] %></td>
+                </tr>
+              <% end %>
+            </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+<% else %>
+  <p>取引データが存在しないので為替差益が計算できません<br/><%= link_to "ドル円外貨預金元帳", dollar_yen_transactions_path %>から取引データを登録してください。</p>
+<% end %>

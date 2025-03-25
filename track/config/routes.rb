@@ -34,6 +34,8 @@ Rails.application.routes.draw do
       put "edit_confirmation"
     end
     collection do
+      # 為替差益
+      get "foreign_exchange_gain"
       get "csv_upload"
       post "csv_import"
       post "create_confirmation"

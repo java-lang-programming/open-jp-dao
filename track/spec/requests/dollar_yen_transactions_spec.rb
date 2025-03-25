@@ -343,4 +343,39 @@ RSpec.describe "DollarYenTransactions", type: :request do
       end
     end
   end
+
+  describe "get /foreign_exchange_gain" do
+    let(:addresses_eth) { create(:addresses_eth) }
+    let(:transaction_type5) { create(:transaction_type5, address: addresses_eth) }
+    let(:transaction_type5) { create(:transaction_type5, address: addresses_eth) }
+    let(:dollar_yen_transaction44) { create(:dollar_yen_transaction44, transaction_type: transaction_type5, address: addresses_eth) }
+    let(:dollar_yen_transaction51) { create(:dollar_yen_transaction51, transaction_type: transaction_type5, address: addresses_eth) }
+
+
+    context 'success' do
+      before do
+        # sigin処理
+        mock_apis_verify(body: {})
+        get apis_sessions_nonce_path
+        post apis_sessions_signin_path, params: { address: addresses_eth.address, kind: Address.kinds[:ethereum], chain_id: 1, message: "message", signature: "signature", domain: "aiueo.com" }
+      end
+
+      # データあり
+      it "should be success." do
+        dollar_yen_transaction44
+        dollar_yen_transaction51
+
+        get foreign_exchange_gain_dollar_yen_transactions_path, params: { year: '2024' }
+        expect(response.status).to eq(200)
+
+        body = response.body
+
+        # select boxにある
+        expect(body).to include '2024'
+        expect(body).to include '全2件'
+        expect(body).to include dollar_yen_transaction44.date.strftime("%Y/%m/%d")
+        expect(body).to include dollar_yen_transaction51.date.strftime("%Y/%m/%d")
+      end
+    end
+  end
 end
