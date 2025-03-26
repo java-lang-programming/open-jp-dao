@@ -1,13 +1,12 @@
 'use client';
-// import { use } from "react";
+
 import Image from "next/image";
 import { useEffect, useState } from 'react';
 import { BrowserProvider } from 'ethers';
-// import { SiweMessage } from 'siwe';
 import Link from 'next/link';
 import "./login.css";
-import { fetchSessionsNonce, postSessionsSignin } from "./repo/sessions";
-import { makeMessage } from "./usecases/singin";
+import { postSessionsSignin } from "./repo/sessions";
+import { makeMessage, requestEthAccountsViaMetamask, nonceResponse, makePostSessionsSigninBody, sessionsSigninResponse } from "./usecases/singin";
 import { ForeignExchangeGainIndex, DollarYenTransactionsIndex } from "./page_urls";
 import { useRouter } from 'next/navigation'
 
@@ -57,102 +56,66 @@ export default function Home() {
   // https://qiita.com/harururu32/items/c372c825ee8c9f90caa3#%E3%83%A6%E3%83%8B%E3%83%83%E3%83%88%E3%83%86%E3%82%B9%E3%83%88
   // エラーハンドリングも行うこと
   const handleConnect = async(providerWithInfo)=> {
-    //const accounts = await signInWithEthereum(providerWithInfo)
-    //console.log(providerWithInfo);
-
-    // const accounts = await requestAccounts(providerWithInfo)
-    // alert(accounts);
-    let accounts = null
     try {
-      accounts = await providerWithInfo.provider.request({method:'eth_requestAccounts'})
+      const accounts = await requestEthAccountsViaMetamask(providerWithInfo);
+
+      if (accounts?.[0]) {
+        const provider = new BrowserProvider(providerWithInfo.provider);
+        const signer = await provider.getSigner();
+        const network = await provider.getNetwork();
+        const chainId = String(Number(network.chainId));
+
+        // http://localhost:8001/api/nonce
+        // https://qiita.com/harururu32/items/c372c825ee8c9f90caa3#%E3%83%A6%E3%83%8B%E3%83%83%E3%83%88%E3%83%86%E3%82%B9%E3%83%88
+        const res_nonce = await nonceResponse();
+        const nonce = res_nonce.nonce;
+        // TODO nonceを保存しておくこと！
+
+        // ここからは毎回
+        const scheme = window.location.protocol.slice(0, -1);
+        const domain = window.location.host;
+        const origin = window.location.origin;
+        const address = signer.address;
+
+        // メッセージを作成
+        const message = makeMessage(scheme, domain, origin, address, chainId, nonce);
+        // メッセージにサイン
+        const signature = await signer.signMessage(message);
+        // signatureも保存
+        const body = makePostSessionsSigninBody(chainId, message, signature, nonce, domain, address);
+        alert(body);
+
+        // const obj = { chain_id: chainId, message: message, signature: signature, nonce: nonce, domain:  domain, address: address, kind: 1};
+        // const body = JSON.stringify(obj);
+
+        const verify_status = await sessionsSigninResponse(body)
+
+        // const verify_status = await res.status
+        if (verify_status.status == 201) {
+          router.push(DollarYenTransactionsIndex)
+          // setAddress(address)
+          return
+        }
+      }
     } catch (err) {
-        alert(err);
-        console.error(err);
-        return
-    }
-    // const accounts = await providerWithInfo.provider
-    //   .request({method:'eth_requestAccounts'})
-    //   .catch(console.error)
-
-    if (accounts?.[0]) {
-      const account = accounts?.[0];
-      const provider = new BrowserProvider(providerWithInfo.provider);
-      const signer = await provider.getSigner();
-      console.log(signer.address);
-      const network = await provider.getNetwork();
-      const chainId = String(Number(network.chainId));
-      console.log(chainId) // 1337
-
-      // 3000
-      // http://localhost:8001/api/nonce
-      // https://qiita.com/harururu32/items/c372c825ee8c9f90caa3#%E3%83%A6%E3%83%8B%E3%83%83%E3%83%88%E3%83%86%E3%82%B9%E3%83%88
-      // const response = await fetch('http://localhost:3000/apis/sessions/nonce', {mode: 'cors', credentials: 'include'})
-      let nonce_result = null;
-      try {
-        const response = await fetchSessionsNonce()
-        nonce_result = await response.json();
-      } catch (err) {
-        alert(err);
-        console.error(err);
-        // TODO
-        // エラーを送信する developersで閲覧可能にする
-        // ここでエラーを作成する
-        setErrors([{"code": "aaaa", "msg": "ログインに失敗しました。"}]);
-        return
+      if (err.code === "ERROR_MATAMASK_ETH_REQUEST_ACCOUNTS") {
+        setErrors([{"code": err.code, "msg": "METAMASKのリクエストを処理中です。METAMASKの状態を確認してください。"}]);
+      } else if (err.code === "ERROR_FETCH_SESSION_NONCE_ERROR") {
+        // TODO Frontのログインで発生発生したエラー　番号を管理すること
+        setErrors([{"code": err.code, "msg": "予期せぬエラーでログインに失敗しました。管理者に連絡してください。エラーコードはF0001です。"}]);
+      } else if (err.code === "ERROR_POST_SESSION_SIGNIN_ERROR") {
+        setErrors([{"code": err.code, "msg": "予期せぬエラーでログインに失敗しました。管理者に連絡してください。エラーコードはF0002です。"}]);
       }
-
-      // TODO responseのチェックでnonceがなければエラー表示
-      // 本番とdivでは異なる
-      // const nonce_result = await response.json();
-
-      console.log(nonce_result)
-      console.log(nonce_result.nonce);
-
-      // TODO nonceを保存しておくこと！
-
-      // ここからは毎回
-      const scheme = window.location.protocol.slice(0, -1);
-      const domain = window.location.host;
-      const origin = window.location.origin;
-      const address = signer.address;
-      //const statement = 'Sign in with Ethereum to the app.';
-
-      // メッセージを作成
-      const message = makeMessage(scheme, domain, origin, address, chainId, nonce_result.nonce)
-      
-      // メッセージにサイン
-      let signature = null;
-      try {
-        signature = await signer.signMessage(message);
-      } catch (err) {
-        alert("ここでエラー");
-        alert(err);
-        console.error(err);
-        return
-      }
-      // signatureも保存
-
-
-      const obj = { chain_id: chainId, message: message, signature: signature, nonce: nonce_result.nonce, domain:  domain, address: address, kind: 1};
-      const body = JSON.stringify(obj);
-
-      const res = await postSessionsSignin(body)
-
-      const verify_status = await res.status
-      if (verify_status == 201) {
-        router.push(DollarYenTransactionsIndex)
-        // setAddress(address)
-        return
-      }
-
-
-    }    
+    }  
   }
+
 
   const providerDetails = async () => {
     let providerDetails = [];
     function onAnnouncement(event) {
-      providerDetails.push(event.detail)
+      if (event.detail.info.name === 'MetaMask') {
+        providerDetails.push(event.detail);
+      }
     }
     window.addEventListener("eip6963:announceProvider", onAnnouncement);
     // これでannounceProviderを呼び出す
@@ -165,7 +128,6 @@ export default function Home() {
   useEffect(() => {
     const fetchProviders = async () => {
        const providers = await providerDetails();
-       // console.log(providers);
        setProviders(providers)
     };
 
@@ -179,7 +141,7 @@ export default function Home() {
         
         <div class="header1">
           <div>
-            <a href="#" class="header1_site_name">EKISA</a>
+            <Link className="header1_site_name" href="/">Wan<sup>2</sup></Link>
           </div>
 
           <nav
@@ -190,20 +152,6 @@ export default function Home() {
           </nav>
         </div>
 
-        <div class="header2">
-          <div>
-            <ul class="header2_nav">
-              <li>
-                <a href="#"
-                  class="header2_nav_li">Home</a>
-              </li>
-              <li>
-                <a href="#"
-                  class="header2_nav_li">お知らせ・ご案内</a>
-              </li>
-            </ul>
-          </div>
-        </div>
       </header>
 
       <div class="main">
@@ -222,9 +170,10 @@ export default function Home() {
               <button key={provider.info.uuid} onClick={()=>handleConnect(provider)} >
                 <img src={provider.info.icon} alt={provider.info.name} width="100" height="100" />
               </button>
-          )) :
+          )) : 
             <div>
-              there are no Announced Providers
+              <p>MetaMaskを検出できませんでした。</p>
+              <p>ブラウザに<a href="https://metamask.io/download" target="blank">MetaMaskをダウンロード</a>してログインしてください。</p>
             </div>
           }            
           </div>
