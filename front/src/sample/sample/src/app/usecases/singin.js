@@ -1,16 +1,9 @@
 import { SiweMessage } from 'siwe';
 import { fetchSessionsNonce, postSessionsSignin } from "../repo/sessions";
-// export const requestAccounts = async (providerWithInfo) => {
-//   let accounts
-//   try {
-//     await providerWithInfo.provider.request({method:'eth_requestAccounts'})
-//   } catch (err) {
-//     alert(err);
-//     return err
-//   }
-//   return accounts
-// }
 
+export const ERROR_MATAMASK_ETH_REQUEST_ACCOUNTS = "ERROR_MATAMASK_ETH_REQUEST_ACCOUNTS";
+export const ERROR_FETCH_SESSION_NONCE_ERROR = "ERROR_FETCH_SESSION_NONCE_ERROR";
+export const ERROR_POST_SESSION_SIGNIN_ERROR = "ERROR_POST_SESSION_SIGNIN_ERROR";
 
 /**
 //  * @description メッセージを作成する

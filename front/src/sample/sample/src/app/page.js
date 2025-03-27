@@ -1,12 +1,15 @@
 'use client';
 
 import Image from "next/image";
-import { useEffect, useState } from 'react';
+import { useEffect, useState, Suspense } from 'react';
 import { BrowserProvider } from 'ethers';
 import Link from 'next/link';
 import "./login.css";
 import { postSessionsSignin } from "./repo/sessions";
-import { makeMessage, requestEthAccountsViaMetamask, nonceResponse, makePostSessionsSigninBody, sessionsSigninResponse } from "./usecases/singin";
+import SigninLoading from "./components/signin_loading";
+import MetamaskSignin from "./components/matamask_signin";
+import Eip6963Loading from "./components/sessions/eip6963_loading";
+import { makeMessage, requestEthAccountsViaMetamask, nonceResponse, makePostSessionsSigninBody, sessionsSigninResponse, ERROR_MATAMASK_ETH_REQUEST_ACCOUNTS } from "./usecases/singin";
 import { ForeignExchangeGainIndex, DollarYenTransactionsIndex } from "./page_urls";
 import { useRouter } from 'next/navigation'
 
@@ -17,6 +20,10 @@ import { useRouter } from 'next/navigation'
 export default function Home() {
   const router = useRouter();
 
+  // 複数ロード
+  const [walletLoad, setWalletLoad] = useState(false);
+  const [walletProcessing, setWalletProcessing] = useState(false);
+  const [provider, setProvider] = useState(null);
   const [providers, setProviders] = useState([]);
   const [address, setAddress] = useState("");
   const [errors, setErrors] = useState([]);
@@ -56,6 +63,9 @@ export default function Home() {
   // https://qiita.com/harururu32/items/c372c825ee8c9f90caa3#%E3%83%A6%E3%83%8B%E3%83%83%E3%83%88%E3%83%86%E3%82%B9%E3%83%88
   // エラーハンドリングも行うこと
   const handleConnect = async(providerWithInfo)=> {
+    // setProvider(providerWithInfo);
+    setWalletProcessing(true);
+    // ここから下をmetamask signinでまとめる
     try {
       const accounts = await requestEthAccountsViaMetamask(providerWithInfo);
 
@@ -83,7 +93,6 @@ export default function Home() {
         const signature = await signer.signMessage(message);
         // signatureも保存
         const body = makePostSessionsSigninBody(chainId, message, signature, nonce, domain, address);
-        alert(body);
 
         // const obj = { chain_id: chainId, message: message, signature: signature, nonce: nonce, domain:  domain, address: address, kind: 1};
         // const body = JSON.stringify(obj);
@@ -98,7 +107,7 @@ export default function Home() {
         }
       }
     } catch (err) {
-      if (err.code === "ERROR_MATAMASK_ETH_REQUEST_ACCOUNTS") {
+      if (err.code === ERROR_MATAMASK_ETH_REQUEST_ACCOUNTS) {
         setErrors([{"code": err.code, "msg": "METAMASKのリクエストを処理中です。METAMASKの状態を確認してください。"}]);
       } else if (err.code === "ERROR_FETCH_SESSION_NONCE_ERROR") {
         // TODO Frontのログインで発生発生したエラー　番号を管理すること
@@ -106,7 +115,8 @@ export default function Home() {
       } else if (err.code === "ERROR_POST_SESSION_SIGNIN_ERROR") {
         setErrors([{"code": err.code, "msg": "予期せぬエラーでログインに失敗しました。管理者に連絡してください。エラーコードはF0002です。"}]);
       }
-    }  
+    }
+    setWalletProcessing(false);  
   }
 
 
@@ -129,6 +139,7 @@ export default function Home() {
     const fetchProviders = async () => {
        const providers = await providerDetails();
        setProviders(providers)
+       setWalletLoad(true)
     };
 
     fetchProviders();    
@@ -143,41 +154,55 @@ export default function Home() {
           <div>
             <Link className="header1_site_name" href="/">Wan<sup>2</sup></Link>
           </div>
-
-          <nav
-            class="header1_nav">
-            <div>
-              <button class="btn_sign">ログアウト</button>
-            </div>
-          </nav>
         </div>
 
       </header>
 
       <div class="main">
-        <div class="main_content">
-          <p class="title-font font-medium text-3xl text-gray-900">ウォレットをお持ちの方はログインしてください</p>
-          <div>
-          {
-            errors.length > 0 && errors.map((e) => (
-              <div class="login_error">
-                <p>{e.msg}</p>
+        <div>
+          <div class="main_content">
+            { walletLoad === false && (
+              <Eip6963Loading />
+            )}
+            { walletLoad === true && (
+              <div>
+                {
+                  walletProcessing === false && providers.length > 0 && (
+                    <p class="title-font font-medium text-3xl text-gray-900">MetaMaskアイコンをクリックしてログインしてください</p>
+                  )
+                }
+                <div>
+                {
+                  errors.length > 0 && errors.map((e) => (
+                    <div class="login_error">
+                      <p>{e.msg}</p>
+                    </div>
+                  ))
+                }
+                {
+                  walletProcessing === false && providers.length > 0 && providers.map((provider)=>(
+                      <button key={provider.info.uuid} onClick={()=>handleConnect(provider)} >
+                        <img src={provider.info.icon} alt={provider.info.name} width="100" height="100" />
+                      </button>
+                    )
+                  )
+                }
+                {
+                  walletProcessing === false && providers.length == 0 && (
+                    <div>
+                      <p>MetaMaskを検出できませんでした。</p>
+                      <p>ブラウザに<a href="https://metamask.io/download" target="blank">MetaMaskをダウンロード</a>してログインしてください。</p>
+                    </div>
+                  )
+                }
+                </div>
+                <p class="text-xs text-gray-500 mt-3">ログインできない場合</p>
               </div>
-            ))
-          }
-          {
-            providers.length > 0 ? providers?.map((provider)=>(
-              <button key={provider.info.uuid} onClick={()=>handleConnect(provider)} >
-                <img src={provider.info.icon} alt={provider.info.name} width="100" height="100" />
-              </button>
-          )) : 
-            <div>
-              <p>MetaMaskを検出できませんでした。</p>
-              <p>ブラウザに<a href="https://metamask.io/download" target="blank">MetaMaskをダウンロード</a>してログインしてください。</p>
-            </div>
-          }            
+            )}
           </div>
-          <p class="text-xs text-gray-500 mt-3">ログインできない場合</p>
+          {walletProcessing && (
+            <SigninLoading />
+          )}
         </div>
       </div>
     </div>
