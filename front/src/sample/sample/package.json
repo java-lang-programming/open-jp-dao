@@ -6,7 +6,8 @@
     "dev": "next dev -H 0.0.0.0 -p 3000",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "lint:fix": "eslint --fix ./src/app/page.js"
   },
   "dependencies": {
     "ethers": "^6.13.3",
