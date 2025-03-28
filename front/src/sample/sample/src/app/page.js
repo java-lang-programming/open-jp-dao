@@ -170,7 +170,7 @@ export default function Home() {
                   }
                   <div>
                   {
-                    errors.length > 0 && errors.map((e) => (
+                    walletProcessing === false && errors.length > 0 && errors.map((e) => (
                       <div className="login_error">
                         <p>{e.msg}</p>
                       </div>
@@ -190,13 +190,17 @@ export default function Home() {
                     )
                   }
                   </div>
-                  <p className="text-xs text-gray-500 mt-3"><Link href="/support">ログインできない場合</Link></p>
+                  {
+                    walletProcessing === false && (
+                      <p className="text-xs text-gray-500 mt-3"><Link href="/support">ログインできない場合</Link></p>
+                    )
+                  }
+                  {walletProcessing === true && (
+                    <SigninLoading />
+                  )}
                 </div>
               )}
             </div>
-            {walletProcessing && (
-              <SigninLoading />
-            )}
           </div>
         </div>
       </div>
