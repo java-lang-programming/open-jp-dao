@@ -95,10 +95,11 @@ export default function Home() {
         // signatureも保存
         const body = makePostSessionsSigninBody(chainId, message, signature, nonce, domain, address);
 
-        const verify_status = await sessionsSigninResponse(body)
+        const res_signin = await sessionsSigninResponse(body)
 
         // const verify_status = await res.status
-        if (verify_status.status == 201) {
+        if (res_signin.status == 201) {
+          // ここで認証に成功しましたがるとさらに良い。
           router.push(DollarYenTransactionsIndex)
           // setAddress(address)
           return

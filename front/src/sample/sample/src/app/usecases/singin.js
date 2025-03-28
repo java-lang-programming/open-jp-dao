@@ -61,10 +61,7 @@ export const nonceResponse = async() => {
 
 export const sessionsSigninResponse = async(body) => {
   try {
-    const error = new Error("fetchSessionsNonce error");
-    throw error;
-    const res = await postSessionsSignin(body)
-    return await res.json();
+    return await postSessionsSignin(body)
   } catch (err) {
     // TODO これはslackいき
     console.error(err);
