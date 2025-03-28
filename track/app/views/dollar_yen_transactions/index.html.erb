@@ -59,6 +59,6 @@
         </tbody>        
       </table>
 <% else %>
-  <p>取引データが存在しません。<br/>取引登録画面 もしくは <a href="./dollar_yen_transactions/csv_upload">ドル円外貨預金元帳csvアップロード画面</a>から取引データを登録してください。</p>
+  <p>取引データが存在しません。<br/><%= link_to "取引データ作成", new_dollar_yen_transaction_path %>、もしくは<a href="./dollar_yen_transactions/csv_upload">csvアップロード画面</a>から取引データを登録してください。</p>
 <% end %>
 

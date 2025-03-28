@@ -11,6 +11,7 @@ import MetamaskSignin from "./components/matamask_signin";
 import Eip6963Loading from "./components/sessions/eip6963_loading";
 import SigninLoading from "./components/sessions/signin_loading";
 import MetamaskNotFound from "./components/sessions/metamask_not_found";
+import SigninSuccess from "./components/sessions/signin_success";
 import { makeMessage, requestEthAccountsViaMetamask, nonceResponse, makePostSessionsSigninBody, sessionsSigninResponse, ERROR_MATAMASK_ETH_REQUEST_ACCOUNTS } from "./usecases/singin";
 import { ForeignExchangeGainIndex, DollarYenTransactionsIndex } from "./page_urls";
 import { useRouter } from 'next/navigation'
@@ -25,6 +26,7 @@ export default function Home() {
   // 複数ロード
   const [walletLoad, setWalletLoad] = useState(false);
   const [walletProcessing, setWalletProcessing] = useState(false);
+  const [signin, setSignin] = useState(false);
   const [provider, setProvider] = useState(null);
   const [providers, setProviders] = useState([]);
   const [address, setAddress] = useState("");
@@ -99,6 +101,7 @@ export default function Home() {
 
         // const verify_status = await res.status
         if (res_signin.status == 201) {
+          setSignin(true);
           // ここで認証に成功しましたがるとさらに良い。
           router.push(DollarYenTransactionsIndex)
           // setAddress(address)
@@ -198,6 +201,9 @@ export default function Home() {
                   }
                   {walletProcessing === true && (
                     <SigninLoading />
+                  )}
+                  {signin === true && (
+                    <SigninSuccess />
                   )}
                 </div>
               )}
