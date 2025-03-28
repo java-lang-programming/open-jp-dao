@@ -1,4 +1,4 @@
-.PHONY: dc_build dc_up dc_stop dc_rm_pid dc_dev_with_que dc_dev mini_test rubocop rubocop_auto_correct bundle_install bundle_install_production outdated dev_init
+.PHONY: dc_build dc_up dc_stop dc_rm_pid dc_dev_with_que dc_dev zeitwerk_check_prod mini_test rubocop rubocop_auto_correct bundle_install bundle_install_production outdated dev_init
 dc_build:
 	docker-compose -f .devcontainer/compose.yaml build
 dc_up:
@@ -13,17 +13,21 @@ dc_dev_with_que:
 dc_dev:
 	make log_clear
 	make dc_rm_pid
+	# ここで環境変数のチェック
 	RAILS_ENV=development bundle exec rails db:reset
 	SOLID_QUEUE_IN_PUMA=1 RAILS_ENV=development bundle exec rails server -b 0.0.0.0
 dc_prod:
 	make log_clear
 	make dc_rm_pid
+	# ここで環境変数のチェック
 	RAILS_ENV=production bundle exec rails db:reset
 	SOLID_QUEUE_IN_PUMA=1 RAILS_ENV=production bundle exec rails server -b 0.0.0.0
 rails_info:
 	bundle exec rails about
 zeitwerk_check:
 	bundle exec rails zeitwerk:check
+zeitwerk_check_prod:
+	RAILS_ENV=production bundle exec rails zeitwerk:check
 brakeman:
 	bundle exec brakeman
 yjit_enabled:
@@ -48,7 +52,6 @@ migrate:
 	bundle exec rails db:migrate
 reset:
 	bundle exec rails db:reset
-# spec/requests/import_files_spec.rb
 rspec:
 	bundle exec rspec spec --backtrace
 log_clear:

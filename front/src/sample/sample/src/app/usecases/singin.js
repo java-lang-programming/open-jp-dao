@@ -1,5 +1,5 @@
 import { SiweMessage } from 'siwe';
-import { fetchSessionsNonce, postSessionsSignin } from "../repo/sessions";
+import { fetchSessionsNonce, postSessionsSignin, postVerify } from "../repo/sessions";
 
 export const ERROR_MATAMASK_ETH_REQUEST_ACCOUNTS = "ERROR_MATAMASK_ETH_REQUEST_ACCOUNTS";
 export const ERROR_FETCH_SESSION_NONCE_ERROR = "ERROR_FETCH_SESSION_NONCE_ERROR";
@@ -67,6 +67,18 @@ export const sessionsSigninResponse = async(body) => {
     console.error(err);
     const error = new Error("postSessionsSignin error");
     error.code = "ERROR_POST_SESSION_SIGNIN_ERROR";
+    throw error;
+  }
+}
+
+export const sessionsVerifyResponse = async() => {
+  try {
+    return await postVerify()
+  } catch (err) {
+    // TODO これはslackいき
+    console.error(err);
+    const error = new Error("sessionsVerifyResponse error");
+    error.code = "ERROR_POST_SESSION_VERIFY_ERROR";
     throw error;
   }
 }

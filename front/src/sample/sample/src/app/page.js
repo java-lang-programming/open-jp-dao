@@ -12,7 +12,7 @@ import Eip6963Loading from "./components/sessions/eip6963_loading";
 import SigninLoading from "./components/sessions/signin_loading";
 import MetamaskNotFound from "./components/sessions/metamask_not_found";
 import SigninSuccess from "./components/sessions/signin_success";
-import { makeMessage, requestEthAccountsViaMetamask, nonceResponse, makePostSessionsSigninBody, sessionsSigninResponse, ERROR_MATAMASK_ETH_REQUEST_ACCOUNTS } from "./usecases/singin";
+import { makeMessage, requestEthAccountsViaMetamask, nonceResponse, makePostSessionsSigninBody, sessionsSigninResponse, sessionsVerifyResponse, ERROR_MATAMASK_ETH_REQUEST_ACCOUNTS } from "./usecases/singin";
 import { ForeignExchangeGainIndex, DollarYenTransactionsIndex } from "./page_urls";
 import { useRouter } from 'next/navigation'
 
@@ -48,21 +48,6 @@ export default function Home() {
       return
     }
   }
-
-  // 権限があるかを首藤
-  const verify = async()=> {
-    const res = await fetch(`http://localhost:3000/apis/sessions/verify`, {
-        method: "POST",
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        mode: 'cors',
-        credentials: 'include'
-    });
-
-    const verify_status = await res.status
-  }
-
 
   // https://qiita.com/harururu32/items/c372c825ee8c9f90caa3#%E3%83%A6%E3%83%8B%E3%83%83%E3%83%88%E3%83%86%E3%82%B9%E3%83%88
   // エラーハンドリングも行うこと
@@ -137,13 +122,24 @@ export default function Home() {
   }
 
   useEffect(() => {
-    const fetchProviders = async () => {
-       const providers = await providerDetails();
-       setProviders(providers)
-       setWalletLoad(true)
+    // 初回処理
+    const init = async () => {
+      // 認証
+      const res_verify = await sessionsVerifyResponse()
+      if (res_verify.status == 201) {
+        setSignin(true);
+        router.push(DollarYenTransactionsIndex)
+        return
+      }
+
+      // metamask検出
+      const providers = await providerDetails();
+      setProviders(providers)
+      setWalletLoad(true)
     };
 
-    fetchProviders();    
+    init();
+
   }, []);
 
   return (
@@ -162,7 +158,10 @@ export default function Home() {
         <div className="main">
           <div>
             <div className="main_content">
-              { walletLoad === false && (
+              { signin === true && (
+                <div><p>welcome back!</p></div>
+              )}
+              { signin === false && walletLoad === false && (
                 <Eip6963Loading />
               )}
               { walletLoad === true && (
@@ -199,7 +198,7 @@ export default function Home() {
                       <p className="text-xs text-gray-500 mt-3"><Link href="/support">ログインできない場合</Link></p>
                     )
                   }
-                  {walletProcessing === true && (
+                  {walletProcessing === true && signin === false (
                     <SigninLoading />
                   )}
                   {signin === true && (
