@@ -12,29 +12,52 @@
   </div>
   <div class="tw_mb-5">
     <label for="transaction_kind" class="form_label">取引種別*</label>
-    <%= form.select :transaction_type, @transaction_types.collect { |c| [c.name, c.id] }, {}, { class: "form_input" } %>
+    <%= form.select :transaction_type, @transaction_types.collect { |c| [c.name, c.id, { "data-kind": c.kind }] }, {}, { class: "form_input", onchange: "onChangeKind(this);" } %>
   </div>
-  <div class="tw_mb-5">
-    <!-- エラーとOKの場合のcssを作成する -->
-    <label for="en_dollar_value" class="form_label">数量米ドル*</label>
-    <%= form.text_field :deposit_quantity, class: "form_input", id: "default-datepicker", placeholder: "預入数量米ドル", required: true %>
-  </div>
-  <div class="tw_mb-5">
-    <label for="jp_en_rate" class="form_label">レート* </label>
-    <%= form.text_field :deposit_rate, class: "form_input", id: "default-datepicker", placeholder: "預入レート", required: true %>
-  </div>
-  <div class="form_checkbox_section">
-    <!-- flex items-center  -->
-    <div class="h-5">
-      <input id="auto_rate" type="checkbox" value="" class="form_checkbox" />
+  <div id="deposit_section" style="display: block;">
+    <div class="tw_mb-5">
+      <!-- エラーとOKの場合のcssを作成する -->
+      <label for="en_dollar_value" class="form_label">受け取った米ドル*</label>
+      <%= form.text_field :deposit_quantity, class: "form_input", id: "default-datepicker", placeholder: "預入数量米ドル" %>
     </div>
-    <label for="auto_rate" class="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300">ドル円レート自動反映</label>
+    <div class="tw_mb-5">
+      <label for="jp_en_rate" class="form_label">米ドル円レート* </label>
+      <%= form.text_field :deposit_rate, class: "form_input", id: "default-datepicker", placeholder: "預入レート" %>
+    </div>
+    <div class="form_checkbox_section">
+      <!-- flex items-center  -->
+      <div class="h-5">
+        <input id="auto_rate" type="checkbox" value="" class="form_checkbox" />
+      </div>
+      <label for="auto_rate" class="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300">米ドル円レート自動反映</label>
+    </div>
   </div>
-  <div class="tw_mb-5">
-    <label for="jp_en" class="form_label">日本円</label>
-    <input type="text" id="jp_en" class="form_input form_input_ng" required />
+  <div id="withdrawal_section" style="display: none;">
+    <div class="tw_mb-5">
+      <label for="withdrawal_quantity" class="form_label">売却した米ドル*</label>
+      <%= form.text_field :withdrawal_quantity, class: "form_input", id: "default-datepicker", placeholder: "払出数量米ドル" %>
+    </div>
+    <div class="tw_mb-5">
+      <label for="exchange_en" class="form_label">受け取った日本円</label>
+      <%= form.text_field :exchange_en, class: "form_input", id: "default-datepicker", placeholder: "払出数量米ドル" %>
+    </div>
   </div>
   <%= form.submit '登録' %>
 <% end %>
 
+<script>
+  function onChangeKind(selectElement) {
+    const selectedOption = selectElement.options[selectElement.selectedIndex];
+    const transactionType = selectedOption.getAttribute('data-kind');
+    const deposit_section = document.getElementById('deposit_section');
+    const withdrawal_section = document.getElementById('withdrawal_section');
 
+    if (transactionType === 'deposit' && withdrawal_section.style.display === 'block') {
+      deposit_section.style.display = 'block';
+      withdrawal_section.style.display = 'none';
+    } else if (transactionType === 'withdrawal' && withdrawal_section.style.display === 'none') {
+      deposit_section.style.display = 'none';
+      withdrawal_section.style.display = 'block';
+    }
+  }
+</script>

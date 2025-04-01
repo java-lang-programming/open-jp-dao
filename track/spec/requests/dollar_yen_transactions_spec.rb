@@ -95,6 +95,7 @@ RSpec.describe "DollarYenTransactions", type: :request do
 
       # validareエラー
       it "should get not data when date is not found." do
+        transaction_type1
         post create_confirmation_dollar_yen_transactions_path, params: { dollar_yen_transaction: { transaction_type: "1", deposit_quantity: "100.10", deposit_rate: "130.32" } }
       end
 

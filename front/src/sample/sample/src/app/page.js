@@ -198,7 +198,7 @@ export default function Home() {
                       <p className="text-xs text-gray-500 mt-3"><Link href="/support">ログインできない場合</Link></p>
                     )
                   }
-                  {walletProcessing === true && signin === false (
+                  {walletProcessing === true && signin === false && (
                     <SigninLoading />
                   )}
                   {signin === true && (

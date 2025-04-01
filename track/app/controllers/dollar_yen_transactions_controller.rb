@@ -34,15 +34,16 @@ class DollarYenTransactionsController < ApplicationViewController
     # dollar_yen_transactions_pathの繊維の時はいらない
     set_view_var
 
-    request = params.require(:dollar_yen_transaction).permit(:date, :transaction_type, :deposit_quantity, :deposit_rate)
+    request = params.require(:dollar_yen_transaction).permit(:date, :transaction_type, :deposit_quantity, :deposit_rate, :withdrawal_quantity, :exchange_en)
+    transaction_type = @session.address.transaction_types.where(id: request[:transaction_type]).first
 
-    req = Requests::DollarYensTransaction.new
-    @error = req.error(request: request)
+    req = Requests::DollarYensTransaction.new(transaction_type_kind: transaction_type.kind, withdrawal_quantity: request[:withdrawal_quantity], exchange_en: request[:exchange_en])
+    @error = req.error(request: request, transaction_type_kind: transaction_type.kind)
 
     if @error.present?
       set_view_var
       @dollar_yen_transaction = DollarYenTransaction.new
-      @dollar_yen_transaction.transaction_type =  @session.address.transaction_types.where(id: request[:transaction_type]).first
+      @dollar_yen_transaction.transaction_type =  transaction_type
       @dollar_yen_transaction.date = request[:date]
       @dollar_yen_transaction.deposit_quantity = request[:deposit_quantity]
       @dollar_yen_transaction.deposit_rate = request[:deposit_rate]
@@ -104,9 +105,10 @@ class DollarYenTransactionsController < ApplicationViewController
     address = @session.address
 
     request = params.require(:dollar_yen_transaction).permit(:date, :transaction_type, :deposit_quantity, :deposit_rate)
+    transaction_type = @session.address.transaction_types.where(id: request[:transaction_type]).first
 
-    req = Requests::DollarYensTransaction.new
-    @error = req.error(request: request)
+    req = Requests::DollarYensTransaction.new(transaction_type_kind: transaction_type.kind)
+    @error = req.error(request: request, transaction_type_kind: transaction_type.kind)
 
     if @error.present?
       set_view_var
