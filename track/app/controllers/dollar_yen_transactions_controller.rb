@@ -37,21 +37,17 @@ class DollarYenTransactionsController < ApplicationViewController
     request = params.require(:dollar_yen_transaction).permit(:date, :transaction_type, :deposit_quantity, :deposit_rate, :withdrawal_quantity, :exchange_en)
     transaction_type = @session.address.transaction_types.where(id: request[:transaction_type]).first
 
-    req = Requests::DollarYensTransaction.new(transaction_type_kind: transaction_type.kind, withdrawal_quantity: request[:withdrawal_quantity], exchange_en: request[:exchange_en])
-    @error = req.error(request: request, transaction_type_kind: transaction_type.kind)
+    req = Requests::DollarYensTransaction.new(date: request[:date], transaction_type: transaction_type, deposit_quantity: request[:deposit_quantity], deposit_rate: request[:deposit_rate], withdrawal_quantity: request[:withdrawal_quantity], exchange_en: request[:exchange_en])
+    errors = req.get_errors
 
-    if @error.present?
+    if errors.present?
       set_view_var
-      @dollar_yen_transaction = DollarYenTransaction.new
-      @dollar_yen_transaction.transaction_type =  transaction_type
-      @dollar_yen_transaction.date = request[:date]
-      @dollar_yen_transaction.deposit_quantity = request[:deposit_quantity]
-      @dollar_yen_transaction.deposit_rate = request[:deposit_rate]
+      @dollar_yen_transaction = req.to_dollar_yen_transaction(errors: errors, address: @session.address)
       render "new"
       return
     end
 
-    @dollar_yen_transaction = reqest_to_dollar_yen_transaction(request: request)
+    @dollar_yen_transaction = req.to_dollar_yen_transaction(errors: errors, address: @session.address)
 
     recalculation_need_count = @session.address.recalculation_need_dollar_yen_transactions_create(target_date: @dollar_yen_transaction.date).count
     # 影響ないデータはそのまま更新して一覧画面
@@ -104,19 +100,20 @@ class DollarYenTransactionsController < ApplicationViewController
     set_view_var
     address = @session.address
 
-    request = params.require(:dollar_yen_transaction).permit(:date, :transaction_type, :deposit_quantity, :deposit_rate)
+    request = params.require(:dollar_yen_transaction).permit(:date, :transaction_type, :deposit_quantity, :deposit_rate, :withdrawal_quantity, :exchange_en)
     transaction_type = @session.address.transaction_types.where(id: request[:transaction_type]).first
 
-    req = Requests::DollarYensTransaction.new(transaction_type_kind: transaction_type.kind)
-    @error = req.error(request: request, transaction_type_kind: transaction_type.kind)
+    req = Requests::DollarYensTransaction.new(date: request[:date], transaction_type: transaction_type, deposit_quantity: request[:deposit_quantity], deposit_rate: request[:deposit_rate], withdrawal_quantity: request[:withdrawal_quantity], exchange_en: request[:exchange_en])
+    errors = req.get_errors
 
-    if @error.present?
+    if errors.present?
       set_view_var
-      @dollar_yen_transaction = DollarYenTransaction.new
-      @dollar_yen_transaction.transaction_type =  address.transaction_types.where(id: request[:transaction_type]).first
-      @dollar_yen_transaction.date = request[:date]
-      @dollar_yen_transaction.deposit_quantity = request[:deposit_quantity]
-      @dollar_yen_transaction.deposit_rate = request[:deposit_rate]
+      @dollar_yen_transaction = req.to_dollar_yen_transaction(errors: errors, address: address)
+      # @dollar_yen_transaction = DollarYenTransaction.new
+      # @dollar_yen_transaction.transaction_type =  address.transaction_types.where(id: request[:transaction_type]).first
+      # @dollar_yen_transaction.date = request[:date]
+      # @dollar_yen_transaction.deposit_quantity = request[:deposit_quantity]
+      # @dollar_yen_transaction.deposit_rate = request[:deposit_rate]
       return render "edit"
     end
 

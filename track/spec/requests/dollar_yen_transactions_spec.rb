@@ -164,6 +164,8 @@ RSpec.describe "DollarYenTransactions", type: :request do
     end
   end
 
+
+
   describe "get /edit" do
     let(:addresses_eth) { create(:addresses_eth) }
     let(:transaction_type1) { create(:transaction_type1, address: addresses_eth) }
@@ -347,7 +349,6 @@ RSpec.describe "DollarYenTransactions", type: :request do
 
   describe "get /foreign_exchange_gain" do
     let(:addresses_eth) { create(:addresses_eth) }
-    let(:transaction_type5) { create(:transaction_type5, address: addresses_eth) }
     let(:transaction_type5) { create(:transaction_type5, address: addresses_eth) }
     let(:dollar_yen_transaction44) { create(:dollar_yen_transaction44, transaction_type: transaction_type5, address: addresses_eth) }
     let(:dollar_yen_transaction51) { create(:dollar_yen_transaction51, transaction_type: transaction_type5, address: addresses_eth) }

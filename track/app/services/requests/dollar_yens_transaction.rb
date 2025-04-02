@@ -4,17 +4,24 @@ module Requests
     include ActiveModel::Model
     include ActiveModel::Validations
 
-    attr_accessor :transaction_type_kind, :withdrawal_quantity, :exchange_en
+    attr_accessor :transaction_type, :date, :deposit_quantity, :deposit_rate, :withdrawal_quantity, :exchange_en
 
     # validate :validate_invalid_withdrawal_quantity
 
+    validates :transaction_type, presence: true
+    validates :date, presence: true
+    validates :deposit_quantity, presence: true, if: :deposit?
+    validates :deposit_rate, presence: true, if: :deposit?
     validates :withdrawal_quantity, presence: true, if: :withdrawal?
     validates :exchange_en, presence: true, numericality: { only_integer: true }, if: :withdrawal?
 
-    def withdrawal?
-      TransactionType.kinds[:withdrawal] === transaction_type_kind
+    def deposit?
+      TransactionType.kinds.key(1) === transaction_type.kind
     end
 
+    def withdrawal?
+      TransactionType.kinds.key(2) === transaction_type.kind
+    end
 
     def validate_withdrawal_quantity
       if withdrawal_quantity.present?
@@ -31,48 +38,57 @@ module Requests
       end
     end
 
-    def error(request:, transaction_type_kind:)
+    def get_errors
       error = {}
-      unless request[:date].present?
-        error = { date: "日付は必須入力です" }
-      end
 
-      if TransactionType.kinds[:deposit] === transaction_type_kind
-        unless request[:deposit_quantity].present?
-          error[:deposit_quantity] = "deposit_quantityは必須入力です"
-        else
-          begin
-            bd = BigDecimal(request[:deposit_quantity])
-            # 　小数点部分
-            fractional_part = bd.frac.to_s.sub("0.", "") # "0."を取り除く
-            if fractional_part.length > 2
-              error = { deposit_quantity: "deposit_quantityの値が不正です。小数点2桁までで入力してください" }
-            end
-          rescue => e
-            error = { deposit_quantity: "deposit_quantityの値が不正です。数値、もしくは小数点付きの数値を入力してください" }
-          end
-        end
-
-        unless request[:deposit_rate].present?
-          error[:deposit_rate] = "deposit_rateは必須入力です"
-        else
-          begin
-            bd = BigDecimal(request[:deposit_rate])
-            # 　小数点部分
-            fractional_part = bd.frac.to_s.sub("0.", "") # "0."を取り除く
-            if fractional_part.length > 2
-              error = { deposit_rate: "deposit_rateの値が不正です。小数点2桁までで入力してください" }
-            end
-          rescue => e
-            error = { deposit_rate: "deposit_rateの値が不正です。数値、もしくは小数点付きの数値を入力してください" }
-          end
-        end
-
-      elsif TransactionType.kinds[:withdrawal] === transaction_type_kind
+      if deposit?
 
         unless valid?
           errors.full_messages.each do |e|
-            if e == "Withdrawal quantity can't be blank"
+            if e == "Date can't be blank"
+              error[:date] = "日付は必須入力です"
+            elsif e == "Deposit quantity can't be blank"
+              error[:deposit_quantity] = "deposit_quantityは必須入力です"
+            elsif e == "Deposit rate can't be blank"
+              error[:deposit_rate] = "deposit_rateは必須入力です"
+            end
+          end
+        end
+
+
+        if deposit_quantity.present?
+          begin
+            bd = BigDecimal(deposit_quantity)
+            # 　小数点部分
+            fractional_part = bd.frac.to_s.sub("0.", "") # "0."を取り除く
+            if fractional_part.length > 2
+              error[:deposit_quantity] = "deposit_quantityの値が不正です。小数点2桁までで入力してください"
+            end
+          rescue => e
+            error[:deposit_quantity] = "deposit_quantityの値が不正です。数値、もしくは小数点付きの数値を入力してください"
+          end
+        end
+
+        if deposit_rate.present?
+          begin
+            bd = BigDecimal(deposit_rate)
+            # 　小数点部分
+            fractional_part = bd.frac.to_s.sub("0.", "") # "0."を取り除く
+            if fractional_part.length > 2
+              error[:deposit_rate] = "deposit_rateの値が不正です。小数点2桁までで入力してください"
+            end
+          rescue => e
+            error[:deposit_rate] = "deposit_rateの値が不正です。数値、もしくは小数点付きの数値を入力してください"
+          end
+        end
+
+      elsif withdrawal?
+
+        unless valid?
+          errors.full_messages.each do |e|
+            if e == "Date can't be blank"
+              error[:date] = "日付は必須入力です"
+            elsif e == "Withdrawal quantity can't be blank"
               error[:withdrawal_quantity] = "withdrawal_quantityは必須入力です"
             elsif e == "Exchange en can't be blank"
               error[:exchange_en] = "exchange_enは必須入力です"
@@ -102,9 +118,28 @@ module Requests
       error
     end
 
-    def to_date(request:)
-      splited_date = request[:date].split("-")
-      Date.new(splited_date[0].to_i, splited_date[1].to_i, splited_date[2].to_i)
+    def to_dollar_yen_transaction(errors:, address:)
+      dollar_yen_transaction = DollarYenTransaction.new
+      dollar_yen_transaction.address = address
+      dollar_yen_transaction.transaction_type = transaction_type
+      unless errors.key?(:date)
+        splited_date = date.split("-")
+        dollar_yen_transaction.date = Date.new(splited_date[0].to_i, splited_date[1].to_i, splited_date[2].to_i)
+      end
+
+      if deposit?
+        unless errors.key?(:deposit_quantity)
+          dollar_yen_transaction.deposit_quantity = BigDecimal(deposit_quantity)
+        end
+
+        unless errors.key?(:deposit_rate)
+          dollar_yen_transaction.deposit_rate = BigDecimal(deposit_rate)
+        end
+      elsif withdrawal?
+        dollar_yen_transaction.withdrawal_quantity = BigDecimal(withdrawal_quantity)
+        dollar_yen_transaction.exchange_en = BigDecimal(exchange_en)
+      end
+      dollar_yen_transaction
     end
   end
 end
