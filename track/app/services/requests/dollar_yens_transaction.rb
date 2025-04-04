@@ -141,5 +141,21 @@ module Requests
       end
       dollar_yen_transaction
     end
+
+    def html_errors(errors:)
+      html_errors = {}
+      if errors.present?
+        html_errors[:deposit_quantity_class] = "form_input"
+        if errors[:deposit_quantity].present?
+          html_errors[:deposit_quantity_msg] = errors[:deposit_quantity]
+        else
+          html_errors[:deposit_quantity_msg] = ""
+        end
+      else
+        html_errors[:deposit_quantity_class] = "form_input form_input_ng"
+        html_errors[:deposit_quantity_msg] = ""
+      end
+      html_errors
+    end
   end
 end

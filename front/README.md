@@ -139,3 +139,175 @@ cdd sample
 cd sample
 
 npm run dev
+
+
+====
+import Image from "next/image";
+import { useEffect, useState } from 'react';
+import { BrowserProvider } from 'ethers';
+import Link from 'next/link';
+import { fetchSessionsNonce, postSessionsSignin } from "./repo/sessions";
+import { makeMessage } from "./usecases/singin";
+import { ForeignExchangeGainIndex, DollarYenTransactionsIndex } from "./page_urls";
+import { useRouter } from 'next/navigation';
+import "./login.css";
+
+// 共通のエラーハンドリング関数
+const handleError = (err, customMessage) => {
+  alert(customMessage);
+  console.error(err);
+  setErrors([...errors, { "code": "error_code", "msg": customMessage }]);
+};
+
+// 共通のAPI呼び出し関数
+const apiCall = async (url, options) => {
+  try {
+    const response = await fetch(url, options);
+    return await response.json();
+  } catch (err) {
+    handleError(err, "API呼び出しに失敗しました");
+    throw err;
+  }
+};
+
+const Header = () => (
+  <header>
+    <div className="header1">
+      <div>
+        <a href="#" className="header1_site_name">EKISA</a>
+      </div>
+      <nav className="header1_nav">
+        <div>
+          <button className="btn_sign">ログアウト</button>
+        </div>
+      </nav>
+    </div>
+    <div className="header2">
+      <div>
+        <ul className="header2_nav">
+          <li><a href="#" className="header2_nav_li">Home</a></li>
+          <li><a href="#" className="header2_nav_li">お知らせ・ご案内</a></li>
+        </ul>
+      </div>
+    </div>
+  </header>
+);
+
+const MainContent = ({ errors, providers, handleConnect }) => (
+  <div className="main">
+    <div className="main_content">
+      <p className="title-font font-medium text-3xl text-gray-900">ウォレットをお持ちの方はログインしてください</p>
+      <div>
+        {errors.length > 0 && errors.map((e) => (
+          <div className="login_error" key={e.code}>
+            <p>{e.msg}</p>
+          </div>
+        ))}
+        {providers.length > 0 ? providers.map((provider) => (
+          <button key={provider.info.uuid} onClick={() => handleConnect(provider)} >
+            <img src={provider.info.icon} alt={provider.info.name} width="100" height="100" />
+          </button>
+        )) : <div>there are no Announced Providers</div>}
+      </div>
+      <p className="text-xs text-gray-500 mt-3">ログインできない場合</p>
+    </div>
+  </div>
+);
+
+// メイン関数
+export default function Home() {
+  const router = useRouter();
+  const [providers, setProviders] = useState([]);
+  const [address, setAddress] = useState("");
+  const [errors, setErrors] = useState([]);
+
+  const handleLogout = async () => {
+    try {
+      const res = await fetch(`http://localhost:3000/apis/sessions/signout`, {
+        method: "POST",
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        mode: 'cors',
+        credentials: 'include'
+      });
+      if (res.status === 201) {
+        setAddress("");
+      }
+    } catch (err) {
+      handleError(err, "ログアウトに失敗しました");
+    }
+  };
+
+  const verify = async () => {
+    try {
+      await fetch(`http://localhost:3000/apis/sessions/verify`, {
+        method: "POST",
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        mode: 'cors',
+        credentials: 'include'
+      });
+    } catch (err) {
+      handleError(err, "権限の確認に失敗しました");
+    }
+  };
+
+  const handleConnect = async (providerWithInfo) => {
+    try {
+      const accounts = await providerWithInfo.provider.request({ method: 'eth_requestAccounts' });
+      if (accounts?.[0]) {
+        const account = accounts[0];
+        const provider = new BrowserProvider(providerWithInfo.provider);
+        const signer = await provider.getSigner();
+        const network = await provider.getNetwork();
+        const chainId = String(Number(network.chainId));
+
+        const response = await fetchSessionsNonce();
+        const nonce_result = await response.json();
+
+        const message = makeMessage(window.location.protocol.slice(0, -1), window.location.host, window.location.origin, signer.address, chainId, nonce_result.nonce);
+        const signature = await signer.signMessage(message);
+
+        const obj = { chain_id: chainId, message: message, signature: signature, nonce: nonce_result.nonce, domain: window.location.host, address: signer.address, kind: 1 };
+        const body = JSON.stringify(obj);
+
+        const res = await postSessionsSignin(body);
+        if (res.status === 201) {
+          router.push(DollarYenTransactionsIndex);
+        }
+      }
+    } catch (err) {
+      handleError(err, "ログインに失敗しました");
+    }
+  };
+
+  const providerDetails = async () => {
+    let providerDetails = [];
+    function onAnnouncement(event) {
+      providerDetails.push(event.detail);
+    }
+    window.addEventListener("eip6963:announceProvider", onAnnouncement);
+    window.dispatchEvent(new Event("eip6963:requestProvider"));
+    window.removeEventListener("eip6963:announceProvider", onAnnouncement);
+    return providerDetails;
+  };
+
+  useEffect(() => {
+    const fetchProviders = async () => {
+      const providers = await providerDetails();
+      setProviders(providers);
+    };
+    fetchProviders();
+  }, []);
+
+  return (
+    <div>
+      <Header />
+      <MainContent errors={errors} providers={providers} handleConnect={handleConnect} />
+      {address && <p>{address}</p>}
+      {address && <button onClick={handleLogout}><div>ログアウト</div></button>}
+    </div>
+  );
+}

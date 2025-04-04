@@ -25,6 +25,11 @@ class DollarYenTransactionsController < ApplicationViewController
     header_session
     set_view_var
     @dollar_yen_transaction = DollarYenTransaction.new
+
+    # クラスの指定(分ける)
+    @errors = {}
+    @errors[:deposit_quantity_class] = "form_input"
+    @errors[:deposit_quantity_msg] = ""
   end
 
   # 作成確認
@@ -43,6 +48,13 @@ class DollarYenTransactionsController < ApplicationViewController
     if errors.present?
       set_view_var
       @dollar_yen_transaction = req.to_dollar_yen_transaction(errors: errors, address: @session.address)
+      @errors = {}
+      @errors[:deposit_quantity_class] = "form_input form_input_ng"
+      @errors[:deposit_quantity_msg] = errors[:deposit_quantity] if errors[:deposit_quantity].present?
+
+      # form_input_ng
+      # puts @errors
+      # @errors = errors
       render "new"
       return
     end
