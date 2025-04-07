@@ -55,6 +55,19 @@ module Requests
           end
         end
 
+        if date.present?
+          dates = date.split("-")
+          size = dates.length
+          if size != 3
+            error[:date] = "dateのフォーマットが不正です。yyyy-mm-dd形式で入力してください"
+          elsif size == 3
+            begin
+              Date.new(dates[0].to_i, dates[1].to_i, dates[2].to_i)
+            rescue => e
+              error[:date] =  "dateの値が不正です。yyyy-mm-dd形式で正しい日付を入力してください"
+            end
+          end
+        end
 
         if deposit_quantity.present?
           begin
@@ -96,6 +109,20 @@ module Requests
               error[:exchange_en] = "exchange_enの値が不正です。数値を入力してください" unless error.key?(:exchange_en)
             elsif e == "Exchange en is not a number"
               error[:exchange_en] = "exchange_enの値が不正です。数値を入力してください" unless error.key?(:exchange_en)
+            end
+          end
+        end
+
+        if date.present?
+          dates = date.split("-")
+          size = dates.length
+          if size != 3
+            error[:date] = "dateのフォーマットが不正です。yyyy-mm-dd形式で入力してください"
+          elsif size == 3
+            begin
+              Date.new(dates[0].to_i, dates[1].to_i, dates[2].to_i)
+            rescue => e
+              error[:date] =  "dateの値が不正です。yyyy-mm-dd形式で正しい日付を入力してください"
             end
           end
         end

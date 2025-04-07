@@ -8,6 +8,9 @@
 
   <div class="tw_mb-5">
     <label class="form_label">日付*</label>
+    <% if @errors[:date].present? %>
+      <p><%= @errors[:date] %></p>
+    <% end %>
     <%= form.text_field :date, class: "form_input", id: "default-datepicker", placeholder: "Select date", required: true %>
   </div>
   <div class="tw_mb-5">

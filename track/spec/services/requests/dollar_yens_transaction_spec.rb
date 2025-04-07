@@ -13,6 +13,18 @@ RSpec.describe Requests::DollarYensTransaction, type: :feature do
         expect(error).to eq({ date: "日付は必須入力です", deposit_quantity: "deposit_quantityは必須入力です" })
       end
 
+      it 'should get errors when date is invalid format.' do
+        req = Requests::DollarYensTransaction.new(date: "aaaaa", transaction_type: transaction_type1, deposit_quantity: "100.12", deposit_rate: "150.12")
+        error = req.get_errors
+        expect(error).to eq({ date: "dateのフォーマットが不正です。yyyy-mm-dd形式で入力してください" })
+      end
+
+      it 'should get errors when date is invalid.' do
+        req = Requests::DollarYensTransaction.new(date: "2022-03-32", transaction_type: transaction_type1, deposit_quantity: "100.12", deposit_rate: "150.12")
+        error = req.get_errors
+        expect(error).to eq({ date: "dateの値が不正です。yyyy-mm-dd形式で正しい日付を入力してください" })
+      end
+
       it 'should get errors when deposit_quantity is invalid.' do
         req = Requests::DollarYensTransaction.new(date: "2022-02-11", transaction_type: transaction_type1, deposit_quantity: "aaaa", deposit_rate: "150.12")
         error = req.get_errors
@@ -49,6 +61,18 @@ RSpec.describe Requests::DollarYensTransaction, type: :feature do
         req = Requests::DollarYensTransaction.new(date: "", transaction_type: transaction_type5, withdrawal_quantity: "", exchange_en: "")
         error = req.get_errors
         expect(error).to eq({ date: "日付は必須入力です", withdrawal_quantity: "withdrawal_quantityは必須入力です", exchange_en: "exchange_enは必須入力です" })
+      end
+
+      it 'should get errors when date is invalid format.' do
+        req = Requests::DollarYensTransaction.new(date: "aaaaa", transaction_type: transaction_type5, withdrawal_quantity: "40.7", exchange_en: "50000")
+        error = req.get_errors
+        expect(error).to eq({ date: "dateのフォーマットが不正です。yyyy-mm-dd形式で入力してください" })
+      end
+
+      it 'should get errors when date is invalid.' do
+        req = Requests::DollarYensTransaction.new(date: "2022-03-32", transaction_type: transaction_type5, withdrawal_quantity: "40.7", exchange_en: "50000")
+        error = req.get_errors
+        expect(error).to eq({ date: "dateの値が不正です。yyyy-mm-dd形式で正しい日付を入力してください" })
       end
 
       it 'should get errors when withdrawal_quantity is empty.' do
