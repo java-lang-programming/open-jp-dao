@@ -8,10 +8,10 @@
 
   <div class="tw_mb-5">
     <label class="form_label">日付*</label>
-    <% if @errors[:date].present? %>
-      <p><%= @errors[:date] %></p>
+    <% if @errors[:date_msg].present? %>
+      <p><%= @errors[:date_msg] %></p>
     <% end %>
-    <%= form.text_field :date, class: "form_input", id: "default-datepicker", placeholder: "Select date", required: true %>
+    <%= form.text_field :date, class: @errors[:date_class], id: "default-datepicker", placeholder: "日付(yyyy-mm-dd)", required: true %>
   </div>
   <div class="tw_mb-5">
     <label for="transaction_kind" class="form_label">取引種別*</label>
@@ -28,7 +28,10 @@
     </div>
     <div class="tw_mb-5">
       <label for="jp_en_rate" class="form_label">米ドル円レート* </label>
-      <%= form.text_field :deposit_rate, class: "form_input", id: "default-datepicker", placeholder: "預入レート" %>
+      <% if @errors[:deposit_rate_msg].present? %>
+        <p><%= @errors[:deposit_rate_msg] %></p>
+      <% end %>
+      <%= form.text_field :deposit_rate, class: @errors[:deposit_rate_class], id: "default-datepicker", placeholder: "預入レート" %>
     </div>
     <div class="form_checkbox_section">
       <!-- flex items-center  -->
@@ -41,11 +44,17 @@
   <div id="withdrawal_section" style="display: none;">
     <div class="tw_mb-5">
       <label for="withdrawal_quantity" class="form_label">売却した米ドル*</label>
-      <%= form.text_field :withdrawal_quantity, class: "form_input", id: "default-datepicker", placeholder: "払出数量米ドル" %>
+      <% if @errors[:withdrawal_quantity_msg].present? %>
+        <p><%= @errors[:withdrawal_quantity_msg] %></p>
+      <% end %>
+      <%= form.text_field :withdrawal_quantity, class: @errors[:withdrawal_quantity_class], id: "default-datepicker", placeholder: "払出数量米ドル" %>
     </div>
     <div class="tw_mb-5">
       <label for="exchange_en" class="form_label">受け取った日本円</label>
-      <%= form.text_field :exchange_en, class: "form_input", id: "default-datepicker", placeholder: "払出数量米ドル" %>
+      <% if @errors[:exchange_en_msg].present? %>
+        <p><%= @errors[:exchange_en_msg] %></p>
+      <% end %>
+      <%= form.text_field :exchange_en, class: @errors[:exchange_en_class], id: "default-datepicker", placeholder: "払出数量米ドル" %>
     </div>
   </div>
   <%= form.submit '登録' %>

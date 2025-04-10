@@ -28,8 +28,16 @@ class DollarYenTransactionsController < ApplicationViewController
 
     # クラスの指定(分ける)
     @errors = {}
+    @errors[:date_class] = "form_input"
+    @errors[:date_msg] = ""
     @errors[:deposit_quantity_class] = "form_input"
     @errors[:deposit_quantity_msg] = ""
+    @errors[:deposit_rate_class] = "form_input"
+    @errors[:deposit_rate_msg] = ""
+    @errors[:withdrawal_quantity_class] = "form_input"
+    @errors[:withdrawal_quantity_msg] = ""
+    @errors[:exchange_en_class] = "form_input"
+    @errors[:exchange_en_msg] = ""
   end
 
   # 作成確認
@@ -49,12 +57,36 @@ class DollarYenTransactionsController < ApplicationViewController
       set_view_var
       @dollar_yen_transaction = req.to_dollar_yen_transaction(errors: errors, address: @session.address)
       @errors = {}
+      @errors[:date_class] = "form_input form_input_ng"
+      if errors[:date].present?
+        @errors[:date_msg] = errors[:date]
+      else
+        @errors[:date_class] = "form_input form_input_ok"
+      end
       @errors[:deposit_quantity_class] = "form_input form_input_ng"
-      @errors[:deposit_quantity_msg] = errors[:deposit_quantity] if errors[:deposit_quantity].present?
-
-      # form_input_ng
-      # puts @errors
-      # @errors = errors
+      if errors[:deposit_quantity].present?
+        @errors[:deposit_quantity_msg] = errors[:deposit_quantity]
+      else
+        @errors[:deposit_quantity_class] = "form_input form_input_ok"
+      end
+      @errors[:deposit_rate_class] = "form_input form_input_ng"
+      if errors[:deposit_rate].present?
+        @errors[:deposit_rate_msg] = errors[:deposit_rate]
+      else
+        @errors[:deposit_rate_class] = "form_input form_input_ok"
+      end
+      @errors[:withdrawal_quantity_class] = "form_input form_input_ng"
+      if errors[:withdrawal_quantity].present?
+        @errors[:withdrawal_quantity_msg] = errors[:withdrawal_quantity]
+      else
+        @errors[:withdrawal_quantity_class] = "form_input form_input_ok"
+      end
+      @errors[:exchange_en_class] = "form_input form_input_ng"
+      if errors[:exchange_en].present?
+        @errors[:exchange_en_msg] = errors[:exchange_en]
+      else
+        @errors[:exchange_en_class] = "form_input form_input_ok"
+      end
       render "new"
       return
     end

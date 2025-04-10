@@ -152,15 +152,21 @@ module Requests
       unless errors.key?(:date)
         splited_date = date.split("-")
         dollar_yen_transaction.date = Date.new(splited_date[0].to_i, splited_date[1].to_i, splited_date[2].to_i)
+      else
+        dollar_yen_transaction.date = date
       end
 
       if deposit?
         unless errors.key?(:deposit_quantity)
           dollar_yen_transaction.deposit_quantity = BigDecimal(deposit_quantity)
+        else
+          dollar_yen_transaction.deposit_quantity = deposit_quantity
         end
 
         unless errors.key?(:deposit_rate)
           dollar_yen_transaction.deposit_rate = BigDecimal(deposit_rate)
+        else
+          dollar_yen_transaction.deposit_rate = deposit_rate
         end
       elsif withdrawal?
         dollar_yen_transaction.withdrawal_quantity = BigDecimal(withdrawal_quantity)
