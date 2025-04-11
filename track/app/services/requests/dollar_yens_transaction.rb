@@ -169,8 +169,17 @@ module Requests
           dollar_yen_transaction.deposit_rate = deposit_rate
         end
       elsif withdrawal?
-        dollar_yen_transaction.withdrawal_quantity = BigDecimal(withdrawal_quantity)
-        dollar_yen_transaction.exchange_en = BigDecimal(exchange_en)
+        unless errors.key?(:withdrawal_quantity)
+          dollar_yen_transaction.withdrawal_quantity = BigDecimal(withdrawal_quantity)
+        else
+          dollar_yen_transaction.withdrawal_quantity = withdrawal_quantity
+        end
+
+        unless errors.key?(:exchange_en)
+          dollar_yen_transaction.exchange_en = BigDecimal(exchange_en)
+        else
+          dollar_yen_transaction.exchange_en = exchange_en
+        end
       end
       dollar_yen_transaction
     end
@@ -189,6 +198,16 @@ module Requests
         html_errors[:deposit_quantity_msg] = ""
       end
       html_errors
+    end
+
+    def deposit_block
+      return "block;" if deposit?
+      "none;"
+    end
+
+    def withdrawal_block
+      return "block;" if withdrawal?
+      "none;"
     end
   end
 end

@@ -26,6 +26,9 @@ class DollarYenTransactionsController < ApplicationViewController
     set_view_var
     @dollar_yen_transaction = DollarYenTransaction.new
 
+    @deposit_section_block = "block;"
+    @withdrawal_section_block = "none;"
+
     # クラスの指定(分ける)
     @errors = {}
     @errors[:date_class] = "form_input"
@@ -47,8 +50,8 @@ class DollarYenTransactionsController < ApplicationViewController
     # dollar_yen_transactions_pathの繊維の時はいらない
     set_view_var
 
-    request = params.require(:dollar_yen_transaction).permit(:date, :transaction_type, :deposit_quantity, :deposit_rate, :withdrawal_quantity, :exchange_en)
-    transaction_type = @session.address.transaction_types.where(id: request[:transaction_type]).first
+    request = params.require(:dollar_yen_transaction).permit(:date, :transaction_type_id, :deposit_quantity, :deposit_rate, :withdrawal_quantity, :exchange_en)
+    transaction_type = @session.address.transaction_types.where(id: request[:transaction_type_id]).first
 
     req = Requests::DollarYensTransaction.new(date: request[:date], transaction_type: transaction_type, deposit_quantity: request[:deposit_quantity], deposit_rate: request[:deposit_rate], withdrawal_quantity: request[:withdrawal_quantity], exchange_en: request[:exchange_en])
     errors = req.get_errors
@@ -56,6 +59,9 @@ class DollarYenTransactionsController < ApplicationViewController
     if errors.present?
       set_view_var
       @dollar_yen_transaction = req.to_dollar_yen_transaction(errors: errors, address: @session.address)
+      @deposit_section_block = req.deposit_block
+      @withdrawal_section_block = req.withdrawal_block
+
       @errors = {}
       @errors[:date_class] = "form_input form_input_ng"
       if errors[:date].present?
