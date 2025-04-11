@@ -96,13 +96,13 @@ RSpec.describe "DollarYenTransactions", type: :request do
       # validareエラー
       it "should get not data when date is not found." do
         transaction_type1
-        post create_confirmation_dollar_yen_transactions_path, params: { dollar_yen_transaction: { transaction_type: "1", deposit_quantity: "100.10", deposit_rate: "130.32" } }
+        post create_confirmation_dollar_yen_transactions_path, params: { dollar_yen_transaction: { transaction_type_id: transaction_type1.id, deposit_quantity: "100.10", deposit_rate: "130.32" } }
       end
 
       # 初回データの作成
       it "should get not data when date is not found." do
         transaction_type1
-        post create_confirmation_dollar_yen_transactions_path, params: { dollar_yen_transaction: { date: "2022-01-01", transaction_type: "1", deposit_quantity: "100.10", deposit_rate: "130.32" } }
+        post create_confirmation_dollar_yen_transactions_path, params: { dollar_yen_transaction: { date: "2022-01-01", transaction_type_id: transaction_type1.id, deposit_quantity: "100.10", deposit_rate: "130.32" } }
         expect(addresses_eth.dollar_yen_transactions.count).to eq(1)
       end
 
@@ -113,7 +113,7 @@ RSpec.describe "DollarYenTransactions", type: :request do
           dollar_yen_transaction3
 
           # dollar_yen_transaction2を追加
-          post create_confirmation_dollar_yen_transactions_path, params: { dollar_yen_transaction: { date: "2020-06-19", transaction_type: "1", deposit_quantity: "10.76", deposit_rate: "105.95" } }
+          post create_confirmation_dollar_yen_transactions_path, params: { dollar_yen_transaction: { date: "2020-06-19", transaction_type_id: dollar_yen_transaction1.id, deposit_quantity: "10.76", deposit_rate: "105.95" } }
 
           expect(response.body).to include '取引データが1件あります'
         end
@@ -124,11 +124,11 @@ RSpec.describe "DollarYenTransactions", type: :request do
           base_date = dollar_yen_transaction2.date
           50.times do
             base_date = base_date.tomorrow
-            post create_confirmation_dollar_yen_transactions_path, params: { dollar_yen_transaction: { date: base_date.strftime("%Y-%m-%d"), transaction_type: "1", deposit_quantity: "10.76", deposit_rate: "105.95" } }
+            post create_confirmation_dollar_yen_transactions_path, params: { dollar_yen_transaction: { date: base_date.strftime("%Y-%m-%d"), transaction_type_id: 1, deposit_quantity: "10.76", deposit_rate: "105.95" } }
           end
 
           # dollar_yen_transaction2を追加
-          post create_confirmation_dollar_yen_transactions_path, params: { dollar_yen_transaction: { date: "2020-06-18", transaction_type: "1", deposit_quantity: "10.76", deposit_rate: "105.95" } }
+          post create_confirmation_dollar_yen_transactions_path, params: { dollar_yen_transaction: { date: "2020-06-18", transaction_type_id: 1, deposit_quantity: "10.76", deposit_rate: "105.95" } }
 
           expect(response.body).to include '2020-06-18以降の取引データが51件あります'
         end
