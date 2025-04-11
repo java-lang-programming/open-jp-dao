@@ -122,7 +122,7 @@ RSpec.describe Requests::DollarYensTransaction, type: :feature do
         expect(dollar_yen_transaction.address).to eq(addresses_eth)
         expect(dollar_yen_transaction.transaction_type).to eq(transaction_type1)
         expect(dollar_yen_transaction.deposit_quantity).to eq(0.0)
-        expect(dollar_yen_transaction.deposit_rate).to be nil
+        expect(dollar_yen_transaction.deposit_rate).to eq(BigDecimal(0.0))
       end
 
       it 'should be object' do
@@ -132,8 +132,8 @@ RSpec.describe Requests::DollarYensTransaction, type: :feature do
         expect(dollar_yen_transaction.date).to be nil
         expect(dollar_yen_transaction.address).to eq(addresses_eth)
         expect(dollar_yen_transaction.transaction_type).to eq(transaction_type1)
-        expect(dollar_yen_transaction.deposit_quantity).to be nil
-        expect(dollar_yen_transaction.deposit_rate).to be nil
+        expect(dollar_yen_transaction.deposit_quantity).to eq(0.0)
+        expect(dollar_yen_transaction.deposit_rate).to eq(0.0)
       end
     end
   end
