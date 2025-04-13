@@ -18,44 +18,10 @@
     <%= form.select :transaction_type_id, @transaction_types.collect { |c| [c.name, c.id, { "data-kind": c.kind }] }, {}, { class: "form_input", onchange: "onChangeKind(this);" } %>
   </div>
   <div id="deposit_section" style="display: <%= @deposit_section_block %>">
-    <div class="tw_mb-5">
-      <!-- エラーとOKの場合のcssを作成する -->
-      <label for="en_dollar_value" class="form_label">受け取った米ドル*</label>
-      <% if @errors[:deposit_quantity_msg].present? %>
-        <p><%= @errors[:deposit_quantity_msg] %></p>
-      <% end %>
-      <%= form.text_field :deposit_quantity, class: @errors[:deposit_quantity_class], id: "default-datepicker", placeholder: "預入数量米ドル" %>
-    </div>
-    <div class="tw_mb-5">
-      <label for="jp_en_rate" class="form_label">米ドル円レート* </label>
-      <% if @errors[:deposit_rate_msg].present? %>
-        <p><%= @errors[:deposit_rate_msg] %></p>
-      <% end %>
-      <%= form.text_field :deposit_rate, class: @errors[:deposit_rate_class], id: "default-datepicker", placeholder: "預入レート" %>
-    </div>
-    <div class="form_checkbox_section">
-      <!-- flex items-center  -->
-      <div class="h-5">
-        <input id="auto_rate" type="checkbox" value="" class="form_checkbox" />
-      </div>
-      <label for="auto_rate" class="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300">米ドル円レート自動反映</label>
-    </div>
+    <%= render partial: "form_deposit_section", locals: { form: form, dollar_yen_transaction: @dollar_yen_transaction, errors: @errors } %>
   </div>
   <div id="withdrawal_section" style="display: <%= @withdrawal_section_block %>">
-    <div class="tw_mb-5">
-      <label for="withdrawal_quantity" class="form_label">売却した米ドル*</label>
-      <% if @errors[:withdrawal_quantity_msg].present? %>
-        <p><%= @errors[:withdrawal_quantity_msg] %></p>
-      <% end %>
-      <%= form.text_field :withdrawal_quantity, class: @errors[:withdrawal_quantity_class], id: "default-datepicker", placeholder: "例:70.25" %>
-    </div>
-    <div class="tw_mb-5">
-      <label for="exchange_en" class="form_label">受け取った日本円</label>
-      <% if @errors[:exchange_en_msg].present? %>
-        <p><%= @errors[:exchange_en_msg] %></p>
-      <% end %>
-      <%= form.text_field :exchange_en, class: @errors[:exchange_en_class], id: "default-datepicker", placeholder: "例:10000" %>
-    </div>
+    <%= render partial: "form_withdrawal_section", locals: { form: form, dollar_yen_transaction: @dollar_yen_transaction, errors: @errors } %>
   </div>
   <%= form.submit '登録' %>
 <% end %>

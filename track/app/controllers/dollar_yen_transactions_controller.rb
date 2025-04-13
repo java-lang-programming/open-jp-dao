@@ -142,6 +142,22 @@ class DollarYenTransactionsController < ApplicationViewController
     header_session
     set_view_var
     @dollar_yen_transaction = @session.address.dollar_yen_transactions.where(id: params[:id]).first
+
+    # クラスの指定(分ける)
+    @deposit_section_block = "block;"
+    @withdrawal_section_block = "none;"
+
+    @errors = {}
+    @errors[:date_class] = "form_input"
+    @errors[:date_msg] = ""
+    @errors[:deposit_quantity_class] = "form_input"
+    @errors[:deposit_quantity_msg] = ""
+    @errors[:deposit_rate_class] = "form_input"
+    @errors[:deposit_rate_msg] = ""
+    @errors[:withdrawal_quantity_class] = "form_input"
+    @errors[:withdrawal_quantity_msg] = ""
+    @errors[:exchange_en_class] = "form_input"
+    @errors[:exchange_en_msg] = ""
   end
 
   def edit_confirmation
@@ -150,8 +166,11 @@ class DollarYenTransactionsController < ApplicationViewController
     set_view_var
     address = @session.address
 
-    request = params.require(:dollar_yen_transaction).permit(:date, :transaction_type, :deposit_quantity, :deposit_rate, :withdrawal_quantity, :exchange_en)
-    transaction_type = @session.address.transaction_types.where(id: request[:transaction_type]).first
+    puts params.inspect
+
+    request = params.require(:dollar_yen_transaction).permit(:date, :transaction_type_id, :deposit_quantity, :deposit_rate, :withdrawal_quantity, :exchange_en)
+    puts request.inspect
+    transaction_type = address.transaction_types.where(id: request[:transaction_type_id]).first
 
     req = Requests::DollarYensTransaction.new(date: request[:date], transaction_type: transaction_type, deposit_quantity: request[:deposit_quantity], deposit_rate: request[:deposit_rate], withdrawal_quantity: request[:withdrawal_quantity], exchange_en: request[:exchange_en])
     errors = req.get_errors
@@ -159,11 +178,40 @@ class DollarYenTransactionsController < ApplicationViewController
     if errors.present?
       set_view_var
       @dollar_yen_transaction = req.to_dollar_yen_transaction(errors: errors, address: address)
-      # @dollar_yen_transaction = DollarYenTransaction.new
-      # @dollar_yen_transaction.transaction_type =  address.transaction_types.where(id: request[:transaction_type]).first
-      # @dollar_yen_transaction.date = request[:date]
-      # @dollar_yen_transaction.deposit_quantity = request[:deposit_quantity]
-      # @dollar_yen_transaction.deposit_rate = request[:deposit_rate]
+      @deposit_section_block = req.deposit_block
+      @withdrawal_section_block = req.withdrawal_block
+
+      @errors = {}
+      @errors[:date_class] = "form_input form_input_ng"
+      if errors[:date].present?
+        @errors[:date_msg] = errors[:date]
+      else
+        @errors[:date_class] = "form_input form_input_ok"
+      end
+      @errors[:deposit_quantity_class] = "form_input form_input_ng"
+      if errors[:deposit_quantity].present?
+        @errors[:deposit_quantity_msg] = errors[:deposit_quantity]
+      else
+        @errors[:deposit_quantity_class] = "form_input form_input_ok"
+      end
+      @errors[:deposit_rate_class] = "form_input form_input_ng"
+      if errors[:deposit_rate].present?
+        @errors[:deposit_rate_msg] = errors[:deposit_rate]
+      else
+        @errors[:deposit_rate_class] = "form_input form_input_ok"
+      end
+      @errors[:withdrawal_quantity_class] = "form_input form_input_ng"
+      if errors[:withdrawal_quantity].present?
+        @errors[:withdrawal_quantity_msg] = errors[:withdrawal_quantity]
+      else
+        @errors[:withdrawal_quantity_class] = "form_input form_input_ok"
+      end
+      @errors[:exchange_en_class] = "form_input form_input_ng"
+      if errors[:exchange_en].present?
+        @errors[:exchange_en_msg] = errors[:exchange_en]
+      else
+        @errors[:exchange_en_class] = "form_input form_input_ok"
+      end
       return render "edit"
     end
 
