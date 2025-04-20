@@ -34,7 +34,7 @@ make dc_up
 ```
 rails-new --devcontainer --database=sqlite3
 docker exec -it wanwan-create /bin/sh
-docker exec -it devcontainer_wevb3-rails-dev-app_1 /bin/sh
+docker exec -it devcontainer-wevb3-rails-dev-app-1 /bin/sh
 ```
 
 ## temp
