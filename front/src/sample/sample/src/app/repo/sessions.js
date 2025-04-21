@@ -32,6 +32,21 @@ export const postSessionsSignin = (body) => {
 }
 
 /**
+ * @description rails apiに接続してverifyする
+ * @function
+ */
+export const postVerify = () => {
+  return fetch(`${ApiBaseUrl}/apis/sessions/verify`, {
+    method: "POST",
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    mode: 'cors',
+    credentials: 'include'
+  })
+}
+
+/**
  *  @description rails apiに接続してuse情報を取得する
  *
  */

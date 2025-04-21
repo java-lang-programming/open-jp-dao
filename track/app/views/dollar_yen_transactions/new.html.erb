@@ -5,36 +5,39 @@
 <% end %>
 
 <%= form_with model: @dollar_yen_transaction, url: create_confirmation_dollar_yen_transactions_path, data: { turbo: false }, class:"form_transaction" do |form|  %>
-
   <div class="tw_mb-5">
     <label class="form_label">日付*</label>
-    <%= form.text_field :date, class: "form_input", id: "default-datepicker", placeholder: "Select date", required: true %>
+    <% if @errors[:date_msg].present? %>
+      <p><%= @errors[:date_msg] %></p>
+    <% end %>
+    <%= form.text_field :date, class: @errors[:date_class], id: "default-datepicker", placeholder: "日付(yyyy-mm-dd)", required: true %>
   </div>
   <div class="tw_mb-5">
     <label for="transaction_kind" class="form_label">取引種別*</label>
-    <%= form.select :transaction_type, @transaction_types.collect { |c| [c.name, c.id] }, {}, { class: "form_input" } %>
+    <%= form.select :transaction_type_id, @transaction_types.collect { |c| [c.name, c.id, { "data-kind": c.kind }] }, {}, { class: "form_input", onchange: "onChangeKind(this);" } %>
   </div>
-  <div class="tw_mb-5">
-    <!-- エラーとOKの場合のcssを作成する -->
-    <label for="en_dollar_value" class="form_label">数量米ドル*</label>
-    <%= form.text_field :deposit_quantity, class: "form_input", id: "default-datepicker", placeholder: "預入数量米ドル", required: true %>
+  <div id="deposit_section" style="display: <%= @deposit_section_block %>">
+    <%= render partial: "form_deposit_section", locals: { form: form, dollar_yen_transaction: @dollar_yen_transaction, errors: @errors } %>
   </div>
-  <div class="tw_mb-5">
-    <label for="jp_en_rate" class="form_label">レート* </label>
-    <%= form.text_field :deposit_rate, class: "form_input", id: "default-datepicker", placeholder: "預入レート", required: true %>
-  </div>
-  <div class="form_checkbox_section">
-    <!-- flex items-center  -->
-    <div class="h-5">
-      <input id="auto_rate" type="checkbox" value="" class="form_checkbox" />
-    </div>
-    <label for="auto_rate" class="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300">ドル円レート自動反映</label>
-  </div>
-  <div class="tw_mb-5">
-    <label for="jp_en" class="form_label">日本円</label>
-    <input type="text" id="jp_en" class="form_input form_input_ng" required />
+  <div id="withdrawal_section" style="display: <%= @withdrawal_section_block %>">
+    <%= render partial: "form_withdrawal_section", locals: { form: form, dollar_yen_transaction: @dollar_yen_transaction, errors: @errors } %>
   </div>
   <%= form.submit '登録' %>
 <% end %>
 
+<script>
+  function onChangeKind(selectElement) {
+    const selectedOption = selectElement.options[selectElement.selectedIndex];
+    const transactionType = selectedOption.getAttribute('data-kind');
+    const deposit_section = document.getElementById('deposit_section');
+    const withdrawal_section = document.getElementById('withdrawal_section');
 
+    if (transactionType === 'deposit' && withdrawal_section.style.display === 'block') {
+      deposit_section.style.display = 'block';
+      withdrawal_section.style.display = 'none';
+    } else if (transactionType === 'withdrawal' && withdrawal_section.style.display === 'none') {
+      deposit_section.style.display = 'none';
+      withdrawal_section.style.display = 'block';
+    }
+  }
+</script>

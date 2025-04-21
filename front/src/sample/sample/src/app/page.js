@@ -1,13 +1,18 @@
 'use client';
-// import { use } from "react";
+
 import Image from "next/image";
-import { useEffect, useState } from 'react';
+import { useEffect, useState, Suspense } from 'react';
 import { BrowserProvider } from 'ethers';
-// import { SiweMessage } from 'siwe';
 import Link from 'next/link';
 import "./login.css";
-import { fetchSessionsNonce, postSessionsSignin } from "./repo/sessions";
-import { makeMessage } from "./usecases/singin";
+import Constants from "./models/errors";
+import { postSessionsSignin } from "./repo/sessions";
+import MetamaskSignin from "./components/matamask_signin";
+import Eip6963Loading from "./components/sessions/eip6963_loading";
+import SigninLoading from "./components/sessions/signin_loading";
+import MetamaskNotFound from "./components/sessions/metamask_not_found";
+import SigninSuccess from "./components/sessions/signin_success";
+import { makeMessage, requestEthAccountsViaMetamask, nonceResponse, makePostSessionsSigninBody, sessionsSigninResponse, sessionsVerifyResponse, ERROR_MATAMASK_ETH_REQUEST_ACCOUNTS } from "./usecases/singin";
 import { ForeignExchangeGainIndex, DollarYenTransactionsIndex } from "./page_urls";
 import { useRouter } from 'next/navigation'
 
@@ -18,6 +23,11 @@ import { useRouter } from 'next/navigation'
 export default function Home() {
   const router = useRouter();
 
+  // 複数ロード
+  const [walletLoad, setWalletLoad] = useState(false);
+  const [walletProcessing, setWalletProcessing] = useState(false);
+  const [signin, setSignin] = useState(false);
+  const [provider, setProvider] = useState(null);
   const [providers, setProviders] = useState([]);
   const [address, setAddress] = useState("");
   const [errors, setErrors] = useState([]);
@@ -39,120 +49,69 @@ export default function Home() {
     }
   }
 
-  // 権限があるかを首藤
-  const verify = async()=> {
-    const res = await fetch(`http://localhost:3000/apis/sessions/verify`, {
-        method: "POST",
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        mode: 'cors',
-        credentials: 'include'
-    });
-
-    const verify_status = await res.status
-  }
-
-
   // https://qiita.com/harururu32/items/c372c825ee8c9f90caa3#%E3%83%A6%E3%83%8B%E3%83%83%E3%83%88%E3%83%86%E3%82%B9%E3%83%88
   // エラーハンドリングも行うこと
   const handleConnect = async(providerWithInfo)=> {
-    //const accounts = await signInWithEthereum(providerWithInfo)
-    //console.log(providerWithInfo);
-
-    // const accounts = await requestAccounts(providerWithInfo)
-    // alert(accounts);
-    let accounts = null
+    // setProvider(providerWithInfo);
+    setWalletProcessing(true);
+    // ここから下をmetamask signinでまとめる
     try {
-      accounts = await providerWithInfo.provider.request({method:'eth_requestAccounts'})
+      const accounts = await requestEthAccountsViaMetamask(providerWithInfo);
+
+      if (accounts?.[0]) {
+        const provider = new BrowserProvider(providerWithInfo.provider);
+        const signer = await provider.getSigner();
+        const network = await provider.getNetwork();
+        const chainId = String(Number(network.chainId));
+
+        // http://localhost:8001/api/nonce
+        // https://qiita.com/harururu32/items/c372c825ee8c9f90caa3#%E3%83%A6%E3%83%8B%E3%83%83%E3%83%88%E3%83%86%E3%82%B9%E3%83%88
+        const res_nonce = await nonceResponse();
+        const nonce = res_nonce.nonce;
+
+        // ここからは毎回
+        const scheme = window.location.protocol.slice(0, -1);
+        const domain = window.location.host;
+        const origin = window.location.origin;
+        const address = signer.address;
+
+        // メッセージを作成
+        const message = makeMessage(scheme, domain, origin, address, chainId, nonce);
+        // メッセージにサイン
+        const signature = await signer.signMessage(message);
+        // signatureも保存
+        const body = makePostSessionsSigninBody(chainId, message, signature, nonce, domain, address);
+
+        const res_signin = await sessionsSigninResponse(body)
+
+        // const verify_status = await res.status
+        if (res_signin.status == 201) {
+          setSignin(true);
+          // ここで認証に成功しましたがるとさらに良い。
+          router.push(DollarYenTransactionsIndex)
+          // setAddress(address)
+          return
+        }
+      }
     } catch (err) {
-        alert(err);
-        console.error(err);
-        return
+      if (err.code === ERROR_MATAMASK_ETH_REQUEST_ACCOUNTS) {
+        setErrors([{"code": err.code, "msg": "MetaMaskのリクエストを処理中です。MetaMaskの状態を確認してください。(画面右上でMetaMaskが起動状態になっていませんか？)"}]);
+      } else if (err.code === "ERROR_FETCH_SESSION_NONCE_ERROR") {
+        setErrors([{"code": err.code, "msg": `予期せぬエラーでログインに失敗しました。管理者に連絡してください。エラーコードは${Constants.FS01R001}です。`}]);
+      } else if (err.code === "ERROR_POST_SESSION_SIGNIN_ERROR") {
+        setErrors([{"code": err.code, "msg": `予期せぬエラーでログインに失敗しました。管理者に連絡してください。エラーコードは${Constants.FS01R002}です。`}]);
+      }
     }
-    // const accounts = await providerWithInfo.provider
-    //   .request({method:'eth_requestAccounts'})
-    //   .catch(console.error)
-
-    if (accounts?.[0]) {
-      const account = accounts?.[0];
-      const provider = new BrowserProvider(providerWithInfo.provider);
-      const signer = await provider.getSigner();
-      console.log(signer.address);
-      const network = await provider.getNetwork();
-      const chainId = String(Number(network.chainId));
-      console.log(chainId) // 1337
-
-      // 3000
-      // http://localhost:8001/api/nonce
-      // https://qiita.com/harururu32/items/c372c825ee8c9f90caa3#%E3%83%A6%E3%83%8B%E3%83%83%E3%83%88%E3%83%86%E3%82%B9%E3%83%88
-      // const response = await fetch('http://localhost:3000/apis/sessions/nonce', {mode: 'cors', credentials: 'include'})
-      let nonce_result = null;
-      try {
-        const response = await fetchSessionsNonce()
-        nonce_result = await response.json();
-      } catch (err) {
-        alert(err);
-        console.error(err);
-        // TODO
-        // エラーを送信する developersで閲覧可能にする
-        // ここでエラーを作成する
-        setErrors([{"code": "aaaa", "msg": "ログインに失敗しました。"}]);
-        return
-      }
-
-      // TODO responseのチェックでnonceがなければエラー表示
-      // 本番とdivでは異なる
-      // const nonce_result = await response.json();
-
-      console.log(nonce_result)
-      console.log(nonce_result.nonce);
-
-      // TODO nonceを保存しておくこと！
-
-      // ここからは毎回
-      const scheme = window.location.protocol.slice(0, -1);
-      const domain = window.location.host;
-      const origin = window.location.origin;
-      const address = signer.address;
-      //const statement = 'Sign in with Ethereum to the app.';
-
-      // メッセージを作成
-      const message = makeMessage(scheme, domain, origin, address, chainId, nonce_result.nonce)
-      
-      // メッセージにサイン
-      let signature = null;
-      try {
-        signature = await signer.signMessage(message);
-      } catch (err) {
-        alert("ここでエラー");
-        alert(err);
-        console.error(err);
-        return
-      }
-      // signatureも保存
-
-
-      const obj = { chain_id: chainId, message: message, signature: signature, nonce: nonce_result.nonce, domain:  domain, address: address, kind: 1};
-      const body = JSON.stringify(obj);
-
-      const res = await postSessionsSignin(body)
-
-      const verify_status = await res.status
-      if (verify_status == 201) {
-        router.push(DollarYenTransactionsIndex)
-        // setAddress(address)
-        return
-      }
-
-
-    }    
+    setWalletProcessing(false);  
   }
+
 
   const providerDetails = async () => {
     let providerDetails = [];
     function onAnnouncement(event) {
-      providerDetails.push(event.detail)
+      if (event.detail.info.name === 'MetaMask') {
+        providerDetails.push(event.detail);
+      }
     }
     window.addEventListener("eip6963:announceProvider", onAnnouncement);
     // これでannounceProviderを呼び出す
@@ -163,185 +122,94 @@ export default function Home() {
   }
 
   useEffect(() => {
-    const fetchProviders = async () => {
-       const providers = await providerDetails();
-       // console.log(providers);
-       setProviders(providers)
+    // 初回処理
+    const init = async () => {
+      // 認証
+      const res_verify = await sessionsVerifyResponse()
+      if (res_verify.status == 201) {
+        setSignin(true);
+        router.push(DollarYenTransactionsIndex)
+        return
+      }
+
+      // metamask検出
+      const providers = await providerDetails();
+      setProviders(providers)
+      setWalletLoad(true)
     };
 
-    fetchProviders();    
+    init();
+
   }, []);
 
   return (
     <div>
-    <div class="container">
-      <header>
-        
-        <div class="header1">
-          <div>
-            <a href="#" class="header1_site_name">EKISA</a>
-          </div>
-
-          <nav
-            class="header1_nav">
+      <div className="container">
+        <header>
+          
+          <div className="header1">
             <div>
-              <button class="btn_sign">ログアウト</button>
+              <Link className="header1_site_name" href="/">Wan<sup>2</sup></Link>
             </div>
-          </nav>
-        </div>
-
-        <div class="header2">
-          <div>
-            <ul class="header2_nav">
-              <li>
-                <a href="#"
-                  class="header2_nav_li">Home</a>
-              </li>
-              <li>
-                <a href="#"
-                  class="header2_nav_li">お知らせ・ご案内</a>
-              </li>
-            </ul>
           </div>
-        </div>
-      </header>
 
-      <div class="main">
-        <div class="main_content">
-          <p class="title-font font-medium text-3xl text-gray-900">ウォレットをお持ちの方はログインしてください</p>
+        </header>
+
+        <div className="main">
           <div>
-          {
-            errors.length > 0 && errors.map((e) => (
-              <div class="login_error">
-                <p>{e.msg}</p>
-              </div>
-            ))
-          }
-          {
-            providers.length > 0 ? providers?.map((provider)=>(
-              <button key={provider.info.uuid} onClick={()=>handleConnect(provider)} >
-                <img src={provider.info.icon} alt={provider.info.name} width="100" height="100" />
-              </button>
-          )) :
-            <div>
-              there are no Announced Providers
+            <div className="main_content">
+              { signin === true && (
+                <div><p>welcome back!</p></div>
+              )}
+              { signin === false && walletLoad === false && (
+                <Eip6963Loading />
+              )}
+              { walletLoad === true && (
+                <div>
+                  {
+                    walletProcessing === false && providers.length > 0 && (
+                      <p className="title-font font-medium text-3xl text-gray-900">MetaMaskアイコンをクリックしてログインしてください</p>
+                    )
+                  }
+                  <div>
+                  {
+                    walletProcessing === false && errors.length > 0 && errors.map((e) => (
+                      <div className="login_error">
+                        <p>{e.msg}</p>
+                      </div>
+                    ))
+                  }
+                  {
+                    walletProcessing === false && providers.length > 0 && providers.map((provider)=>(
+                        <button key={provider.info.uuid} onClick={()=>handleConnect(provider)} >
+                          <Image src={provider.info.icon} alt={provider.info.name} width="100" height="100" />
+                        </button>
+                      )
+                    )
+                  }
+                  {
+                    walletProcessing === false && providers.length == 0 && (
+                      <MetamaskNotFound />
+                    )
+                  }
+                  </div>
+                  {
+                    walletProcessing === false && (
+                      <p className="text-xs text-gray-500 mt-3"><Link href="/support">ログインできない場合</Link></p>
+                    )
+                  }
+                  {walletProcessing === true && signin === false && (
+                    <SigninLoading />
+                  )}
+                  {signin === true && (
+                    <SigninSuccess />
+                  )}
+                </div>
+              )}
             </div>
-          }            
           </div>
-          <p class="text-xs text-gray-500 mt-3">ログインできない場合</p>
         </div>
       </div>
-    </div>
-
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col gap-8 row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="https://nextjs.org/icons/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="list-inside list-decimal text-sm text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
-          <li className="mb-2">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-semibold">
-              src/app/page.js
-            </code>
-            .
-          </li>
-          <li>Save and see your changes instantly.</li>
-          <li><Link href="/dollaryenledgers">外貨預金元帳ドル円一覧</Link></li>
-        </ol>
-        {
-          address && (<p>{address}</p>)
-        }
-        {
-          address && (
-            <button onClick={()=>handleLogout()} >
-              <div>ログアウト</div>
-            </button>)
-        }
-        <div>
-          <h2>項目</h2>
-          <p><Link href="/dollaryenledgers">外貨預金元帳ドル円一覧</Link></p>
-          <p><Link href="/dollar_yens">ドル円一覧</Link></p>
-        </div>
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="https://nextjs.org/icons/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:min-w-44"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
-        </div>
-      </main>
-      <footer className="row-start-3 flex gap-6 flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="https://nextjs.org/icons/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="https://nextjs.org/icons/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="https://nextjs.org/icons/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
-    </div>
     </div>
   );
 }

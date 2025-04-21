@@ -1,11 +1,11 @@
-name: 結合テスト コードチェック&テスト
+name: 結合テスト コードチェック&テスト no docker
 
 on:
   push:
     branches:
       - main
       - develop
-      - feature/*
+      # - feature/*
     paths-ignore:
       - contracts/*
       - backend/*
@@ -47,7 +47,7 @@ jobs:
         run: |
           cd backend/server
           make launch_pro_server
-      - name: wait wevox-rbac launching go app.
+      - name: wait launching web3 server.
         run: |
           ./backend/server/scripts/wait_launch_server.sh
 

@@ -95,13 +95,14 @@ RSpec.describe "DollarYenTransactions", type: :request do
 
       # validareエラー
       it "should get not data when date is not found." do
-        post create_confirmation_dollar_yen_transactions_path, params: { dollar_yen_transaction: { transaction_type: "1", deposit_quantity: "100.10", deposit_rate: "130.32" } }
+        transaction_type1
+        post create_confirmation_dollar_yen_transactions_path, params: { dollar_yen_transaction: { transaction_type_id: transaction_type1.id, deposit_quantity: "100.10", deposit_rate: "130.32" } }
       end
 
       # 初回データの作成
       it "should get not data when date is not found." do
         transaction_type1
-        post create_confirmation_dollar_yen_transactions_path, params: { dollar_yen_transaction: { date: "2022-01-01", transaction_type: "1", deposit_quantity: "100.10", deposit_rate: "130.32" } }
+        post create_confirmation_dollar_yen_transactions_path, params: { dollar_yen_transaction: { date: "2022-01-01", transaction_type_id: transaction_type1.id, deposit_quantity: "100.10", deposit_rate: "130.32" } }
         expect(addresses_eth.dollar_yen_transactions.count).to eq(1)
       end
 
@@ -112,7 +113,7 @@ RSpec.describe "DollarYenTransactions", type: :request do
           dollar_yen_transaction3
 
           # dollar_yen_transaction2を追加
-          post create_confirmation_dollar_yen_transactions_path, params: { dollar_yen_transaction: { date: "2020-06-19", transaction_type: "1", deposit_quantity: "10.76", deposit_rate: "105.95" } }
+          post create_confirmation_dollar_yen_transactions_path, params: { dollar_yen_transaction: { date: "2020-06-19", transaction_type_id: dollar_yen_transaction1.id, deposit_quantity: "10.76", deposit_rate: "105.95" } }
 
           expect(response.body).to include '取引データが1件あります'
         end
@@ -123,11 +124,11 @@ RSpec.describe "DollarYenTransactions", type: :request do
           base_date = dollar_yen_transaction2.date
           50.times do
             base_date = base_date.tomorrow
-            post create_confirmation_dollar_yen_transactions_path, params: { dollar_yen_transaction: { date: base_date.strftime("%Y-%m-%d"), transaction_type: "1", deposit_quantity: "10.76", deposit_rate: "105.95" } }
+            post create_confirmation_dollar_yen_transactions_path, params: { dollar_yen_transaction: { date: base_date.strftime("%Y-%m-%d"), transaction_type_id: 1, deposit_quantity: "10.76", deposit_rate: "105.95" } }
           end
 
           # dollar_yen_transaction2を追加
-          post create_confirmation_dollar_yen_transactions_path, params: { dollar_yen_transaction: { date: "2020-06-18", transaction_type: "1", deposit_quantity: "10.76", deposit_rate: "105.95" } }
+          post create_confirmation_dollar_yen_transactions_path, params: { dollar_yen_transaction: { date: "2020-06-18", transaction_type_id: 1, deposit_quantity: "10.76", deposit_rate: "105.95" } }
 
           expect(response.body).to include '2020-06-18以降の取引データが51件あります'
         end
@@ -162,6 +163,8 @@ RSpec.describe "DollarYenTransactions", type: :request do
       end
     end
   end
+
+
 
   describe "get /edit" do
     let(:addresses_eth) { create(:addresses_eth) }
@@ -204,6 +207,7 @@ RSpec.describe "DollarYenTransactions", type: :request do
 
       # 更新
       it "should be success and edited." do
+        transaction_type1
         dollar_yen_transaction1
         dollar_yen_transaction2 = build(:dollar_yen_transaction2, transaction_type: transaction_type1, address: addresses_eth)
         dollar_yen_transaction2.deposit_quantity = 10.0
@@ -211,7 +215,7 @@ RSpec.describe "DollarYenTransactions", type: :request do
         dollar_yen_transaction2.deposit_en = 100
         dollar_yen_transaction2.save
 
-        put edit_confirmation_dollar_yen_transaction_path(dollar_yen_transaction2), params: { dollar_yen_transaction: { id: dollar_yen_transaction2.id, date: "2020-06-19", transaction_type: "1", deposit_quantity: "10.76", deposit_rate: "105.95" } }
+        put edit_confirmation_dollar_yen_transaction_path(dollar_yen_transaction2), params: { dollar_yen_transaction: { id: dollar_yen_transaction2.id, date: "2020-06-19", transaction_type_id: "1", deposit_quantity: "10.76", deposit_rate: "105.95" } }
         updated = addresses_eth.dollar_yen_transactions.where(id: dollar_yen_transaction2.id).first
 
         future_gadgets = CSV.read(master_export_master_csv_path)
@@ -230,6 +234,7 @@ RSpec.describe "DollarYenTransactions", type: :request do
 
       # 更新確認
       it "should be success." do
+        transaction_type1
         dollar_yen_transaction1
         dollar_yen_transaction2
         dollar_yen_transaction3
@@ -239,7 +244,7 @@ RSpec.describe "DollarYenTransactions", type: :request do
         dollar_yen_transaction2.deposit_en = 100
         dollar_yen_transaction2.save
 
-        put edit_confirmation_dollar_yen_transaction_path(dollar_yen_transaction2), params: { dollar_yen_transaction: { id: dollar_yen_transaction2.id, date: "2020-06-19", transaction_type: "1", deposit_quantity: "10.76", deposit_rate: "105.95" } }
+        put edit_confirmation_dollar_yen_transaction_path(dollar_yen_transaction2), params: { dollar_yen_transaction: { id: dollar_yen_transaction2.id, date: "2020-06-19", transaction_type_id: "1", deposit_quantity: "10.76", deposit_rate: "105.95" } }
 
         expect(response.body).to include '2020-06-19以降の取引データが1件あります'
       end
@@ -346,7 +351,6 @@ RSpec.describe "DollarYenTransactions", type: :request do
 
   describe "get /foreign_exchange_gain" do
     let(:addresses_eth) { create(:addresses_eth) }
-    let(:transaction_type5) { create(:transaction_type5, address: addresses_eth) }
     let(:transaction_type5) { create(:transaction_type5, address: addresses_eth) }
     let(:dollar_yen_transaction44) { create(:dollar_yen_transaction44, transaction_type: transaction_type5, address: addresses_eth) }
     let(:dollar_yen_transaction51) { create(:dollar_yen_transaction51, transaction_type: transaction_type5, address: addresses_eth) }

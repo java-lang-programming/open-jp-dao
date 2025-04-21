@@ -6,6 +6,26 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <!-- <script src="https://cdn.tailwindcss.com"></script>-->
   <link rel="stylesheet" type="text/css" href="../css/v1_design.css" />
+  <script>
+      function onChangeTransactionKind(selectElement) {
+        // var selectedValue = selectElement.value;
+        // alert(selectedValue);
+        const selectedOption = selectElement.options[selectElement.selectedIndex];
+        const transactionType = selectedOption.getAttribute('transaction-types');
+        const deposit_section = document.getElementById('deposit_section');
+        const withdrawal_section = document.getElementById('withdrawal_section');
+        
+        
+
+        if (transactionType === '1' && withdrawal_section.style.display === 'block') {
+          deposit_section.style.display = 'block';
+          withdrawal_section.style.display = 'none';
+        } else if (transactionType === '2' && withdrawal_section.style.display === 'none') {
+          deposit_section.style.display = 'none';
+          withdrawal_section.style.display = 'block';
+        }
+      }
+  </script>
 </head>
 <body>
 <h1>外貨預金元帳作成</h1>
@@ -16,34 +36,43 @@
   </div>
   <div class="tw_mb-5">
     <label for="transaction_kind" class="form_label">取引種別*</label>
-    <select id="transaction_kind" class="form_input
-    ">
-      <option selected>Choose a country</option>
-      <option value="US">United States</option>
-      <option value="CA">Canada</option>
-      <option value="FR">France</option>
-      <option value="DE">Germany</option>
+    <select id="transaction_kind" class="form_input" onchange="onChangeTransactionKind(this)"
+    >
+      <option selected transaction-types="1">Choose a country</option>
+      <option value="1" transaction-types="1">United States</option>
+      <option value="2" transaction-types="1">Canada</option>
+      <option value="3" transaction-types="1">住信SBI利子</option>
+      <option value="4" transaction-types="2">ドルを円に変換</option>
     </select>
   </div>
-  <div class="tw_mb-5">
-    <!-- エラーとOKの場合のcssを作成する -->
-    <label for="en_dollar_value" class="form_label">数量米ドル*</label>
-    <input type="text" id="en_dollar_value" class="form_input form_input_ok" required />
-  </div>
-  <div class="tw_mb-5">
-    <label for="jp_en_rate" class="form_label">レート* </label>
-    <input type="text" id="jp_en_rate" class="form_input" required />
-  </div>
-  <div class="form_checkbox_section">
-    <!-- flex items-center  -->
-    <div class="h-5">
-      <input id="auto_rate" type="checkbox" value="" class="form_checkbox" required />
+  <div id="deposit_section" style="display: block;">
+    <div class="tw_mb-5">
+      <!-- エラーとOKの場合のcssを作成する -->
+      <label for="en_dollar_value" class="form_label">受け取った米国ドル*</label>
+      <input type="text" id="en_dollar_value" class="form_input form_input_ok" required />
     </div>
-    <label for="auto_rate" class="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300">ドル円レート自動反映</label>
+    <div class="tw_mb-5">
+      <label for="jp_en_rate" class="form_label">ドル円のレート* </label>
+      <input type="text" id="jp_en_rate" class="form_input" required />
+    </div>
+    <div class="form_checkbox_section">
+      <!-- flex items-center  -->
+      <div class="h-5">
+        <input id="auto_rate" type="checkbox" value="" class="form_checkbox" required />
+      </div>
+      <label for="auto_rate" class="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300">ドル円レート自動反映</label>
+    </div>
   </div>
-  <div class="tw_mb-5">
-    <label for="jp_en" class="form_label">日本円</label>
-    <input type="text" id="jp_en" class="form_input form_input_ng" required />
+  <div id="withdrawal_section" style="display: none;">
+    <div class="tw_mb-5">
+      <!-- エラーとOKの場合のcssを作成する -->
+      <label for="withdrawal_quantity" class="form_label">売却した米国ドル*</label>
+      <input type="text" id="withdrawal_quantity" class="form_input form_input_ok" required />
+    </div>
+    <div id="withdrawal_en" class="tw_mb-5">
+      <label for="jp_en" class="form_label">受け取った日本円*</label>
+      <input type="text" id="jp_en" class="form_input form_input_ng" required />
+    </div>
   </div>
   <button type="submit" class="btn_submit">登録</button>
 </form>
