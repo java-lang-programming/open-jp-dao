@@ -12,7 +12,6 @@ class DollarYenTransactionsController < ApplicationViewController
     offset = 0 unless offset.present?
 
     header_session
-    # @notification = { message: "aaaaaaaaaa" }
 
     base_sql = @session.address.dollar_yen_transactions.preload(:transaction_type)
 
@@ -126,7 +125,7 @@ class DollarYenTransactionsController < ApplicationViewController
   def create
     header_session
 
-    request = params.require(:dollar_yen_transaction).permit(:date, :transaction_type, :deposit_quantity, :deposit_rate)
+    request = params.require(:dollar_yen_transaction).permit(:date, :transaction_type_id, :deposit_quantity, :deposit_rate)
     dollar_yen_transaction = reqest_to_dollar_yen_transaction(request: request)
 
     recalculation_need_count = @session.address.recalculation_need_dollar_yen_transactions_create(target_date: dollar_yen_transaction.date).count
@@ -140,8 +139,10 @@ class DollarYenTransactionsController < ApplicationViewController
 
   def edit
     header_session
-    set_view_var
-    @dollar_yen_transaction = @session.address.dollar_yen_transactions.where(id: params[:id]).first
+    address = @session.address
+    @dollar_yen_transaction = address.dollar_yen_transactions.where(id: params[:id]).first
+    @transaction_types = address.transaction_types.where(kind: @dollar_yen_transaction.transaction_type.kind)
+
 
     # クラスの指定(分ける)
     @deposit_section_block = "block;"
@@ -163,14 +164,11 @@ class DollarYenTransactionsController < ApplicationViewController
   def edit_confirmation
     header_session
     # dollar_yen_transactions_pathの繊維の時はいらない
-    set_view_var
     address = @session.address
 
-    puts params.inspect
-
     request = params.require(:dollar_yen_transaction).permit(:date, :transaction_type_id, :deposit_quantity, :deposit_rate, :withdrawal_quantity, :exchange_en)
-    puts request.inspect
     transaction_type = address.transaction_types.where(id: request[:transaction_type_id]).first
+    @transaction_types = address.transaction_types.where(kind: transaction_type.kind)
 
     req = Requests::DollarYensTransaction.new(date: request[:date], transaction_type: transaction_type, deposit_quantity: request[:deposit_quantity], deposit_rate: request[:deposit_rate], withdrawal_quantity: request[:withdrawal_quantity], exchange_en: request[:exchange_en])
     errors = req.get_errors
@@ -226,6 +224,7 @@ class DollarYenTransactionsController < ApplicationViewController
       csv = @dollar_yen_transaction.to_files_dollar_yen_transaction_csv(row_num: -1, preload_records: @session.preload_records)
       dollar_yen_transaction = csv.to_dollar_yen_transaction(previous_dollar_yen_transactions: address.base_dollar_yen_transaction_update(target_date: @dollar_yen_transaction.date, id: @dollar_yen_transaction.id))
       # 　TODO ここでswap(ますはこれから)
+      @dollar_yen_transaction.transaction_type = transaction_type
       @dollar_yen_transaction.deposit_en = dollar_yen_transaction.deposit_en
       @dollar_yen_transaction.withdrawal_rate = dollar_yen_transaction.withdrawal_rate
       @dollar_yen_transaction.withdrawal_quantity = dollar_yen_transaction.withdrawal_quantity
@@ -254,12 +253,11 @@ class DollarYenTransactionsController < ApplicationViewController
   def update
     address = @session.address
 
-    request = params.require(:dollar_yen_transaction).permit(:id, :date, :transaction_type, :deposit_quantity, :deposit_rate)
-
-    # req = Requests::DollarYensTransaction.new
-    # @error = req.error(request: request)
-
+    request = params.require(:dollar_yen_transaction).permit(:id, :date, :transaction_type_id, :deposit_quantity, :deposit_rate)
     dollar_yen_transaction = address.dollar_yen_transactions.where(id: params[:id]).first
+    transaction_type = address.transaction_types.where(id: request[:transaction_type_id]).first
+
+    dollar_yen_transaction.transaction_type = transaction_type
     dollar_yen_transaction.deposit_quantity = BigDecimal(request[:deposit_quantity])
     dollar_yen_transaction.deposit_rate = BigDecimal(request[:deposit_rate])
 

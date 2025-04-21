@@ -5,7 +5,6 @@
 <% end %>
 
 <%= form_with model: @dollar_yen_transaction, url: create_confirmation_dollar_yen_transactions_path, data: { turbo: false }, class:"form_transaction" do |form|  %>
-
   <div class="tw_mb-5">
     <label class="form_label">日付*</label>
     <% if @errors[:date_msg].present? %>

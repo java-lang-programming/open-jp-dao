@@ -207,6 +207,7 @@ RSpec.describe "DollarYenTransactions", type: :request do
 
       # 更新
       it "should be success and edited." do
+        transaction_type1
         dollar_yen_transaction1
         dollar_yen_transaction2 = build(:dollar_yen_transaction2, transaction_type: transaction_type1, address: addresses_eth)
         dollar_yen_transaction2.deposit_quantity = 10.0
@@ -214,7 +215,7 @@ RSpec.describe "DollarYenTransactions", type: :request do
         dollar_yen_transaction2.deposit_en = 100
         dollar_yen_transaction2.save
 
-        put edit_confirmation_dollar_yen_transaction_path(dollar_yen_transaction2), params: { dollar_yen_transaction: { id: dollar_yen_transaction2.id, date: "2020-06-19", transaction_type: "1", deposit_quantity: "10.76", deposit_rate: "105.95" } }
+        put edit_confirmation_dollar_yen_transaction_path(dollar_yen_transaction2), params: { dollar_yen_transaction: { id: dollar_yen_transaction2.id, date: "2020-06-19", transaction_type_id: "1", deposit_quantity: "10.76", deposit_rate: "105.95" } }
         updated = addresses_eth.dollar_yen_transactions.where(id: dollar_yen_transaction2.id).first
 
         future_gadgets = CSV.read(master_export_master_csv_path)
@@ -233,6 +234,7 @@ RSpec.describe "DollarYenTransactions", type: :request do
 
       # 更新確認
       it "should be success." do
+        transaction_type1
         dollar_yen_transaction1
         dollar_yen_transaction2
         dollar_yen_transaction3
@@ -242,7 +244,7 @@ RSpec.describe "DollarYenTransactions", type: :request do
         dollar_yen_transaction2.deposit_en = 100
         dollar_yen_transaction2.save
 
-        put edit_confirmation_dollar_yen_transaction_path(dollar_yen_transaction2), params: { dollar_yen_transaction: { id: dollar_yen_transaction2.id, date: "2020-06-19", transaction_type: "1", deposit_quantity: "10.76", deposit_rate: "105.95" } }
+        put edit_confirmation_dollar_yen_transaction_path(dollar_yen_transaction2), params: { dollar_yen_transaction: { id: dollar_yen_transaction2.id, date: "2020-06-19", transaction_type_id: "1", deposit_quantity: "10.76", deposit_rate: "105.95" } }
 
         expect(response.body).to include '2020-06-19以降の取引データが1件あります'
       end
