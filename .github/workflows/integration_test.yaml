@@ -1,4 +1,4 @@
-name: 結合テスト コードチェック&テスト no docker
+name: 結合テスト コードチェック&テスト no docker(ansibleに移行すること)
 
 on:
   push:
