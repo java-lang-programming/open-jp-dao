@@ -22,8 +22,6 @@
   <%= form.submit 'ダウンロード', :name => nil, onclick: 'handleSubmit(event)'  %>
 <% end %>
 
-<%= link_to('CSVをダウンロードする', apis_dollaryen_download_path("csv_import"), class: "btn") %>
-
 <p>全<%= @total %>件</p>
 <% if @total > 0 %>
       <table border="2">
