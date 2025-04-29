@@ -16,10 +16,10 @@ class DollarYenTransactionsController < ApplicationViewController
     # 検索表示用
     @transaction_types = address.transaction_types
     # ダウンロード表示用(TODO テスト)
-    @downloads = [{id: "csv_import", name: "csv importファイル"}, {id: "csv_export", name: "csv exportファイル"}]
+    @downloads = [ { id: "csv_import", name: "csv importファイル" }, { id: "csv_export", name: "csv exportファイル" } ]
 
 
-    # 検索パラメーター(TODO テスト) 
+    # 検索パラメーター(TODO テスト)
     @transaction_type_id = nil
     if request[:transaction_type_id].present?
       @transaction_type_id = request[:transaction_type_id].to_i
