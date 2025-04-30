@@ -6,7 +6,7 @@
     <!-- navigation -->
     <nav class="nav">
       <div>
-        <%= link_to "ログアウト", sessions_signout_path, method: :post %>
+        <%= link_to "ログアウト", sessions_logout_path,  data: { "turbo-method": :post }, class: "no-underline" %>
       </div>
     </nav>
   </div>
