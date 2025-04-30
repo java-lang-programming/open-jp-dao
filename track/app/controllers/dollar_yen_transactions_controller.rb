@@ -2,20 +2,33 @@ class DollarYenTransactionsController < ApplicationViewController
   before_action :verify, only: [ :index, :new, :create_confirmation, :create, :edit, :edit_confirmation, :update, :delete_confirmation, :destroy, :foreign_exchange_gain, :csv_upload, :csv_import ]
 
   skip_before_action :verify_authenticity_token, only: [ :update, :destroy ]
-  # https://railsguides.jp/action_controller_overview.html
-  # https://weseek.co.jp/tech/1211/
+
   def index
-    # default
-    limit = params[:limit]
+    request = params.permit(:transaction_type_id, :limit, :offset)
+
+    limit = request[:limit]
     limit = 50 unless limit.present?
-    offset = params[:offset]
+    offset = request[:offset]
     offset = 0 unless offset.present?
 
     header_session
+    address = @session.address
+    # 検索表示用
+    @transaction_types = address.transaction_types
+    # ダウンロード表示用(TODO テスト)
+    @downloads = [ { id: "csv_import", name: "csv importファイル" }, { id: "csv_export", name: "csv exportファイル" } ]
 
-    base_sql = @session.address.dollar_yen_transactions.preload(:transaction_type)
 
+    # 検索パラメーター(TODO テスト)
+    @transaction_type_id = nil
+    if request[:transaction_type_id].present?
+      @transaction_type_id = request[:transaction_type_id].to_i
+    end
+
+    base_sql = address.dollar_yen_transactions.preload(:transaction_type)
+    base_sql = base_sql.where(transaction_type_id: request[:transaction_type_id]) if request[:transaction_type_id].present?
     @total = base_sql.all.count
+
     # TODO APIと極力同じにするべき
     @dollaryen_transactions = base_sql.limit(limit).offset(offset).order(date: :desc,  transaction_type_id: :asc)
   end

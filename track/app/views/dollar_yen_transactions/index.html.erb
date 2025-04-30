@@ -12,6 +12,16 @@
   <div class="alert alert-success"><%= notice %></div>
 <% end %>
 <hr/>
+<%= form_with url: dollar_yen_transactions_path, method: :get, local: true do |form| %>
+  <%= form.select :transaction_type_id, @transaction_types.collect { |c| [c.name, c.id, { "data-kind": c.kind }]}, {selected: @transaction_type_id, include_blank: "選択して下さい" }, { class: "bg-transparent placeholder:text-slate-400 text-slate-700 text-sm border border-slate-200 rounded pl-3 pr-8 py-2 transition duration-300 ease focus:outline-none focus:border-slate-400 hover:border-slate-400 shadow-sm focus:shadow-md  cursor-pointer mr-4" } %>
+  <%= form.submit 'Search', :name => nil  %>
+<% end %>
+
+<%= form_with url: '#', method: :get do |form| %>
+  <%= form.select :download_id, @downloads.collect { |c| [c[:name], c[:id]]}, { class: "bg-transparent placeholder:text-slate-400 text-slate-700 text-sm border border-slate-200 rounded pl-3 pr-8 py-2 transition duration-300 ease focus:outline-none focus:border-slate-400 hover:border-slate-400 shadow-sm focus:shadow-md  cursor-pointer mr-4" } %>
+  <%= form.submit 'ダウンロード', :name => nil, onclick: 'handleSubmit(event)'  %>
+<% end %>
+
 <p>全<%= @total %>件</p>
 <% if @total > 0 %>
       <table border="2">
@@ -62,5 +72,14 @@
   <p>取引データが存在しません。<br/><%= link_to "取引データ作成", new_dollar_yen_transaction_path %>、もしくは<%= link_to "csvアップロード画面", csv_upload_dollar_yen_transactions_path %>から取引データを登録してください。</p>
 <% end %>
 
+<script>
+  function handleSubmit(event) {
+    event.preventDefault();
+    const form = event.target.form;
+    const username = form.querySelector('[name="download_id"]').value;
+    location.href = '/apis/dollaryen/downloads/' + username;
+    return false;
+  }
+</script>
 
 

@@ -1,5 +1,6 @@
 
 import "@hotwired/turbo-rails"
+// Turbo.start()
 // // Configure your import map in config/importmap.rb. Read more: https://github.com/rails/importmap-rails
 // alert("sss");
 // // import { useEffect, useState } from 'react';

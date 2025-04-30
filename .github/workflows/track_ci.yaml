@@ -22,7 +22,7 @@ jobs:
     runs-on: ubuntu-24.04
     strategy:
       matrix:
-        ruby-version: ["3.4.2"]
+        ruby-version: ["3.4.2", "3.5.0-preview1"]
     steps:
       - name: Install packages
         run: sudo apt-get update && sudo apt-get install --no-install-recommends -y libjemalloc2 sqlite3

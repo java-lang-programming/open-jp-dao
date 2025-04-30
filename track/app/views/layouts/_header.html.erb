@@ -6,7 +6,7 @@
     <!-- navigation -->
     <nav class="nav">
       <div>
-        <button class="btn_session">ログアウト</button>
+        <%= link_to "ログアウト", sessions_logout_path,  data: { "turbo-method": :post }, class: "no-underline" %>
       </div>
     </nav>
   </div>
@@ -16,7 +16,7 @@
     <div>
       <ul class="ul_nav">
         <li class="li_nav">
-          <a href="#" class="li_nav_link">Home</a>
+          <%= link_to "Home", dollar_yen_transactions_path %>
         </li>
         <li class="li_nav"><%= link_to "為替差益", foreign_exchange_gain_dollar_yen_transactions_path %></li>
         <li class="li_nav"><%= link_to "取引種別", transaction_types_path %></a></li>

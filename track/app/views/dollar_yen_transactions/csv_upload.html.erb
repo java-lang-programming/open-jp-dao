@@ -12,7 +12,8 @@
     <% end %>
   </ul>
 <% end %>
-<%= form_with url: csv_import_dollar_yen_transactions_path, multipart: true do |form|  %>
+
+<%= form_with url: csv_import_dollar_yen_transactions_path, data: { turbo: false }, multipart: true do |form|  %>
   <div>
     <%= form.file_field :file %>
   </div>
