@@ -72,7 +72,7 @@ RSpec.describe "DollarYenTransactions", type: :request do
         get new_dollar_yen_transaction_path
         body = response.body
         expect(body).to include 'ドル円外貨預金元帳 新規作成'
-        expect(body).to include addresses_eth.address
+        expect(body).to include addresses_eth.matamask_format_address
       end
     end
   end

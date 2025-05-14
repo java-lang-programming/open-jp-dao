@@ -159,7 +159,8 @@ RSpec.describe "Apis::SessionsController", type: :request do
         expect(response).to have_http_status(:ok)
         json = JSON.parse(response.body, symbolize_names: true)
         expect(json[:address]).to eq(addresses_eth.address)
-        expect(json[:network]).to eq("Ethereum Sepolia")
+        expect(json[:omission_address]).to eq(addresses_eth.matamask_format_address)
+        expect(json[:network]).to eq("Sepolia")
         expect(json[:last_login].size).to eq(19)
       end
     end

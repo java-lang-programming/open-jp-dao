@@ -1,17 +1,57 @@
-<header>
+<heade>
   <!-- header 1行目 -->
-  <div class="header_nav_first">
-    <div class="left_side"><a href="#" class="site_name">WanWan</a></div>
-    
-    <!-- navigation -->
-    <nav class="nav">
-      <div>
-        <%= link_to "ログアウト", sessions_logout_path,  data: { "turbo-method": :post }, class: "no-underline" %>
+  <div x-data="{ open: open }" class="bg-white mx-auto flex max-w-screen-xl p-5 md:flex-row">
+    <div class="flex flex-row items-center justify-between lg:justify-start">
+      <a href="#" class="text-lg font-bold text-blue-600 lg:pr-8">Wan
+        <sup>2</sup>
+      </a>
+    </div>
+    <nav :class="{'flex': open, 'hidden': !open}" class="hidden grow flex-col pb-4 md:flex md:flex-row md:justify-end md:pb-0 lg:pl-2">
+      <div class="inline-flex list-none items-center gap-2 lg:ml-auto">
+        <!-- TODO ボタンの色red -->
+        <%= link_to "ログアウト", sessions_logout_path,  data: { "turbo-method": :post }, class: "flex items-center rounded-xl border-gray-600 py-2.5 text-center font-medium text-white transition duration-500 ease-in-out bg-red-700 hover:bg-red-800 focus:outline-none focus:ring-4 focus:ring-gray-500 focus:ring-offset-2 lg:px-8" %>
       </div>
     </nav>
   </div>
 
-  <!-- header 2行目-->
+  <!-- header 2行目 TODO お問い合わせを右に-->
+  <div class="mx-auto max-w-screen-xl">
+    <div class="overflow-y-auto whitespace-nowrap bg-gray-50 p-5">
+      <ul class="inline-flex list-none items-center">
+        <!-- <li>
+          <a href="#" class="mr-1 rounded-md px-4 py-1 text-base text-gray-500 ring-offset-2 ring-offset-current transition duration-500 ease-in-out hover:text-blue-600 focus:outline-none focus:ring-2">Home</a>
+        </li>-->
+        <li class="font-bold underline">為替差益</li>
+        <li>
+          <a href="../dollar_yen_transactions/index.html" class="mr-1 rounded-md px-4 py-1 text-base text-gray-500 ring-offset-2 ring-offset-current transition duration-500 ease-in-out hover:text-blue-600 focus:outline-none focus:ring-2">ドル円外貨預金元帳</a>
+        </li>
+        <li>
+          <a href="../settings/index.html" class="mr-1 rounded-md px-4 py-1 text-base text-gray-500 ring-offset-2 ring-offset-current transition duration-500 ease-in-out hover:text-blue-600 focus:outline-none focus:ring-2">設定</a>
+        </li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- login情報 -->
+  <div class="bg-white mx-auto max-w-screen-xl py-4">
+    <div class="mx-auto flex items-center justify-between px-4">
+      <div class="text-left"><%= user[:omission_address] %></div>
+      <div class="text-center"><%= user[:network] %></div>
+      <div class="text-right">最終ログイン:&nbsp;<%= user[:last_login] %></div>
+    </div>
+  </div>
+
+  <!-- imformation -->
+  <div class="bg-white mx-auto max-w-screen-xl py-4">
+    <div class="mx-auto flex px-4">
+      <div class="mx-auto">確定申告は2026年2月から開始されます。早めに準備をしておきましょう。</div>
+    </div>
+  </div>
+</heade>
+
+<!--<header>
+
+
   <div class="header_nav_second">
     <div>
       <ul class="ul_nav">
@@ -25,10 +65,5 @@
     </div>
   </div>
 
-  <div class="header_session">
-    <div class="item"><%= user[:address] %></div>
-    <div class="item"><%= user[:network] %></div>
-    <div class="item">最終ログイン:&nbsp;<%= user[:last_login] %></div>
-  </div>
 
-</header>
+</header>-->

@@ -57,3 +57,9 @@ gem "propshaft"
 gem "importmap-rails"
 # Hotwire's SPA-like page accelerator [https://turbo.hotwired.dev]
 gem "turbo-rails"
+
+gem "tailwindcss-rails"
+
+
+# pin to tailwindcss version 4.1.6
+gem "tailwindcss-ruby", "4.1.6"

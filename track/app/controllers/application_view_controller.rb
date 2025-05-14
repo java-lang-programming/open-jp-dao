@@ -75,6 +75,6 @@ class ApplicationViewController < ActionController::Base
   def user
     @session ||= find_session_by_cookie
     return { errors: [ { msg: "ログイン情報がありません" } ] } unless @session.present?
-    { address: @session.address.address, network: @session.network, last_login: @session.last_login }
+    { address: @session.address.address, omission_address: @session.address.matamask_format_address, network: @session.network, last_login: @session.last_login }
   end
 end

@@ -1,6 +1,16 @@
 require 'rails_helper'
 
 RSpec.describe Job, type: :model do
+  describe 'matamask_format_address' do
+    let(:addresses_eth) { create(:addresses_eth) }
+
+    context 'matamaskのaddress形式で返す' do
+      it 'should be get matamask address format.' do
+        expect(addresses_eth.matamask_format_address).to eq('0x00001...CC89D')
+      end
+    end
+  end
+
   describe 'generate_dollar_yen_transactions_csv_import_file' do
     let(:addresses_eth) { create(:addresses_eth) }
     let(:job_2) { create(:job_2) }
