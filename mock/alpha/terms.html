@@ -1,0 +1,191 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <title>利用規約</title>
+</head>
+<body>
+<section>
+  <!-- header -->
+  <!-- TODO 背景をwhite -->
+  <div class="container">
+
+    <!-- header 1行目 -->
+    <div x-data="{ open: open }"
+      class="bg-white mx-auto flex max-w-screen-xl p-5 md:flex-row">
+
+      <div class="flex flex-row items-center justify-between lg:justify-start">
+        <a href="#"
+          class="text-lg font-bold text-blue-600 lg:pr-8">
+          Wan<sup>2</sup>
+        </a>
+      </div>
+
+      <nav :class="{'flex': open, 'hidden': !open}"
+        class="hidden grow flex-col pb-4 md:flex md:flex-row md:justify-end md:pb-0 lg:pl-2">
+        <div class="inline-flex list-none items-center gap-2 lg:ml-auto">
+          <!-- TODO ボタンの色red -->
+          <button
+            class="flex items-center rounded-xl border-gray-600 py-2.5 text-center font-medium text-white transition duration-500 ease-in-out bg-red-700 hover:bg-red-800 focus:outline-none focus:ring-4 focus:ring-gray-500 focus:ring-offset-2 lg:px-8">ログアウト</button>
+        </div>
+      </nav>
+    </div>
+
+    <!-- header 2行目 TODO お問い合わせを右に-->
+    <!--<div class="mx-auto max-w-screen-xl">
+      <div class="overflow-y-auto whitespace-nowrap bg-gray-50 p-5">
+        <ul class="inline-flex list-none items-center">
+          <li>
+            <a href="#"
+              class="mr-1 rounded-md px-4 py-1 text-base text-gray-500 ring-offset-2 ring-offset-current transition duration-500 ease-in-out hover:text-blue-600 focus:outline-none focus:ring-2">Home</a>
+          </li>
+          <li>
+            <a href="#"
+              class="mr-1 rounded-md px-4 py-1 text-base text-gray-500 ring-offset-2 ring-offset-current transition duration-500 ease-in-out hover:text-blue-600 focus:outline-none focus:ring-2">お知らせ・ご案内</a>
+          </li>
+        </ul>
+      </div>
+    </div>-->
+    <!-- header end -->
+
+    <!-- body -->
+    <div class="px-5 py-24 mx-auto flex flex-wrap items-center">
+      <div class="px-32 flex flex-col md:ml-auto w-full mt-10 md:mt-0">
+        <div class="rounded-lg p-8 bg-gray-100">
+          <p class="text-lg text-center text-3xl text-gray-900">MetaMaskでログインしてください</p>
+          <div class="flex justify-center">
+            <img src="./img/icon.svg" width="150px" alt="meta mask"/>
+          </div>
+          <p class="text-xs text-center text-gray-500 mt-3">ログインできない場合</p>
+        </div>
+      </div>
+    </div>
+    <!-- body -->
+
+    <footer class="bg-white rounded-lg shadow-sm dark:bg-gray-900 m-4">
+      <div class="w-full max-w-screen-xl mx-auto p-4 md:py-8">
+        <div class="sm:flex sm:justify-center sm:items-center">
+            <!--<a href="https://flowbite.com/" class="flex items-center mb-4 sm:mb-0 space-x-3 rtl:space-x-reverse">
+                <img src="https://flowbite.com/docs/images/logo.svg" class="h-8" alt="Flowbite Logo" />
+                <span class="self-center text-2xl font-semibold whitespace-nowrap dark:text-white">Flowbite</span>
+            </a>-->
+            <ul class="flex flex-wrap items-center mb-6 text-sm font-medium text-gray-500 sm:mb-0 dark:text-gray-400">
+                <li>
+                    <a href="#" class="hover:underline me-4 md:me-6">利用規約</a>
+                </li>
+                <li>
+                    <a href="#" class="hover:underline me-4 md:me-6">プライバシーポリシー</a>
+                </li>
+                <li>
+                    <a href="#" class="hover:underline">Contact</a>
+                </li>
+            </ul>
+        </div>
+        <hr class="my-6 border-gray-200 sm:mx-auto dark:border-gray-700 lg:my-8" />
+        <span class="block text-sm text-gray-500 sm:text-center dark:text-gray-400">© 2025 <a href="https://flowbite.com/" class="hover:underline">Marsa</a>. All Rights Reserved.</span>
+      </div>
+    </footer>
+
+  </div>
+</section>
+</body>
+</html>
+<!--
+
+利用規約
+
+第1条（適用）
+
+本規約は、[あなたの名前またはサービス名]（以下「提供者」といいます。）が提供するWebサービス[サービス名]（以下「本サービス」といいます。）の利用に関する条件を定めるものです。
+本サービスの利用者（以下「利用者」といいます。）は、本規約に同意の上、本サービスを利用するものとします。
+第2条（定義）
+
+本規約において使用する用語の定義は、以下のとおりとします。
+
+「コンテンツ」：本サービスを通じて提供される情報、テキスト、画像、動画、プログラム、その他のデータ
+「利用者コンテンツ」：利用者が本サービスに投稿、送信、アップロード、その他の方法により提供したコンテンツ
+「知的財産権」：著作権、特許権、実用新案権、意匠権、商標権その他の知的財産権（それらの権利を取得し、または登録等を出願する権利を含みます。）
+第3条（登録情報）
+
+本サービスの一部の機能を利用するにあたり、利用者は提供者が定める情報を登録する必要がある場合があります。登録にあたっては、以下の事項を遵守してください。
+
+真実かつ正確な情報を提供すること。
+常に最新の情報となるよう適宜修正すること。
+登録したIDおよびパスワードを適切に管理し、第三者に利用させたり、譲渡、貸与、担保供与したりしないこと。
+提供者は、登録情報が不正確または虚偽であると判断した場合、事前の通知なく利用を停止または登録を抹消できるものとします。
+第4条（利用料金）
+
+本サービスの利用料金は、別途提供者が定め、本サービス上に表示するものとします。
+無料と表示されている機能については、提供者の判断により、将来有料となる場合があります。
+利用者は、提供者が定める支払方法に従い、利用料金を支払うものとします。
+支払われた利用料金は、いかなる理由があっても返金されないものとします。
+第5条（禁止事項）
+
+利用者は、本サービスの利用にあたり、以下の行為を行ってはならないものとします。
+
+法令または公序良俗に違反する行為
+犯罪行為に関連する行為
+提供者または第三者の知的財産権、肖像権、プライバシー、名誉、その他の権利または利益を侵害する行為
+本サービスの運営を妨害するおそれのある行為
+不正アクセス、またはそれを試みる行為
+有害なプログラムやスクリプト等を送信または投稿する行為
+本サービスまたは提供者のサーバー等に過度な負荷をかける行為
+他の利用者のIDまたはパスワードを不正に取得または利用する行為
+反社会的勢力等への利益供与その他の協力行為
+宗教活動または政治活動を目的とする行為
+わいせつ、児童ポルノまたは児童虐待にあたるコンテンツを送信または表示する行為
+差別を助長する、または民族的・人種的差別につながるコンテンツを送信または表示する行為
+その他、提供者が不適切と判断する行為
+第6条（知的財産権等）
+
+本サービスに関する知的財産権は、全て提供者または提供者にライセンスを許諾している者に帰属します。
+利用者は、本サービスを通じて提供されるコンテンツについて、提供者の事前の承諾なく、複製、改変、頒布、公衆送信、その他の利用を行うことはできません。
+利用者が本サービスに投稿等した利用者コンテンツに関する著作権は、利用者に帰属するものとします。ただし、利用者は提供者に対し、本サービスの運営、改善、プロモーション等の目的で、利用者コンテンツを無償で利用（複製、改変、二次利用、公衆送信等）する権利を許諾するものとします。また、利用者は著作者人格権を行使しないものとします。
+利用者コンテンツが第三者の知的財産権を侵害する場合、利用者は自らの責任と費用においてその問題を解決するものとし、提供者はいかなる責任も負わないものとします。
+第7条（本サービスの変更、中断、終了）
+
+提供者は、利用者に事前の通知なく、本サービスの内容の全部または一部を変更、追加、または廃止することができるものとします。
+提供者は、以下のいずれかの事由が生じた場合、利用者に事前の通知なく、本サービスの提供を中断または終了することができるものとします。
+システムの保守、点検、修理、更新等を定期的にまたは緊急に行う場合
+地震、落雷、火災、停電または天災地変等の不可抗力により、本サービスの提供が困難となった場合
+電気通信事業者の役務が提供されない場合
+その他、提供者が本サービスの提供が困難と判断した場合
+提供者は、本サービスの変更、中断、終了によって利用者に生じた損害について、一切の責任を負わないものとします。
+第8条（免責事項）
+
+提供者は、本サービスの内容、正確性、有用性、完全性、安全性、特定の目的への適合性等について、明示または黙示を問わず、いかなる保証も行うものではありません。
+利用者は、自己の責任において本サービスを利用するものとし、本サービスの利用に関連して利用者に生じた損害について、提供者は一切の責任を負わないものとします。
+提供者は、利用者間の通信またはやり取りについて、一切関与せず、その結果について一切の責任を負わないものとします。
+本サービスから第三者のウェブサイトへのリンクが提供されている場合でも、提供者は当該ウェブサイトの内容について一切の責任を負わないものとします。
+提供者は、本サービスの利用に関連して利用者が被った損害につき、提供者の故意または重過失による場合を除き、賠償する責任を負わないものとします。
+第9条（損害賠償）
+
+利用者が本規約に違反した行為、または不正もしくは違法な行為によって提供者に損害を与えた場合、利用者は提供者に対し、その損害を賠償する責任を負うものとします。
+
+第10条（利用者間の紛争）
+
+本サービスの利用に関連して、利用者間で紛争が生じた場合、利用者は自己の責任と費用においてこれを解決するものとし、提供者は一切関与せず、何らの責任も負わないものとします。
+
+第11条（本規約の変更）
+
+提供者は、必要と判断した場合、利用者に事前の通知なく、いつでも本規約の内容を変更することができるものとします。
+変更後の本規約は、本サービス上に掲載した時点から効力を生じるものとします。
+利用者は、変更後の本規約についても同意したものとみなされますので、定期的に本規約を確認してください。
+第12条（準拠法および管轄）
+
+本規約の準拠法は日本法とします。本規約または本サービスに関連する一切の紛争については、[あなたの住所地の管轄裁判所]を第一審の専属的合意管轄裁判所とします。
+
+附則
+
+本規約は[制定日]から施行します。
+
+【利用規約作成の際の注意点】
+
+[あなたの名前またはサービス名]、[サービス名]、[あなたの住所地の管轄裁判所]、[制定日] の部分は、あなたのサービスに合わせて具体的に記述してください。
+提供するサービスの内容に合わせて、条項の追加や修正を行ってください。（例：特定の機能に関する規約、ポイントシステムに関する規約、など）
+個人情報保護方針（プライバシーポリシー）は、本規約とは別に定める必要があります。
+弁護士などの専門家に相談し、リーガルチェックを受けることを強く推奨します。
+このテンプレートが、あなたのWebサービスの運営にお役に立てば幸いです。
+-->
