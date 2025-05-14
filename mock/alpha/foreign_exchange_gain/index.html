@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <script src="https://cdn.tailwindcss.com"></script>
-  <title>WanWan</title>
+  <title>WanWan 為替差益</title>
 </head>
 <body>
 <section>
@@ -32,14 +32,18 @@
       <div class="mx-auto max-w-screen-xl">
         <div class="overflow-y-auto whitespace-nowrap bg-gray-50 p-5">
           <ul class="inline-flex list-none items-center">
-            <li>
+            <!-- <li>
               <a href="#" class="mr-1 rounded-md px-4 py-1 text-base text-gray-500 ring-offset-2 ring-offset-current transition duration-500 ease-in-out hover:text-blue-600 focus:outline-none focus:ring-2">Home</a>
+            </li>-->
+            <li class="font-bold underline">為替差益</li>
+            <li>
+              <a href="../dollar_yen_transactions/index.html" class="mr-1 rounded-md px-4 py-1 text-base text-gray-500 ring-offset-2 ring-offset-current transition duration-500 ease-in-out hover:text-blue-600 focus:outline-none focus:ring-2">ドル円外貨預金元帳</a>
             </li>
             <li>
               <a href="#" class="mr-1 rounded-md px-4 py-1 text-base text-gray-500 ring-offset-2 ring-offset-current transition duration-500 ease-in-out hover:text-blue-600 focus:outline-none focus:ring-2">お知らせ・ご案内</a>
             </li>
             <li>
-              <a href="#" class="mr-1 rounded-md px-4 py-1 text-base text-gray-500 ring-offset-2 ring-offset-current transition duration-500 ease-in-out hover:text-blue-600 focus:outline-none focus:ring-2">設定</a>
+              <a href="../settings/index.html" class="mr-1 rounded-md px-4 py-1 text-base text-gray-500 ring-offset-2 ring-offset-current transition duration-500 ease-in-out hover:text-blue-600 focus:outline-none focus:ring-2">設定</a>
             </li>
           </ul>
         </div>
@@ -63,21 +67,25 @@
     </heade>
 
     <section class="main py-8">
+
+      <!-- 検索項目 -->
       <div class="bg-white dark:bg-gray-900">
         <!-- https://www.material-tailwind.com/docs/html/select -->
         <!-- todo flex -->
-        <div class="mx-auto max-w-screen-xl text-center ">
+        <div class="mx-auto max-w-screen-xl text-center">
           <select class="bg-transparent placeholder:text-slate-400 text-slate-700 text-sm border border-slate-200 rounded pl-3 pr-8 py-2 transition duration-300 ease focus:outline-none focus:border-slate-400 hover:border-slate-400 shadow-sm focus:shadow-md  cursor-pointer mr-4">
               <option>2023</option>
               <option>2024</option>
               <option>2025</option>
             </select>年
-          <button type="submit" class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 rounded-lg text-sm px-4 py-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">検索</button>
+          <button type="submit" class="mx-4 text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 rounded-lg text-sm px-4 py-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">検索</button>
         </div>
       </div>
+
+
       <section class="bg-white dark:bg-gray-900">
         <div class="mx-auto max-w-screen-xl text-center lg:py-8 lg:px-12">
-          <p class="mb-8 text-lg font-normal text-gray-500 lg:text-xl sm:px-16 xl:px-48 dark:text-gray-400">+100,000円</p>
+          <p class="text-lg font-normal text-gray-500 lg:text-xl sm:px-16 xl:px-48 dark:text-gray-400">+100,000円</p>
         </div>
       </section>
 
@@ -122,32 +130,50 @@
                 <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
                     <tr>
                         <th scope="col" class="px-6 py-3">
-                            Product name
+                            取引日
                         </th>
                         <th scope="col" class="px-6 py-3">
-                            Color
+                            取引種別
                         </th>
                         <th scope="col" class="px-6 py-3">
-                            Category
+                            数量米ドル(ドル)
                         </th>
                         <th scope="col" class="px-6 py-3">
-                            Price
+                            レート(ドル/円)
+                        </th>
+                        <th scope="col" class="px-6 py-3">
+                            円換算(円)
+                        </th>
+                        <th scope="col" class="px-6 py-3">
+                            出金(円)
+                        </th>
+                        <th scope="col" class="px-6 py-3">
+                            差益(円)
                         </th>
                     </tr>
                 </thead>
                 <tbody>
                     <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 border-gray-200">
                         <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
-                            Apple MacBook Pro 17"
+                            2024/02/01
                         </th>
                         <td class="px-6 py-4">
-                            Silver
+                            ドルを円に変換
                         </td>
                         <td class="px-6 py-4">
-                            Laptop
+                            $88
                         </td>
                         <td class="px-6 py-4">
-                            $2999
+                            ¥131.55
+                        </td>
+                        <td class="px-6 py-4">
+                            ¥11577.16
+                        </td>
+                        <td class="px-6 py-4">
+                            ¥12,918
+                        </td>
+                        <td class="px-6 py-4">
+                            +¥1,341
                         </td>
                     </tr>
                     <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 border-gray-200">
@@ -183,109 +209,6 @@
         </div>
 
     </section>
-    <!-- body -->
-    <!--
-    <div class="table_parent_1">
-        <table class="table_main_1">
-            <thead class="thead_main_1">
-                <tr class="thead_tr_1">
-                    <th scope="col" class="tr_th_1">
-                        取引日
-                    </th>
-                    <th scope="col" class="tr_th_1">
-                        取引種別
-                    </th>
-                    <th scope="col" class="tr_th_1">
-                        数量米ドル
-                    </th>
-                    <th scope="col" class="tr_th_1">
-                        レート(ドル/円)
-                    </th>
-                    <th scope="col" class="tr_th_1">
-                        円換算(円)
-                    </th>
-                    <th scope="col" class="tr_th_1">
-                        出金(円)
-                    </th>
-                    <th scope="col" class="tr_th_1">
-                        差益(円)
-                    </th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr class="tbody_tr_1">
-                    <th scope="row" class="tbody_tr_th_1">
-                        2024/02/01
-                    </th>
-                    <td class="tbody_tr_td_1">
-                        ドルを円に変換
-                    </td>
-                    <td class="tbody_tr_td_1">
-                        88
-                    </td>
-                    <td class="tbody_tr_td_1">
-                        131.55
-                    </td>
-                    <td class="tbody_tr_td_1">
-                        11577.16
-                    </td>
-                    <td class="tbody_tr_td_1">
-                        12,918
-                    </td>
-                    <td class="tbody_tr_td_1">
-                        +1,341
-                    </td>
-                </tr>
-                <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
-                    <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
-                        2024/04/05
-                    </th>
-                    <td class="px-6 py-4">
-                        ドルを円に変換
-                    </td>
-                    <td class="px-6 py-4">
-                        $72.1
-                    </td>
-                    <td class="px-6 py-4">
-                        133.37
-                    </td>
-                    <td class="px-6 py-4">
-                        ￥9616.61
-                    </td>
-                    <td class="px-6 py-4">
-                        ￥10,930
-                    </td>
-                    <td class="px-6 py-4">
-                        +￥1,313
-                    </td>
-                </tr>
-                <tr class="bg-white dark:bg-gray-800">
-                    <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
-                        2024/05/10
-                    </th>
-                    <td class="px-6 py-4">
-                        Black
-                    </td>
-                    <td class="px-6 py-4">
-                        Accessories
-                    </td>
-                    <td class="px-6 py-4">
-                        $99
-                    </td>
-                    <td class="px-6 py-4">
-                        ￥9616.61
-                    </td>
-                    <td class="px-6 py-4">
-                        ￥10,930
-                    </td>
-                    <td class="px-6 py-4">
-                        +￥1,313
-                    </td>
-                </tr>
-            </tbody>
-        </table>
-    </div>
-    -->
     <!-- body -->
 
     <footer class="bg-white rounded-lg shadow-sm dark:bg-gray-900 m-4">
