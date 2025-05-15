@@ -4,14 +4,31 @@
   <%= render "layouts/header", user: @user, notification: @notification %>
 <% end %>
 
-<p>ドル円外貨預金元帳</p>
-<hr/>
-<p><%= link_to "csvアップロード画面", csv_upload_dollar_yen_transactions_path %></p>
-<p><%= link_to "取引データ作成", new_dollar_yen_transaction_path %></p>
 <% if flash[:notice] %>
   <div class="alert alert-success"><%= notice %></div>
 <% end %>
-<hr/>
+
+<section class="py-8">
+  <div class="bg-white flex justify-end px-6 py-4">
+    <%= link_to "作成", new_dollar_yen_transaction_path, class: "bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mr-2" %>
+    <%= link_to "一括作成/更新", csv_upload_dollar_yen_transactions_path, class: "bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded" %>
+  </div>
+</section>
+
+<% if @total > 0 %>
+
+<% else %>
+  <div class="bg-white flex justify-center px-6 py-4">
+    <p class="text-red-500">取引データが存在しません。作成、もしくは一括作成/更新ボタンをクリックして取引データを登録してください。</p>
+  </div>
+<% end %>
+
+<% content_for :footer do %>
+  <%= render "layouts/footer" %>
+<% end %>
+
+
+
 <%= form_with url: dollar_yen_transactions_path, method: :get, local: true do |form| %>
   <%= form.select :transaction_type_id, @transaction_types.collect { |c| [c.name, c.id, { "data-kind": c.kind }]}, {selected: @transaction_type_id, include_blank: "選択して下さい" }, { class: "bg-transparent placeholder:text-slate-400 text-slate-700 text-sm border border-slate-200 rounded pl-3 pr-8 py-2 transition duration-300 ease focus:outline-none focus:border-slate-400 hover:border-slate-400 shadow-sm focus:shadow-md  cursor-pointer mr-4" } %>
   <%= form.submit 'Search', :name => nil  %>
@@ -69,7 +86,7 @@
         </tbody>        
       </table>
 <% else %>
-  <p>取引データが存在しません。<br/><%= link_to "取引データ作成", new_dollar_yen_transaction_path %>、もしくは<%= link_to "csvアップロード画面", csv_upload_dollar_yen_transactions_path %>から取引データを登録してください。</p>
+  
 <% end %>
 
 <script>

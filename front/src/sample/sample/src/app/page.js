@@ -13,7 +13,7 @@ import SigninLoading from "./components/sessions/signin_loading";
 import MetamaskNotFound from "./components/sessions/metamask_not_found";
 import SigninSuccess from "./components/sessions/signin_success";
 import { makeMessage, requestEthAccountsViaMetamask, nonceResponse, makePostSessionsSigninBody, sessionsSigninResponse, sessionsVerifyResponse, ERROR_MATAMASK_ETH_REQUEST_ACCOUNTS } from "./usecases/singin";
-import { ForeignExchangeGainIndex, DollarYenTransactionsIndex } from "./page_urls";
+import { ForeignExchangeGainIndex } from "./page_urls";
 import { useRouter } from 'next/navigation'
 
 
@@ -88,8 +88,7 @@ export default function Home() {
         if (res_signin.status == 201) {
           setSignin(true);
           // ここで認証に成功しましたがるとさらに良い。
-          router.push(DollarYenTransactionsIndex)
-          // setAddress(address)
+          router.push(ForeignExchangeGainIndex)
           return
         }
       }
@@ -128,7 +127,7 @@ export default function Home() {
       const res_verify = await sessionsVerifyResponse()
       if (res_verify.status == 201) {
         setSignin(true);
-        router.push(DollarYenTransactionsIndex)
+        router.push(ForeignExchangeGainIndex)
         return
       }
 

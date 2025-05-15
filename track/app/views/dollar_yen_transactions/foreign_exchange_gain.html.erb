@@ -4,8 +4,6 @@
   <%= render "layouts/header", user: @user, notification: @notification %>
 <% end %>
 
-<h2>為替差益</h2>
-<% if @dollar_yen_transactions_total > 0 %>
   <section class="main">
     <div class="main_data">
       <div>
@@ -66,6 +64,8 @@
       </div>
     </div>
   </section>
-<% else %>
-  <p>取引データが存在しないので為替差益が計算できません<br/><%= link_to "ドル円外貨預金元帳", dollar_yen_transactions_path %>から取引データを登録してください。</p>
+
+
+<% content_for :footer do %>
+  <%= render "layouts/footer" %>
 <% end %>

@@ -332,7 +332,9 @@ class DollarYenTransactionsController < ApplicationViewController
 
     base_sql = address.dollar_yen_transactions
     @dollar_yen_transactions_total = base_sql.all.count
-    render :foreign_exchange_gain if @dollar_yen_transactions_total == 0
+
+    # データが存在しない場合はドル円外貨預金元帳に遷移する
+    redirect_to dollar_yen_transactions_path if @dollar_yen_transactions_total == 0
 
     # データのある年度を取得 sqlite3のみ(postgres:EXTRACT(year FROM date))
     years = base_sql.order(date: :desc).distinct.pluck(Arel.sql("strftime('%Y', date)"))

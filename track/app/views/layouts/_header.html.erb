@@ -8,13 +8,11 @@
     </div>
     <nav :class="{'flex': open, 'hidden': !open}" class="hidden grow flex-col pb-4 md:flex md:flex-row md:justify-end md:pb-0 lg:pl-2">
       <div class="inline-flex list-none items-center gap-2 lg:ml-auto">
-        <!-- TODO ボタンの色red -->
         <%= link_to "ログアウト", sessions_logout_path,  data: { "turbo-method": :post }, class: "flex items-center rounded-xl border-gray-600 py-2.5 text-center font-medium text-white transition duration-500 ease-in-out bg-red-700 hover:bg-red-800 focus:outline-none focus:ring-4 focus:ring-gray-500 focus:ring-offset-2 lg:px-8" %>
       </div>
     </nav>
   </div>
 
-  <!-- header 2行目 TODO お問い合わせを右に-->
   <div class="mx-auto max-w-screen-xl">
     <div class="overflow-y-auto whitespace-nowrap bg-gray-50 p-5">
       <ul class="inline-flex list-none items-center">
