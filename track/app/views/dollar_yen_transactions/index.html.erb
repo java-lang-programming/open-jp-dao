@@ -13,33 +13,127 @@
     <%= link_to "作成", new_dollar_yen_transaction_path, class: "bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mr-2" %>
     <%= link_to "一括作成/更新", csv_upload_dollar_yen_transactions_path, class: "bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded" %>
   </div>
+
+  <% if @total > 0 %>
+    <div class="bg-white flex justify-between px-6">
+      <div>
+        <%= form_with url: dollar_yen_transactions_path, method: :get, local: true do |form| %>
+          <%= form.select :transaction_type_id, @transaction_types.collect { |c| [c.name, c.id, { "data-kind": c.kind }]}, {selected: @transaction_type_id, include_blank: "選択して下さい" }, { class: "bg-transparent placeholder:text-slate-400 text-slate-700 text-sm border border-slate-200 rounded pl-3 pr-8 py-2 transition duration-300 ease focus:outline-none focus:border-slate-400 hover:border-slate-400 shadow-sm focus:shadow-md  cursor-pointer mr-4" } %>
+          <%= form.submit '検索', :name => nil, class: "text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 rounded-lg text-sm px-4 py-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800" %>
+        <% end %>
+      </div>
+      <div>
+        <%= form_with url: '#', method: :get do |form| %>
+          <%= form.select :download_id, @downloads.collect { |c| [c[:name], c[:id]]}, {}, { class: "bg-transparent placeholder:text-slate-400 text-slate-700 text-sm border border-slate-200 rounded pl-3 pr-8 py-2 transition duration-300 ease focus:outline-none focus:border-slate-400 hover:border-slate-400 shadow-sm focus:shadow-md  cursor-pointer mr-4" } %>
+          <%= form.submit 'ダウンロード', :name => nil, onclick: 'handleSubmit(event)', class: "text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 rounded-lg text-sm px-4 py-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"  %>
+        <% end %>
+      </div>
+    </div>
+
+    <div class="relative overflow-x-auto m-4">
+      <div>
+        <div class="my-4">
+          <p id="item-count" class="text-sm text-gray-500">検索結果: 1 - 20 / <%= @total %></p>
+        </div>
+
+        <!-- page nation-->
+        <!--<div class="flex flex-col space-y-4 items-center justify-center my-4">
+          <nav aria-label="Page navigation example">
+            <ul class="inline-flex -space-x-px text-sm">
+              <li>
+                <a href="#" class="flex items-center justify-center px-3 h-8 ms-0 leading-tight text-gray-500 bg-white border border-e-0 border-gray-300 rounded-s-lg hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white">Previous</a>
+              </li>
+              <li>
+                <a href="#" class="flex items-center justify-center px-3 h-8 leading-tight text-gray-500 bg-white border border-gray-300 hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white">1</a>
+              </li>
+              <li>
+                <a href="#" class="flex items-center justify-center px-3 h-8 leading-tight text-gray-500 bg-white border border-gray-300 hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white">2</a>
+              </li>
+              <li>
+                <a href="#" aria-current="page" class="flex items-center justify-center px-3 h-8 text-blue-600 border border-gray-300 bg-blue-50 hover:bg-blue-100 hover:text-blue-700 dark:border-gray-700 dark:bg-gray-700 dark:text-white">3</a>
+              </li>
+              <li>
+                <a href="#" class="flex items-center justify-center px-3 h-8 leading-tight text-gray-500 bg-white border border-gray-300 hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white">4</a>
+              </li>
+              <li>
+                <a href="#" class="flex items-center justify-center px-3 h-8 leading-tight text-gray-500 bg-white border border-gray-300 hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white">5</a>
+              </li>
+              <li>
+                <a href="#" class="flex items-center justify-center px-3 h-8 leading-tight text-gray-500 bg-white border border-gray-300 rounded-e-lg hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white">Next</a>
+              </li>
+            </ul>
+          </nav>
+        </div>-->
+      </div>
+
+      <!-- データ表示 -->
+      <table class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
+          <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+          <tr>
+            <th scope="col" rowspan="2" class="px-6 py-3">
+                No
+            </th>
+            <th scope="col" rowspan="2" class="px-6 py-3">
+                <a hred="">取引日↑</a>
+            </th>
+            <th scope="col" rowspan="2" class="px-6 py-3">
+                取引種類
+            </th>
+            <th scope="col" colspan="3" class="py-3 align-middle">
+                預かり入れ
+            </th>
+            <th scope="col" colspan="3" class="py-3 align-middle">
+                払出
+            </th>
+            <th scope="col" colspan="3" class="py-3 align-middle">
+                残帳簿価格
+            </th>
+          </tr>
+          <tr>
+            <th scope="col">数量米ドル</th>
+            <th scope="col">ドル/円</th>
+            <th scope="col">円換算</th>
+            <th scope="col">数量米ドル </th>
+            <th scope="col">ドル/円</th>
+            <th scope="col">円換算</th>
+            <th scope="col">数量米ドル </th>
+            <th scope="col">ドル/円</th>
+            <th scope="col">円換算</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% @dollaryen_transactions.each_with_index do |dollaryen_transaction, index| %>
+            <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 border-gray-200">
+              <th class="px-6 py-4 font-normal"><%= link_to "#{index + 1}", edit_dollar_yen_transaction_path(dollaryen_transaction) %></th> 
+              <th class="px-6 py-4 font-normal"><%= dollaryen_transaction.date.strftime("%Y/%m/%d")  %></th>
+              <th class="px-6 py-4 font-normal"><%= dollaryen_transaction.transaction_type.name %></th>  
+              <th class="py-4 font-normal">＄<%= dollaryen_transaction.deposit_quantity_on_screen %></th>
+              <td class="py-4">¥<%= dollaryen_transaction.deposit_rate_on_screen %></td>
+              <td class="py-4">¥<%= dollaryen_transaction.deposit_en_screen %></td>
+              <td class="py-4"><%= dollaryen_transaction.withdrawal_rate_on_screen %></td>
+              <th class="py-4"><%= dollaryen_transaction.withdrawal_quantity_on_screen %></th>
+              <td class="py-4"><%= dollaryen_transaction.withdrawal_en_on_screen %></td>
+              <td class="py-4">＄<%= dollaryen_transaction.balance_quantity_on_screen %></td>
+              <th class="py-4 font-normal">¥<%= dollaryen_transaction.balance_rate_on_screen %></th>
+              <td class="py-4">¥<%= dollaryen_transaction.balance_en_on_screen %></td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+
+    </div>
+  <% else %>
+    <div class="bg-white flex justify-center px-6 py-4">
+      <p class="text-red-500">取引データが存在しません。作成、もしくは一括作成/更新ボタンをクリックして取引データを登録してください。</p>
+    </div>
+  <% end %>
 </section>
-
-<% if @total > 0 %>
-
-<% else %>
-  <div class="bg-white flex justify-center px-6 py-4">
-    <p class="text-red-500">取引データが存在しません。作成、もしくは一括作成/更新ボタンをクリックして取引データを登録してください。</p>
-  </div>
-<% end %>
 
 <% content_for :footer do %>
   <%= render "layouts/footer" %>
 <% end %>
 
 
-
-<%= form_with url: dollar_yen_transactions_path, method: :get, local: true do |form| %>
-  <%= form.select :transaction_type_id, @transaction_types.collect { |c| [c.name, c.id, { "data-kind": c.kind }]}, {selected: @transaction_type_id, include_blank: "選択して下さい" }, { class: "bg-transparent placeholder:text-slate-400 text-slate-700 text-sm border border-slate-200 rounded pl-3 pr-8 py-2 transition duration-300 ease focus:outline-none focus:border-slate-400 hover:border-slate-400 shadow-sm focus:shadow-md  cursor-pointer mr-4" } %>
-  <%= form.submit 'Search', :name => nil  %>
-<% end %>
-
-<%= form_with url: '#', method: :get do |form| %>
-  <%= form.select :download_id, @downloads.collect { |c| [c[:name], c[:id]]}, { class: "bg-transparent placeholder:text-slate-400 text-slate-700 text-sm border border-slate-200 rounded pl-3 pr-8 py-2 transition duration-300 ease focus:outline-none focus:border-slate-400 hover:border-slate-400 shadow-sm focus:shadow-md  cursor-pointer mr-4" } %>
-  <%= form.submit 'ダウンロード', :name => nil, onclick: 'handleSubmit(event)'  %>
-<% end %>
-
-<p>全<%= @total %>件</p>
 <% if @total > 0 %>
       <table border="2">
         <thead>
