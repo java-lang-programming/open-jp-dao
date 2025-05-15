@@ -18,12 +18,9 @@
   <div class="mx-auto max-w-screen-xl">
     <div class="overflow-y-auto whitespace-nowrap bg-gray-50 p-5">
       <ul class="inline-flex list-none items-center">
-        <!-- <li>
-          <a href="#" class="mr-1 rounded-md px-4 py-1 text-base text-gray-500 ring-offset-2 ring-offset-current transition duration-500 ease-in-out hover:text-blue-600 focus:outline-none focus:ring-2">Home</a>
-        </li>-->
-        <li class="font-bold underline">為替差益</li>
+        <li><%= link_to "為替差益", foreign_exchange_gain_dollar_yen_transactions_path, class: "mr-1 rounded-md px-4 py-1 text-base text-gray-500 ring-offset-2 ring-offset-current transition duration-500 ease-in-out hover:text-blue-600 focus:outline-none focus:ring-2" %></li>
         <li>
-          <a href="../dollar_yen_transactions/index.html" class="mr-1 rounded-md px-4 py-1 text-base text-gray-500 ring-offset-2 ring-offset-current transition duration-500 ease-in-out hover:text-blue-600 focus:outline-none focus:ring-2">ドル円外貨預金元帳</a>
+          <%= link_to "ドル円外貨預金元帳", dollar_yen_transactions_path, class: "mr-1 rounded-md px-4 py-1 text-base text-gray-500 ring-offset-2 ring-offset-current transition duration-500 ease-in-out hover:text-blue-600 focus:outline-none focus:ring-2" %>
         </li>
         <li>
           <a href="../settings/index.html" class="mr-1 rounded-md px-4 py-1 text-base text-gray-500 ring-offset-2 ring-offset-current transition duration-500 ease-in-out hover:text-blue-600 focus:outline-none focus:ring-2">設定</a>
@@ -42,11 +39,14 @@
   </div>
 
   <!-- imformation -->
+  <% if notification.present? %>
   <div class="bg-white mx-auto max-w-screen-xl py-4">
     <div class="mx-auto flex px-4">
-      <div class="mx-auto">確定申告は2026年2月から開始されます。早めに準備をしておきましょう。</div>
+      <div class="mx-auto"><%= notification.message %></div>
     </div>
   </div>
+  <% end %>
+
 </heade>
 
 <!--<header>

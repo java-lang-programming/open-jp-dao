@@ -77,4 +77,8 @@ class ApplicationViewController < ActionController::Base
     return { errors: [ { msg: "ログイン情報がありません" } ] } unless @session.present?
     { address: @session.address.address, omission_address: @session.address.matamask_format_address, network: @session.network, last_login: @session.last_login }
   end
+
+  def notification
+    Notification.header.first
+  end
 end

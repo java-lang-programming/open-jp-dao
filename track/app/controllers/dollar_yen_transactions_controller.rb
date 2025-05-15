@@ -426,6 +426,7 @@ class DollarYenTransactionsController < ApplicationViewController
 
     def header_session
       @user = user
+      @notification = notification
     end
 
     def set_view_var
