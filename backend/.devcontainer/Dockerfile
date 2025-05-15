@@ -1,4 +1,4 @@
-FROM python:3.12.3-bullseye as builder
+FROM python:3.13.3-bullseye as builder
 
 # Default to UTF-8 file.encoding
 ENV LANG C.UTF-8

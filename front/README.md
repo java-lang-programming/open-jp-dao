@@ -125,7 +125,7 @@ make launch_dev_server
 
 cd /Users/masayasuzuki/workplace/study/open-jp-dao/track 
 make dc_up
-docker exec -it devcontainer_wevb3-rails-dev-app_1 /bin/sh
+docker exec -it devcontainer-wevb3-rails-dev-app-1 /bin/sh
 make dc_dev
 
 4. front

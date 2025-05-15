@@ -19,8 +19,7 @@ jobs:
     runs-on: ubuntu-24.04
     strategy:
       matrix:
-        # "3.13"
-        python-version: ["3.12", "3.13"]
+        python-version: ["3.13.3", "3.14.0-beta.1"]
     steps:
       - uses: actions/checkout@v4
       - name: Set up Python ${{ matrix.python-version }}
