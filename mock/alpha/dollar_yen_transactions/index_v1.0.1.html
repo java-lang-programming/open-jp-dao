@@ -22,7 +22,7 @@
       /**
        * クリック処理の設定
        **/
-      document.addEventListener('DOMContentLoaded', () => {     
+      document.addEventListener('DOMContentLoaded', () => {
         const container = document.querySelector('.list-container'); // 行を囲む親要素
 
         if (container) {
@@ -44,10 +44,10 @@
                 event.stopPropagation(); // イベントの伝播を停止
                 modalArea(itemRow);
                 return;
-              } 
+              }
 
               // alert("横クリック");
-              window.location.href = `./edit.html`;
+              window.location.href = `./${itemId}/edit.html`;
             }
           });
         }
