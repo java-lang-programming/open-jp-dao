@@ -8,6 +8,12 @@
   <div class="alert alert-success"><%= notice %></div>
 <% end %>
 
+<style>
+.list-hover-bg-gray-100:hover {
+  background-color: #f3f4f6; /* gray-100 の色コード */
+}
+</style>  
+
 <section class="py-8">
   <div class="bg-white flex justify-end px-6 py-4">
     <%= link_to "作成", new_dollar_yen_transaction_path, class: "bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mr-2" %>
@@ -33,7 +39,7 @@
     <div class="relative overflow-x-auto m-4">
       <div>
         <div class="my-4">
-          <p id="item-count" class="text-sm text-gray-500">検索結果: 1 - 20 / <%= @total %></p>
+          <p id="item-count" class="text-sm text-gray-500">検索結果: 1 - 50 / <%= @total %></p>
         </div>
 
         <!-- page nation-->
@@ -66,61 +72,72 @@
         </div>-->
       </div>
 
-      <!-- データ表示 -->
-      <table class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
-          <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
-          <tr>
-            <th scope="col" rowspan="2" class="px-6 py-3">
-                No
-            </th>
-            <th scope="col" rowspan="2" class="px-6 py-3">
-                <a hred="">取引日↑</a>
-            </th>
-            <th scope="col" rowspan="2" class="px-6 py-3">
-                取引種類
-            </th>
-            <th scope="col" colspan="3" class="py-3 align-middle">
-                預かり入れ
-            </th>
-            <th scope="col" colspan="3" class="py-3 align-middle">
-                払出
-            </th>
-            <th scope="col" colspan="3" class="py-3 align-middle">
-                残帳簿価格
-            </th>
-          </tr>
-          <tr>
-            <th scope="col">数量米ドル</th>
-            <th scope="col">ドル/円</th>
-            <th scope="col">円換算</th>
-            <th scope="col">数量米ドル </th>
-            <th scope="col">ドル/円</th>
-            <th scope="col">円換算</th>
-            <th scope="col">数量米ドル </th>
-            <th scope="col">ドル/円</th>
-            <th scope="col">円換算</th>
-          </tr>
-        </thead>
-        <tbody>
-          <% @dollaryen_transactions.each_with_index do |dollaryen_transaction, index| %>
-            <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 border-gray-200">
-              <th class="px-6 py-4 font-normal"><%= link_to "#{index + 1}", edit_dollar_yen_transaction_path(dollaryen_transaction) %></th> 
-              <th class="px-6 py-4 font-normal"><%= dollaryen_transaction.date.strftime("%Y/%m/%d")  %></th>
-              <th class="px-6 py-4 font-normal"><%= dollaryen_transaction.transaction_type.name %></th>  
-              <th class="py-4 font-normal">＄<%= dollaryen_transaction.deposit_quantity_on_screen %></th>
-              <td class="py-4">¥<%= dollaryen_transaction.deposit_rate_on_screen %></td>
-              <td class="py-4">¥<%= dollaryen_transaction.deposit_en_screen %></td>
-              <td class="py-4"><%= dollaryen_transaction.withdrawal_rate_on_screen %></td>
-              <th class="py-4"><%= dollaryen_transaction.withdrawal_quantity_on_screen %></th>
-              <td class="py-4"><%= dollaryen_transaction.withdrawal_en_on_screen %></td>
-              <td class="py-4">＄<%= dollaryen_transaction.balance_quantity_on_screen %></td>
-              <th class="py-4 font-normal">¥<%= dollaryen_transaction.balance_rate_on_screen %></th>
-              <td class="py-4">¥<%= dollaryen_transaction.balance_en_on_screen %></td>
-            </tr>
-          <% end %>
-        </tbody>
-      </table>
-
+      <!-- データ表示 切り出す -->
+      <div class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
+        <div class="grid grid-cols-12 text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+          <div class="col-span-1 px-6 py-3 flex items-center">
+            <a href="">取引日↑</a>
+          </div>
+          <div class="col-span-1 px-6 py-3 flex items-center">
+            取引種類
+          </div>
+          <div class="col-span-3 py-3 align-middle text-center">
+            預かり入れ
+            <div class="grid grid-cols-3">
+              <div class="px-2 py-1">数量米ドル</div>
+              <div class="px-2 py-1">ドル/円</div>
+              <div class="px-2 py-1">円換算</div>
+            </div>
+          </div>
+          <div class="col-span-3 py-3 align-middle text-center">
+            払出
+            <div class="grid grid-cols-3">
+              <div class="px-2 py-1">数量米ドル</div>
+              <div class="px-2 py-1">ドル/円</div>
+              <div class="px-2 py-1">円換算</div>
+            </div>
+          </div>
+          <div class="col-span-3 py-3 align-middle text-center">
+            残帳簿価格
+            <div class="grid grid-cols-3">
+              <div class="px-2 py-1">数量米ドル</div>
+              <div class="px-2 py-1">ドル/円</div>
+              <div class="px-2 py-1">円換算</div>
+            </div>
+          </div>
+          <div class="col-span-1 px-6 py-3 flex items-center"></div>
+        </div>
+        <% @dollaryen_transactions.each_with_index do |dollaryen_transaction, index| %>
+          <div class="grid grid-cols-12 bg-white border-b dark:bg-gray-800 dark:border-gray-700 border-gray-200 hover:bg-gray-100 list-hover-bg-gray-100">
+            <div class="col-span-1 px-6 py-4 font-normal flex items-center"><%= dollaryen_transaction.date.strftime("%Y/%m/%d")  %></div>
+            <div class="col-span-1 px-6 py-4 font-normal flex items-center"><%= dollaryen_transaction.transaction_type.name %></div>
+            <div class="col-span-1 py-4 flex items-center justify-center">＄<%= dollaryen_transaction.deposit_quantity_on_screen %></div>
+            <div class="col-span-1 py-4 flex items-center justify-center">¥<%= dollaryen_transaction.deposit_rate_on_screen %></div>
+            <div class="col-span-1 py-4 flex items-center justify-center">¥<%= dollaryen_transaction.deposit_en_screen %></div>
+            <div class="col-span-1 py-4 flex items-center justify-center"><%= dollaryen_transaction.withdrawal_rate_on_screen %></div>
+            <div class="col-span-1 py-4 flex items-center justify-center"><%= dollaryen_transaction.withdrawal_quantity_on_screen %></div>
+            <div class="col-span-1 py-4 flex items-center justify-center"><%= dollaryen_transaction.withdrawal_en_on_screen %></div>
+            <div class="col-span-1 py-4 flex items-center justify-center">＄<%= dollaryen_transaction.balance_quantity_on_screen %></div>
+            <div class="col-span-1 py-4 flex items-center justify-center">¥<%= dollaryen_transaction.balance_rate_on_screen %></div>
+            <div class="col-span-1 py-4 flex items-center justify-center">¥<%= dollaryen_transaction.balance_en_on_screen %></div>
+            <div class="col-span-1 py-4 flex items-center justify-center">
+              <div class="relative inline-block">
+                <button id="dropdownButtonVertical" class="w-8 h-8 flex items-center justify-center rounded-full hover:bg-gray-200 focus:outline-none" onclick="">
+                  <svg class="w-5 h-5 text-gray-600" fill="currentColor" viewBox="0 0 16 16">
+                    <path d="M8 4a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3zm0 5a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3zm0 5a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3z"/>
+                  </svg>
+                </button>
+                <div id="dropdownModalHorizontal" class="absolute top-full right-0 mt-2 w-32 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 focus:outline-none z-20 hidden" role="menu" aria-orientation="vertical" aria-labelledby="dropdownButtonHorizontal">
+                  <div class="py-1" role="none">
+                    <a href="#" class="block px-4 py-2 text-sm text-red-700 hover:bg-red-100" role="menuitem">
+                      削除
+                    </a>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        <% end %>
     </div>
   <% else %>
     <div class="bg-white flex justify-center px-6 py-4">

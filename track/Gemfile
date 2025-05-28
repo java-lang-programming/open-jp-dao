@@ -62,4 +62,4 @@ gem "tailwindcss-rails"
 
 
 # pin to tailwindcss version 4.1.6
-gem "tailwindcss-ruby", "4.1.6"
+gem "tailwindcss-ruby"
