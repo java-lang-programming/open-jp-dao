@@ -194,13 +194,11 @@ class DollarYenTransaction < ApplicationRecord
   end
 
   def withdrawal_en_on_screen
-    return BigDecimal(withdrawal_en).floor(2).to_f if withdrawal_en.present?
-    nil
+    Fraction.en(value: withdrawal_en)
   end
 
   def exchange_en_on_screen
-    return BigDecimal(exchange_en).floor(2).to_f if exchange_en.present?
-    nil
+    Fraction.en(value: exchange_en)
   end
 
   def exchange_difference_on_screen
@@ -221,8 +219,7 @@ class DollarYenTransaction < ApplicationRecord
   # @return [Integer|nil] 残帳簿価格 円換算
   # 小数点以下の数を切り捨てて整数にする
   def balance_en_on_screen
-    return BigDecimal(balance_en).floor(0).to_i if balance_en.present?
-    nil
+    Fraction.en(value: balance_en)
   end
 
   # csv import用のデータに変換

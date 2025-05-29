@@ -407,6 +407,26 @@ RSpec.describe DollarYenTransaction, type: :model do
         expect(dollar_yen_transaction44.withdrawal_rate_on_screen).to eq(137.05)
       end
     end
+
+    context '画面表示 withdrawal_en_on_screen' do
+      it 'should be withdrawal_en_on_screen when data not found.' do
+        expect(dollar_yen_transaction1.withdrawal_en_on_screen).to be nil
+      end
+
+      it 'should be withdrawal_en_on_screen when data found.' do
+        expect(dollar_yen_transaction44.withdrawal_en_on_screen).to eq(12060)
+      end
+    end
+
+    context '画面表示 exchange_en_on_screen' do
+      it 'should be exchange_en_on_screen when data not found.' do
+        expect(dollar_yen_transaction1.exchange_en_on_screen).to be nil
+      end
+
+      it 'should be exchange_en_on_screen when data found.' do
+        expect(dollar_yen_transaction44.exchange_en_on_screen).to eq(12918)
+      end
+    end
   end
 
   describe 'balance_en_on_screen' do

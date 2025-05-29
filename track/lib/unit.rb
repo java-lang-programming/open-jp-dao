@@ -1,8 +1,8 @@
 class Unit
   # 米ドル
-  EN_DOLLAR = 'dollar'
+  EN_DOLLAR = "dollar"
   # 日本円
-  JP_EN = 'en'
+  JP_EN = "en"
 
   # 単位データがない
   class NotFoundUnit < StandardError; end
@@ -12,9 +12,9 @@ class Unit
     def add_unit(value:, unit: Unit::JP_EN)
       return "" unless value
       if unit == Unit::JP_EN
-        return "¥" + value.to_s
+        "¥" + value.to_s
       elsif unit == Unit::EN_DOLLAR
-        return "$" + value.to_s
+        "$" + value.to_s
       else
         raise NotFoundUnit
       end
