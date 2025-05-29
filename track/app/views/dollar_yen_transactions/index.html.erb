@@ -166,18 +166,18 @@
           <div class="col-span-1 px-6 py-3 flex items-center"></div>
         </div>
         <% @dollaryen_transactions.each_with_index do |dollaryen_transaction, index| %>
-          <div class="item-row grid grid-cols-12 bg-white border-b dark:bg-gray-800 dark:border-gray-700 border-gray-200 hover:bg-gray-100 list-hover-bg-gray-100" data-id="<%= dollaryen_transaction.id %>">
-            <div class="col-span-1 px-6 py-4 font-normal flex items-center"><%= dollaryen_transaction.date.strftime("%Y/%m/%d")  %></div>
-            <div class="col-span-1 px-6 py-4 font-normal flex items-center"><%= dollaryen_transaction.transaction_type.name %></div>
-            <div class="col-span-1 py-4 flex items-center justify-center">＄<%= dollaryen_transaction.deposit_quantity_on_screen %></div>
-            <div class="col-span-1 py-4 flex items-center justify-center">¥<%= dollaryen_transaction.deposit_rate_on_screen %></div>
-            <div class="col-span-1 py-4 flex items-center justify-center">¥<%= dollaryen_transaction.deposit_en_screen %></div>
-            <div class="col-span-1 py-4 flex items-center justify-center"><%= dollaryen_transaction.withdrawal_rate_on_screen %></div>
-            <div class="col-span-1 py-4 flex items-center justify-center"><%= dollaryen_transaction.withdrawal_quantity_on_screen %></div>
-            <div class="col-span-1 py-4 flex items-center justify-center"><%= dollaryen_transaction.withdrawal_en_on_screen %></div>
-            <div class="col-span-1 py-4 flex items-center justify-center">＄<%= dollaryen_transaction.balance_quantity_on_screen %></div>
-            <div class="col-span-1 py-4 flex items-center justify-center">¥<%= dollaryen_transaction.balance_rate_on_screen %></div>
-            <div class="col-span-1 py-4 flex items-center justify-center">¥<%= dollaryen_transaction.balance_en_on_screen %></div>
+          <div class="item-row grid grid-cols-12 bg-white border-b dark:bg-gray-800 dark:border-gray-700 border-gray-200 hover:bg-gray-100 list-hover-bg-gray-100" data-id="<%= dollaryen_transaction[:id] %>">
+            <div class="col-span-1 px-6 py-4 font-normal flex items-center"><%= dollaryen_transaction[:date]  %></div>
+            <div class="col-span-1 px-6 py-4 font-normal flex items-center"><%= dollaryen_transaction[:transaction_type_name] %></div>
+            <div class="col-span-1 py-4 flex items-center justify-center"><%= dollaryen_transaction[:deposit_quantity] %></div>
+            <div class="col-span-1 py-4 flex items-center justify-center"><%= dollaryen_transaction[:deposit_rate] %></div>
+            <div class="col-span-1 py-4 flex items-center justify-center"><%= dollaryen_transaction[:deposit_en] %></div>
+            <div class="col-span-1 py-4 flex items-center justify-center"><%= dollaryen_transaction[:withdrawal_rate] %></div>
+            <div class="col-span-1 py-4 flex items-center justify-center"><%= dollaryen_transaction[:withdrawal_quantity] %></div>
+            <div class="col-span-1 py-4 flex items-center justify-center"><%= dollaryen_transaction[:withdrawal_en] %></div>
+            <div class="col-span-1 py-4 flex items-center justify-center"><%= dollaryen_transaction[:balance_quantity] %></div>
+            <div class="col-span-1 py-4 flex items-center justify-center"><%= dollaryen_transaction[:balance_rate] %></div>
+            <div class="col-span-1 py-4 flex items-center justify-center"><%= dollaryen_transaction[:balance_en] %></div>
             <div class="col-span-1 py-4 flex items-center justify-center">
               <div class="kebabu relative inline-block">
                 <button id="dropdownButtonVertical" class="kebabu w-8 h-8 flex items-center justify-center rounded-full hover:bg-gray-200 focus:outline-none" onclick="">

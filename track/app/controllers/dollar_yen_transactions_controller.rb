@@ -29,8 +29,23 @@ class DollarYenTransactionsController < ApplicationViewController
     base_sql = base_sql.where(transaction_type_id: request[:transaction_type_id]) if request[:transaction_type_id].present?
     @total = base_sql.all.count
 
-    # TODO APIと極力同じにするべき
-    @dollaryen_transactions = base_sql.limit(limit).offset(offset).order(date: :desc,  transaction_type_id: :asc)
+    dollaryen_transactions = base_sql.limit(limit).offset(offset).order(date: :desc,  transaction_type_id: :asc)
+    @dollaryen_transactions = dollaryen_transactions.map do |dollaryen_transaction|
+      {
+        id: dollaryen_transaction.id,
+        date: dollaryen_transaction.date.strftime("%Y/%m/%d"),
+        transaction_type_name: dollaryen_transaction.transaction_type.name,
+        deposit_rate: Unit.add_unit(value: dollaryen_transaction.deposit_rate_on_screen, unit: Unit::EN_DOLLAR),
+        deposit_quantity: Unit.add_unit(value: dollaryen_transaction.deposit_quantity_on_screen, unit: Unit::EN_DOLLAR),
+        deposit_en: Unit.add_unit(value: dollaryen_transaction.deposit_en_screen, unit: Unit::JP_EN),
+        withdrawal_rate: Unit.add_unit(value: dollaryen_transaction.withdrawal_rate_on_screen, unit: Unit::EN_DOLLAR),
+        withdrawal_quantity: Unit.add_unit(value: dollaryen_transaction.withdrawal_quantity_on_screen, unit: Unit::EN_DOLLAR),
+        withdrawal_en: Unit.add_unit(value: dollaryen_transaction.withdrawal_en_on_screen, unit: Unit::JP_EN),
+        balance_rate: Unit.add_unit(value: dollaryen_transaction.balance_rate_on_screen, unit: Unit::EN_DOLLAR),
+        balance_quantity: Unit.add_unit(value: dollaryen_transaction.balance_quantity_on_screen, unit: Unit::EN_DOLLAR),
+        balance_en: Unit.add_unit(value: dollaryen_transaction.balance_en_on_screen, unit: Unit::JP_EN)
+      }
+    end
   end
 
   def new
