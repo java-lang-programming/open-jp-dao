@@ -13,7 +13,7 @@ RSpec.describe "Unit", type: :feature do
       end
 
       it "should get 預入 円換算表示." do
-        expect(Unit.add_unit(value: dollar_yen_transaction1.deposit_en_screen, unit: Unit::JP_EN)).to eq('¥423')
+        expect(Unit.add_unit(value: 423, unit: Unit::JP_EN)).to eq('¥423')
       end
 
       it "should get 払出 数量米ドル." do

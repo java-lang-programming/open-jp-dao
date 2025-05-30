@@ -37,13 +37,13 @@ class DollarYenTransactionsController < ApplicationViewController
         transaction_type_name: dollaryen_transaction.transaction_type.name,
         deposit_rate: Unit.add_unit(value: dollaryen_transaction.deposit_rate_on_screen, unit: Unit::EN_DOLLAR),
         deposit_quantity: Unit.add_unit(value: dollaryen_transaction.deposit_quantity_on_screen, unit: Unit::EN_DOLLAR),
-        deposit_en: Unit.add_unit(value: dollaryen_transaction.deposit_en_screen, unit: Unit::JP_EN),
+        deposit_en: dollaryen_transaction.deposit_en_screen,
         withdrawal_rate: Unit.add_unit(value: dollaryen_transaction.withdrawal_rate_on_screen, unit: Unit::EN_DOLLAR),
         withdrawal_quantity: Unit.add_unit(value: dollaryen_transaction.withdrawal_quantity_on_screen, unit: Unit::EN_DOLLAR),
-        withdrawal_en: Unit.add_unit(value: dollaryen_transaction.withdrawal_en_on_screen, unit: Unit::JP_EN),
+        withdrawal_en: dollaryen_transaction.withdrawal_en_on_screen,
         balance_rate: Unit.add_unit(value: dollaryen_transaction.balance_rate_on_screen, unit: Unit::EN_DOLLAR),
         balance_quantity: Unit.add_unit(value: dollaryen_transaction.balance_quantity_on_screen, unit: Unit::EN_DOLLAR),
-        balance_en: Unit.add_unit(value: dollaryen_transaction.balance_en_on_screen, unit: Unit::JP_EN)
+        balance_en: dollaryen_transaction.balance_en_on_screen
       }
     end
   end
@@ -374,14 +374,14 @@ class DollarYenTransactionsController < ApplicationViewController
     @total = dollaryen_transactions.count
 
     # 為替差額
-    foreign_exchange_gain = dollaryen_transactions.inject (0) { |sum, t| sum += t.exchange_difference }
-    @foreign_exchange_gain = foreign_exchange_gain.floor(2).to_f
+    foreign_exchange_gain = dollaryen_transactions.inject (0) { |sum, t| sum += Fraction.en(value: t.exchange_difference) }
+    @foreign_exchange_gain = Fraction.en(value: foreign_exchange_gain)
 
     @responses = dollaryen_transactions.map do |dollaryen_transaction|
       {
         date: dollaryen_transaction.date.strftime("%Y/%m/%d"),
         transaction_type_name: dollaryen_transaction.transaction_type.name,
-        withdrawal_rate: dollaryen_transaction.withdrawal_rate_on_screen,
+        withdrawal_rate:  dollaryen_transaction.withdrawal_rate_on_screen,
         withdrawal_quantity: dollaryen_transaction.withdrawal_quantity_on_screen,
         withdrawal_en: dollaryen_transaction.withdrawal_en_on_screen,
         exchange_en: dollaryen_transaction.exchange_en_on_screen,

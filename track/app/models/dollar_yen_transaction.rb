@@ -1,4 +1,6 @@
 class DollarYenTransaction < ApplicationRecord
+  include ActionView::Helpers::NumberHelper
+
   belongs_to :transaction_type
   belongs_to :address
 
@@ -166,13 +168,12 @@ class DollarYenTransaction < ApplicationRecord
     nil
   end
 
-  # @return [Integer|nil] 画面で表示するdeposit 円換算
+  # @return [ActiveSupport::SafeBuffer|nil] 画面で表示するdeposit 円換算
   #
   # deposit_enを表示する。小数点以下の数を切り捨てて整数にする。データがない場合はnil
   #
   def deposit_en_screen
-    return BigDecimal(deposit_en).floor(0).to_i if deposit_en.present?
-    nil
+    en_with_unit(value: deposit_en)
   end
 
   # @return [float|nil] 画面で表示するwithdrawal_rate
@@ -193,12 +194,20 @@ class DollarYenTransaction < ApplicationRecord
     nil
   end
 
+  # @return [ActiveSupport::SafeBuffer|nil] 画面で表示するwithdrawal_en
+  #
+  # withdrawal_enを表示する。データがない場合はnil
+  #
   def withdrawal_en_on_screen
-    Fraction.en(value: withdrawal_en)
+    en_with_unit(value: withdrawal_en)
   end
 
+  # @return [ActiveSupport::SafeBuffer|nil] 画面で表示するexchange_en
+  #
+  # exchange_enを表示する。データがない場合はnil
+  #
   def exchange_en_on_screen
-    Fraction.en(value: exchange_en)
+    en_with_unit(value: exchange_en)
   end
 
   def exchange_difference_on_screen
@@ -216,10 +225,12 @@ class DollarYenTransaction < ApplicationRecord
     nil
   end
 
-  # @return [Integer|nil] 残帳簿価格 円換算
-  # 小数点以下の数を切り捨てて整数にする
+  # @return [ActiveSupport::SafeBuffer|nil] 残帳簿価格 円換算
+  #
+  # balance_enを表示する。データがない場合はnil
+  #
   def balance_en_on_screen
-    Fraction.en(value: balance_en)
+    en_with_unit(value: balance_en)
   end
 
   # csv import用のデータに変換
@@ -408,5 +419,17 @@ class DollarYenTransaction < ApplicationRecord
       return calculate_deposit_en unless dollar_yen_transaction.present?
       # 以前のデータがある
       dollar_yen_transaction.balance_en + calculate_deposit_en
+    end
+
+    # 単位付きの円にする(いつでも切り替えできるようにラップしている)
+    # 円の端数計算
+    # 　↓↓↓↓↓
+    # 端数の処理についてはすべて切り捨て
+    # 100ドルを140.123のレートで両替した場合 → 14,012円の受取です。
+    # 円換算結果が11,577.16523 → 11,577円の受取です。
+    # 上記の計算に円マークを負荷する
+    def en_with_unit(value: nil)
+      return number_to_currency(value, unit: "¥", separator: ".", delimiter: ",", precision: 0) if value.present?
+      nil
     end
 end

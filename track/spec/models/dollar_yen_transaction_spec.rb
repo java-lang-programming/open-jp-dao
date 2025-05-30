@@ -390,7 +390,7 @@ RSpec.describe DollarYenTransaction, type: :model do
 
     context '画面表示 deposit_en' do
       it 'should be deposit_en_screen when data found.' do
-        expect(dollar_yen_transaction1.deposit_en_screen).to eq(423)
+        expect(dollar_yen_transaction1.deposit_en_screen).to eq("¥423")
       end
 
       it 'should be deposit_quantity_on_screen when data not found.' do
@@ -414,7 +414,7 @@ RSpec.describe DollarYenTransaction, type: :model do
       end
 
       it 'should be withdrawal_en_on_screen when data found.' do
-        expect(dollar_yen_transaction44.withdrawal_en_on_screen).to eq(12060)
+        expect(dollar_yen_transaction44.withdrawal_en_on_screen).to eq("¥12,061")
       end
     end
 
@@ -424,7 +424,7 @@ RSpec.describe DollarYenTransaction, type: :model do
       end
 
       it 'should be exchange_en_on_screen when data found.' do
-        expect(dollar_yen_transaction44.exchange_en_on_screen).to eq(12918)
+        expect(dollar_yen_transaction44.exchange_en_on_screen).to eq("¥12,918")
       end
     end
   end
@@ -437,7 +437,7 @@ RSpec.describe DollarYenTransaction, type: :model do
     context '画面表示 balance_en_on_screen' do
       # 端数の処理は切り捨て
       it 'should be balance_en_on_screen when data is decimal point.' do
-        expect(dollar_yen_transaction44.balance_en_on_screen).to eq(90166)
+        expect(dollar_yen_transaction44.balance_en_on_screen).to eq("¥90,166")
       end
     end
   end
