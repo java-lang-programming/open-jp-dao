@@ -54,9 +54,9 @@
                   <td class="tbody_tr_td_1"><%= response[:transaction_type_name] %></td>
                   <td class="tbody_tr_td_1"><%= response[:withdrawal_quantity] %></td>
                   <td class="tbody_tr_td_1">$<%= response[:withdrawal_rate] %></td>
-                  <td class="tbody_tr_td_1">￥<%= response[:withdrawal_en] %></td>
-                  <td class="tbody_tr_td_1">￥<%= response[:exchange_en] %></td>
-                  <td class="tbody_tr_td_1">￥<%= response[:exchange_difference] %></td>
+                  <td class="tbody_tr_td_1"><%= response[:withdrawal_en] %></td>
+                  <td class="tbody_tr_td_1"><%= response[:exchange_en] %></td>
+                  <td class="tbody_tr_td_1"><%= response[:exchange_difference] %></td>
                 </tr>
               <% end %>
             </tbody>

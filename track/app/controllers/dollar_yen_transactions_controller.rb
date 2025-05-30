@@ -3,13 +3,16 @@ class DollarYenTransactionsController < ApplicationViewController
 
   skip_before_action :verify_authenticity_token, only: [ :update, :destroy ]
 
+  DEFAULT_LIMIT = 50
+  DEFAULT_OFFSET = 0
+
   def index
     request = params.permit(:transaction_type_id, :limit, :offset)
 
     limit = request[:limit]
-    limit = 50 unless limit.present?
+    limit = DEFAULT_LIMIT unless limit.present?
     offset = request[:offset]
-    offset = 0 unless offset.present?
+    offset = DEFAULT_OFFSET unless offset.present?
 
     header_session
     address = @session.address
