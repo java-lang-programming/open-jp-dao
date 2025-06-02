@@ -14,7 +14,7 @@ dc_dev:
 	make log_clear
 	make dc_rm_pid
 	# ここで環境変数のチェック
-	RAILS_ENV=development bundle exec rails db:reset
+	# RAILS_ENV=development bundle exec rails db:reset
 	SOLID_QUEUE_IN_PUMA=1 RAILS_ENV=development bundle exec rails server -b 0.0.0.0
 dc_prod:
 	make log_clear

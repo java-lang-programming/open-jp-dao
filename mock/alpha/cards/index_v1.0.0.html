@@ -63,36 +63,36 @@
       /**
        * クリック処理の設定
        **/
-      document.addEventListener('DOMContentLoaded', () => {
-        const container = document.querySelector('.list-container'); // 行を囲む親要素
+      // document.addEventListener('DOMContentLoaded', () => {
+      //   const container = document.querySelector('.list-container'); // 行を囲む親要素
 
-        if (container) {
-          container.addEventListener('click', (event) => {
-            const clickedElement = event.target;
-            const itemRow = clickedElement.closest('.item-row'); // クリックされた要素から最も近い親の.item-rowを探す
-            if (itemRow) {
-              const itemId = itemRow.dataset.id;
+      //   if (container) {
+      //     container.addEventListener('click', (event) => {
+      //       const clickedElement = event.target;
+      //       const itemRow = clickedElement.closest('.item-row'); // クリックされた要素から最も近い親の.item-rowを探す
+      //       if (itemRow) {
+      //         const itemId = itemRow.dataset.id;
 
-              if (clickedElement.classList.contains('delete')) {
-                event.stopPropagation(); // イベントの伝播を停止
-                modalArea(itemRow);
-                alert("削除処理")
-                return;
-              }
+      //         if (clickedElement.classList.contains('delete')) {
+      //           event.stopPropagation(); // イベントの伝播を停止
+      //           modalArea(itemRow);
+      //           alert("削除処理")
+      //           return;
+      //         }
 
-              // console.log(clickedElement.classList);
-              if (clickedElement.classList.contains('kebabu') || clickedElement.classList.contains('cancel')) {
-                event.stopPropagation(); // イベントの伝播を停止
-                modalArea(itemRow);
-                return;
-              }
+      //         // console.log(clickedElement.classList);
+      //         if (clickedElement.classList.contains('kebabu') || clickedElement.classList.contains('cancel')) {
+      //           event.stopPropagation(); // イベントの伝播を停止
+      //           modalArea(itemRow);
+      //           return;
+      //         }
 
-              // alert("横クリック");
-              window.location.href = `./${itemId}/edit.html`;
-            }
-          });
-        }
-      });
+      //         // alert("横クリック");
+      //         window.location.href = `./${itemId}/edit.html`;
+      //       }
+      //     });
+      //   }
+      // });
     </script>
   </head>
   <body>
@@ -123,7 +123,7 @@
                 <!-- <li>
               <a href="#" class="mr-1 rounded-md px-4 py-1 text-base text-gray-500 ring-offset-2 ring-offset-current transition duration-500 ease-in-out hover:text-blue-600 focus:outline-none focus:ring-2">Home</a>
             </li>-->
-                <li class="font-bold underline">為替差益</li>
+                <li class="font-bold underline">enavi csvインポート</li>
                 <li>
                   <a href="../dollar_yen_transactions/index.html" class="mr-1 rounded-md px-4 py-1 text-base text-gray-500 ring-offset-2 ring-offset-current transition duration-500 ease-in-out hover:text-blue-600 focus:outline-none focus:ring-2">ドル円外貨預金元帳</a>
                 </li>
@@ -155,11 +155,8 @@
         <section class="py-8">
 
           <div class="bg-white flex justify-end px-6 py-4">
-            <button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mr-2">
-              作成
-            </button>
             <button class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">
-              一括作成/更新
+              csvインポート
             </button>
           </div>
 
@@ -172,13 +169,6 @@
                 <option>VYM配当入金</option>
               </select>
               <button type="submit" class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 rounded-lg text-sm px-4 py-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">検索</button>
-            </div>
-            <div>
-              <select class="bg-transparent placeholder:text-slate-400 text-slate-700 text-sm border border-slate-200 rounded pl-3 pr-8 py-2 transition duration-300 ease focus:outline-none focus:border-slate-400 hover:border-slate-400 shadow-sm focus:shadow-md  cursor-pointer mr-4">
-                <option>csv importファイル</option>
-                <option>csv exportファイル</option>
-              </select>
-              <button type="submit" class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 rounded-lg text-sm px-4 py-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">ダウンロード</button>
             </div>
           </div>
           <!-- 検索項目 -->
@@ -228,118 +218,30 @@
               </div>
             </div>
 
+            <!-- account_itemsにデータがある時は最初からチェックしておく -->
+            <!-- 登録 ledgersテーブルにチェックしたデータを登録 account_itemsから名称を取得 なければaccount_itemsに登録 ある場合は按分や調整金を取得 -->
             <!-- 以下をdivにする。絶対将来的なことを考えると間違いない できればresuponnsibu -->
             <!-- start -->
             <div class="list-container w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
-              <div class="grid grid-cols-12 text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+              <div class="grid grid-cols-4 text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
                 <div class="col-span-1 px-6 py-3 flex items-center">
-                  <a href="">取引日↑</a>
-                </div>
-                <div class="col-span-1 px-6 py-3 flex items-center">
-                  取引種類
-                </div>
-                <div class="col-span-3 py-3 align-middle text-center">
-                  預かり入れ
-                  <div class="grid grid-cols-3">
-                    <div class="px-2 py-1">数量米ドル</div>
-                    <div class="px-2 py-1">ドル/円</div>
-                    <div class="px-2 py-1">円換算</div>
-                  </div>
-                </div>
-                <div class="col-span-3 py-3 align-middle text-center">
-                  払出
-                  <div class="grid grid-cols-3">
-                    <div class="px-2 py-1">数量米ドル</div>
-                    <div class="px-2 py-1">ドル/円</div>
-                    <div class="px-2 py-1">円換算</div>
-                  </div>
-                </div>
-                <div class="col-span-3 py-3 align-middle text-center">
-                  残帳簿価格
-                  <div class="grid grid-cols-3">
-                    <div class="px-2 py-1">数量米ドル</div>
-                    <div class="px-2 py-1">ドル/円</div>
-                    <div class="px-2 py-1">円換算</div>
-                  </div>
+                  チェック
                 </div>
                 <div class="col-span-1 px-6 py-3 flex items-center">
-                
+                  <a href="">利用日</a>
+                </div>
+                <div class="col-span-1 px-6 py-3 flex items-center">
+                  利用店名・商品名
+                </div>
+                <div class="col-span-1 px-6 py-3 flex items-center">
+                  利用金額
                 </div>
               </div>
-              <div class="item-row grid grid-cols-12 bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-100" data-id="456">
+              <div class="item-row grid grid-cols-4 bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-100" data-id="456">
+                <div class="col-span-1 px-6 py-4 font-normal flex items-center"><input id="default-checkbox" type="checkbox" value="" class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded-sm focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"></div>
                 <div class="col-span-1 px-6 py-4 font-normal flex items-center">2020/04/01</div>
-                <div class="col-span-1 px-6 py-4 font-normal flex items-center">HDV配当入金</div>
-                <div class="col-span-1 py-4 flex items-center justify-center">＄3.97</div>
-                <div class="col-span-1 py-4 flex items-center justify-center">¥106.59</div>
-                <div class="col-span-1 py-4 flex items-center justify-center">¥423</div>
-                <div class="col-span-1 py-4 flex items-center justify-center">-</div>
-                <div class="col-span-1 py-4 flex items-center justify-center">-</div>
-                <div class="col-span-1 py-4 flex items-center justify-center">-</div>
-                <div class="col-span-1 py-4 flex items-center justify-center">＄3.97</div>
-                <div class="col-span-1 py-4 flex items-center justify-center">¥106.55</div>
-                <div class="col-span-1 py-4 flex items-center justify-center">¥423</div>
-
-                <!-- ここを設計 -->
-                <div class="col-span-1 py-4 flex items-center justify-center">
-                  <div class="kebabu relative inline-block">
-                    <button id="dropdownButtonVertical" class="kebabu w-8 h-8 flex items-center justify-center rounded-full hover:bg-gray-200 focus:outline-none">
-                      <svg class="kebabu w-5 h-5 text-gray-600" fill="currentColor" viewBox="0 0 16 16">
-                        <path d="M8 4a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3zm0 5a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3zm0 5a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3z"/>
-                      </svg>
-                    </button>
-
-                     
-                    <!-- modal --> 
-                    <div id="dropdownModalHorizontal" class="modal-area absolute top-full right-0 mt-2 w-32 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 focus:outline-none z-20 hidden" role="menu" aria-orientation="vertical" aria-labelledby="dropdownButtonHorizontal">
-                      <div class="py-1" role="none">
-                        <div class="delete block px-4 py-2 text-sm text-red-700 hover:bg-red-100" role="menuitem" onclick="onClickDelete()">
-                          削除
-                        </div>
-                      </div>
-                      <div class="py-1" role="none">
-                        <div class="cancel block px-4 py-2 text-sm text-black-700 hover:bg-red-100" role="menuitem">
-                          キャンセル
-                        </div>
-                      </div>
-                    </div>
-
-                  </div>
-                </div>
-
-              </div>
-              <div class="item-row grid grid-cols-12 bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-100" data-id="456">
-                <div class="col-span-1 px-6 py-4 flex items-center">2020/04/01</div>
-                <div class="col-span-1 px-6 py-4 flex items-center">HDV配当入金</div>
-                <div class="col-span-1 py-4 flex items-center justify-center">＄3.97</div>
-                <div class="col-span-1 py-4 flex items-center justify-center">¥106.59</div>
-                <div class="col-span-1 py-4 flex items-center justify-center">¥423</div>
-                <div class="col-span-1 py-4 flex items-center justify-center">-</div>
-                <div class="col-span-1 py-4 flex items-center justify-center">-</div>
-                <div class="col-span-1 py-4 flex items-center justify-center">-</div>
-                <div class="col-span-1 py-4 flex items-center justify-center">＄3.97</div>
-                <div class="col-span-1 py-4 flex items-center justify-center">¥106.55</div>
-                <div class="col-span-1 py-4 flex items-center justify-center">¥423</div>
-                <div class="col-span-1 py-4 flex items-center justify-center">
-                  <div class="relative inline-block">
-                    <button id="dropdownButtonVertical" class="w-8 h-8 flex items-center justify-center rounded-full hover:bg-gray-200 focus:outline-none" onclick="">
-                      <svg class="kebabu w-5 h-5 text-gray-600" fill="currentColor" viewBox="0 0 16 16" data-id="457">
-                        <path d="M8 4a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3zm0 5a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3zm0 5a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3z"/>
-                      </svg>
-                    </button><!-- -->
-                    <div id="dropdownModalHorizontal" class="modal-area absolute top-full right-0 mt-2 w-32 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 focus:outline-none z-20 hidden" role="menu" aria-orientation="vertical" aria-labelledby="dropdownButtonHorizontal">
-                      <div class="py-1" role="none">
-                        <a href="#" class="block px-4 py-2 text-sm text-red-700 hover:bg-red-100" role="menuitem">
-                          削除
-                        </a>
-                      </div>
-                      <div class="py-1" role="none">
-                        <div class="cancel block px-4 py-2 text-sm text-black-700 hover:bg-red-100" role="menuitem">
-                          キャンセル
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
+                <div class="col-span-1 px-6 py-4 font-normal flex items-center">NTT東日本光コラボ</div>
+                <div class="col-span-1 px-6 py-4 font-normal flex items-center">5,843</div>
               </div>
             </div>
             <!-- end -->

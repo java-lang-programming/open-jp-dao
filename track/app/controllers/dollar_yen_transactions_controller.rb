@@ -4,15 +4,10 @@ class DollarYenTransactionsController < ApplicationViewController
   skip_before_action :verify_authenticity_token, only: [ :update, :destroy ]
 
   DEFAULT_LIMIT = 50
-  DEFAULT_OFFSET = 0
+  # DEFAULT_OFFSET = 0
 
   def index
-    request = params.permit(:transaction_type_id, :limit, :offset)
-
-    limit = request[:limit]
-    limit = DEFAULT_LIMIT unless limit.present?
-    offset = request[:offset]
-    offset = DEFAULT_OFFSET unless offset.present?
+    request = params.permit(:transaction_type_id, :page)
 
     header_session
     address = @session.address
@@ -30,9 +25,13 @@ class DollarYenTransactionsController < ApplicationViewController
 
     base_sql = address.dollar_yen_transactions.preload(:transaction_type)
     base_sql = base_sql.where(transaction_type_id: request[:transaction_type_id]) if request[:transaction_type_id].present?
-    @total = base_sql.all.count
+    total = base_sql.all.count
 
-    dollaryen_transactions = base_sql.limit(limit).offset(offset).order(date: :desc,  transaction_type_id: :asc)
+    # ページング処理
+    pagy = SimplePagy::Pagy.new(request_page: request[:page], request_query: request).build(total: total)
+
+    dollaryen_transactions = base_sql.limit(DEFAULT_LIMIT).offset(pagy.offset).order(date: :desc,  transaction_type_id: :asc)
+    # result = base_sql.order(date: :desc,  transaction_type_id: :asc)
     @dollaryen_transactions = dollaryen_transactions.map do |dollaryen_transaction|
       {
         id: dollaryen_transaction.id,
@@ -49,6 +48,8 @@ class DollarYenTransactionsController < ApplicationViewController
         balance_en: dollaryen_transaction.balance_en_on_screen
       }
     end
+    # 下記がうまく言ったらpagyをそのまま置き換えるようにする
+    @page = { total: pagy.total, page: pagy.page, current_page: pagy.current_page, start_data_number: pagy.start_data_number, end_data_number: pagy.end_data_number, prev_query: pagy.prev_query, next_query: pagy.next_query, pages: pagy.pages_query }
   end
 
   def new

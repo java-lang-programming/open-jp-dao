@@ -67,9 +67,47 @@
   });
 </script>
 <style>
-.list-hover-bg-gray-100:hover {
-  background-color: #f3f4f6; /* gray-100 の色コード */
-}
+  .list-hover-bg-gray-100:hover {
+    background-color: #f3f4f6; /* gray-100 の色コード */
+  }
+  /** ここからページング **/
+  .pagination {
+    margin-top: 2px;
+    font-size: 0.875rem;
+    line-height: 1.25rem;
+    display: inline-flex;
+  }
+
+  .page-item {
+    color: rgb(107 114 128 / 1);
+    line-height: 1.25;
+    padding-left: 0.75rem;
+    padding-right: 0.75rem;
+    background-color: rgb(255 255 255 / 1);
+    border-color: rgb(209 213 219 / 1);
+    border-width: 1px;
+    align-items: center;
+    height: 2rem;
+    display: flex;
+  }
+
+  .page-item:hover {
+    background-color: #f3f4f6; /* gray-100 の色コード */
+  }
+
+  .prev {
+    border-start-start-radius: 0.5rem;
+    border-end-start-radius: 0.5rem;
+  }
+
+  .next {
+    border-start-end-radius: 0.5rem;
+    border-end-end-radius: 0.5rem;
+  }
+
+  .active {
+    background-color: rgb(239 246 255 / 1);
+  }
 </style>  
 
 <section class="py-8">
@@ -78,7 +116,7 @@
     <%= link_to "一括作成/更新", csv_upload_dollar_yen_transactions_path, class: "bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded" %>
   </div>
 
-  <% if @total > 0 %>
+  <% if @page[:total] > 0 %>
     <div class="bg-white flex justify-between px-6">
       <div>
         <%= form_with url: dollar_yen_transactions_path, method: :get, local: true do |form| %>
@@ -97,37 +135,29 @@
     <div class="relative overflow-x-auto m-4">
       <div>
         <div class="my-4">
-          <p id="item-count" class="text-sm text-gray-500">検索結果: 1 - 50 / <%= @total %></p>
+          <p id="item-count" class="text-sm text-gray-500">検索結果: <%= @page[:start_data_number] %> - <%= @page[:end_data_number] %> / <%= @page[:total] %></p>
         </div>
 
-        <!-- page nation-->
-        <!--<div class="flex flex-col space-y-4 items-center justify-center my-4">
-          <nav aria-label="Page navigation example">
-            <ul class="inline-flex -space-x-px text-sm">
-              <li>
-                <a href="#" class="flex items-center justify-center px-3 h-8 ms-0 leading-tight text-gray-500 bg-white border border-e-0 border-gray-300 rounded-s-lg hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white">Previous</a>
-              </li>
-              <li>
-                <a href="#" class="flex items-center justify-center px-3 h-8 leading-tight text-gray-500 bg-white border border-gray-300 hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white">1</a>
-              </li>
-              <li>
-                <a href="#" class="flex items-center justify-center px-3 h-8 leading-tight text-gray-500 bg-white border border-gray-300 hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white">2</a>
-              </li>
-              <li>
-                <a href="#" aria-current="page" class="flex items-center justify-center px-3 h-8 text-blue-600 border border-gray-300 bg-blue-50 hover:bg-blue-100 hover:text-blue-700 dark:border-gray-700 dark:bg-gray-700 dark:text-white">3</a>
-              </li>
-              <li>
-                <a href="#" class="flex items-center justify-center px-3 h-8 leading-tight text-gray-500 bg-white border border-gray-300 hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white">4</a>
-              </li>
-              <li>
-                <a href="#" class="flex items-center justify-center px-3 h-8 leading-tight text-gray-500 bg-white border border-gray-300 hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white">5</a>
-              </li>
-              <li>
-                <a href="#" class="flex items-center justify-center px-3 h-8 leading-tight text-gray-500 bg-white border border-gray-300 rounded-e-lg hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white">Next</a>
-              </li>
-            </ul>
-          </nav>
-        </div>-->
+        <!-- ページ数が2からページングを表示する -->
+        <% if @page[:page] >= 2 %>
+          <div class="flex flex-col space-y-4 items-center justify-center my-4">
+            <nav aria-label="Page navigation example">
+              <ul class="inline-flex -space-x-px text-sm">
+                <li>
+                  <a href="./dollar_yen_transactions?<%= @page[:prev_query] %>" class="flex items-center justify-center px-3 h-8 ms-0 leading-tight text-gray-500 bg-white border border-e-0 border-gray-300 rounded-s-lg hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white">Previous</a>
+                </li>
+                <% @page[:pages].each do |page| %>
+                  <li>
+                    <a href="./dollar_yen_transactions?<%= page[:query] %>" class="flex items-center justify-center px-3 h-8 leading-tight text-gray-500 <%=  page[:page] == @page[:current_page] ? "bg-blue-50" : "bg-white" %> border border-gray-300 <%=  page[:page] == @page[:current_page] ? "hover:bg-blue-100" : "hover:bg-gray-100" %> hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white"><%= page[:page] %></a>
+                  </li>
+                <% end %>
+                <li>
+                  <a href="./dollar_yen_transactions?<%= @page[:next_query] %>" class="flex items-center justify-center px-3 h-8 leading-tight text-gray-500 bg-white border border-gray-300 rounded-e-lg hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white">Next</a>
+                </li>
+              </ul>
+            </nav>
+          </div>
+        <% end %>
       </div>
 
       <!-- データ表示 切り出す -->
