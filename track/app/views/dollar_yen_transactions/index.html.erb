@@ -34,11 +34,10 @@
   }
 
   /**
-   * クリック処理の設定
+   * イベントの設定
    **/
-  document.addEventListener('DOMContentLoaded', () => {
+  function setEventListener() {
     const container = document.querySelector('.list-container'); // 行を囲む親要素
-
     if (container) {
       container.addEventListener('click', (event) => {
         const clickedElement = event.target;
@@ -64,7 +63,17 @@
         }
       });
     }
-  });
+  }
+
+  // イベントの登録の呼び出し
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', () => {
+      setEventListener();
+    });
+  } else {
+    setEventListener();
+  }
+
 </script>
 <style>
   .list-hover-bg-gray-100:hover {
