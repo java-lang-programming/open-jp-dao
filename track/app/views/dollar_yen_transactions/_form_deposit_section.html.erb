@@ -1,24 +1,32 @@
     <div class="tw_mb-5">
-      <!-- エラーとOKの場合のcssを作成する -->
-      <label for="en_dollar_value" class="form_label">受け取った米ドル*</label>
       <% if @errors[:deposit_quantity_msg].present? %>
-        <p><%= @errors[:deposit_quantity_msg] %></p>
+        <div class="text-red-600 text-sm mb-1">
+          <p><%= @errors[:deposit_quantity_msg] %></p>
+        </div>
       <% end %>
+      <label for="en_dollar_value" class="block text-gray-700 text-sm mb-2">受け取った米ドル*
+        <% if @errors[:deposit_quantity_msg].blank? && @errors[:deposit_quantity_class].include?("ok") %>
+          <span class="ml-2 text-green-500 ok-status">ok</span>
+        <% end %>
+      </label>
       <%= form.text_field :deposit_quantity, class: @errors[:deposit_quantity_class], id: "default-datepicker", placeholder: "預入数量米ドル" %>
     </div>
     <div class="tw_mb-5">
-      <label for="jp_en_rate" class="form_label">米ドル円レート* </label>
       <% if @errors[:deposit_rate_msg].present? %>
-        <p><%= @errors[:deposit_rate_msg] %></p>
+        <div class="text-red-600 text-sm mb-1">
+          <p><%= @errors[:deposit_rate_msg] %></p>
+        </div>
       <% end %>
+      <label for="jp_en_rate" class="block text-gray-700 text-sm mb-2">米ドル円レート*
+        <% if @errors[:deposit_rate_msg].blank? && @errors[:deposit_rate_class].include?("ok") %>
+          <span class="ml-2 text-green-500 ok-status">ok</span>
+        <% end %>
+      </label>
       <%= form.text_field :deposit_rate, class: @errors[:deposit_rate_class], id: "default-datepicker", placeholder: "預入レート" %>
     </div>
-    <div class="form_checkbox_section">
-      <!-- flex items-center  -->
+    <!--<div class="form_checkbox_section">
       <div class="h-5">
         <input id="auto_rate" type="checkbox" value="" class="form_checkbox" />
       </div>
       <label for="auto_rate" class="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300">米ドル円レート自動反映</label>
-    </div>
-
-
+    </div>-->

@@ -6,10 +6,16 @@
 
 <%= form_with model: @dollar_yen_transaction, url: create_confirmation_dollar_yen_transactions_path, data: { turbo: false }, class:"form_transaction" do |form|  %>
   <div class="tw_mb-5">
-    <label class="form_label">日付*</label>
     <% if @errors[:date_msg].present? %>
-      <p><%= @errors[:date_msg] %></p>
+      <div class="text-red-600 text-sm mb-1">
+        <p><%= @errors[:date_msg] %></p>
+      </div>
     <% end %>
+    <label class="block text-gray-700 text-sm mb-2">日付*
+      <% if @errors[:date_msg].blank? && @errors[:date_class].include?("ok") %>
+        <span class="ml-2 text-green-500 ok-status">ok</span>
+      <% end %>
+    </label>
     <%= form.text_field :date, class: @errors[:date_class], id: "default-datepicker", placeholder: "日付(yyyy-mm-dd)", required: true %>
   </div>
   <div class="tw_mb-5">
@@ -22,7 +28,7 @@
   <div id="withdrawal_section" style="display: <%= @withdrawal_section_block %>">
     <%= render partial: "form_withdrawal_section", locals: { form: form, dollar_yen_transaction: @dollar_yen_transaction, errors: @errors } %>
   </div>
-  <%= form.submit '登録' %>
+  <%= form.submit '登録', class: "bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mr-2" %>
 <% end %>
 
 <script>
