@@ -4,11 +4,6 @@
   <%= render "layouts/header", user: @user, notification: @notification %>
 <% end %>
 
-<% if flash[:notice] %>
-  <div class="alert alert-success"><%= notice %></div>
-<% end %>
-
-
 <script>
   /**
    * ダウンロード
@@ -118,6 +113,14 @@
     background-color: rgb(239 246 255 / 1);
   }
 </style>  
+
+<% if flash[:notice] %>
+  <section class="bg-white py-4">
+    <div class="flex">
+      <p class="mx-auto font-bold text-red-500"><%= notice %></p>
+    </div>
+  </section>
+<% end %>
 
 <section class="py-8">
   <div class="bg-white flex justify-end px-6 py-4">

@@ -113,27 +113,46 @@ RSpec.describe Requests::DollarYensTransaction, type: :feature do
     let(:addresses_eth) { create(:addresses_eth) }
     let(:transaction_type1) { create(:transaction_type1, address: addresses_eth) }
 
-    context 'deposit.' do
+    # 　作成
+    context 'idなし' do
+      context 'deposit.' do
+        it 'should be object' do
+          req = Requests::DollarYensTransaction.new(date: "2022-02-11", transaction_type: transaction_type1, deposit_quantity: "aaaaa", deposit_rate: "bbbbb")
+          errors = req.get_errors
+          dollar_yen_transaction = req.to_dollar_yen_transaction(errors: errors, address: addresses_eth)
+          expect(dollar_yen_transaction.date).to eq(Date.new(2022, 2, 11))
+          expect(dollar_yen_transaction.address).to eq(addresses_eth)
+          expect(dollar_yen_transaction.transaction_type).to eq(transaction_type1)
+          expect(dollar_yen_transaction.deposit_quantity).to eq(0.0)
+          expect(dollar_yen_transaction.deposit_rate).to eq(BigDecimal(0.0))
+        end
+
+        it 'should be object' do
+          req = Requests::DollarYensTransaction.new(date: "", transaction_type: transaction_type1, deposit_quantity: "aaaaa", deposit_rate: "bbbbb")
+          errors = req.get_errors
+          dollar_yen_transaction = req.to_dollar_yen_transaction(errors: errors, address: addresses_eth)
+          expect(dollar_yen_transaction.id).to be nil
+          expect(dollar_yen_transaction.date).to be nil
+          expect(dollar_yen_transaction.address).to eq(addresses_eth)
+          expect(dollar_yen_transaction.transaction_type).to eq(transaction_type1)
+          expect(dollar_yen_transaction.deposit_quantity).to eq(0.0)
+          expect(dollar_yen_transaction.deposit_rate).to eq(0.0)
+        end
+      end
+    end
+
+    # 更新
+    context 'idあり' do
       it 'should be object' do
-        req = Requests::DollarYensTransaction.new(date: "2022-02-11", transaction_type: transaction_type1, deposit_quantity: "aaaaa", deposit_rate: "bbbbb")
+        req = Requests::DollarYensTransaction.new(id: "1", date: "2022-02-11", transaction_type: transaction_type1, deposit_quantity: "aaaaa", deposit_rate: "bbbbb")
         errors = req.get_errors
         dollar_yen_transaction = req.to_dollar_yen_transaction(errors: errors, address: addresses_eth)
+        expect(dollar_yen_transaction.id).to eq(1)
         expect(dollar_yen_transaction.date).to eq(Date.new(2022, 2, 11))
         expect(dollar_yen_transaction.address).to eq(addresses_eth)
         expect(dollar_yen_transaction.transaction_type).to eq(transaction_type1)
         expect(dollar_yen_transaction.deposit_quantity).to eq(0.0)
         expect(dollar_yen_transaction.deposit_rate).to eq(BigDecimal(0.0))
-      end
-
-      it 'should be object' do
-        req = Requests::DollarYensTransaction.new(date: "", transaction_type: transaction_type1, deposit_quantity: "aaaaa", deposit_rate: "bbbbb")
-        errors = req.get_errors
-        dollar_yen_transaction = req.to_dollar_yen_transaction(errors: errors, address: addresses_eth)
-        expect(dollar_yen_transaction.date).to be nil
-        expect(dollar_yen_transaction.address).to eq(addresses_eth)
-        expect(dollar_yen_transaction.transaction_type).to eq(transaction_type1)
-        expect(dollar_yen_transaction.deposit_quantity).to eq(0.0)
-        expect(dollar_yen_transaction.deposit_rate).to eq(0.0)
       end
     end
   end

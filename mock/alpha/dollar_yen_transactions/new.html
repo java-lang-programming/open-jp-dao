@@ -65,11 +65,6 @@
       </heade>
 
       <section class="py-8">
-        <div class="bg-white mx-auto max-w-screen-xl py-4">
-          <div class="mx-auto flex px-4">
-            <div class="mx-auto">*日付と異なる取引種別の変更はできません。変更したい場合は、削除してから新しい取引データを作成してください。</div>
-          </div>
-        </div>
 
         <form class="form_transaction">
           <div class="tw_mb-5">
@@ -107,6 +102,65 @@
           <button type="submit" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mr-2">登録</button>
         </form>
 
+        <!--<form class="form_transaction">
+          <div class="mb-5">
+            <label class="form_label">日付*<span class="ml-2 text-green-500 ok-status hidden">OK</span><span class="ml-2 text-red-500 ng-status hidden">NG</span></label>
+            <input datepicker id="default-datepicker" type="text" class="form_input" placeholder="Select date">
+          </div>
+          <div class="mb-5">
+            <label for="transaction_kind" class="form_label">取引種別*<span class="ml-2 text-green-500 ok-status hidden">OK</span><span class="ml-2 text-red-500 ng-status hidden">NG</span></label>
+            <select id="transaction_kind" class="form_input">
+              <option selected>Choose a country</option>
+              <option value="US">United States</option>
+              <option value="CA">Canada</option>
+              <option value="FR">France</option>
+              <option value="DE">Germany</option>
+            </select>
+          </div>
+          <div class="mb-5">
+            <label for="en_dollar_value" class="form_label">数量米ドル*<span class="ml-2 text-green-500 ok-status hidden">OK</span><span class="ml-2 text-red-500 ng-status hidden">NG</span></label>
+            <input type="text" id="en_dollar_value" class="form_input" required />
+          </div>
+          <div class="mb-5">
+            <label for="jp_en_rate" class="form_label">レート*<span class="ml-2 text-green-500 ok-status hidden">OK</span><span class="ml-2 text-red-500 ng-status hidden">NG</span></label>
+            <input type="password" id="jp_en_rate" class="form_input" required />
+          </div>
+          <div class="mb-5">
+            <label for="jp_en" class="form_label">日本円<span class="ml-2 text-green-500 ok-status hidden">OK</span><span class="ml-2 text-red-500 ng-status hidden">NG</span></label>
+            <input type="password" id="jp_en" class="form_input" required />
+          </div>
+          <button type="submit" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mr-2">登録</button>
+        </form>-->
+  <!--<div class="bg-white p-8 rounded-lg shadow-md w-full max-w-md">
+    <h2 class="text-2xl font-bold mb-6 text-center text-gray-800">お問い合わせフォーム</h2>
+
+    <form action="#" method="POST">
+      <div class="mb-4">
+        <div class="text-red-600 text-sm mb-1">
+          <p>メールアドレスが無効です。</p>
+        </div>
+
+        <label for="email" class="block text-gray-700 text-sm font-bold mb-2">メールアドレス</label>
+        <input type="email" id="email" name="email"
+               class="shadow appearance-none border border-red-500 rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+               placeholder="your@example.com"
+               value="invalid@example"> </div>
+
+      <div class="mb-6">
+        <label for="password" class="block text-gray-700 text-sm font-bold mb-2">パスワード</label>
+        <input type="password" id="password" name="password"
+               class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 mb-3 leading-tight focus:outline-none focus:shadow-outline"
+               placeholder="********">
+      </div>
+
+      <div class="flex items-center justify-between">
+        <button type="submit"
+                class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">
+          送信
+        </button>
+      </div>
+    </form>
+  </div>-->
       </section>
       <!-- body -->
         <footer class="bg-white rounded-lg shadow-sm dark:bg-gray-900 m-4">

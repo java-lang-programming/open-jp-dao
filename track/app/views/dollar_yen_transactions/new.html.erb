@@ -4,32 +4,34 @@
   <%= render "layouts/header", user: @user, notification: @notification %>
 <% end %>
 
-<%= form_with model: @dollar_yen_transaction, url: create_confirmation_dollar_yen_transactions_path, data: { turbo: false }, class:"form_transaction" do |form|  %>
-  <div class="tw_mb-5">
-    <% if @errors[:date_msg].present? %>
-      <div class="text-red-600 text-sm mb-1">
-        <p><%= @errors[:date_msg] %></p>
-      </div>
-    <% end %>
-    <label class="block text-gray-700 text-sm mb-2">日付*
-      <% if @errors[:date_msg].blank? && @errors[:date_class].include?("ok") %>
-        <span class="ml-2 text-green-500 ok-status">ok</span>
+<section class="py-8">
+  <%= form_with model: @dollar_yen_transaction, url: create_confirmation_dollar_yen_transactions_path, data: { turbo: false }, class:"form_transaction" do |form|  %>
+    <div class="tw_mb-5">
+      <% if @errors[:date_msg].present? %>
+        <div class="text-red-600 text-sm mb-1">
+          <p><%= @errors[:date_msg] %></p>
+        </div>
       <% end %>
-    </label>
-    <%= form.text_field :date, class: @errors[:date_class], id: "default-datepicker", placeholder: "日付(yyyy-mm-dd)", required: true %>
-  </div>
-  <div class="tw_mb-5">
-    <label for="transaction_kind" class="form_label">取引種別*</label>
-    <%= form.select :transaction_type_id, @transaction_types.collect { |c| [c.name, c.id, { "data-kind": c.kind }] }, {}, { class: "form_input", onchange: "onChangeKind(this);" } %>
-  </div>
-  <div id="deposit_section" style="display: <%= @deposit_section_block %>">
-    <%= render partial: "form_deposit_section", locals: { form: form, dollar_yen_transaction: @dollar_yen_transaction, errors: @errors } %>
-  </div>
-  <div id="withdrawal_section" style="display: <%= @withdrawal_section_block %>">
-    <%= render partial: "form_withdrawal_section", locals: { form: form, dollar_yen_transaction: @dollar_yen_transaction, errors: @errors } %>
-  </div>
-  <%= form.submit '登録', class: "bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mr-2" %>
-<% end %>
+      <label class="block text-gray-700 text-sm mb-2">日付*
+        <% if @errors[:date_msg].blank? && @errors[:date_class].include?("ok") %>
+          <span class="ml-2 text-green-500 ok-status">ok</span>
+        <% end %>
+      </label>
+      <%= form.text_field :date, class: @errors[:date_class], id: "default-datepicker", placeholder: "日付(yyyy-mm-dd)", required: true %>
+    </div>
+    <div class="tw_mb-5">
+      <label for="transaction_kind" class="form_label">取引種別*</label>
+      <%= form.select :transaction_type_id, @transaction_types.collect { |c| [c.name, c.id, { "data-kind": c.kind }] }, {}, { class: "form_input", onchange: "onChangeKind(this);" } %>
+    </div>
+    <div id="deposit_section" style="display: <%= @deposit_section_block %>">
+      <%= render partial: "form_deposit_section", locals: { form: form, dollar_yen_transaction: @dollar_yen_transaction, errors: @errors } %>
+    </div>
+    <div id="withdrawal_section" style="display: <%= @withdrawal_section_block %>">
+      <%= render partial: "form_withdrawal_section", locals: { form: form, dollar_yen_transaction: @dollar_yen_transaction, errors: @errors } %>
+    </div>
+    <%= form.submit '登録', class: "bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mr-2" %>
+  <% end %>
+</section>
 
 <script>
   function onChangeKind(selectElement) {

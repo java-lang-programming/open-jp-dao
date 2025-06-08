@@ -202,7 +202,7 @@ class DollarYenTransactionsController < ApplicationViewController
     transaction_type = address.transaction_types.where(id: request[:transaction_type_id]).first
     @transaction_types = address.transaction_types.where(kind: transaction_type.kind)
 
-    req = Requests::DollarYensTransaction.new(date: request[:date], transaction_type: transaction_type, deposit_quantity: request[:deposit_quantity], deposit_rate: request[:deposit_rate], withdrawal_quantity: request[:withdrawal_quantity], exchange_en: request[:exchange_en])
+    req = Requests::DollarYensTransaction.new(id: params[:id], date: request[:date], transaction_type: transaction_type, deposit_quantity: request[:deposit_quantity], deposit_rate: request[:deposit_rate], withdrawal_quantity: request[:withdrawal_quantity], exchange_en: request[:exchange_en])
     errors = req.get_errors
 
     if errors.present?
@@ -317,9 +317,9 @@ class DollarYenTransactionsController < ApplicationViewController
     end
 
     if recalculation_need_count > 50
-      @message = "#{@dollar_yen_transaction.date}以降の取引データが#{recalculation_need_count}件あります。これらの取引を含めて削除と再計算が実行されます。データが多いのでこの処理は非同期で実行します。実行してもよろしいですか。"
+      @message = "#{@dollar_yen_transaction.date}以降の取引データが#{recalculation_need_count}件あります。削除をするとこれらの取引にも再計算が実行されます。データが多いのでこの処理は非同期で実行します。実行してもよろしいですか。"
     else
-      @message = "#{@dollar_yen_transaction.date}以降の取引データが#{recalculation_need_count}件あります。これらの取引を含めて削除と再計算が実行されます。実行してもよろしいですか。"
+      @message = "#{@dollar_yen_transaction.date}以降の取引データが#{recalculation_need_count}件あります。削除をするとこれらの取引にも再計算が実行されます。実行してもよろしいですか。"
     end
   end
 
