@@ -1,4 +1,4 @@
-name: track コードチェック&テスト
+name: rails コードチェック&テスト
 
 on:
   push:
@@ -6,12 +6,8 @@ on:
       - main
       - develop
       - feature/*
-    paths-ignore:
-      - contracts/*
-      - backend/*
-      - docs/*
-      - .gitignore
-      - '**.md'
+    paths:
+      - 'track/**' # このパス以下の変更のみトリガー
 
 env:
   BUNDLER_VESION: 2.5.15
