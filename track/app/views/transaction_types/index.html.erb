@@ -4,13 +4,23 @@
   <%= render "layouts/header", user: @user, notification: @notification %>
 <% end %>
 
-<p>取引種別一覧</p>
-<hr/>
-<p><%= link_to "取引種別追加", new_transaction_type_path %></p>
+<section class="py-8">
+  <div class="flex">
+    <h2 class="mx-auto">取引種別一覧</h2>
+  </div>
+
+  <div class="bg-white flex justify-end px-6 py-4">
+    <%= link_to "作成", new_transaction_type_path, class: "bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mr-2" %>
+  </div>
+
 <% if flash[:notice] %>
-  <div class="alert alert-success"><%= notice %></div>
+  <section class="bg-white py-4">
+    <div class="flex">
+      <p class="mx-auto font-bold text-red-500"><%= notice %></p>
+    </div>
+  </section>
 <% end %>
-<hr/>
+
 <% if @total > 0 %>
     <div class="bg-white">
       <div class="mx-auto max-w-7xl px-6 lg:px-8">
