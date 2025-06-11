@@ -37,7 +37,7 @@ RSpec.describe "Apis::DollarYenTransactions", type: :request do
             {
               date: "2020/06/19",
               transaction_type_name: transaction_type1.name,
-              deposit_en: 1140.0,
+              deposit_en: "¥1,140",
               deposit_quantity: 10.76,
               deposit_rate: 105.95,
               withdrawal_en: nil,
@@ -45,7 +45,7 @@ RSpec.describe "Apis::DollarYenTransactions", type: :request do
               withdrawal_rate: nil,
               balance_quantity: 14.73,
               balance_rate: 106.10,
-              balance_en: 1563
+              balance_en: "¥1,563"
             }
           ]
         })

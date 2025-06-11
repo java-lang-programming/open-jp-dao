@@ -12,7 +12,7 @@ class ImportFilesController < ApplicationViewController
     offset = params[:offset]
     offset = DEFAULT_OFFSET unless offset.present?
 
-    @user = user
+    header_session
 
     session = find_session_by_cookie
 
@@ -27,5 +27,10 @@ class ImportFilesController < ApplicationViewController
         status: import_file.status_on_screen
       }
     end
+  end
+
+  def header_session
+    @user = user
+    @notification = notification
   end
 end

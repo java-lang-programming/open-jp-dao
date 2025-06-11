@@ -10,6 +10,12 @@ class Address < ApplicationRecord
 
   class NotFoundDeleteDollarYenTransactionID < StandardError; end
 
+  # matamask形式のaddress表示
+  def matamask_format_address
+    full_address = address
+    full_address[0...7] + "..." + full_address[-5..-1]
+  end
+
   def generate_dollar_yen_transactions_csv_import_file(output_csv_file_path:)
     csv_data = generate_dollar_yen_transactions_csv_import_data
     File.write(output_csv_file_path, csv_data)

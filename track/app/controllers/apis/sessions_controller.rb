@@ -141,6 +141,6 @@ class Apis::SessionsController < ApplicationController
       return
     end
 
-    render json: { address: session.address.address, network: session.network, last_login: session.last_login }, status: :ok
+    render json: { address: session.address.address, omission_address: session.address.matamask_format_address, network: session.network, last_login: session.last_login }, status: :ok
   end
 end

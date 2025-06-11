@@ -1,78 +1,13 @@
 <% content_for :title do %>WanWan ドル円外貨預金元帳<% end %>
 
 <% content_for :header do %>
-  <%= render "layouts/header", user: @user %>
-<% end %>
-
-<p>ドル円外貨預金元帳</p>
-<hr/>
-<p><%= link_to "csvアップロード画面", csv_upload_dollar_yen_transactions_path %></p>
-<p><%= link_to "取引データ作成", new_dollar_yen_transaction_path %></p>
-<% if flash[:notice] %>
-  <div class="alert alert-success"><%= notice %></div>
-<% end %>
-<hr/>
-<%= form_with url: dollar_yen_transactions_path, method: :get, local: true do |form| %>
-  <%= form.select :transaction_type_id, @transaction_types.collect { |c| [c.name, c.id, { "data-kind": c.kind }]}, {selected: @transaction_type_id, include_blank: "選択して下さい" }, { class: "bg-transparent placeholder:text-slate-400 text-slate-700 text-sm border border-slate-200 rounded pl-3 pr-8 py-2 transition duration-300 ease focus:outline-none focus:border-slate-400 hover:border-slate-400 shadow-sm focus:shadow-md  cursor-pointer mr-4" } %>
-  <%= form.submit 'Search', :name => nil  %>
-<% end %>
-
-<%= form_with url: '#', method: :get do |form| %>
-  <%= form.select :download_id, @downloads.collect { |c| [c[:name], c[:id]]}, { class: "bg-transparent placeholder:text-slate-400 text-slate-700 text-sm border border-slate-200 rounded pl-3 pr-8 py-2 transition duration-300 ease focus:outline-none focus:border-slate-400 hover:border-slate-400 shadow-sm focus:shadow-md  cursor-pointer mr-4" } %>
-  <%= form.submit 'ダウンロード', :name => nil, onclick: 'handleSubmit(event)'  %>
-<% end %>
-
-<p>全<%= @total %>件</p>
-<% if @total > 0 %>
-      <table border="2">
-        <thead>
-          <tr>
-            <th scope="col" rowSpan="2">No</th>
-            <th scope="col" rowSpan="2">取引日</th>
-            <th scope="col" rowSpan="2">取引種類</th>
-            <th scope="col" colSpan="3">預かり入れ</th>
-            <th scope="col" colSpan="3">払出</th>
-            <th scope="col" colSpan="3">残帳簿価格</th>
-            <th scope="col" colSpan="2" rowSpan="2">アクション</th>
-          </tr>
-          <tr>
-            <th scope="col">数量米ドル </th>
-            <th scope="col">レート</th>
-            <th scope="col">円換算</th>
-            <th scope="col">数量米ドル </th>
-            <th scope="col">レート</th>
-            <th scope="col">円換算</th>
-            <th scope="col">数量米ドル </th>
-            <th scope="col">  レート</th>
-            <th scope="col">円換算</th>
-          </tr>
-        </thead>
-        <tbody>
-          <% @dollaryen_transactions.each_with_index do |dollaryen_transaction, index| %>
-            <tr>
-              <th scope="row"><%= index + 1 %></th> 
-              <th scope="row"><%= dollaryen_transaction.date.strftime("%Y/%m/%d")  %></th>
-              <th scope="row"><%= dollaryen_transaction.transaction_type.name %></th>
-              <th scope="row"><%= dollaryen_transaction.deposit_quantity_on_screen %></th>
-              <td><%= dollaryen_transaction.deposit_rate_on_screen %></td>
-              <td><%= dollaryen_transaction.deposit_en_screen %></td>
-              <td><%= dollaryen_transaction.withdrawal_rate_on_screen %></td>
-              <td><%= dollaryen_transaction.withdrawal_quantity_on_screen %></td>
-              <td><%= dollaryen_transaction.withdrawal_en_on_screen %></td>
-              <td><%= dollaryen_transaction.balance_quantity_on_screen %></td>
-              <td><%= dollaryen_transaction.balance_rate_on_screen %></td>
-              <td><%= dollaryen_transaction.balance_en_on_screen %></td>
-              <td><%= link_to "編集", edit_dollar_yen_transaction_path(dollaryen_transaction) %></td>
-              <td><%= link_to "削除", delete_confirmation_dollar_yen_transaction_path(dollaryen_transaction) %></td>
-            </tr>
-          <% end %>
-        </tbody>        
-      </table>
-<% else %>
-  <p>取引データが存在しません。<br/><%= link_to "取引データ作成", new_dollar_yen_transaction_path %>、もしくは<%= link_to "csvアップロード画面", csv_upload_dollar_yen_transactions_path %>から取引データを登録してください。</p>
+  <%= render "layouts/header", user: @user, notification: @notification %>
 <% end %>
 
 <script>
+  /**
+   * ダウンロード
+   **/
   function handleSubmit(event) {
     event.preventDefault();
     const form = event.target.form;
@@ -80,6 +15,242 @@
     location.href = '/apis/dollaryen/downloads/' + username;
     return false;
   }
+
+  /**
+   * モーダルエリアの表示/非表示処理
+   **/
+  function modalArea(itemRow) {
+    const modalAreaElement = itemRow.querySelector('.modal-area');
+    if (modalAreaElement.classList.contains('hidden')) {
+      modalAreaElement.classList.remove('hidden');
+      return;
+    }
+    modalAreaElement.classList.add('hidden');
+  }
+
+  /**
+   * イベントの設定
+   **/
+  function setEventListener() {
+    const container = document.querySelector('.list-container'); // 行を囲む親要素
+    if (container) {
+      container.addEventListener('click', (event) => {
+        const clickedElement = event.target;
+        const itemRow = clickedElement.closest('.item-row'); // クリックされた要素から最も近い親の.item-rowを探す
+        if (itemRow) {
+          const itemId = itemRow.dataset.id;
+
+          if (clickedElement.classList.contains('delete')) {
+            event.stopPropagation(); // イベントの伝播を停止
+            modalArea(itemRow);
+            // 削除処理
+            window.location.href = `./dollar_yen_transactions/${itemId}/delete_confirmation`;
+            return;
+          }
+
+          if (clickedElement.classList.contains('kebabu') || clickedElement.classList.contains('cancel')) {
+            event.stopPropagation(); // イベントの伝播を停止
+            modalArea(itemRow);
+            return;
+          }
+
+          window.location.href = `./dollar_yen_transactions/${itemId}/edit`;
+        }
+      });
+    }
+  }
+
+  // イベントの登録の呼び出し
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', () => {
+      setEventListener();
+    });
+  } else {
+    setEventListener();
+  }
+
 </script>
+<style>
+  .list-hover-bg-gray-100:hover {
+    background-color: #f3f4f6; /* gray-100 の色コード */
+  }
+  /** ここからページング **/
+  .pagination {
+    margin-top: 2px;
+    font-size: 0.875rem;
+    line-height: 1.25rem;
+    display: inline-flex;
+  }
 
+  .page-item {
+    color: rgb(107 114 128 / 1);
+    line-height: 1.25;
+    padding-left: 0.75rem;
+    padding-right: 0.75rem;
+    background-color: rgb(255 255 255 / 1);
+    border-color: rgb(209 213 219 / 1);
+    border-width: 1px;
+    align-items: center;
+    height: 2rem;
+    display: flex;
+  }
 
+  .page-item:hover {
+    background-color: #f3f4f6; /* gray-100 の色コード */
+  }
+
+  .prev {
+    border-start-start-radius: 0.5rem;
+    border-end-start-radius: 0.5rem;
+  }
+
+  .next {
+    border-start-end-radius: 0.5rem;
+    border-end-end-radius: 0.5rem;
+  }
+
+  .active {
+    background-color: rgb(239 246 255 / 1);
+  }
+</style>  
+
+<% if flash[:notice] %>
+  <section class="bg-white py-4">
+    <div class="flex">
+      <p class="mx-auto font-bold text-red-500"><%= notice %></p>
+    </div>
+  </section>
+<% end %>
+
+<section class="py-8">
+  <div class="bg-white flex justify-end px-6 py-4">
+    <%= link_to "作成", new_dollar_yen_transaction_path, class: "bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mr-2" %>
+    <%= link_to "一括作成/更新", csv_upload_dollar_yen_transactions_path, class: "bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded" %>
+  </div>
+
+  <% if @page[:total] > 0 %>
+    <div class="bg-white flex justify-between px-6">
+      <div>
+        <%= form_with url: dollar_yen_transactions_path, method: :get, local: true do |form| %>
+          <%= form.select :transaction_type_id, @transaction_types.collect { |c| [c.name, c.id, { "data-kind": c.kind }]}, {selected: @transaction_type_id, include_blank: "なし" }, { class: "bg-transparent placeholder:text-slate-400 text-slate-700 text-sm border border-slate-200 rounded pl-3 pr-8 py-2 transition duration-300 ease focus:outline-none focus:border-slate-400 hover:border-slate-400 shadow-sm focus:shadow-md  cursor-pointer mr-4" } %>
+          <%= form.submit '検索', :name => nil, class: "text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 rounded-lg text-sm px-4 py-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800" %>
+        <% end %>
+      </div>
+      <div>
+        <%= form_with url: '#', method: :get do |form| %>
+          <%= form.select :download_id, @downloads.collect { |c| [c[:name], c[:id]]}, {}, { class: "bg-transparent placeholder:text-slate-400 text-slate-700 text-sm border border-slate-200 rounded pl-3 pr-8 py-2 transition duration-300 ease focus:outline-none focus:border-slate-400 hover:border-slate-400 shadow-sm focus:shadow-md  cursor-pointer mr-4" } %>
+          <%= form.submit 'ダウンロード', :name => nil, onclick: 'handleSubmit(event)', class: "text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 rounded-lg text-sm px-4 py-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"  %>
+        <% end %>
+      </div>
+    </div>
+
+    <div class="relative overflow-x-auto m-4">
+      <div>
+        <div class="my-4">
+          <p id="item-count" class="text-sm text-gray-500">検索結果: <%= @page[:start_data_number] %> - <%= @page[:end_data_number] %> / <%= @page[:total] %></p>
+        </div>
+
+        <!-- ページ数が2からページングを表示する -->
+        <% if @page[:page] >= 2 %>
+          <div class="flex flex-col space-y-4 items-center justify-center my-4">
+            <nav aria-label="Page navigation example">
+              <ul class="inline-flex -space-x-px text-sm">
+                <li>
+                  <a href="./dollar_yen_transactions?<%= @page[:prev_query] %>" class="flex items-center justify-center px-3 h-8 ms-0 leading-tight text-gray-500 bg-white border border-e-0 border-gray-300 rounded-s-lg hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white">Previous</a>
+                </li>
+                <% @page[:pages].each do |page| %>
+                  <li>
+                    <a href="./dollar_yen_transactions?<%= page[:query] %>" class="flex items-center justify-center px-3 h-8 leading-tight text-gray-500 <%=  page[:page] == @page[:current_page] ? "bg-blue-50" : "bg-white" %> border border-gray-300 <%=  page[:page] == @page[:current_page] ? "hover:bg-blue-100" : "hover:bg-gray-100" %> hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white"><%= page[:page] %></a>
+                  </li>
+                <% end %>
+                <li>
+                  <a href="./dollar_yen_transactions?<%= @page[:next_query] %>" class="flex items-center justify-center px-3 h-8 leading-tight text-gray-500 bg-white border border-gray-300 rounded-e-lg hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white">Next</a>
+                </li>
+              </ul>
+            </nav>
+          </div>
+        <% end %>
+      </div>
+
+      <!-- データ表示 切り出す -->
+      <div class="list-container w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
+        <div class="grid grid-cols-12 text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+          <div class="col-span-1 px-6 py-3 flex items-center">
+            <a href="">取引日↑</a>
+          </div>
+          <div class="col-span-1 px-6 py-3 flex items-center">
+            取引種類
+          </div>
+          <div class="col-span-3 py-3 align-middle text-center">
+            預かり入れ
+            <div class="grid grid-cols-3">
+              <div class="px-2 py-1">数量米ドル</div>
+              <div class="px-2 py-1">ドル/円</div>
+              <div class="px-2 py-1">円換算</div>
+            </div>
+          </div>
+          <div class="col-span-3 py-3 align-middle text-center">
+            払出
+            <div class="grid grid-cols-3">
+              <div class="px-2 py-1">数量米ドル</div>
+              <div class="px-2 py-1">ドル/円</div>
+              <div class="px-2 py-1">円換算</div>
+            </div>
+          </div>
+          <div class="col-span-3 py-3 align-middle text-center">
+            残帳簿価格
+            <div class="grid grid-cols-3">
+              <div class="px-2 py-1">数量米ドル</div>
+              <div class="px-2 py-1">ドル/円</div>
+              <div class="px-2 py-1">円換算</div>
+            </div>
+          </div>
+          <div class="col-span-1 px-6 py-3 flex items-center"></div>
+        </div>
+        <% @dollaryen_transactions.each_with_index do |dollaryen_transaction, index| %>
+          <div class="item-row grid grid-cols-12 bg-white border-b dark:bg-gray-800 dark:border-gray-700 border-gray-200 hover:bg-gray-100 list-hover-bg-gray-100" data-id="<%= dollaryen_transaction[:id] %>">
+            <div class="col-span-1 px-6 py-4 font-normal flex items-center"><%= dollaryen_transaction[:date]  %></div>
+            <div class="col-span-1 px-6 py-4 font-normal flex items-center"><%= dollaryen_transaction[:transaction_type_name] %></div>
+            <div class="col-span-1 py-4 flex items-center justify-center"><%= dollaryen_transaction[:deposit_quantity] %></div>
+            <div class="col-span-1 py-4 flex items-center justify-center"><%= dollaryen_transaction[:deposit_rate] %></div>
+            <div class="col-span-1 py-4 flex items-center justify-center"><%= dollaryen_transaction[:deposit_en] %></div>
+            <div class="col-span-1 py-4 flex items-center justify-center"><%= dollaryen_transaction[:withdrawal_rate] %></div>
+            <div class="col-span-1 py-4 flex items-center justify-center"><%= dollaryen_transaction[:withdrawal_quantity] %></div>
+            <div class="col-span-1 py-4 flex items-center justify-center"><%= dollaryen_transaction[:withdrawal_en] %></div>
+            <div class="col-span-1 py-4 flex items-center justify-center"><%= dollaryen_transaction[:balance_quantity] %></div>
+            <div class="col-span-1 py-4 flex items-center justify-center"><%= dollaryen_transaction[:balance_rate] %></div>
+            <div class="col-span-1 py-4 flex items-center justify-center"><%= dollaryen_transaction[:balance_en] %></div>
+            <div class="col-span-1 py-4 flex items-center justify-center">
+              <div class="kebabu relative inline-block">
+                <button id="dropdownButtonVertical" class="kebabu w-8 h-8 flex items-center justify-center rounded-full hover:bg-gray-200 focus:outline-none" onclick="">
+                  <svg class="kebabu w-5 h-5 text-gray-600" fill="currentColor" viewBox="0 0 16 16">
+                    <path d="M8 4a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3zm0 5a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3zm0 5a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3z"/>
+                  </svg>
+                </button>
+                <div id="dropdownModalHorizontal" class="modal-area absolute top-full right-0 mt-2 w-32 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 focus:outline-none z-20 hidden" role="menu" aria-orientation="vertical" aria-labelledby="dropdownButtonHorizontal">
+                  <div class="py-1" role="none">
+                    <div class="delete block px-4 py-2 text-sm text-red-700 hover:bg-red-100" role="menuitem">
+                      削除
+                    </div>
+                  </div>
+                  <div class="py-1" role="none">
+                    <div class="cancel block px-4 py-2 text-sm text-black-700 hover:bg-red-100" role="menuitem">
+                      キャンセル
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        <% end %>
+    </div>
+  <% else %>
+    <div class="bg-white flex justify-center px-6 py-4">
+      <p class="text-red-500">取引データが存在しません。作成、もしくは一括作成/更新ボタンをクリックして取引データを登録してください。</p>
+    </div>
+  <% end %>
+</section>
+
+<% content_for :footer do %>
+  <%= render "layouts/footer" %>
+<% end %>

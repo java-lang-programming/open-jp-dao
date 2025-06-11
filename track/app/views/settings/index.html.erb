@@ -1,0 +1,36 @@
+<% content_for :title do %>WanWan 設定<% end %>
+
+<% content_for :header do %>
+  <%= render "layouts/header", user: @user, notification: @notification %>
+<% end %>
+
+<script>
+  function confirmDeleteAccount() {
+    if (confirm('本当にアカウントを削除しますか？この操作は取り消せません。')) {
+      try {
+        // ここにアカウント削除のAPI呼び出しなどの非同期処理を記述します
+        // 例：await fetch('/api/delete-account', { method: 'POST' });
+        console.log('アカウント削除処理を実行');
+        alert('アカウントを削除しました。');
+      } catch (error) {
+        console.error('アカウント削除中にエラーが発生しました:', error);
+        alert('アカウント削除に失敗しました。');
+      }
+    }
+  }
+</script>
+
+<section class="py-8">
+  <div class="grid justify-items-center">
+    <p><span class="mx-4">address:</span><%= @user[:address] %></p>
+      <div class="my-4">
+        <button onclick="confirmDeleteAccount()" class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline flex items-center">
+          <svg class="w-5 h-5 mr-2 fill-current text-white" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M2.93 17.07A10 10 0 1 1 17.07 2.93 10 10 0 0 1 2.93 17.07zm12.73-1.41A8 8 0 1 0 4.34 4.34a8 8 0 0 0 11.32 11.32zM9 11V5h2v6H9zm-2 2h4v2H7v-2z"/></svg>アカウント削除
+        </button>
+      </div>
+  </div> 
+</section>
+
+<% content_for :footer do %>
+  <%= render "layouts/footer" %>
+<% end %>

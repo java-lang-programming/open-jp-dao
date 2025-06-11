@@ -48,11 +48,15 @@ RSpec.describe "DollarYenTransactions", type: :request do
         post apis_sessions_signin_path, params: { address: addresses_eth.address, kind: Address.kinds[:ethereum], chain_id: 1, message: "message", signature: "signature", domain: "aiueo.com" }
       end
 
+      # 　データがある場合
+      # 　検索結果 検索　/ ダウンロード
+
+
+      # 　データがない場合
       it "should get not data." do
         get dollar_yen_transactions_path
         body = response.body
-        expect(body).to include 'ドル円外貨預金元帳'
-        expect(response.body).to include '全0件'
+        expect(response.body).to include '取引データが存在しません。作成、もしくは一括作成/更新ボタンをクリックして取引データを登録してください。'
       end
     end
   end
@@ -72,7 +76,7 @@ RSpec.describe "DollarYenTransactions", type: :request do
         get new_dollar_yen_transaction_path
         body = response.body
         expect(body).to include 'ドル円外貨預金元帳 新規作成'
-        expect(body).to include addresses_eth.address
+        expect(body).to include addresses_eth.matamask_format_address
       end
     end
   end
@@ -349,6 +353,7 @@ RSpec.describe "DollarYenTransactions", type: :request do
     end
   end
 
+
   describe "get /foreign_exchange_gain" do
     let(:addresses_eth) { create(:addresses_eth) }
     let(:transaction_type5) { create(:transaction_type5, address: addresses_eth) }
@@ -362,6 +367,12 @@ RSpec.describe "DollarYenTransactions", type: :request do
         mock_apis_verify(body: {})
         get apis_sessions_nonce_path
         post apis_sessions_signin_path, params: { address: addresses_eth.address, kind: Address.kinds[:ethereum], chain_id: 1, message: "message", signature: "signature", domain: "aiueo.com" }
+      end
+
+      # データなしの場合はリダイレクト
+      it "should be redirect." do
+        get foreign_exchange_gain_dollar_yen_transactions_path, params: { year: '2024' }
+        expect(response.status).to eq(302)
       end
 
       # データあり

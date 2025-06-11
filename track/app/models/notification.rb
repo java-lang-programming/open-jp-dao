@@ -1,4 +1,5 @@
 class Notification < ApplicationRecord
-  scope :header, -> { where(start_at: ..Time.now).where(end_at: Time.now..).order(priority: "DESC").order(created_at: "DESC") }
-  # Notification.where(start_at: ..Time.now).where(end_at: Time.now..).order(priority: "DESC").order(created_at: "DESC").first
+  def self.header(start_at: Time.now, end_at: Time.now)
+    Notification.where(start_at: ..start_at).where(end_at: end_at..).order(priority: "DESC").order(created_at: "DESC")
+  end
 end

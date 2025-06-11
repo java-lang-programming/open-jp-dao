@@ -4,20 +4,20 @@ class TransactionTypesController < ApplicationViewController
   skip_before_action :verify_authenticity_token, only: [ :destroy ]
 
   def index
-    @user = user
+    header_session
     base_sql = @session.address.transaction_types
     @total = base_sql.all.count
     @transaction_types = base_sql.order(id: :asc)
   end
 
   def new
-    @user = user
+    header_session
     @kinds = TransactionType.kinds_collection
     @transaction_type = TransactionType.new
   end
 
   def create
-    @user = user
+    header_session
     request = params.require(:transaction_type).permit(:name, :kind)
     transaction_type = TransactionType.new(name: request[:name], kind: request[:kind].to_i, address: @session.address)
     transaction_type.save
@@ -26,14 +26,14 @@ class TransactionTypesController < ApplicationViewController
   end
 
   def edit
-    @user = user
+    header_session
     @kinds = TransactionType.kinds_collection
     @dollar_yen_transactions_count = @session.address.dollar_yen_transactions.where(transaction_type_id: params[:id]).count
     @transaction_type = @session.address.transaction_types.where(id: params[:id]).first
   end
 
   def update
-    @user = user
+    header_session
     request = params.require(:transaction_type).permit(:name, :kind)
     transaction_type = @session.address.transaction_types.where(id: params[:id]).first
     transaction_type.name = request[:name]
@@ -44,7 +44,7 @@ class TransactionTypesController < ApplicationViewController
   end
 
   def destroy
-    @user = user
+    header_session
 
     transaction_type = @session.address.transaction_types.where(id: params[:id]).first
     dollar_yen_transactions_count = @session.address.dollar_yen_transactions.where(transaction_type_id: params[:id]).count
@@ -56,4 +56,11 @@ class TransactionTypesController < ApplicationViewController
 
     redirect_to transaction_types_path, notice: "#{transaction_type.name}を削除しました"
   end
+
+  private
+
+    def header_session
+      @user = user
+      @notification = notification
+    end
 end

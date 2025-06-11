@@ -1,0 +1,218 @@
+<!doctype html>
+<html>
+<head>
+  <!-- https://v1.tailwindcss.com/components/alerts -->
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" type="text/css" href="../css/v1_design.css" />
+</head>
+<body>
+  <section>
+    <!-- header -->
+    <!-- TODO 背景をwhite -->
+    <div class="container">
+      <heade>
+        <!-- header 1行目 -->
+        <div x-data="{ open: open }" class="bg-white mx-auto flex max-w-screen-xl p-5 md:flex-row">
+          <div class="flex flex-row items-center justify-between lg:justify-start">
+            <a href="#" class="text-lg font-bold text-blue-600 lg:pr-8">Wan 
+              <sup>2</sup>
+            </a>
+          </div>
+          <nav :class="{'flex': open, 'hidden': !open}" class="hidden grow flex-col pb-4 md:flex md:flex-row md:justify-end md:pb-0 lg:pl-2">
+            <div class="inline-flex list-none items-center gap-2 lg:ml-auto">
+              <!-- TODO ボタンの色red -->
+              <button class="flex items-center rounded-xl border-gray-600 py-2.5 text-center font-medium text-white transition duration-500 ease-in-out bg-red-700 hover:bg-red-800 focus:outline-none focus:ring-4 focus:ring-gray-500 focus:ring-offset-2 lg:px-8">ログアウト</button>
+            </div>
+          </nav>
+        </div>
+
+        <!-- header 2行目 TODO お問い合わせを右に-->
+        <div class="mx-auto max-w-screen-xl">
+          <div class="overflow-y-auto whitespace-nowrap bg-gray-50 p-5">
+            <ul class="inline-flex list-none items-center">
+              <!-- <li>
+            <a href="#" class="mr-1 rounded-md px-4 py-1 text-base text-gray-500 ring-offset-2 ring-offset-current transition duration-500 ease-in-out hover:text-blue-600 focus:outline-none focus:ring-2">Home</a>
+          </li>-->
+              <li class="font-bold underline">ドル円外貨預金元帳作成</li>
+              <li>
+                <a href="../dollar_yen_transactions/index.html" class="mr-1 rounded-md px-4 py-1 text-base text-gray-500 ring-offset-2 ring-offset-current transition duration-500 ease-in-out hover:text-blue-600 focus:outline-none focus:ring-2">ドル円外貨預金元帳</a>
+              </li>
+              <li>
+                <a href="#" class="mr-1 rounded-md px-4 py-1 text-base text-gray-500 ring-offset-2 ring-offset-current transition duration-500 ease-in-out hover:text-blue-600 focus:outline-none focus:ring-2">お知らせ・ご案内</a>
+              </li>
+              <li>
+                <a href="../settings/index.html" class="mr-1 rounded-md px-4 py-1 text-base text-gray-500 ring-offset-2 ring-offset-current transition duration-500 ease-in-out hover:text-blue-600 focus:outline-none focus:ring-2">設定</a>
+              </li>
+            </ul>
+          </div>
+        </div>
+        <!-- login情報 -->
+        <div class="bg-white mx-auto max-w-screen-xl py-4">
+          <div class="mx-auto flex items-center justify-between px-4">
+            <div class="text-left">0x91582...CC89D(hoverで長い表示)</div>
+            <div class="text-center">munbai</div>
+            <div class="text-right">最終ログイン:2025/01/09</div>
+          </div>
+        </div>
+        <!-- imformation -->
+        <div class="bg-white mx-auto max-w-screen-xl py-4">
+          <div class="mx-auto flex px-4">
+            <div class="mx-auto">確定申告は2026年2月から開始されます。早めに準備をしておきましょう。</div>
+          </div>
+        </div>
+      </heade>
+
+      <section class="py-8">
+        <div class="bg-white mx-auto max-w-screen-xl py-4">
+          <div class="mx-auto flex px-4">
+            <div class="mx-auto">*日付と異なる取引種別の変更はできません。変更したい場合は、削除してから新しい取引データを作成してください。</div>
+          </div>
+        </div>
+
+        <form class="form_transaction">
+          <div class="tw_mb-5">
+            <div class="text-red-600 text-sm mb-1">
+              <p>日付が不正です。</p>
+            </div>
+            <label class="form_label">日付*</label>
+            <input datepicker id="default-datepicker" type="text" class="form_input border-red-500" placeholder="Select date">
+          </div>
+          <div class="tw_mb-5">
+            <label for="transaction_kind" class="form_label">取引種別*</label>
+            <select id="transaction_kind" class="form_input
+            ">
+              <option selected>Choose a country</option>
+              <option value="US">United States</option>
+              <option value="CA">Canada</option>
+              <option value="FR">France</option>
+              <option value="DE">Germany</option>
+            </select>
+          </div>
+          <div class="tw_mb-5">
+            <!-- エラーとOKの場合のcssを作成する -->
+            <label for="en_dollar_value" class="block text-gray-700 text-sm font-bold mb-2">数量米ドル*<span class="ml-2 text-green-500 ok-status">ok</span></label>
+            <input type="text" id="en_dollar_value" class="form_input border-green-500" required />
+          </div>
+          <div class="tw_mb-5">
+            <label for="jp_en_rate" class="form_label">レート*
+            </label>
+            <input type="password" id="password" class="form_input" required />
+          </div>
+          <div class="tw_mb-5">
+            <label for="jp_en" class="form_label">日本円<span class="ml-2 text-red-500 ng-status">NG</span></label>
+            <input type="password" id="password" class="form_input border-red-500" required />
+          </div>
+          <button type="submit" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mr-2">登録</button>
+        </form>
+
+      </section>
+      <!-- body -->
+        <footer class="bg-white rounded-lg shadow-sm dark:bg-gray-900 m-4">
+          <div class="w-full max-w-screen-xl mx-auto p-4 md:py-8">
+            <div class="sm:flex sm:justify-center sm:items-center">
+              <!--<a href="https://flowbite.com/" class="flex items-center mb-4 sm:mb-0 space-x-3 rtl:space-x-reverse">
+                <img src="https://flowbite.com/docs/images/logo.svg" class="h-8" alt="Flowbite Logo" />
+                <span class="self-center text-2xl font-semibold whitespace-nowrap dark:text-white">Flowbite</span>
+            </a>-->
+              <ul class="flex flex-wrap items-center mb-6 text-sm font-medium text-gray-500 sm:mb-0 dark:text-gray-400">
+                <li>
+                  <a href="./terms.html" class="hover:underline me-4 md:me-6">利用規約</a>
+                </li>
+                <li>
+                  <a href="#" class="hover:underline me-4 md:me-6">プライバシーポリシー</a>
+                </li>
+                <li>
+                  <a href="#" class="hover:underline">Contact</a>
+                </li>
+              </ul>
+            </div>
+            <hr class="my-6 border-gray-200 sm:mx-auto dark:border-gray-700 lg:my-8" />
+            <span class="block text-sm text-gray-500 sm:text-center dark:text-gray-400">© 2025 
+              <a href="https://flowbite.com/" class="hover:underline">Marsa</a>. All Rights Reserved.
+            </span>
+          </div>
+        </footer>
+      </div>
+    </section>
+</body>
+</html>
+<!--
+
+document.addEventListener('DOMContentLoaded', () => {
+  const form = document.querySelector('.form_transaction');
+
+  form.addEventListener('submit', (e) => {
+    e.preventDefault(); // フォームのデフォルト送信を防止
+
+    // 各入力フィールドをチェック
+    validateField('default-datepicker', (value) => value.length > 0); // 例: 空ではないことをチェック
+    validateField('transaction_kind', (value) => value !== 'Choose a country'); // 例: デフォルト選択ではないことをチェック
+    validateField('en_dollar_value', (value) => !isNaN(value) && value > 0); // 例: 数値で0より大きいことをチェック
+    validateField('jp_en_rate', (value) => value.length >= 6); // 例: 6文字以上であることをチェック
+    validateField('jp_en', (value) => !isNaN(value)); // 例: 数値であることをチェック
+
+    // 全てのフィールドが有効であればフォームを送信（実際にはここに送信ロジックを記述）
+    if (form.checkValidity()) {
+        console.log('フォームが有効です。送信します。');
+        // form.submit(); // 実際の送信処理
+    } else {
+        console.log('フォームにエラーがあります。');
+    }
+  });
+
+  // 入力イベントごとにバリデーションを実行する例
+  form.querySelectorAll('.form_input').forEach(input => {
+    input.addEventListener('input', () => {
+      // 各フィールドのバリデーション関数を呼び出す
+      if (input.id === 'default-datepicker') {
+        validateField('default-datepicker', (value) => value.length > 0);
+      } else if (input.id === 'transaction_kind') {
+        validateField('transaction_kind', (value) => value !== 'Choose a country');
+      } else if (input.id === 'en_dollar_value') {
+        validateField('en_dollar_value', (value) => !isNaN(value) && value > 0);
+      } else if (input.id === 'jp_en_rate') {
+        validateField('jp_en_rate', (value) => value.length >= 6);
+      } else if (input.id === 'jp_en') {
+        validateField('jp_en', (value) => !isNaN(value));
+      }
+    });
+  });
+
+
+  /**
+   * フィールドのバリデーションを行い、スタイルとテキストを更新する関数
+   * @param {string} inputId - 入力フィールドのID
+   * @param {function} validatorFn - バリデーションを実行する関数。true/falseを返す。
+   */
+  function validateField(inputId, validatorFn) {
+    const inputElement = document.getElementById(inputId);
+    const labelElement = inputElement.previousElementSibling; // labelはinputの直前の要素にあると仮定
+    const okStatusSpan = labelElement.querySelector('.ok-status');
+    const ngStatusSpan = labelElement.querySelector('.ng-status');
+
+    if (!inputElement || !labelElement || !okStatusSpan || !ngStatusSpan) {
+        console.warn(`要素が見つかりません: ${inputId}`);
+        return;
+    }
+
+    const isValid = validatorFn(inputElement.value);
+
+    // input要素の枠線スタイルを更新
+    inputElement.classList.remove('border-red-500', 'border-green-500');
+    if (isValid) {
+      inputElement.classList.add('border-green-500');
+      okStatusSpan.classList.remove('hidden');
+      ngStatusSpan.classList.add('hidden');
+    } else {
+      inputElement.classList.add('border-red-500');
+      okStatusSpan.classList.add('hidden');
+      ngStatusSpan.classList.remove('hidden');
+    }
+    // HTML5のバリデーションAPIを使ってフォームの有効性をマーク
+    inputElement.setCustomValidity(isValid ? '' : 'invalid');
+  }
+});
+
+-->

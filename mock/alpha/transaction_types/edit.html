@@ -1,0 +1,102 @@
+<!doctype html>
+<html>
+<head>
+  <!-- lint https://csslint.net/ ->
+  <!-- https://v1.tailwindcss.com/components/alerts -->
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" type="text/css" href="../css/v1_design.css" />
+  <!--<style type="text/css">
+
+
+    .main {
+      padding-top: 6rem;
+      padding-bottom: 6rem;
+      padding-left: 1.25rem;
+      padding-right: 1.25rem;
+    }
+
+    .main_content {
+      --tw-bg-opacity: 1;
+      background-color: rgb(243 244 246 / var(--tw-bg-opacity, 1));
+      border-radius: 0.5rem;
+      padding: 2rem;
+    }
+
+
+
+  </style>-->
+</head>
+<body>
+  <!-- ここで全体のコンテナを囲む-->
+
+  <!-- header -->
+<div class="container">
+  <header>
+    <!-- header 1行目 -->
+    <div class="header_nav_first">
+      <div class="left_side"><a href="#" class="site_name">WanWan</a></div>
+      
+      <!-- navigation -->
+      <nav class="nav">
+        <div>
+          <button class="btn_session">ログアウト</button>
+        </div>
+      </nav>
+    </div>
+
+    <!-- header 2行目-->
+    <div class="header_nav_second">
+      <div>
+        <ul class="ul_nav">
+          <li class="li_nav">
+            <a href="#" class="li_nav_link">Home</a>
+          </li>
+          <li class="li_nav"><a href="#" class="li_nav_link">お知らせ・ご案内</a>
+          </li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="header_session">
+      <div class="item">0x72329g8wewejuiuiwerwerw</div>
+      <div class="item">munbai</div>
+      <div class="item">最終ログイン:&nbsp;2025/01/09</div>
+    </div>
+  </header>
+
+  <section class="information">
+    <div>
+      <span>New</span>
+      <span >Get the coolest t-shirts from our brand new store</span>
+    </div>
+  </section>
+
+
+  <!-- body -->
+  <section >
+    <h2>取引種別更新</h2>
+    <div class="bg-white py-24">
+      <form class="form_transaction">
+        <div class="tw_mb-5">
+          <label for="name" class="form_label">名称*</label>
+          <input type="text" id="name" class="form_input form_input_ok" required />
+        </div>
+        <div class="tw_mb-5">
+          <label for="kind" class="form_label">取引種別*(取引種別の変更はできません。取引種別を変更したい場合は、<a href="">関連する取引データ</a>を削除後に、取引種別を削除してください。)</label>
+          <select id="kind" class="form_input
+          ">
+            <option selected>入金</option>
+            <option value="US">出金</option>
+          </select>
+        </div>
+        <button type="submit" class="btn_submit">登録</button>
+      </form>
+    </div>
+  </section>
+
+</div>
+
+</body>
+</html>

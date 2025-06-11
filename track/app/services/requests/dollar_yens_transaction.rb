@@ -4,9 +4,7 @@ module Requests
     include ActiveModel::Model
     include ActiveModel::Validations
 
-    attr_accessor :transaction_type, :date, :deposit_quantity, :deposit_rate, :withdrawal_quantity, :exchange_en
-
-    # validate :validate_invalid_withdrawal_quantity
+    attr_accessor :id, :transaction_type, :date, :deposit_quantity, :deposit_rate, :withdrawal_quantity, :exchange_en
 
     validates :transaction_type, presence: true
     validates :date, presence: true
@@ -147,6 +145,7 @@ module Requests
 
     def to_dollar_yen_transaction(errors:, address:)
       dollar_yen_transaction = DollarYenTransaction.new
+      dollar_yen_transaction.id = id if id.present?
       dollar_yen_transaction.address = address
       dollar_yen_transaction.transaction_type = transaction_type
       unless errors.key?(:date)

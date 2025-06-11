@@ -1,4 +1,4 @@
-name: track コードチェック&テスト
+name: rails コードチェック&テスト
 
 on:
   push:
@@ -6,12 +6,8 @@ on:
       - main
       - develop
       - feature/*
-    paths-ignore:
-      - contracts/*
-      - backend/*
-      - docs/*
-      - .gitignore
-      - '**.md'
+    paths:
+      - 'track/**' # このパス以下の変更のみトリガー
 
 env:
   BUNDLER_VESION: 2.5.15
@@ -22,7 +18,7 @@ jobs:
     runs-on: ubuntu-24.04
     strategy:
       matrix:
-        ruby-version: ["3.4.2", "3.5.0-preview1"]
+        ruby-version: ["3.4.4", "3.5.0-preview1"]
     steps:
       - name: Install packages
         run: sudo apt-get update && sudo apt-get install --no-install-recommends -y libjemalloc2 sqlite3

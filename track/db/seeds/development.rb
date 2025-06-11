@@ -98,7 +98,7 @@ puts "ドル円マスタ投入完了"
 puts "お知らせ(header)作成"
 
 Notification.create!(
-   message: "2021/01/12にメンテナンス作業でサービスが利用ができなくなります",
+   message: "確定申告は2026年2月から開始されます。早めに準備をしておきましょう。",
    start_at: Time.now,
    end_at: Time.now.tomorrow,
    priority: 1

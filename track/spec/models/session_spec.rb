@@ -9,7 +9,7 @@ RSpec.describe Session, type: :model do
   describe 'network' do
     context 'ethereum sepoliaの場合' do
       it 'should be ethereum sepolia.' do
-        expect(session_sepolia.network).to eq("Ethereum Sepolia")
+        expect(session_sepolia.network).to eq("Sepolia")
       end
     end
 

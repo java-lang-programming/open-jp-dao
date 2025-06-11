@@ -3,13 +3,11 @@ class DollarYenTransactionsController < ApplicationViewController
 
   skip_before_action :verify_authenticity_token, only: [ :update, :destroy ]
 
-  def index
-    request = params.permit(:transaction_type_id, :limit, :offset)
+  DEFAULT_LIMIT = 50
+  # DEFAULT_OFFSET = 0
 
-    limit = request[:limit]
-    limit = 50 unless limit.present?
-    offset = request[:offset]
-    offset = 0 unless offset.present?
+  def index
+    request = params.permit(:transaction_type_id, :page)
 
     header_session
     address = @session.address
@@ -27,10 +25,31 @@ class DollarYenTransactionsController < ApplicationViewController
 
     base_sql = address.dollar_yen_transactions.preload(:transaction_type)
     base_sql = base_sql.where(transaction_type_id: request[:transaction_type_id]) if request[:transaction_type_id].present?
-    @total = base_sql.all.count
+    total = base_sql.all.count
 
-    # TODO APIと極力同じにするべき
-    @dollaryen_transactions = base_sql.limit(limit).offset(offset).order(date: :desc,  transaction_type_id: :asc)
+    # ページング処理
+    pagy = SimplePagy::Pagy.new(request_page: request[:page], request_query: request).build(total: total)
+
+    dollaryen_transactions = base_sql.limit(DEFAULT_LIMIT).offset(pagy.offset).order(date: :desc,  transaction_type_id: :asc)
+    # result = base_sql.order(date: :desc,  transaction_type_id: :asc)
+    @dollaryen_transactions = dollaryen_transactions.map do |dollaryen_transaction|
+      {
+        id: dollaryen_transaction.id,
+        date: dollaryen_transaction.date.strftime("%Y/%m/%d"),
+        transaction_type_name: dollaryen_transaction.transaction_type.name,
+        deposit_rate: Unit.add_unit(value: dollaryen_transaction.deposit_rate_on_screen, unit: Unit::EN_DOLLAR),
+        deposit_quantity: Unit.add_unit(value: dollaryen_transaction.deposit_quantity_on_screen, unit: Unit::EN_DOLLAR),
+        deposit_en: dollaryen_transaction.deposit_en_screen,
+        withdrawal_rate: Unit.add_unit(value: dollaryen_transaction.withdrawal_rate_on_screen, unit: Unit::EN_DOLLAR),
+        withdrawal_quantity: Unit.add_unit(value: dollaryen_transaction.withdrawal_quantity_on_screen, unit: Unit::EN_DOLLAR),
+        withdrawal_en: dollaryen_transaction.withdrawal_en_on_screen,
+        balance_rate: Unit.add_unit(value: dollaryen_transaction.balance_rate_on_screen, unit: Unit::EN_DOLLAR),
+        balance_quantity: Unit.add_unit(value: dollaryen_transaction.balance_quantity_on_screen, unit: Unit::EN_DOLLAR),
+        balance_en: dollaryen_transaction.balance_en_on_screen
+      }
+    end
+    # 下記がうまく言ったらpagyをそのまま置き換えるようにする
+    @page = { total: pagy.total, page: pagy.page, current_page: pagy.current_page, start_data_number: pagy.start_data_number, end_data_number: pagy.end_data_number, prev_query: pagy.prev_query, next_query: pagy.next_query, pages: pagy.pages_query }
   end
 
   def new
@@ -183,7 +202,7 @@ class DollarYenTransactionsController < ApplicationViewController
     transaction_type = address.transaction_types.where(id: request[:transaction_type_id]).first
     @transaction_types = address.transaction_types.where(kind: transaction_type.kind)
 
-    req = Requests::DollarYensTransaction.new(date: request[:date], transaction_type: transaction_type, deposit_quantity: request[:deposit_quantity], deposit_rate: request[:deposit_rate], withdrawal_quantity: request[:withdrawal_quantity], exchange_en: request[:exchange_en])
+    req = Requests::DollarYensTransaction.new(id: params[:id], date: request[:date], transaction_type: transaction_type, deposit_quantity: request[:deposit_quantity], deposit_rate: request[:deposit_rate], withdrawal_quantity: request[:withdrawal_quantity], exchange_en: request[:exchange_en])
     errors = req.get_errors
 
     if errors.present?
@@ -298,9 +317,9 @@ class DollarYenTransactionsController < ApplicationViewController
     end
 
     if recalculation_need_count > 50
-      @message = "#{@dollar_yen_transaction.date}以降の取引データが#{recalculation_need_count}件あります。これらの取引を含めて削除と再計算が実行されます。データが多いのでこの処理は非同期で実行します。実行してもよろしいですか。"
+      @message = "#{@dollar_yen_transaction.date}以降の取引データが#{recalculation_need_count}件あります。削除をするとこれらの取引にも再計算が実行されます。データが多いのでこの処理は非同期で実行します。実行してもよろしいですか。"
     else
-      @message = "#{@dollar_yen_transaction.date}以降の取引データが#{recalculation_need_count}件あります。これらの取引を含めて削除と再計算が実行されます。実行してもよろしいですか。"
+      @message = "#{@dollar_yen_transaction.date}以降の取引データが#{recalculation_need_count}件あります。削除をするとこれらの取引にも再計算が実行されます。実行してもよろしいですか。"
     end
   end
 
@@ -332,7 +351,9 @@ class DollarYenTransactionsController < ApplicationViewController
 
     base_sql = address.dollar_yen_transactions
     @dollar_yen_transactions_total = base_sql.all.count
-    render :foreign_exchange_gain if @dollar_yen_transactions_total == 0
+
+    # データが存在しない場合はドル円外貨預金元帳に遷移する
+    redirect_to dollar_yen_transactions_path if @dollar_yen_transactions_total == 0
 
     # データのある年度を取得 sqlite3のみ(postgres:EXTRACT(year FROM date))
     years = base_sql.order(date: :desc).distinct.pluck(Arel.sql("strftime('%Y', date)"))
@@ -357,14 +378,14 @@ class DollarYenTransactionsController < ApplicationViewController
     @total = dollaryen_transactions.count
 
     # 為替差額
-    foreign_exchange_gain = dollaryen_transactions.inject (0) { |sum, t| sum += t.exchange_difference }
-    @foreign_exchange_gain = foreign_exchange_gain.floor(2).to_f
+    foreign_exchange_gain = dollaryen_transactions.inject (0) { |sum, t| sum += Fraction.en(value: t.exchange_difference) }
+    @foreign_exchange_gain = Fraction.en(value: foreign_exchange_gain)
 
     @responses = dollaryen_transactions.map do |dollaryen_transaction|
       {
         date: dollaryen_transaction.date.strftime("%Y/%m/%d"),
         transaction_type_name: dollaryen_transaction.transaction_type.name,
-        withdrawal_rate: dollaryen_transaction.withdrawal_rate_on_screen,
+        withdrawal_rate:  dollaryen_transaction.withdrawal_rate_on_screen,
         withdrawal_quantity: dollaryen_transaction.withdrawal_quantity_on_screen,
         withdrawal_en: dollaryen_transaction.withdrawal_en_on_screen,
         exchange_en: dollaryen_transaction.exchange_en_on_screen,
@@ -426,6 +447,7 @@ class DollarYenTransactionsController < ApplicationViewController
 
     def header_session
       @user = user
+      @notification = notification
     end
 
     def set_view_var

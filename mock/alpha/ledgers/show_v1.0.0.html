@@ -1,0 +1,337 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <title>WanWan 為替差益</title>
+    <style>
+      /** ここからページング **/
+      .pagination {
+        margin-top: 2px;
+        font-size: 0.875rem;
+        line-height: 1.25rem;
+        display: inline-flex;
+      }
+
+      .page-item {
+        color: rgb(107 114 128 / 1);
+        line-height: 1.25;
+        padding-left: 0.75rem;
+        padding-right: 0.75rem;
+        background-color: rgb(255 255 255 / 1);
+        border-color: rgb(209 213 219 / 1);
+        border-width: 1px;
+        align-items: center;
+        height: 2rem;
+        display: flex;
+      }
+
+      .page-item:hover {
+        background-color: #f3f4f6; /* gray-100 の色コード */
+      }
+
+      .prev {
+        border-start-start-radius: 0.5rem;
+        border-end-start-radius: 0.5rem;
+      }
+
+      .next {
+        border-start-end-radius: 0.5rem;
+        border-end-end-radius: 0.5rem;
+      }
+
+      .active {
+        background-color: rgb(239 246 255 / 1);
+      }
+
+    </style>
+    <script>
+
+      /**
+       * モーダルエリアの表示/非表示処理
+       **/
+      function modalArea(itemRow) {
+        const modalAreaElement = itemRow.querySelector('.modal-area');
+        if (modalAreaElement.classList.contains('hidden')) {
+          modalAreaElement.classList.remove('hidden');
+          return;
+        }
+        modalAreaElement.classList.add('hidden');
+      }
+
+      /**
+       * クリック処理の設定
+       **/
+      // document.addEventListener('DOMContentLoaded', () => {
+      //   const container = document.querySelector('.list-container'); // 行を囲む親要素
+
+      //   if (container) {
+      //     container.addEventListener('click', (event) => {
+      //       const clickedElement = event.target;
+      //       const itemRow = clickedElement.closest('.item-row'); // クリックされた要素から最も近い親の.item-rowを探す
+      //       if (itemRow) {
+      //         const itemId = itemRow.dataset.id;
+
+      //         if (clickedElement.classList.contains('delete')) {
+      //           event.stopPropagation(); // イベントの伝播を停止
+      //           modalArea(itemRow);
+      //           alert("削除処理")
+      //           return;
+      //         }
+
+      //         // console.log(clickedElement.classList);
+      //         if (clickedElement.classList.contains('kebabu') || clickedElement.classList.contains('cancel')) {
+      //           event.stopPropagation(); // イベントの伝播を停止
+      //           modalArea(itemRow);
+      //           return;
+      //         }
+
+      //         // alert("横クリック");
+      //         window.location.href = `./${itemId}/edit.html`;
+      //       }
+      //     });
+      //   }
+      // });
+    </script>
+  </head>
+  <body>
+    <section>
+      <!-- header -->
+      <!-- TODO 背景をwhite -->
+      <div class="container">
+        <heade>
+          <!-- header 1行目 -->
+          <div x-data="{ open: open }" class="bg-white mx-auto flex max-w-screen-xl p-5 md:flex-row">
+            <div class="flex flex-row items-center justify-between lg:justify-start">
+              <a href="#" class="text-lg font-bold text-blue-600 lg:pr-8">Wan 
+                <sup>2</sup>
+              </a>
+            </div>
+            <nav :class="{'flex': open, 'hidden': !open}" class="hidden grow flex-col pb-4 md:flex md:flex-row md:justify-end md:pb-0 lg:pl-2">
+              <div class="inline-flex list-none items-center gap-2 lg:ml-auto">
+                <!-- TODO ボタンの色red -->
+                <button class="flex items-center rounded-xl border-gray-600 py-2.5 text-center font-medium text-white transition duration-500 ease-in-out bg-red-700 hover:bg-red-800 focus:outline-none focus:ring-4 focus:ring-gray-500 focus:ring-offset-2 lg:px-8">ログアウト</button>
+              </div>
+            </nav>
+          </div>
+
+          <!-- header 2行目 TODO お問い合わせを右に-->
+          <div class="mx-auto max-w-screen-xl">
+            <div class="overflow-y-auto whitespace-nowrap bg-gray-50 p-5">
+              <ul class="inline-flex list-none items-center">
+                <!-- <li>
+              <a href="#" class="mr-1 rounded-md px-4 py-1 text-base text-gray-500 ring-offset-2 ring-offset-current transition duration-500 ease-in-out hover:text-blue-600 focus:outline-none focus:ring-2">Home</a>
+            </li>-->
+                <li class="font-bold underline">仕訳帳</li>
+                <li>
+                  <a href="../dollar_yen_transactions/index.html" class="mr-1 rounded-md px-4 py-1 text-base text-gray-500 ring-offset-2 ring-offset-current transition duration-500 ease-in-out hover:text-blue-600 focus:outline-none focus:ring-2">仕訳帳</a>
+                </li>
+                <li>
+                  <a href="#" class="mr-1 rounded-md px-4 py-1 text-base text-gray-500 ring-offset-2 ring-offset-current transition duration-500 ease-in-out hover:text-blue-600 focus:outline-none focus:ring-2">お知らせ・ご案内</a>
+                </li>
+                <li>
+                  <a href="../settings/index.html" class="mr-1 rounded-md px-4 py-1 text-base text-gray-500 ring-offset-2 ring-offset-current transition duration-500 ease-in-out hover:text-blue-600 focus:outline-none focus:ring-2">設定</a>
+                </li>
+              </ul>
+            </div>
+          </div>
+          <!-- login情報 -->
+          <div class="bg-white mx-auto max-w-screen-xl py-4">
+            <div class="mx-auto flex items-center justify-between px-4">
+              <div class="text-left">0x91582...CC89D(hoverで長い表示)</div>
+              <div class="text-center">munbai</div>
+              <div class="text-right">最終ログイン:2025/01/09</div>
+            </div>
+          </div>
+          <!-- imformation -->
+          <div class="bg-white mx-auto max-w-screen-xl py-4">
+            <div class="mx-auto flex px-4">
+              <div class="mx-auto">確定申告は2026年2月から開始されます。早めに準備をしておきましょう。</div>
+            </div>
+          </div>
+        </heade>
+
+        <section class="py-8">
+
+          <div class="bg-white flex justify-between px-6">
+            <div>
+              <!-- https://www.material-tailwind.com/docs/html/select -->
+              <select class="bg-transparent placeholder:text-slate-400 text-slate-700 text-sm border border-slate-200 rounded pl-3 pr-8 py-2 transition duration-300 ease focus:outline-none focus:border-slate-400 hover:border-slate-400 shadow-sm focus:shadow-md  cursor-pointer mr-4">
+                <option>なし</option>
+                <option>通信費</option>
+                <option>水道光熱費</option>
+              </select>
+              <button type="submit" class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 rounded-lg text-sm px-4 py-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">検索</button>
+            </div>
+          </div>
+          <!-- 検索項目 -->
+          <!---  ここから一覧 -->
+          <div class="relative overflow-x-auto m-4">
+            <div>
+              <div class="my-4">
+                <p id="item-count" class="text-sm text-gray-500">検索結果: 1 - 20 / 218</p>
+              </div>
+              <div class="flex flex-col space-y-4 items-center justify-center my-4">
+
+                <!--<nav class="pagy-nav pagination" role="navigation" aria-label="pagination">
+                  <ul class="pagination">
+                    <li class="page-item prev disabled"><a href="#">&laquo;</a></li>
+                    <li class="page-item active"><a href="#">1</a></li>
+                    <li class="page-item"><a href="/?page=2">2</a></li>
+                    <li class="page-item next"><a href="/?page=2">&raquo;</a></li>
+                  </ul>
+                </nav>-->
+
+                <nav aria-label="Page navigation example">
+                  <ul class="inline-flex -space-x-px text-sm">
+                    <li>
+                      <a href="#" class="flex items-center justify-center px-3 h-8 ms-0 leading-tight text-gray-500 bg-white border border-e-0 border-gray-300 rounded-s-lg hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white">Previous</a>
+                    </li>
+                    <li>
+                      <a href="#" class="flex items-center justify-center px-3 h-8 leading-tight text-gray-500 bg-white border border-gray-300 hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white">1</a>
+                    </li>
+                    <li>
+                      <a href="#" class="flex items-center justify-center px-3 h-8 leading-tight text-gray-500 bg-white border border-gray-300 hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white">2</a>
+                    </li>
+                    <li>
+                      <a href="#" aria-current="page" class="flex items-center justify-center px-3 h-8 text-blue-600 border border-gray-300 bg-blue-50 hover:bg-blue-100 hover:text-blue-700 dark:border-gray-700 dark:bg-gray-700 dark:text-white">3</a>
+                    </li>
+                    <li>
+                      <a href="#" class="flex items-center justify-center px-3 h-8 leading-tight text-gray-500 bg-white border border-gray-300 hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white">4</a>
+                    </li>
+                    <li>
+                      <a href="#" class="flex items-center justify-center px-3 h-8 leading-tight text-gray-500 bg-white border border-gray-300 hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white">5</a>
+                    </li>
+                    <li>
+                      <a href="#" class="flex items-center justify-center px-3 h-8 leading-tight text-gray-500 bg-white border border-gray-300 rounded-e-lg hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white">Next</a>
+                    </li>
+                  </ul>
+                </nav>
+
+              </div>
+            </div>
+
+            <!-- account_itemsにデータがある時は最初からチェックしておく -->
+            <!-- 登録 ledgersテーブルにチェックしたデータを登録 account_itemsから名称を取得 なければaccount_itemsに登録 ある場合は按分や調整金を取得 -->
+            <!-- 以下をdivにする。絶対将来的なことを考えると間違いない できればresuponnsibu -->
+            <!-- start -->
+            <div class="list-container w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
+              <div class="grid grid-cols-8 text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+                <div class="col-span-1 px-6 py-3 flex items-center">
+                  チェック
+                </div>
+                <div class="col-span-1 px-6 py-3 flex items-center">
+                  <a href="">日付</a>
+                </div>
+                <div class="col-span-1 px-6 py-3 flex items-center">
+                  勘定科目
+                </div>
+                <div class="col-span-1 px-6 py-3 flex items-center">
+                  名称
+                </div>
+                <div class="col-span-1 px-6 py-3 flex items-center">
+                  額面
+                </div>
+                <div class="col-span-1 px-6 py-3 flex items-center">
+                  按分額
+                </div>
+                <div class="col-span-1 px-6 py-3 flex items-center">
+                  按分率
+                </div>
+                <div class="col-span-1 px-6 py-3 flex items-center">
+                  計上額
+                </div>
+              </div>
+              <div class="item-row grid grid-cols-8 bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-100" data-id="456">
+                <div class="col-span-1 px-6 py-4 font-normal flex items-center"><input id="default-checkbox" type="checkbox" value="" class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded-sm focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"></div>
+                <div class="col-span-1 px-6 py-4 font-normal flex items-center">2020/04/01</div>
+                <div class="col-span-1 px-6 py-4 font-normal flex items-center">通信費</div>
+                <div class="col-span-1 px-6 py-4 font-normal flex items-center">エンヒカリ</div>
+                <div class="col-span-1 px-6 py-4 font-normal flex items-center">¥5,643</div>
+                <div class="col-span-1 px-6 py-4 font-normal flex items-center">¥-825</div>
+                <div class="col-span-1 px-6 py-4 font-normal flex items-center">0.8</div>
+                <div class="col-span-1 px-6 py-4 font-normal flex items-center">¥3,854</div>
+              </div>
+              <div class="item-row grid grid-cols-8 bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-100" data-id="456">
+                <div class="col-span-1 px-6 py-4 font-normal flex items-center"><input id="default-checkbox" type="checkbox" value="" class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded-sm focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"></div>
+                <div class="col-span-1 px-6 py-4 font-normal flex items-center">2025/03/27</div>
+                <div class="col-span-1 px-6 py-4 font-normal flex items-center">通信費</div>
+                <div class="col-span-1 px-6 py-4 font-normal flex items-center">エンヒカリ</div>
+                <div class="col-span-1 px-6 py-4 font-normal flex items-center">¥9,333</div>
+                <div class="col-span-1 px-6 py-4 font-normal flex items-center"></div>
+                <div class="col-span-1 px-6 py-4 font-normal flex items-center">0.2</div>
+                <div class="col-span-1 px-6 py-4 font-normal flex items-center">¥1,866</div>
+              </div>
+              <div class="item-row grid grid-cols-8 bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-100" data-id="456">
+                <div class="col-span-1 px-6 py-4 font-normal flex items-center"><input id="default-checkbox" type="checkbox" value="" class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded-sm focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"></div>
+                <div class="col-span-1 px-6 py-4 font-normal flex items-center">2025/06/04</div>
+                <div class="col-span-1 px-6 py-4 font-normal flex items-center">消耗品費</div>
+                <div class="col-span-1 px-6 py-4 font-normal flex items-center">RubyMine</div>
+                <div class="col-span-1 px-6 py-4 font-normal flex items-center">¥9,148</div>
+                <div class="col-span-1 px-6 py-4 font-normal flex items-center"></div>
+                <div class="col-span-1 px-6 py-4 font-normal flex items-center">1</div>
+                <div class="col-span-1 px-6 py-4 font-normal flex items-center">¥9,148</div>
+              </div>
+            </div>
+            <!-- end -->
+
+            <!-- htmlでdivの一覧画面を作って、行をクリックすると詳細画面に遷移して、行のボタンをクリックするとモーダルで削除が表示されて、モーダル以外の箇所をクリックするとモーダルが消えて、削除をおスト削除画面に遷移したい -->
+            <!-- modal -->
+            <div id="deleteModal" class="modal-overlay fixed inset-0 bg-gray-600 bg-opacity-50 flex items-center justify-center z-50 hidden">
+              <div class="modal-content relative bg-white rounded-lg shadow-xl w-11/12 md:max-w-sm mx-auto p-6">
+                  <button class="close-modal-button absolute top-4 right-4 text-gray-500 hover:text-gray-800 focus:outline-none">
+                      <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                      </svg>
+                  </button>
+
+                  <h3 class="text-lg font-semibold text-gray-900 mb-4">本当に削除しますか？</h3>
+                  <p class="text-gray-700 mb-6">
+                      この操作は元に戻せません。<br>
+                      <span id="deletingItemInfo" class="font-medium text-blue-700"></span> を削除します。
+                  </p>
+                  <div class="flex justify-end space-x-3">
+                      <button class="close-modal-button px-4 py-2 bg-gray-200 text-gray-800 rounded hover:bg-gray-300 focus:outline-none">
+                          キャンセル
+                      </button>
+                      <button id="confirmDeleteButton" class="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700 focus:outline-none">
+                          削除
+                      </button>
+                  </div>
+               </div>
+            </div>
+
+
+          </div>
+        </section>
+        <!-- body -->
+        <footer class="bg-white rounded-lg shadow-sm dark:bg-gray-900 m-4">
+          <div class="w-full max-w-screen-xl mx-auto p-4 md:py-8">
+            <div class="sm:flex sm:justify-center sm:items-center">
+              <!--<a href="https://flowbite.com/" class="flex items-center mb-4 sm:mb-0 space-x-3 rtl:space-x-reverse">
+                <img src="https://flowbite.com/docs/images/logo.svg" class="h-8" alt="Flowbite Logo" />
+                <span class="self-center text-2xl font-semibold whitespace-nowrap dark:text-white">Flowbite</span>
+            </a>-->
+              <ul class="flex flex-wrap items-center mb-6 text-sm font-medium text-gray-500 sm:mb-0 dark:text-gray-400">
+                <li>
+                  <a href="./terms.html" class="hover:underline me-4 md:me-6">利用規約</a>
+                </li>
+                <li>
+                  <a href="#" class="hover:underline me-4 md:me-6">プライバシーポリシー</a>
+                </li>
+                <li>
+                  <a href="#" class="hover:underline">Contact</a>
+                </li>
+              </ul>
+            </div>
+            <hr class="my-6 border-gray-200 sm:mx-auto dark:border-gray-700 lg:my-8" />
+            <span class="block text-sm text-gray-500 sm:text-center dark:text-gray-400">© 2025 
+              <a href="https://flowbite.com/" class="hover:underline">Marsa</a>. All Rights Reserved.
+            </span>
+          </div>
+        </footer>
+      </div>
+    </section>
+  </body>
+</html>

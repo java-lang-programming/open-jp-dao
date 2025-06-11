@@ -22,7 +22,8 @@ class Session < ApplicationRecord
 
   # https://chainlist.org/
   def network
-    return "Ethereum Sepolia" if chain_id == Session::ETHEREUM_SEPOLIA
+    # TODO 接続チェーンはここでは(表記)判断しない
+    return "Sepolia" if chain_id == Session::ETHEREUM_SEPOLIA
     return "Ethereum Mainnet" if chain_id == Session::ETHEREUM_MAINNET
     return "Polygon Mainnet" if chain_id == Session::POLYGON_MAINNET
     # return "Base" if chain_id == 8453

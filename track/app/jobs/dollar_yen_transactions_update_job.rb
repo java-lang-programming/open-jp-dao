@@ -17,7 +17,6 @@ class DollarYenTransactionsUpdateJob < ApplicationJob
         DollarYenTransaction.import dollar_yens_transactions, on_duplicate_key_update: { conflict_target: [ :id ], columns: [ :deposit_rate, :deposit_quantity, :deposit_en, :balance_rate, :balance_quantity, :balance_en ] },  validate: true
       end
     rescue => e
-      puts e
       Rails.error.report(e)
     end
   end

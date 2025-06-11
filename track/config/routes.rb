@@ -46,6 +46,8 @@ Rails.application.routes.draw do
 
   resources :import_files, only: [ :index ]
 
+  resources :settings, only: [ :index ]
+
   post "sessions/logout"
   get "sessions/signout"
 

@@ -12,5 +12,12 @@ docker exec -it open-jp-dao-python-server-dev /bin/sh
 
 ```
 cd backend
-docker-compose build
+make dc_build
+```
+
+## コンテナのup
+
+```
+cd backend
+make dc_up
 ```
