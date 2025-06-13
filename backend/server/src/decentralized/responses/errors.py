@@ -27,6 +27,8 @@ class ErrorCodes:
     INVALID_CHAIN_ID: str = "E0000001"
     # イーサリアムに接続できない
     NOT_CONNECTED_ETHEREUM = "E0000002"
+    # SiweMessage　verifyエラー
+    SIWE_MESSAGE_VERIFY_ERROR = "E0000003"
     # votec createのエラー
     ERROR_VOTE_CREATE = "EVC00001"
     # votec showのエラー

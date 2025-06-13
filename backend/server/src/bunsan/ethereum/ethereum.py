@@ -1,16 +1,15 @@
 # -*- coding: utf-8 -*-
 
 from web3 import Web3
-from decentralized.infrastructures.ethereum.repogitories.base_contract_repository import (
+from web3.types import TxReceipt
+from src.bunsan.ethereum.repositories.base_contract_repository import (
     BaseContractRepository,
 )
-from decentralized.utils.chains import Chains
 
 
 class Ethereum(BaseContractRepository):
-    def __init__(self, url: str, chain_id: int):
-        self.w3 = Web3(Web3.HTTPProvider(url))
-        self.chain_id = chain_id
+    def __init__(self, url: str):
+        self.w3 = Web3(provider=Web3.HTTPProvider(url))
 
     def is_connected(self) -> bool:
         return self.w3.is_connected()
@@ -25,7 +24,7 @@ class Ethereum(BaseContractRepository):
         return self.w3.eth.contract(address=contract_address, abi=abi)
 
     # トランザクじょんのreceipを取得する
-    def get_transaction_receipt(self, tx_hash: any):
+    def get_transaction_receipt(self, tx_hash: any) -> TxReceipt:
         return self.w3.eth.get_transaction_receipt(tx_hash)
 
     def block_number(self):
@@ -39,11 +38,3 @@ class Ethereum(BaseContractRepository):
         # return 0
         checksum_user_address = self.w3.to_checksum_address(user_address)
         return self.w3.from_wei(self.w3.eth.get_balance(checksum_user_address), "ether")
-
-    # ネットワークを返す
-    def network(self):
-        if self.chain_id == Chains.HARDHAT_CHAIN_ID:
-            return "localhost"
-        elif self.chain_id == Chains.SEPOLIA_CHAIN_ID:
-            return "Sepolia"
-        return None

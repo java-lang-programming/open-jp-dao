@@ -1,4 +1,4 @@
-SRC = decentralized/*
+SRC = src/*
 TEST = tests/*
 format:
 	poetry run black $(SRC)
@@ -11,10 +11,13 @@ code_formatting:
 	make lint
 unit_test:
 	poetry run pytest -s --cache-clear tests/bunsan
+unit_test_client:
+	poetry run pytest -s --cache-clear tests/test_main.py
+	poetry run pytest -s --cache-clear tests/test_sessions.py
 launch_dev_server:
-	uvicorn main:app --reload --host=0.0.0.0
+	uvicorn src.main:app --reload --host=0.0.0.0
 launch_pro_server:
-	uvicorn main:app --host=0.0.0.0 &
+	uvicorn src.main:app --host=0.0.0.0 &
 lib_show:
 	poetry show
 outdated:

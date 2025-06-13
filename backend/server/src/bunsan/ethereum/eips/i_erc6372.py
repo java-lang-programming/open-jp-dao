@@ -2,9 +2,9 @@
 
 import abc
 
+
 # https://eips.ethereum.org/EIPS/eip-6372
 class IERC6372(metaclass=abc.ABCMeta):
-
     @abc.abstractmethod
     def clock(self, from_address: str) -> int:
         raise NotImplementedError()

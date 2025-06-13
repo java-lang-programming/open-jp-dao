@@ -1,4 +1,4 @@
-name: backend コードチェック&テスト
+name:  web3 api コードチェック&テスト
 
 on:
   push:
@@ -6,12 +6,8 @@ on:
       - main
       - develop
       - feature/*
-    paths-ignore:
-      - contracts/*
-      - track/*
-      - docs/*
-      - .gitignore
-      - '**.md'
+    paths:
+      - 'backend/server/**' # このパス以下の変更のみトリガー
 
 jobs:
   check:
@@ -41,7 +37,7 @@ jobs:
         run: |
           cd backend/server
           make unit_test
-      # - name: tarvern test
-      #   run: |
-      #     cd backend/server
-      #     make code_formatting
+      - name: unit test for client
+        run: |
+          cd backend/server
+          make unit_test_client

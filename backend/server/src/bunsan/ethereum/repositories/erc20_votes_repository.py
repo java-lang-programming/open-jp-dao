@@ -79,28 +79,26 @@ class ERC20VotesRepository(IERC20Metadata, IERC20, IERC5805, IERC6372):
         )
         # receiptを返す
         receipt = self.ethereum.get_transaction_receipt(tx_hash)
-        #print(receipt)
+        # print(receipt)
 
-        #logs = self.eventTransfer().get_logs()
-        #print(logs)
+        # logs = self.eventTransfer().get_logs()
+        # print(logs)
         return receipt
 
     def clock(self, from_address: str) -> int:
-        return self.contract.functions.clock().call(
-            {"from": from_address}
-        )
+        return self.contract.functions.clock().call({"from": from_address})
 
     def CLOCK_MODE(self, from_address: str) -> str:
-        return self.contract.functions.CLOCK_MODE().call(
-            {"from": from_address}
-        )
+        return self.contract.functions.CLOCK_MODE().call({"from": from_address})
 
     def getVotes(self, tagret_address: str, from_address: str) -> int:
         return self.contract.functions.getVotes(tagret_address).call(
             {"from": from_address}
         )
 
-    def getPastVotes(self, tagret_address: str, timepoint: int, from_address: str) -> str:
+    def getPastVotes(
+        self, tagret_address: str, timepoint: int, from_address: str
+    ) -> str:
         return self.contract.functions.getPastVotes(tagret_address, timepoint).call(
             {"from": from_address}
         )
@@ -119,9 +117,8 @@ class ERC20VotesRepository(IERC20Metadata, IERC20, IERC5805, IERC6372):
             {"from": from_address}
         )
         receipt = self.ethereum.get_transaction_receipt(tx_hash)
-        #　ここでemit
+        # 　ここでemit
 
-        
         return receipt
 
     def eventDelegateChanged():
@@ -129,9 +126,12 @@ class ERC20VotesRepository(IERC20Metadata, IERC20, IERC5805, IERC6372):
 
     #### ここからオリジナル #####
 
-    #　委譲しているユーザーがいればtrue。いればtrue
+    # 　委譲しているユーザーがいればtrue。いればtrue
     def hasDelegates(self, tagret_address: str, from_address: str) -> bool:
-        if self.delegates(tagret_address=tagret_address, from_address=from_address) == ERC20VotesRepository.NOT_FOUND_ADDRESS:
+        if (
+            self.delegates(tagret_address=tagret_address, from_address=from_address)
+            == ERC20VotesRepository.NOT_FOUND_ADDRESS
+        ):
             return False
 
     # seteVoteの逆。tokenを渡して以上する

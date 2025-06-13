@@ -2,17 +2,24 @@
 
 import abc
 
+
 # https://github.com/OpenZeppelin/openzeppelin-contracts/blob/master/contracts/governance/IGovernor.sol
 # versionの差分をどうするか
 # v5.0.2
 class IGovernorRepository(metaclass=abc.ABCMeta):
-
     @abc.abstractmethod
     def hasVoted(self, proposalId: int, target_address: str, from_address: str) -> bool:
         raise NotImplementedError()
-    
+
     @abc.abstractmethod
-    def propose(self, targets: list[str], values: list[int], calldatas: str, description: str, from_address: str) -> int:
+    def propose(
+        self,
+        targets: list[str],
+        values: list[int],
+        calldatas: str,
+        description: str,
+        from_address: str,
+    ) -> int:
         raise NotImplementedError()
 
     @abc.abstractmethod
@@ -29,7 +36,14 @@ class IGovernorRepository(metaclass=abc.ABCMeta):
         raise NotImplementedError()
 
     @abc.abstractmethod
-    def hashProposal(self, targets: list[str], values: list[int], calldatas: str, description: str, from_address: str) -> int:
+    def hashProposal(
+        self,
+        targets: list[str],
+        values: list[int],
+        calldatas: str,
+        description: str,
+        from_address: str,
+    ) -> int:
         raise NotImplementedError()
 
     @abc.abstractmethod

@@ -1,5 +1,8 @@
 # -*- coding: utf-8 -*-
-from bunsan.ethereum.exceptions.exception_invalid_chain_id import ExceptionInvalidChainID
+from src.bunsan.ethereum.exceptions.exception_invalid_chain_id import (
+    ExceptionInvalidChainID,
+)
+
 
 # https://chainlist.org/chain/11155111でRPCを探す
 class Chains:
@@ -30,8 +33,10 @@ class Chains:
                 return Chains.MAIN_CHAIN_ID
             case _:
                 raise ExceptionInvalidChainID(
-                    "invalid chain id. chain id must be {} or {}".format(
-                        Chains.HARDHAT_CHAIN_ID, Chains.SEPOLIA_CHAIN_ID
+                    "invalid chain id. chain id must be {} or {} or {}".format(
+                        Chains.MAIN_CHAIN_ID,
+                        Chains.HARDHAT_CHAIN_ID,
+                        Chains.SEPOLIA_CHAIN_ID,
                     )
                 )
 
