@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 import pytest
-from bunsan.ethereum.chains import Chains
-from bunsan.ethereum.exceptions.exception_invalid_chain_id import ExceptionInvalidChainID
+from src.bunsan.ethereum.chains import Chains
+from src.bunsan.ethereum.exceptions.exception_invalid_chain_id import ExceptionInvalidChainID
 
 class TestChains:
 
