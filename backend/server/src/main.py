@@ -15,6 +15,9 @@ from fastapi.middleware.cors import CORSMiddleware
 # from src.decentralized.requests.nonce import Nonce
 # from src.decentralized.requests.votes.votes_cast import VoteCastRequest
 from src.exceptions.invalid_chain_exception import InvalidChainException
+from src.exceptions.invalid_format_address_exception import (
+    InvalidFormatAddressException,
+)
 from src.exceptions.not_connected_exception import NotConnectedException
 from src.exceptions.siwe_message_verify_exception import SiweMessageVerifyException
 
@@ -56,6 +59,16 @@ async def not_connected_exception_handler(request: Request, exc: NotConnectedExc
 
 @app.exception_handler(InvalidChainException)
 async def invalid_chain_exception_handler(request: Request, exc: InvalidChainException):
+    return JSONResponse(
+        status_code=400,
+        content=exc.errors,
+    )
+
+
+@app.exception_handler(InvalidFormatAddressException)
+async def invalid_format_address_exception_handler(
+    request: Request, exc: InvalidFormatAddressException
+):
     return JSONResponse(
         status_code=400,
         content=exc.errors,

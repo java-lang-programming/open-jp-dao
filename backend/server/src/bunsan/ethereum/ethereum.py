@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 
+from typing import Optional
 from web3 import Web3
 from web3.types import TxReceipt
 from src.bunsan.ethereum.repositories.base_contract_repository import (
@@ -30,11 +31,17 @@ class Ethereum(BaseContractRepository):
     def block_number(self):
         return self.w3.eth.block_number
 
-    def is_checksum_address(self, user_address):
-        return self.w3.is_checksum_address(user_address)
+    def is_checksum_address(self, user_address: str) -> bool:
+        return Web3.is_checksum_address(user_address)
 
     # 残高
     def ether_balance(self, user_address: str):
         # return 0
         checksum_user_address = self.w3.to_checksum_address(user_address)
         return self.w3.from_wei(self.w3.eth.get_balance(checksum_user_address), "ether")
+
+    # ENSの名称を取得する
+    # ENDを取得した時はENS名。ないときはNoneを返す
+    # ちょっと問い合わせに時間がかかる
+    def ens_name(self, address: str) -> Optional[str]:
+        return self.w3.ens.name(address)
