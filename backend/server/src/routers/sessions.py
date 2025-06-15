@@ -100,7 +100,7 @@ async def ens_address(chain_id: str, address: str):
     if not ethereum.is_checksum_address(address):
         raise InvalidFormatAddressException(
             errors=Errors(
-                code=ErrorCodes.NOT_CONNECTED_ETHEREUM,
+                code=ErrorCodes.INVALID_FORMAT_ADDRESS_ERROR,
                 message="イーサリアムのアドレスが不正です",
                 detail="イーサリアムのアドレスを確認してください",
             ).to_dict()
