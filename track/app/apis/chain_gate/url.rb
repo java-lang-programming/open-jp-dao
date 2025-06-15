@@ -1,6 +1,6 @@
 module ChainGate
   module Url
-    # 　これはbackend側で変えた方が良いね。
     VERIFY_POST = "/api/verify"
+    ENS_GET = "/api/ethereum/:chain_id/address/:address/ens"
   end
 end

@@ -10,9 +10,8 @@ module ChainGate
       HTTP_NOT_FOUND = 404
       HTTP_CONFLICT = 409
       HTTP_INTERNAL_SERVER_ERROR = 500
-      UNEXPECTED_ERROR = 600
       UNEXPECTED_ERROR_CODE = "ERR-NOT-IMPLEMENTED"
-      ERROR_HASH = { errors: [ { code: UNEXPECTED_ERROR_CODE } ] }
+      ERROR_HASH = { errors: { code: UNEXPECTED_ERROR_CODE } }
 
       def to_sym_json(body: {})
         JSON.parse(body).deep_symbolize_keys
