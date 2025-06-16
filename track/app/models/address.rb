@@ -112,6 +112,14 @@ class Address < ApplicationRecord
     base_dollar_yen_transaction_delete(target_date: target_date, id: id)
   end
 
+  # encを取得する
+  def fetch_ens(chain_id: 1)
+    ChainGate::Repositories::Sessions::Ens.new(
+      chain_id: chain_id,
+      address: address
+    ).fetch
+  end
+
   class << self
     def kind_errors(kind: nil)
       errors = []

@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-RSpec.describe Job, type: :model do
+RSpec.describe Address, type: :model do
   describe 'matamask_format_address' do
     let(:addresses_eth) { create(:addresses_eth) }
 
@@ -428,6 +428,24 @@ RSpec.describe Job, type: :model do
         base_dollar_yen_transaction = addresses_eth.base_dollar_yen_transaction_delete(target_date: dollar_yen_transaction2_same_day_3.date, id: dollar_yen_transaction2_same_day_3.id)
         expect(base_dollar_yen_transaction).to eq(dollar_yen_transaction2_same_day_2)
       end
+    end
+  end
+
+  describe 'fetch_ens' do
+    let(:addresses_eth) { create(:addresses_eth) }
+
+
+    it 'should ens success' do
+      mock_apis_ens(
+        status: 200,
+        body: { ens_name: "test.eth" }
+      )
+
+      ens_response = addresses_eth.fetch_ens
+
+      status, res = ens_response.result
+      expect(status).to eq(200)
+      expect(res).to eq({ ens_name: "test.eth" })
     end
   end
 end
