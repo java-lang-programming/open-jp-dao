@@ -1,6 +1,6 @@
 module ChainGate
   module Repositories
-    module Authentications
+    module Sessions
       class Verify < ChainGate::Base
         PATH = ChainGate::Url::VERIFY_POST
 
@@ -17,20 +17,20 @@ module ChainGate
           response = post(@params, path)
           case response
           when Net::HTTPCreated then
-            ChainGate::Responses::Authentications::Verify.new(
+            ChainGate::Responses::Sessions::Verify.new(
               status: ChainGate::Responses::Base::HTTP_CREATED, response: response
             )
           when Net::HTTPBadRequest then
-            ChainGate::Responses::Authentications::Verify.new(
+            ChainGate::Responses::Sessions::Verify.new(
               status: ChainGate::Responses::Base::HTTP_BAD_REQUEST, response: response
             )
-          when Net::HTTPInternalServerError
-            ChainGate::Responses::Authentications::Verify.new(
-              status: ChainGate::Responses::Base::HTTP_INTERNAL_SERVER_ERROR, response: response
+          when Net::HTTPForbidden
+            ChainGate::Responses::Sessions::Verify.new(
+              status: ChainGate::Responses::Base::HTTP_FORBIDDEN, response: response
             )
           else
-            ChainGate::Responses::Authentications::Verify.new(
-              status: ChainGate::Responses::Base::UNEXPECTED_ERROR, response: nil
+            ChainGate::Responses::Sessions::Verify.new(
+              status: ChainGate::Responses::Base::HTTP_INTERNAL_SERVER_ERROR, response: nil
             )
           end
         end

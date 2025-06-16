@@ -70,20 +70,20 @@ class Apis::SessionsController < ApplicationController
 
     verify_params = session.make_verify_params(nonce: cookies.signed[:nonce])
 
-    # 　気がついたエラーを修正
+    # 気がついたエラーを修正
     # 　まずはここのログ
     # 　外部APIに対するログ
     # noceとsesson_idの名称 _hoge_nonce
     # envファイル読み込み
 
-    response = nil
-    begin
-      response = ChainGate::Repositories::Authentications::Verify.new(params: verify_params).fetch
-    rescue => e
-      logger.error(e.message)
-      render json: { errors: [ { msg: e } ] }, status: :unauthorized
-      return
-    end
+    response = ChainGate::Repositories::Authentications::Verify.new(params: verify_params).fetch
+    # begin
+    #   response = ChainGate::Repositories::Authentications::Verify.new(params: verify_params).fetch
+    # rescue => e
+    #   logger.error(e.message)
+    #   render json: { errors: [ { msg: e } ] }, status: :unauthorized
+    #   return
+    # end
 
     if response.status_code == 201
       address.sessions.create!(
@@ -97,7 +97,7 @@ class Apis::SessionsController < ApplicationController
         cookies.signed.permanent[:session_id] = { value: session.id, httponly: true, same_site: :lax }
       end
     else
-      render json: { errors: [ { msg: "ログインに失敗しました" } ] }, status: :unauthorized
+      render json: { errors: [ { msg: "ログイン認証に失敗しました" } ] }, status: :unauthorized
       return
     end
 
