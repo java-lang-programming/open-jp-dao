@@ -10,6 +10,10 @@ class Address < ApplicationRecord
 
   class NotFoundDeleteDollarYenTransactionID < StandardError; end
 
+  def ethereum?
+    Address.kinds.key(1) === kind
+  end
+
   # matamask形式のaddress表示
   def matamask_format_address
     full_address = address

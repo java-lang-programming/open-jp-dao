@@ -37,18 +37,11 @@ class Apis::SessionsController < ApplicationController
 
     # ENS情報を取得して更新する
     if address.ethereum?
-      ens_response = nil
-      begin
-        ens_response = address.fetch_ens(chain_id: params[:chain_id])
-      rescue => e
-        logger.error(e.message)
-        render json: { errors: [ { msg: e } ] }, status: :unauthorized
-        return
-      end
+      ens_response = address.fetch_ens(chain_id: params[:chain_id])
 
       status, res = ens_response.result
       if status != 200
-        render json: { errors: [ { msg: res[:message] } ] }, status: :unauthorized
+        render json: { errors: [ { msg: res[:errors][:message] } ] }, status: :unauthorized
         return
       end
 

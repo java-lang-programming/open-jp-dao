@@ -1,6 +1,16 @@
 require 'rails_helper'
 
 RSpec.describe Address, type: :model do
+  describe 'ethereum?' do
+    let(:addresses_eth) { create(:addresses_eth) }
+
+    context 'ethereumの場合' do
+      it 'should be true.' do
+        expect(addresses_eth.ethereum?).to be true
+      end
+    end
+  end
+
   describe 'matamask_format_address' do
     let(:addresses_eth) { create(:addresses_eth) }
 
@@ -433,7 +443,6 @@ RSpec.describe Address, type: :model do
 
   describe 'fetch_ens' do
     let(:addresses_eth) { create(:addresses_eth) }
-
 
     it 'should ens success' do
       mock_apis_ens(
