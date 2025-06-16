@@ -42,6 +42,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_01_13_235613) do
   create_table "addresses", force: :cascade do |t|
     t.string "address", null: false
     t.integer "kind", null: false
+    t.string "ens_name"
     t.datetime "deleted_at"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false

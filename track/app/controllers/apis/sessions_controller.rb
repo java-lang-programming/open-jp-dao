@@ -35,6 +35,27 @@ class Apis::SessionsController < ApplicationController
       address.save
     end
 
+    # ENS情報を取得して更新する
+    if address.ethereum?
+      ens_response = nil
+      begin
+        ens_response = address.fetch_ens(chain_id: params[:chain_id])
+      rescue => e
+        logger.error(e.message)
+        render json: { errors: [ { msg: e } ] }, status: :unauthorized
+        return
+      end
+
+      status, res = ens_response.result
+      if status != 200
+        render json: { errors: [ { msg: res[:message] } ] }, status: :unauthorized
+        return
+      end
+
+      address.ens_name = res[:ens_name]
+      address.save
+    end
+
     # TODO railsのテストコードでsignedが対応されたらテストコードもリファクタリング
     # https://github.com/rails/rails/issues/53207
     session = Session.new(
