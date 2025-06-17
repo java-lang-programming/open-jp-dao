@@ -11,12 +11,12 @@ RSpec.describe Address, type: :model do
     end
   end
 
-  describe 'matamask_format_address' do
+  describe 'metamask_format_address' do
     let(:addresses_eth) { create(:addresses_eth) }
 
     context 'matamaskのaddress形式で返す' do
-      it 'should be get matamask address format.' do
-        expect(addresses_eth.matamask_format_address).to eq('0x00001...CC89D')
+      it 'should be get metamask address format.' do
+        expect(addresses_eth.metamask_format_address).to eq('0x00001...CC89D')
       end
     end
   end
@@ -455,6 +455,19 @@ RSpec.describe Address, type: :model do
       status, res = ens_response.result
       expect(status).to eq(200)
       expect(res).to eq({ ens_name: "test.eth" })
+    end
+  end
+
+  describe 'display_address' do
+    let(:addresses_eth) { create(:addresses_eth) }
+    let(:addresses_eth_with_ens) { create(:addresses_eth, ens_name: 'test.eth') }
+
+    it 'should metamask_format_address when ens_name is empty.' do
+      expect(addresses_eth.display_address).to eq(addresses_eth.metamask_format_address)
+    end
+
+    it 'should ens_eth when ens_name is found.' do
+      expect(addresses_eth_with_ens.display_address).to eq('test.eth')
     end
   end
 end

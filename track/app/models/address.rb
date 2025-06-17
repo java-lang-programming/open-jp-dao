@@ -14,8 +14,8 @@ class Address < ApplicationRecord
     Address.kinds.key(1) === kind
   end
 
-  # matamask形式のaddress表示
-  def matamask_format_address
+  # metamask形式のaddress表示
+  def metamask_format_address
     full_address = address
     full_address[0...7] + "..." + full_address[-5..-1]
   end
@@ -122,6 +122,12 @@ class Address < ApplicationRecord
       chain_id: chain_id,
       address: address
     ).fetch
+  end
+
+  # 画面表示address
+  def display_address
+    return ens_name if ens_name.present?
+    metamask_format_address
   end
 
   class << self
