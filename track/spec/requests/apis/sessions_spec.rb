@@ -47,9 +47,34 @@ RSpec.describe "Apis::SessionsController", type: :request do
         end
       end
 
-      context "session" do
-        it "returns status code bad request when message is empty." do
+      context "ens fetch error(eth connect error)" do
+        before do
           mock_apis_verify(body: {})
+          mock_apis_ens(
+            status: 403,
+            body:  { errors: { code: 'E0000002', message: 'イーサリアムに接続できませんでした', detail: "接続先のステータスを確認してください" } }
+          )
+        end
+
+        it "returns status code bad request when kind is empty." do
+          get apis_sessions_nonce_path
+          post apis_sessions_signin_path, params: { address: "0xaaaa", kind: Address.kinds[:ethereum], chain_id: 1, signature: "signature", domain: "aiueo.com" }
+          expect(response).to have_http_status(:unauthorized)
+          json = JSON.parse(response.body, symbolize_names: true)
+          expect(json).to eq({ errors: [ { msg: "イーサリアムに接続できませんでした" } ] })
+        end
+      end
+
+      context "session" do
+        before do
+          mock_apis_verify(body: {})
+          mock_apis_ens(
+            status: 200,
+            body: { ens_name: "test.eth" }
+          )
+        end
+
+        it "returns status code bad request when message is empty." do
           get apis_sessions_nonce_path
           post apis_sessions_signin_path, params: { address: "0xaaaa", kind: Address.kinds[:ethereum], chain_id: 1, signature: "signature", domain: "aiueo.com" }
           expect(response).to have_http_status(:bad_request)
@@ -58,7 +83,6 @@ RSpec.describe "Apis::SessionsController", type: :request do
         end
 
         it "returns status code bad request when signature is empty." do
-          mock_apis_verify(body: {})
           get apis_sessions_nonce_path
           post apis_sessions_signin_path, params: { address: "0xaaaa", kind: Address.kinds[:ethereum], chain_id: 1,  message: "message", domain: "aiueo.com" }
           expect(response).to have_http_status(:bad_request)
@@ -67,33 +91,80 @@ RSpec.describe "Apis::SessionsController", type: :request do
         end
       end
     end
+
     # https://qiita.com/piggydev/items/a6b2bb4601255e173104
     context "success" do
-      # 　初回ログイン
-      it "returns status code craeted." do
+      before do
         mock_apis_verify(body: {})
+      end
+
+      # 初回ログイン
+      it "returns status code craeted." do
+        mock_apis_ens(
+          status: 200,
+          body: { ens_name: "test.eth" }
+        )
         get apis_sessions_nonce_path
         json = JSON.parse(response.body, symbolize_names: true)
         post apis_sessions_signin_path, params: { address: "0xaaaa", kind: Address.kinds[:ethereum], chain_id: 1, message: "message", signature: "signature", domain: "aiueo.com" }
         expect(response).to have_http_status(:created)
-        session = Address.where(address: "0xaaaa").first.sessions.first
+
+        # 値の確認
+        address = Address.where(address: "0xaaaa").first
+        expect(address.ens_name).to eq("test.eth")
+        session = address.sessions.first
         expect(session.chain_id).to eq(1)
         expect(session.message).to eq("message")
         expect(session.signature).to eq("signature")
       end
 
       # ２回目以降のログイン
-      it "returns status code craeted." do
-        mock_apis_verify(body: {})
-        get apis_sessions_nonce_path
-        post apis_sessions_signin_path, params: { address: addresses_eth.address, kind: Address.kinds[:ethereum], chain_id: 1, message: "message", signature: "signature", domain: "aiueo.com" }
-        session = addresses_eth.sessions.first
-        expect(response).to have_http_status(:created)
-        expect(session.chain_id).to eq(1)
-        expect(session.message).to eq("message")
-        expect(session.chain_id).to eq(1)
-        expect(session.signature).to eq("signature")
-        expect(session.domain).to eq("aiueo.com")
+      context "success login not firsr" do
+        it "returns status code craeted and update ens_name" do
+          mock_apis_ens(
+            status: 200,
+            body: { ens_name: "test.eth" }
+          )
+          get apis_sessions_nonce_path
+          post apis_sessions_signin_path, params: { address: addresses_eth.address, kind: Address.kinds[:ethereum], chain_id: 1, message: "message", signature: "signature", domain: "aiueo.com" }
+
+          # 値の確認
+          session = addresses_eth.sessions.first
+          expect(response).to have_http_status(:created)
+
+          # 更新データ取得
+          temp_address = Address.where(id: addresses_eth.id).first
+
+          expect(temp_address.ens_name).to eq("test.eth")
+          expect(session.chain_id).to eq(1)
+          expect(session.message).to eq("message")
+          expect(session.chain_id).to eq(1)
+          expect(session.signature).to eq("signature")
+          expect(session.domain).to eq("aiueo.com")
+        end
+
+        it "returns status code craeted and update ens_name empty" do
+          mock_apis_ens(
+            status: 200,
+            body: { ens_name: nil }
+          )
+          get apis_sessions_nonce_path
+          post apis_sessions_signin_path, params: { address: addresses_eth.address, kind: Address.kinds[:ethereum], chain_id: 1, message: "message", signature: "signature", domain: "aiueo.com" }
+
+          # 値の確認
+          session = addresses_eth.sessions.first
+          expect(response).to have_http_status(:created)
+
+          # 更新データ取得
+          temp_address = Address.where(id: addresses_eth.id).first
+
+          expect(temp_address.ens_name).to be nil
+          expect(session.chain_id).to eq(1)
+          expect(session.message).to eq("message")
+          expect(session.chain_id).to eq(1)
+          expect(session.signature).to eq("signature")
+          expect(session.domain).to eq("aiueo.com")
+        end
       end
     end
   end
@@ -104,6 +175,10 @@ RSpec.describe "Apis::SessionsController", type: :request do
     context "success" do
       it "returns status code craeted." do
         mock_apis_verify(body: {})
+        mock_apis_ens(
+          status: 200,
+          body: { ens_name: "test.eth" }
+        )
         get apis_sessions_nonce_path
         post apis_sessions_signin_path, params: { address: addresses_eth.address, kind: Address.kinds[:ethereum], chain_id: 1, message: "message", signature: "signature", domain: "aiueo.com" }
         post apis_sessions_verify_path
@@ -126,6 +201,10 @@ RSpec.describe "Apis::SessionsController", type: :request do
       # session_idなし
       it "returns status code unauthorized." do
         mock_apis_verify(body: {})
+        mock_apis_ens(
+          status: 200,
+          body: { ens_name: "test.eth" }
+        )
         get apis_sessions_nonce_path
         post apis_sessions_signin_path, params: { address: addresses_eth.address, kind: Address.kinds[:ethereum], chain_id: 1, message: "message", signature: "signature", domain: "aiueo.com" }
         post apis_sessions_signout_path
@@ -150,6 +229,10 @@ RSpec.describe "Apis::SessionsController", type: :request do
       before do
         # sigin処理
         mock_apis_verify(body: {})
+        mock_apis_ens(
+          status: 200,
+          body: { ens_name: "test.eth" }
+        )
         get apis_sessions_nonce_path
         post apis_sessions_signin_path, params: { address: addresses_eth.address, kind: Address.kinds[:ethereum], chain_id: Session::ETHEREUM_SEPOLIA, message: "message", signature: "signature", domain: "aiueo.com" }
       end
@@ -159,15 +242,10 @@ RSpec.describe "Apis::SessionsController", type: :request do
         expect(response).to have_http_status(:ok)
         json = JSON.parse(response.body, symbolize_names: true)
         expect(json[:address]).to eq(addresses_eth.address)
-        expect(json[:omission_address]).to eq(addresses_eth.matamask_format_address)
+        expect(json[:display_address]).to eq(addresses_eth.ens_name)
         expect(json[:network]).to eq("Sepolia")
         expect(json[:last_login].size).to eq(19)
       end
     end
-  end
-
-  # GODO factory
-  def dummy
-    # {"chain_id":"11155111","message":"http://localhost:3010 wants you to sign in with your Ethereum account:\n0x91582E868c62FA205d38BeBaB7B903322A4CC89D\n\nSign in with Ethereum to the app.\n\nURI: http://localhost:3010\nVersion: 1\nChain ID: 11155111\nNonce: abcdefghajklnlopqA\nIssued At: 2024-12-08T00:02:16.652Z","signature":"0xebf27824d7df2bfeaf69104a306aa3e178616d1903e6136f0eccb18fc05b97fc53dd030ede83131415d1beb089962809dd376067f76cce9d688cee7e9c3760371b","nonce":"abcdefghajklnlopqA","domain":"localhost:3010"}
   end
 end

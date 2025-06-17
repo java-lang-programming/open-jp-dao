@@ -7,15 +7,19 @@ module ChainGate
     BASE_URL = "http://host.docker.internal:8001"
     HEADERS = { "Content-Type" => "application/json" }
 
-    def get(path, query = "")
+    def get(path: "", query: {})
       uri, http = initialize_http(path)
-      req = Net::HTTP::Get.new(uri.path + query)
-      response = nil
+      uri.query = query.to_query if query.present?
+      Rails.logger.info("GET #{BASE_URL}#{uri.request_uri}")
       http.read_timeout = nil
+      req = Net::HTTP::Get.new(uri.request_uri)
+
+      response = nil
+
       begin
         response = http.request(req)
-      rescue StandardError => ex
-        throw ex
+      rescue => ex
+        raise e
       end
       response
     end

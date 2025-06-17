@@ -1,12 +1,22 @@
 require 'rails_helper'
 
-RSpec.describe Job, type: :model do
-  describe 'matamask_format_address' do
+RSpec.describe Address, type: :model do
+  describe 'ethereum?' do
+    let(:addresses_eth) { create(:addresses_eth) }
+
+    context 'ethereumの場合' do
+      it 'should be true.' do
+        expect(addresses_eth.ethereum?).to be true
+      end
+    end
+  end
+
+  describe 'metamask_format_address' do
     let(:addresses_eth) { create(:addresses_eth) }
 
     context 'matamaskのaddress形式で返す' do
-      it 'should be get matamask address format.' do
-        expect(addresses_eth.matamask_format_address).to eq('0x00001...CC89D')
+      it 'should be get metamask address format.' do
+        expect(addresses_eth.metamask_format_address).to eq('0x00001...CC89D')
       end
     end
   end
@@ -428,6 +438,36 @@ RSpec.describe Job, type: :model do
         base_dollar_yen_transaction = addresses_eth.base_dollar_yen_transaction_delete(target_date: dollar_yen_transaction2_same_day_3.date, id: dollar_yen_transaction2_same_day_3.id)
         expect(base_dollar_yen_transaction).to eq(dollar_yen_transaction2_same_day_2)
       end
+    end
+  end
+
+  describe 'fetch_ens' do
+    let(:addresses_eth) { create(:addresses_eth) }
+
+    it 'should ens success' do
+      mock_apis_ens(
+        status: 200,
+        body: { ens_name: "test.eth" }
+      )
+
+      ens_response = addresses_eth.fetch_ens
+
+      status, res = ens_response.result
+      expect(status).to eq(200)
+      expect(res).to eq({ ens_name: "test.eth" })
+    end
+  end
+
+  describe 'display_address' do
+    let(:addresses_eth) { create(:addresses_eth) }
+    let(:addresses_eth_with_ens) { create(:addresses_eth, ens_name: 'test.eth') }
+
+    it 'should metamask_format_address when ens_name is empty.' do
+      expect(addresses_eth.display_address).to eq(addresses_eth.metamask_format_address)
+    end
+
+    it 'should ens_eth when ens_name is found.' do
+      expect(addresses_eth_with_ens.display_address).to eq('test.eth')
     end
   end
 end

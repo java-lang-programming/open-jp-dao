@@ -35,6 +35,20 @@ class Apis::SessionsController < ApplicationController
       address.save
     end
 
+    # ENS情報を取得して更新する
+    if address.ethereum?
+      ens_response = address.fetch_ens(chain_id: params[:chain_id])
+
+      status, res = ens_response.result
+      if status != 200
+        render json: { errors: [ { msg: res[:errors][:message] } ] }, status: :unauthorized
+        return
+      end
+
+      address.ens_name = res[:ens_name]
+      address.save
+    end
+
     # TODO railsのテストコードでsignedが対応されたらテストコードもリファクタリング
     # https://github.com/rails/rails/issues/53207
     session = Session.new(
@@ -56,20 +70,20 @@ class Apis::SessionsController < ApplicationController
 
     verify_params = session.make_verify_params(nonce: cookies.signed[:nonce])
 
-    # 　気がついたエラーを修正
+    # 気がついたエラーを修正
     # 　まずはここのログ
     # 　外部APIに対するログ
     # noceとsesson_idの名称 _hoge_nonce
     # envファイル読み込み
 
-    response = nil
-    begin
-      response = ChainGate::Repositories::Authentications::Verify.new(params: verify_params).fetch
-    rescue => e
-      logger.error(e.message)
-      render json: { errors: [ { msg: e } ] }, status: :unauthorized
-      return
-    end
+    response = ChainGate::Repositories::Sessions::Verify.new(params: verify_params).fetch
+    # begin
+    #   response = ChainGate::Repositories::Authentications::Verify.new(params: verify_params).fetch
+    # rescue => e
+    #   logger.error(e.message)
+    #   render json: { errors: [ { msg: e } ] }, status: :unauthorized
+    #   return
+    # end
 
     if response.status_code == 201
       address.sessions.create!(
@@ -83,7 +97,7 @@ class Apis::SessionsController < ApplicationController
         cookies.signed.permanent[:session_id] = { value: session.id, httponly: true, same_site: :lax }
       end
     else
-      render json: { errors: [ { msg: "ログインに失敗しました" } ] }, status: :unauthorized
+      render json: { errors: [ { msg: "ログイン認証に失敗しました" } ] }, status: :unauthorized
       return
     end
 
@@ -110,7 +124,7 @@ class Apis::SessionsController < ApplicationController
 
     response = nil
     begin
-      response = ChainGate::Repositories::Authentications::Verify.new(params: verify_params).fetch
+      response = ChainGate::Repositories::Sessions::Verify.new(params: verify_params).fetch
     rescue => e
       logger.error(e.message)
       render json: { errors: [ { msg: e } ] }, status: :unauthorized
@@ -141,6 +155,6 @@ class Apis::SessionsController < ApplicationController
       return
     end
 
-    render json: { address: session.address.address, omission_address: session.address.matamask_format_address, network: session.network, last_login: session.last_login }, status: :ok
+    render json: { address: session.address.address, omission_address: session.address.metamask_format_address, network: session.network, last_login: session.last_login }, status: :ok
   end
 end

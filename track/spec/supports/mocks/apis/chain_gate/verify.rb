@@ -13,14 +13,14 @@ module Mocks
           )
         end
 
-        def mock_apis_verify_custom(status:, body:, count:)
+        def mock_apis_verify_custom(status:, body: {})
           stub_request(:post, /api\/verify/).to_return(
             status: status,
             body: body.to_json,
             headers: {
               "Cache-Control" => "public, max-age=86400"
             }
-          ).times(1)
+          )
         end
 
         # 　リセットする

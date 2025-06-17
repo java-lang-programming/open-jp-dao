@@ -1,8 +1,8 @@
 openapi: 3.0.0
 info:
-  title: track API
+  title: web3 api API
   version: '1.0'
-  description: rails trackのAPI
+  description: web3関係のAPI
 servers:
   - url: 'http://localhost:3000'
 tags:
@@ -35,6 +35,34 @@ paths:
         '201':
           description: OK
           headers: {}
+  '/api/ethereum/{chain_id}/address/{address}/ens':
+    get:
+      summary: ens取得
+      tags:
+        - sessions
+      operationId: get-ens
+      description: ensを取得する
+      parameters:
+        - in: path
+          name: chain_id
+          schema:
+            type: integer
+          required: true
+          description: chain_id
+        - in: path
+          name: address
+          schema:
+            type: string
+          required: true
+          description: ethereum EOA
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EnsResult'
+          headers: {}
 components:
   schemas:
     NonceResult:
@@ -44,3 +72,10 @@ components:
           type: string
       required:
         - nonce
+    EnsResult:
+      title: ens_result
+      properties:
+        ens_name:
+          type: string
+      required:
+        - ens_name

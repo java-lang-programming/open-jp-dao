@@ -10,8 +10,12 @@ class Address < ApplicationRecord
 
   class NotFoundDeleteDollarYenTransactionID < StandardError; end
 
-  # matamask形式のaddress表示
-  def matamask_format_address
+  def ethereum?
+    Address.kinds.key(1) === kind
+  end
+
+  # metamask形式のaddress表示
+  def metamask_format_address
     full_address = address
     full_address[0...7] + "..." + full_address[-5..-1]
   end
@@ -110,6 +114,20 @@ class Address < ApplicationRecord
   # @return [DollarYenTransaction | nil] 更新時に再計算対象の1つ手前のdollar_yen_transactions
   def base_dollar_yen_transaction_update(target_date:, id:)
     base_dollar_yen_transaction_delete(target_date: target_date, id: id)
+  end
+
+  # encを取得する
+  def fetch_ens(chain_id: 1)
+    ChainGate::Repositories::Sessions::Ens.new(
+      chain_id: chain_id,
+      address: address
+    ).fetch
+  end
+
+  # 画面表示address
+  def display_address
+    return ens_name if ens_name.present?
+    metamask_format_address
   end
 
   class << self

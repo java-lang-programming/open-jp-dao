@@ -1,7 +1,7 @@
 module ChainGate
   module Responses
-    module Authentications
-      class Verify
+    module Sessions
+      class Ens
         include ChainGate::Responses::Base
 
         attr_accessor :status, :error_symbol, :success_symbol
@@ -9,21 +9,18 @@ module ChainGate
         def initialize(status:, response:)
           self.status = status
           case status
-          when HTTP_BAD_REQUEST, HTTP_NOT_FOUND, HTTP_INTERNAL_SERVER_ERROR
+          when HTTP_BAD_REQUEST, HTTP_FORBIDDEN
             self.error_symbol = to_sym_json(body: response.body)
-          when HTTP_CREATED
-            self.success_symbol = {}
+          when HTTP_OK
+            self.success_symbol = to_sym_json(body: response.body)
           else
             self.error_symbol = ERROR_HASH
           end
         end
 
-        def errors
-          self.error_symbol
-        end
-
-        def status_code
-          status
+        def result
+          return self.status, self.success_symbol if self.status == HTTP_OK
+          return self.status, self.error_symbol
         end
       end
     end

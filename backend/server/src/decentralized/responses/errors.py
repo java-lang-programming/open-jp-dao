@@ -29,6 +29,8 @@ class ErrorCodes:
     NOT_CONNECTED_ETHEREUM = "E0000002"
     # SiweMessage　verifyエラー
     SIWE_MESSAGE_VERIFY_ERROR = "E0000003"
+    # アドレスのフォーマットエラー
+    INVALID_FORMAT_ADDRESS_ERROR = "E0000004"
     # votec createのエラー
     ERROR_VOTE_CREATE = "EVC00001"
     # votec showのエラー
