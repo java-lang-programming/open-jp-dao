@@ -76,7 +76,7 @@ class Apis::SessionsController < ApplicationController
     # noceとsesson_idの名称 _hoge_nonce
     # envファイル読み込み
 
-    response = ChainGate::Repositories::Authentications::Verify.new(params: verify_params).fetch
+    response = ChainGate::Repositories::Sessions::Verify.new(params: verify_params).fetch
     # begin
     #   response = ChainGate::Repositories::Authentications::Verify.new(params: verify_params).fetch
     # rescue => e
@@ -124,7 +124,7 @@ class Apis::SessionsController < ApplicationController
 
     response = nil
     begin
-      response = ChainGate::Repositories::Authentications::Verify.new(params: verify_params).fetch
+      response = ChainGate::Repositories::Sessions::Verify.new(params: verify_params).fetch
     rescue => e
       logger.error(e.message)
       render json: { errors: [ { msg: e } ] }, status: :unauthorized

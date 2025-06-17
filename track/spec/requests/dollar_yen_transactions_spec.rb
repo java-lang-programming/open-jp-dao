@@ -44,6 +44,10 @@ RSpec.describe "DollarYenTransactions", type: :request do
       before do
         # sigin処理
         mock_apis_verify(body: {})
+        mock_apis_ens(
+          status: 200,
+          body: { ens_name: "test.eth" }
+        )
         get apis_sessions_nonce_path
         post apis_sessions_signin_path, params: { address: addresses_eth.address, kind: Address.kinds[:ethereum], chain_id: 1, message: "message", signature: "signature", domain: "aiueo.com" }
       end
@@ -68,6 +72,10 @@ RSpec.describe "DollarYenTransactions", type: :request do
       before do
         # sigin処理
         mock_apis_verify(body: {})
+        mock_apis_ens(
+          status: 200,
+          body: { ens_name: "test.eth" }
+        )
         get apis_sessions_nonce_path
         post apis_sessions_signin_path, params: { address: addresses_eth.address, kind: Address.kinds[:ethereum], chain_id: 1, message: "message", signature: "signature", domain: "aiueo.com" }
       end
@@ -93,6 +101,10 @@ RSpec.describe "DollarYenTransactions", type: :request do
       before do
         # sigin処理
         mock_apis_verify(body: {})
+        mock_apis_ens(
+          status: 200,
+          body: { ens_name: "test.eth" }
+        )
         get apis_sessions_nonce_path
         post apis_sessions_signin_path, params: { address: addresses_eth.address, kind: Address.kinds[:ethereum], chain_id: 1, message: "message", signature: "signature", domain: "aiueo.com" }
       end
@@ -152,6 +164,10 @@ RSpec.describe "DollarYenTransactions", type: :request do
       before do
         # sigin処理
         mock_apis_verify(body: {})
+        mock_apis_ens(
+          status: 200,
+          body: { ens_name: "test.eth" }
+        )
         get apis_sessions_nonce_path
         post apis_sessions_signin_path, params: { address: addresses_eth.address, kind: Address.kinds[:ethereum], chain_id: 1, message: "message", signature: "signature", domain: "aiueo.com" }
       end
@@ -179,6 +195,10 @@ RSpec.describe "DollarYenTransactions", type: :request do
       before do
         # sigin処理
         mock_apis_verify(body: {})
+        mock_apis_ens(
+          status: 200,
+          body: { ens_name: "test.eth" }
+        )
         get apis_sessions_nonce_path
         post apis_sessions_signin_path, params: { address: addresses_eth.address, kind: Address.kinds[:ethereum], chain_id: 1, message: "message", signature: "signature", domain: "aiueo.com" }
       end
@@ -205,6 +225,10 @@ RSpec.describe "DollarYenTransactions", type: :request do
       before do
         # sigin処理
         mock_apis_verify(body: {})
+        mock_apis_ens(
+          status: 200,
+          body: { ens_name: "test.eth" }
+        )
         get apis_sessions_nonce_path
         post apis_sessions_signin_path, params: { address: addresses_eth.address, kind: Address.kinds[:ethereum], chain_id: 1, message: "message", signature: "signature", domain: "aiueo.com" }
       end
@@ -267,6 +291,10 @@ RSpec.describe "DollarYenTransactions", type: :request do
       before do
         # sigin処理
         mock_apis_verify(body: {})
+        mock_apis_ens(
+          status: 200,
+          body: { ens_name: "test.eth" }
+        )
         get apis_sessions_nonce_path
         post apis_sessions_signin_path, params: { address: addresses_eth.address, kind: Address.kinds[:ethereum], chain_id: 1, message: "message", signature: "signature", domain: "aiueo.com" }
       end
@@ -297,6 +325,10 @@ RSpec.describe "DollarYenTransactions", type: :request do
       before do
         # sigin処理
         mock_apis_verify(body: {})
+        mock_apis_ens(
+          status: 200,
+          body: { ens_name: "test.eth" }
+        )
         get apis_sessions_nonce_path
         post apis_sessions_signin_path, params: { address: addresses_eth.address, kind: Address.kinds[:ethereum], chain_id: 1, message: "message", signature: "signature", domain: "aiueo.com" }
       end
@@ -337,6 +369,10 @@ RSpec.describe "DollarYenTransactions", type: :request do
       before do
         # sigin処理
         mock_apis_verify(body: {})
+        mock_apis_ens(
+          status: 200,
+          body: { ens_name: "test.eth" }
+        )
         get apis_sessions_nonce_path
         post apis_sessions_signin_path, params: { address: addresses_eth.address, kind: Address.kinds[:ethereum], chain_id: 1, message: "message", signature: "signature", domain: "aiueo.com" }
       end
@@ -365,6 +401,10 @@ RSpec.describe "DollarYenTransactions", type: :request do
       before do
         # sigin処理
         mock_apis_verify(body: {})
+        mock_apis_ens(
+          status: 200,
+          body: { ens_name: "test.eth" }
+        )
         get apis_sessions_nonce_path
         post apis_sessions_signin_path, params: { address: addresses_eth.address, kind: Address.kinds[:ethereum], chain_id: 1, message: "message", signature: "signature", domain: "aiueo.com" }
       end
