@@ -18,7 +18,7 @@ module FileUploads
 
     # headerのエラー処理
     def validate_headers
-      validate_header_fileds(file_path: @file_path, master: @master)
+      validate_header_fields(file_path: @file_path, master: @master)
     end
 
     # 共通化

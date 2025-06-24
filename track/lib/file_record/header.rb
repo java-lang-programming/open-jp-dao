@@ -1,3 +1,4 @@
+require "csv"
 require "yaml"
 
 # 　リファクタリングをして@@file_pathや@masterは無くす
@@ -10,7 +11,7 @@ module FileRecord
     end
 
     # 正常の場合は空配列を返す
-    def validate_header_fileds(file_path:, master:)
+    def validate_header_fields(file_path:, master:)
       csv_data = CSV.read(file_path, headers: true)
       csv_header = csv_data.headers
       return [] if csv_header == master["fields"]
@@ -21,18 +22,12 @@ module FileRecord
       # row col atribute value messaga
       if fields_size < csv_data_size
         row = 1
-        col = ""
-        attribute = ""
-        value = ""
         messaga = "ヘッダの属性名の数が多いです。ファイルのヘッダー情報を再確認してください。"
         return [ error_data(row: row, messaga: messaga) ]
       end
 
       if fields_size > csv_data_size
         row = 1
-        col = nil
-        attribute = ""
-        value = ""
         messaga = "ヘッダの属性名の数が不足しています。ファイルのヘッダー情報を再確認してください。"
         return [ error_data(row: row, messaga: messaga) ]
       end
@@ -50,10 +45,11 @@ module FileRecord
             array << error_data(row: row, col: col, attribute: attribute, value: value, messaga: messaga)
           end
         end
-        result if result.present?
+        result unless result.empty?
       end
     end
 
+    private
     # 色々な箇所で使うね Baseかな
     # TODO private
     def error_data(row:, col: nil, attribute: "", value: "", messaga: "")
