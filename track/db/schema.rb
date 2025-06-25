@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_06_24_091211) do
+ActiveRecord::Schema[8.0].define(version: 2025_06_25_001029) do
   create_table "active_storage_attachments", force: :cascade do |t|
     t.string "name", null: false
     t.string "record_type", null: false
@@ -103,6 +103,19 @@ ActiveRecord::Schema[8.0].define(version: 2025_06_24_091211) do
     t.datetime "deleted_at"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+  end
+
+  create_table "ledgers", force: :cascade do |t|
+    t.datetime "date", null: false
+    t.string "name", null: false
+    t.integer "ledger_item_id"
+    t.decimal "face_value", null: false
+    t.decimal "proportion_rate"
+    t.decimal "proportion_amount"
+    t.decimal "recorded_amount"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["ledger_item_id"], name: "index_ledgers_on_ledger_item_id"
   end
 
   create_table "notifications", force: :cascade do |t|

@@ -48,6 +48,13 @@ Rails.application.routes.draw do
 
   resources :settings, only: [ :index ]
 
+  # v2
+  resources :ledgers do
+    collection do
+      post "csv_import"
+    end
+  end
+
   post "sessions/logout"
   get "sessions/signout"
 

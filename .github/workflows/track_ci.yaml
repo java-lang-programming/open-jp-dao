@@ -59,6 +59,10 @@ jobs:
         working-directory: track
         run: make rubocop
 
+      - name: Run steep(試験導入)
+        working-directory: track
+        run: make steep_check
+
       - name: Run database create
         working-directory: track
         run: make migrate

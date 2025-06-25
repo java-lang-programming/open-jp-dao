@@ -33,35 +33,9 @@ module FileUploads
         csv = Files::LedgerImportCsv.new(master: @master, row_num: row_num, row: row)
         # csv.make_unique_key
         errors = csv.valid_errors
-
-
-        # TODO arayは入れ子にしない
         all_errors.concat(errors) if errors.present?
-
-
-
-        # fields.each do |field|
-        #   content = @master[field]
-        #   # puts content
-        #   if content.present? && content["type"] == "date"
-        #     validate_date(content: content, row: line_count, feild: field, value: row[0])
-        #   end
-        # end
       end
       all_errors
     end
-
-    # include ActiveRecord::Validators::Date
-    # def validate_date(content:, row:, feild:, value:)
-    #   if content["require"] == true
-    #     unless value.present?
-    #       row = row
-    #       col = 1 # dateは固定だな。。
-    #       attribute = feild
-    #       value = ""
-    #       messaga = "#{feild}が未記入です。#{feild}は必須入力です。"
-    #     end
-    #   end
-    # end
   end
 end
