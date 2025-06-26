@@ -22,7 +22,8 @@ module FileUploads
     end
 
     # 共通化
-    def valid_data
+    # validation_errorsにする
+    def validation_errors
       row_num = 0
       # 全てのエラー配列
       all_errors = []

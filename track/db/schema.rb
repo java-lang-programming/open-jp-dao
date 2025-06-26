@@ -113,8 +113,10 @@ ActiveRecord::Schema[8.0].define(version: 2025_06_25_001029) do
     t.decimal "proportion_rate"
     t.decimal "proportion_amount"
     t.decimal "recorded_amount"
+    t.integer "address_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.index ["address_id"], name: "index_ledgers_on_address_id"
     t.index ["ledger_item_id"], name: "index_ledgers_on_ledger_item_id"
   end
 

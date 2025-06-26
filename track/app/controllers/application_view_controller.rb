@@ -82,4 +82,9 @@ class ApplicationViewController < ActionController::Base
   def notification
     Notification.header.first
   end
+
+  def headers
+    @user = user
+    @notification = notification
+  end
 end

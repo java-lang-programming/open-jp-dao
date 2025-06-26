@@ -4,6 +4,7 @@ class Address < ApplicationRecord
   has_many :dollar_yen_transactions, dependent: :destroy
   has_many :sessions, dependent: :destroy
   has_many :import_files, dependent: :destroy
+  has_many :ledgers, dependent: :destroy
 
   validates :address, presence: true
 

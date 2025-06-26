@@ -8,6 +8,7 @@ class CreateLedgers < ActiveRecord::Migration[8.0]
       t.decimal :proportion_rate, comment: "按分率"
       t.decimal :proportion_amount, comment: "按分額"
       t.decimal :recorded_amount, comment: "計上額"
+      t.references :address, comment: "アドレスID"
 
       t.timestamps
     end

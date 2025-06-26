@@ -43,9 +43,13 @@ jobs:
         working-directory: track
         run: make rails_info
 
-      - name: zeitwerk check
+      - name: zeitwerk check development
         working-directory: track
         run: make zeitwerk_check
+
+      - name: zeitwerk check production
+        working-directory: track
+        run: make zeitwerk_check_prod
 
       - name: yjit_enabled check
         working-directory: track
