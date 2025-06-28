@@ -13,9 +13,19 @@
 # 　開発用のデータと本番をmaskしたデータは分ける。でないと肥大化してしまうので。
 # 　負荷テストと開発は別である。
 
+puts "v2処理スタート"
+
 puts "仕訳項目マスタ作成"
 
 FactoryBot.build(:ledger_item_1)
 FactoryBot.build(:ledger_item_2)
 FactoryBot.build(:ledger_item_3)
 FactoryBot.build(:ledger_item_4)
+
+puts "仕訳項目マスタ作成終了"
+
+puts "Job作成開始"
+
+FactoryBot.build(:job_3)
+
+puts "Job作成終了"

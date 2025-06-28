@@ -35,6 +35,7 @@ target :app do
   # check "app", "lib" # 型チェック対象のRubyコードがあるディレクトリ
   # 実験的に導入
   check "lib/file_record/header.rb"
+  check "app/models/ledger.rb"
   signature "sig"   # RBSファイルがあるディレクトリ
   # 必要に応じて標準ライブラリの型定義などを追加
   # library "pathname"
