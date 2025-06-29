@@ -76,7 +76,7 @@ RSpec.describe FileUploads::LedgerCsv, type: :feature do
     end
   end
 
-  describe 'validation_errors' do
+  describe 'validate_errors_of_simple_data' do
     let(:addresses_eth) { create(:addresses_eth) }
     let(:ledger_csv_sample_path) { "#{Rails.root}/spec/files/uploads/ledger_csv/ledger_csv_sample.csv" }
     # 日付がエラー
@@ -85,7 +85,7 @@ RSpec.describe FileUploads::LedgerCsv, type: :feature do
     context 'エラーなし' do
       it "should be empty array." do
         csv = FileUploads::LedgerCsv.new(address: addresses_eth, file_path: ledger_csv_sample_path)
-        errors = csv.validation_errors
+        errors = csv.validate_errors_of_simple_data
         expect(errors).to eq([])
       end
     end
@@ -93,7 +93,7 @@ RSpec.describe FileUploads::LedgerCsv, type: :feature do
     context 'エラーあり' do
       it "should be date errors array." do
         csv = FileUploads::LedgerCsv.new(address: addresses_eth, file_path: ledger_csv_sample_date_errors_path)
-        errors = csv.validation_errors
+        errors = csv.validate_errors_of_simple_data
         expect(errors.size).to eq(3)
         expect(errors[0]).to eq({
           attribute: "date",
@@ -129,7 +129,7 @@ RSpec.describe FileUploads::LedgerCsv, type: :feature do
     context 'エラーなし' do
       it "should be empty array." do
         csv = FileUploads::LedgerCsv.new(address: addresses_eth, file_path: ledger_csv_sample_path)
-        errors = csv.validation_errors
+        errors = csv.validate_errors_of_simple_data
         expect(errors).to eq([])
       end
     end
@@ -137,7 +137,7 @@ RSpec.describe FileUploads::LedgerCsv, type: :feature do
     context 'エラーあり' do
       it "should be empty array." do
         csv = FileUploads::LedgerCsv.new(address: addresses_eth, file_path: ledger_csv_sample_string_errors_path)
-        errors = csv.validation_errors
+        errors = csv.validate_errors_of_simple_data
         expect(errors.size).to eq(3)
         expect(errors[0]).to eq({
           attribute: "ledger_item",

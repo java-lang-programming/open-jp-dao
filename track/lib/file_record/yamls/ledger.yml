@@ -25,7 +25,7 @@ name:
     max: 100
   require: false
 face_value:
-  type: integer
+  type: bigdecimal
   require: true
 proportion_rate:
   type: bigdecimal

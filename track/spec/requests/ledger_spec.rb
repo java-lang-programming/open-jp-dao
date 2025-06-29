@@ -85,7 +85,6 @@ RSpec.describe "Ledgers", type: :request do
         job_3
         post csv_upload_ledgers_path, params: { file: fixture_file_upload(ledger_csv_sample_path) }
         expect(response.status).to eq(204)
-        addresses_eth.import_files.
       end
     end
   end

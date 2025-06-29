@@ -6,6 +6,7 @@ class ImportFile < ApplicationRecord
   has_one_attached :file
 
   # TODO 将来的にはjobによって切り分ける
+  # 　ここに個別のcsv処理が入るのはおかしいかな
   def make_csvs_dollar_yens_transactions
     preload_records =  { address: address, transaction_types: address.transaction_types }
     csvs = []
