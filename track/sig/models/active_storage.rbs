@@ -1,0 +1,33 @@
+module ActiveStorage
+  module Attached
+    class One
+      # ファイルを添付するメソッド
+      # 引数は IOオブジェクト、File、Rack::Test::UploadedFileなど多岐にわたるため untyped
+      # 戻り値は bool (成功したか) または untyped
+      def attach: (untyped) -> bool
+
+      # ファイルを削除するメソッド
+      def purge: () -> untyped
+      def purge_later: () -> untyped
+
+      # ファイルが添付されているか
+      def attached?: () -> bool
+
+      # ファイルのURLを生成する
+      # Rails.application.routes.url_helpers のメソッドに依存するため untyped
+      def url: (*untyped) -> String
+
+      # ファイル名
+      # def filename: () -> ActiveStorage::Filename
+
+      # バイトサイズ
+      def byte_size: () -> Integer
+
+      # Content-Type
+      def content_type: () -> String? # content_type は nil になることもあります
+
+      # ファイルのパス（ストレージに依存）
+      # def path: () -> String # これは ActiveStorage::Blob が持つ可能性が高い
+    end
+  end
+end

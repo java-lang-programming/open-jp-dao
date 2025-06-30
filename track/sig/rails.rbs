@@ -1,0 +1,3 @@
+module Rails
+  def self.root: () -> Pathname
+end

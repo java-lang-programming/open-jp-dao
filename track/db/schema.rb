@@ -109,10 +109,10 @@ ActiveRecord::Schema[8.0].define(version: 2025_06_25_001029) do
     t.datetime "date", null: false
     t.string "name", null: false
     t.integer "ledger_item_id"
-    t.decimal "face_value", null: false
+    t.integer "face_value", null: false
     t.decimal "proportion_rate"
     t.decimal "proportion_amount"
-    t.decimal "recorded_amount"
+    t.integer "recorded_amount"
     t.integer "address_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false

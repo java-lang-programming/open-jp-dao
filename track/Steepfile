@@ -36,6 +36,12 @@ target :app do
   # 実験的に導入
   check "lib/file_record/header.rb"
   check "app/models/ledger.rb"
+  check "app/models/ledger_item.rb"
+  check "app/services/csv_imports/ledger.rb"
+  check "app/services/file_uploads/generate_master.rb"
+  # check "app/models/files/ledger_import_csv.rb"
+  # 　次はhas manyとかかな。
+  # check "app/models/import_file.rb"
   signature "sig"   # RBSファイルがあるディレクトリ
   # 必要に応じて標準ライブラリの型定義などを追加
   # library "pathname"

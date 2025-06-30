@@ -1,0 +1,5 @@
+class Pathname
+  def to_s: () -> String
+  def join: (*String) -> Pathname
+  def to_path: () -> String
+end

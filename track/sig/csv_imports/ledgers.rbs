@@ -1,0 +1,7 @@
+module CsvImports
+  class Ledgers
+    attr_accessor import_file: ImportFile
+
+    def generate_ledgers: -> untyped
+  end
+end

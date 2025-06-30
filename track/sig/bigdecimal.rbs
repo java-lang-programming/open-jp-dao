@@ -1,0 +1,5 @@
+class BigDecimal
+  def self.new: (String | Integer | Float) -> BigDecimal
+  def multiply: (BigDecimal) -> BigDecimal
+  def subtract: (BigDecimal) -> BigDecimal
+end
