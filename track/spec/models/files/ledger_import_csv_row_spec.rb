@@ -93,7 +93,7 @@ RSpec.describe Files::LedgerImportCsvRow do
         ledger_item_1
         preload = { address: addresses_eth, ledger_items: LedgerItem.all }
         csv_row = Files::LedgerImportCsvRow.new(master: master, row_num: 1, row: row_1, preload: preload)
-        expect(csv_row.data_for_ledger(field: "face_value")).to eq(BigDecimal(1848))
+        expect(csv_row.data_for_ledger(field: "face_value")).to eq(1848)
       end
 
       it 'should get proportion_rate.' do
@@ -108,6 +108,22 @@ RSpec.describe Files::LedgerImportCsvRow do
         preload = { address: addresses_eth, ledger_items: LedgerItem.all }
         csv_row = Files::LedgerImportCsvRow.new(master: master, row_num: 1, row: row_1, preload: preload)
         expect(csv_row.data_for_ledger(field: "proportion_amount")).to be nil
+      end
+    end
+  end
+
+  describe 'to_ledger' do
+    context 'Ledgerオブジェクトを取得する' do
+      it 'should get ledger.' do
+        ledger_item_1
+        preload = { address: addresses_eth, ledger_items: LedgerItem.all }
+        csv_row = Files::LedgerImportCsvRow.new(master: master, row_num: 1, row: row_1, preload: preload)
+        ledger = csv_row.to_ledger
+        expect(ledger.date.to_date).to eq(Date.new(2025, 1, 6))
+        expect(ledger.name).to eq('MFクラウド')
+        expect(ledger.ledger_item).to eq(ledger_item_1)
+        expect(ledger.face_value).to eq(1848)
+        expect(ledger.recorded_amount).to eq(1848)
       end
     end
   end

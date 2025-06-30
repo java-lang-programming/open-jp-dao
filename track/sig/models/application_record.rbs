@@ -1,0 +1,40 @@
+# sig/app/models/application_record.rbs
+
+# ActiveRecordモジュールとBaseクラスの最低限の定義
+module ActiveRecord
+  class Base
+    # enumを有効にするための宣言
+    def self.enum: (Symbol | String, Hash[Symbol, Integer]) -> void
+
+    # belong_toを有効にする
+    def self.belongs_to: (Symbol | String, ?Hash[Symbol, untyped]) -> void
+    # has_manyを有効にする
+    def self.has_many: (Symbol | String, ?Hash[Symbol, untyped]) -> void
+
+    def self.has_one: (Symbol | String, ?Hash[Symbol, untyped]) -> void
+
+
+    # ここには何のメソッド定義も書きません。
+    # こうすることで、RBSはActiveRecord::Baseの存在は認識しますが、
+    # その内部のメソッドについては一切型情報を持ちません。
+    # しかし、これによりUnknownTypeNameエラーは回避されます。
+    # その代わり、Baseから継承されるメソッドの型チェックは行われません。
+  end
+
+  # 必要最低限の関連クラスも定義しておく
+  # これがないと、Baseがこれらを参照した際にUnknownTypeNameになる可能性があります
+  class Relation[T]
+    # 空の定義
+  end
+
+  class Errors
+    # 空の定義
+  end
+end
+
+# ApplicationRecordの定義
+# ActiveRecord::Baseを継承していることをRBSに伝える
+class ApplicationRecord < ActiveRecord::Base
+  # Model.find(id) の場合: 単一のIDを受け取り、単一のインスタンスを返します。
+  def self.find: (Integer) -> instance
+end

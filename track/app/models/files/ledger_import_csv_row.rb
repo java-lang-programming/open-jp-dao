@@ -68,7 +68,7 @@ module Files
 
     def to_ledger
       ledger = Ledger.build(
-        address: address,
+        address: @preload[:address],
         date: data_for_ledger(field: "date"),
         name: data_for_ledger(field: "name"),
         ledger_item: find_ledger_item_by_name,
@@ -76,7 +76,6 @@ module Files
         proportion_rate: data_for_ledger(field: "proportion_rate"),
         proportion_amount: data_for_ledger(field: "proportion_amount")
       )
-      # 　これを実装する
       ledger.recorded_amount = ledger.calculate_recorded_amount
       ledger
     end
@@ -93,6 +92,10 @@ module Files
 
       if content.present? && content["type"] == "string"
         return value
+      end
+
+      if content.present? && content["type"] == "integer"
+        return value.to_i
       end
 
       if content.present? && content["type"] == "bigdecimal" && value.present?

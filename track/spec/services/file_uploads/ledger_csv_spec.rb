@@ -1,11 +1,10 @@
 require 'rails_helper'
 
 RSpec.describe FileUploads::LedgerCsv, type: :feature do
-  # let(:addresses_eth) { create(:addresses_eth) }
-  # let(:transaction_type1) { create(:transaction_type1, address: addresses_eth) }
+  let(:addresses_eth) { create(:addresses_eth) }
+  let(:ledger_2025_1_6_path) { "#{Rails.root}/spec/files/uploads/ledger_csv/2025_1_6.csv" }
 
   describe 'validate_header_fileds' do
-    let(:addresses_eth) { create(:addresses_eth) }
     let(:ledger_csv_header_sample_path) { "#{Rails.root}/spec/files/uploads/ledger_csv/ledger_csv_header_sample.csv" }
     # ヘッダーの属性数が多い
     let(:ledger_csv_many_header_sample_path) { "#{Rails.root}/spec/files/uploads/ledger_csv/ledger_csv_many_header_sample.csv" }
@@ -77,7 +76,6 @@ RSpec.describe FileUploads::LedgerCsv, type: :feature do
   end
 
   describe 'validate_errors_of_simple_data' do
-    let(:addresses_eth) { create(:addresses_eth) }
     let(:ledger_csv_sample_path) { "#{Rails.root}/spec/files/uploads/ledger_csv/ledger_csv_sample.csv" }
     # 日付がエラー
     let(:ledger_csv_sample_date_errors_path) { "#{Rails.root}/spec/files/uploads/ledger_csv/ledger_csv_sample_date_errors.csv" }
@@ -121,7 +119,6 @@ RSpec.describe FileUploads::LedgerCsv, type: :feature do
   end
 
   describe 'valid_string' do
-    let(:addresses_eth) { create(:addresses_eth) }
     let(:ledger_csv_sample_path) { "#{Rails.root}/spec/files/uploads/ledger_csv/ledger_csv_sample.csv" }
     # 日付がエラー
     let(:ledger_csv_sample_string_errors_path) { "#{Rails.root}/spec/files/uploads/ledger_csv/ledger_csv_sample_string_errors.csv" }
@@ -160,6 +157,48 @@ RSpec.describe FileUploads::LedgerCsv, type: :feature do
           messaga: "nameの文字が100文字を超えています。100文字以下にしてください。",
           value: "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
         })
+      end
+    end
+  end
+
+  describe 'validate_errors_of_complex_data' do
+    let(:ledger_csv_sample_path) { "#{Rails.root}/spec/files/uploads/ledger_csv/ledger_csv_sample.csv" }
+    let(:ledger_item_1) { create(:ledger_item_1) }
+    let(:ledger_item_2) { create(:ledger_item_2) }
+    let(:ledger_item_3) { create(:ledger_item_3) }
+
+    context 'エラーなし' do
+      it "should be empty array." do
+        ledger_item_1
+        ledger_item_2
+        ledger_item_3
+        csv = FileUploads::LedgerCsv.new(address: addresses_eth, file_path: ledger_2025_1_6_path)
+        errors = csv.validate_errors_of_complex_data
+        expect(errors).to eq([])
+      end
+    end
+
+    context 'エラーあり' do
+      # ledger_item_2をDBに入れない
+      it "should be errors array." do
+        csv = FileUploads::LedgerCsv.new(address: addresses_eth, file_path: ledger_csv_sample_path)
+        errors = csv.validate_errors_of_complex_data
+        expect(errors.size).to eq(5)
+        expect(errors[0]).to eq({ row: 2, col: 2, attribute: "ledger_item", value: "通信費", messaga: "通信費はledger_itemに存在しません" })
+        expect(errors[1]).to eq({ row: 3, col: 2, attribute: "ledger_item", value: "通信費", messaga: "通信費はledger_itemに存在しません" })
+        expect(errors[2]).to eq({ row: 4, col: 2, attribute: "ledger_item", value: "通信費", messaga: "通信費はledger_itemに存在しません" })
+        expect(errors[3]).to eq({ row: 5, col: 2, attribute: "ledger_item", value: "通信費", messaga: "通信費はledger_itemに存在しません" })
+        expect(errors[4]).to eq({ row: 6, col: 2, attribute: "ledger_item", value: "通信費", messaga: "通信費はledger_itemに存在しません" })
+      end
+    end
+  end
+
+  describe 'validate_errors_first' do
+    context 'エラーなし' do
+      it "should be empty array." do
+        csv = FileUploads::LedgerCsv.new(address: addresses_eth, file_path: ledger_2025_1_6_path)
+        errors = csv.validate_errors_first
+        expect(errors).to eq([])
       end
     end
   end

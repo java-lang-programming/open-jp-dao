@@ -84,28 +84,8 @@ module FileUploads
 
     def generate_ledgers
       @csv_rows.map do |csv_row|
-        Ledger.build(
-          address: @address,
-          date: row[0],
-          ledger_item: csv_row.find_ledger_item_by_name,
-          name: row[2],
-          # 　ここの計算から
-          face_value: row[3],
-
-
-        )
+        csv_row.to_ledger
       end
-      # date, null: false, comment: "取引日"
-      # t.string :name, null: false, comment: "名称"
-      # t.references :ledger_item, comment: "仕訳帳項目ID"
-      # t.decimal :face_value, null: false, comment: "額面"
-      # t.decimal :proportion_rate, comment: "按分率"
-      # t.decimal :proportion_amount, comment: "按分額"
-      # t.decimal :recorded_amount, comment: "計上額"
-      # t.references :address, comment: "アドレスID"
     end
-
-    # 共通化
-    # validation_errorsにする
   end
 end
