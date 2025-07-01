@@ -69,11 +69,14 @@ DollarYenTransactionDepositCsv
 
 bundle exec rails generate model Job job_name:string summary:text
 bundle exec rails generate model Notification message:string start_date:timestamp end_date:timestamp
+bundle exec rails generate model LedgerItem
 
 ドル円のcsvをimportします
 ドル円取引のcsvをimportします
 
-bundle exec rails generate model ImportFile job_id:integer address_id:integer
+ 
+bundle exec  rails generate model LedgerItem name:string kind:integer summary:string deleted_at:datetime
+
 
 次
 
@@ -83,5 +86,20 @@ bundle exec rails generate controller dollar_yen_transactions
 bundle exec rails generate controller transaction_types
 bundle exec rails generate controller foreign_exchange_gains
 bundle exec rails generate controller import_files
+bundle exec rails generate controller ledger index
 bundle exec rails generate controller top
 
+      create  app/controllers/ledger_controller.rb
+       route  get "ledger/index"
+      invoke  tailwindcss
+      create    app/views/ledger
+      create    app/views/ledger/index.html.erb
+      invoke  rspec
+      create    spec/requests/ledger_spec.rb
+      create    spec/views/ledger
+      create    spec/views/ledger/index.html.tailwindcss_spec.rb
+      invoke  helper
+      create    app/helpers/ledger_helper.rb
+      invoke    rspec
+      create      spec/helpers/ledger_helper_spec.rb
+Coverage report generated for RSpec to /usr/src/app/coverage.
