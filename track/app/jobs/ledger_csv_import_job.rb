@@ -2,6 +2,9 @@
 class LedgerCsvImportJob < ApplicationJob
   queue_as :csv
 
+  # LedgerCsvにエラーがある
+  class LedgerCsvErrors < StandardError; end
+
   rescue_from(Exception) do |exception|
     Rails.error.report(exception)
     raise exception
@@ -10,11 +13,12 @@ class LedgerCsvImportJob < ApplicationJob
   def perform(ledger_csv:)
     begin
       # 実行中にする
-      ledger_csv.update_status(status:  :in_progress)
+      ledger_csv.update_status(status: :in_progress)
 
       errors = ledger_csv.validate_errors_of_complex_data
       if errors.present?
         # ここでエラーデータを保存する
+        raise LedgerCsvErrors unless @session.present?
       end
 
       # 　オブジェクトの生成
