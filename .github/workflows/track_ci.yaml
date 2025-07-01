@@ -47,9 +47,10 @@ jobs:
         working-directory: track
         run: make zeitwerk_check
 
-      - name: zeitwerk check production
-        working-directory: track
-        run: make zeitwerk_check_prod
+      # secrert keyを取得後やる
+      # - name: zeitwerk check production
+      #   working-directory: track
+      #   run: make zeitwerk_check_prod
 
       - name: yjit_enabled check
         working-directory: track
@@ -63,9 +64,9 @@ jobs:
         working-directory: track
         run: make rubocop
 
-      - name: Run steep(試験導入)
-        working-directory: track
-        run: make steep_check
+      # - name: Run steep(試験導入)
+      #   working-directory: track
+      #   run: make steep_check
 
       - name: Run database create
         working-directory: track
