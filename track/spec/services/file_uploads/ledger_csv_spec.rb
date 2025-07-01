@@ -3,6 +3,11 @@ require 'rails_helper'
 RSpec.describe FileUploads::LedgerCsv, type: :feature do
   let(:addresses_eth) { create(:addresses_eth) }
   let(:ledger_2025_1_6_path) { "#{Rails.root}/spec/files/uploads/ledger_csv/2025_1_6.csv" }
+  let(:ledger_2025_1_6_errors_path) { "#{Rails.root}/spec/files/uploads/ledger_csv/2025_1_6_errors.csv" }
+  let(:job_3) { create(:job_3) }
+  let(:ledger_item_1) { create(:ledger_item_1) }
+  let(:ledger_item_2) { create(:ledger_item_2) }
+  let(:ledger_item_3) { create(:ledger_item_3) }
 
   describe 'validate_header_fileds' do
     let(:ledger_csv_header_sample_path) { "#{Rails.root}/spec/files/uploads/ledger_csv/ledger_csv_header_sample.csv" }
@@ -163,9 +168,6 @@ RSpec.describe FileUploads::LedgerCsv, type: :feature do
 
   describe 'validate_errors_of_complex_data' do
     let(:ledger_csv_sample_path) { "#{Rails.root}/spec/files/uploads/ledger_csv/ledger_csv_sample.csv" }
-    let(:ledger_item_1) { create(:ledger_item_1) }
-    let(:ledger_item_2) { create(:ledger_item_2) }
-    let(:ledger_item_3) { create(:ledger_item_3) }
 
     context 'エラーなし' do
       it "should be empty array." do
@@ -199,6 +201,74 @@ RSpec.describe FileUploads::LedgerCsv, type: :feature do
         csv = FileUploads::LedgerCsv.new(address: addresses_eth, file_path: ledger_2025_1_6_path)
         errors = csv.validate_errors_first
         expect(errors).to eq([])
+      end
+    end
+
+    context 'エラーあり' do
+      it "should be errors array." do
+        csv = FileUploads::LedgerCsv.new(address: addresses_eth, file_path: ledger_2025_1_6_errors_path)
+        errors = csv.validate_errors_first
+        expect(errors.size).to eq(2)
+        expect(errors[0]).to eq({ row: 1, col: 5, attribute: "proportion_rate", value: "proportion_rete", messaga: "ヘッダの属性名が不正です。正しい属性名はproportion_rateです。" })
+        expect(errors[1]).to eq({ row: 2, col: 1, attribute: "date", value: "2025/01/32", messaga: "dateの値が不正です。yyyy/mm/dd形式で正しい日付を入力してください。" })
+      end
+    end
+  end
+
+  describe 'create_import_file' do
+    after do
+      # テスト用フォルダごとファイル削除
+      FileUtils.rm_rf(ActiveStorage::Blob.service.root)
+    end
+
+    context 'エラーなし' do
+      it "should be status ready." do
+        job_3
+        csv = FileUploads::LedgerCsv.new(address: addresses_eth, file_path: fixture_file_upload(ledger_2025_1_6_path))
+        import_file = csv.create_import_file
+
+        expect(import_file.job_id).to eq(job_3.id)
+        expect(import_file.status).to eq("ready")
+      end
+    end
+  end
+
+  describe 'update_status' do
+    after do
+      # テスト用フォルダごとファイル削除
+      FileUtils.rm_rf(ActiveStorage::Blob.service.root)
+    end
+
+    context 'データありで事項' do
+      it "should be status ready." do
+        job_3
+        csv = FileUploads::LedgerCsv.new(address: addresses_eth, file_path: fixture_file_upload(ledger_2025_1_6_path))
+        import_file = csv.create_import_file
+
+        csv.update_status(status: :in_progress)
+
+        expect(import_file.job_id).to eq(job_3.id)
+        expect(import_file.status).to eq("in_progress")
+      end
+    end
+  end
+
+  describe 'generate_ledgers' do
+    after do
+      # テスト用フォルダごとファイル削除
+      FileUtils.rm_rf(ActiveStorage::Blob.service.root)
+    end
+
+    context 'データありで事項' do
+      it "should be status ready." do
+        ledger_item_1
+        ledger_item_2
+        ledger_item_3
+        job_3
+        csv = FileUploads::LedgerCsv.new(address: addresses_eth, file_path: fixture_file_upload(ledger_2025_1_6_path))
+        ledgers = csv.generate_ledgers
+
+        expect(ledgers.size).to eq(25)
       end
     end
   end

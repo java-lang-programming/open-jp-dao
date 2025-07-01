@@ -16,7 +16,7 @@ class LedgersController < ApplicationViewController
     headers
   end
 
-  # 基本同じ処理なので、モジュール化した方が良い。
+  # csv_uploadは基本同じ処理なので、次の処理を作る際はモジュール化した方が良い。
   def csv_upload
     headers
     address = @session.address

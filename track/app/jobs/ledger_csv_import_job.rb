@@ -10,13 +10,7 @@ class LedgerCsvImportJob < ApplicationJob
   def perform(ledger_csv:)
     begin
       # 実行中にする
-      ledger_csv.update_status(status:  ImportFile.statuses[:in_progress])
-      # ledger_csv.import_file.status = ImportFile.statuses[:in_progress]
-      # import_file = ImportFile.find(import_file_id)
-      # import_file.status = ImportFile.statuses[:in_progress]
-      # import_file.save
-
-      # ci = CsvImports::Ledgers.new(import_file: import_file)
+      ledger_csv.update_status(status:  :in_progress)
 
       errors = ledger_csv.validate_errors_of_complex_data
       if errors.present?
@@ -29,17 +23,15 @@ class LedgerCsvImportJob < ApplicationJob
       # bulk insert
       Ledger.import ledgers, validate: true
 
-      update_status(status:  ImportFile.statuses[:completed])
+      # ステータスを成功
+      ledger_csv.update_status(status: :completed)
     rescue => e
-      update_status(status:  ImportFile.statuses[:failure])
-      # if import_file.present?
-      #   import_file.status = ImportFile.statuses[:failure]
-      #   import_file.save
-      # end
+      # ステータスを失敗
+      ledger_csv.update_status(status: :failure)
       Rails.error.report(e)
     ensure
-      # ファイルを削除
-      import_file.file.purge
+      # ファイルの保存は不要なので削除
+      ledger_csv.purge_file
     end
   end
 end

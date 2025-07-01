@@ -78,14 +78,18 @@ module FileUploads
     end
 
     def update_status(status:)
+      @import_file ||= create_import_file
       @import_file.status = status
       @import_file.save
     end
 
     def generate_ledgers
-      @csv_rows.map do |csv_row|
-        csv_row.to_ledger
-      end
+      @csv_rows.map(&:to_ledger)
+    end
+
+    def purge_file
+      @import_file ||= create_import_file
+      @import_file.file.purge
     end
   end
 end
