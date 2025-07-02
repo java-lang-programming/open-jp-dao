@@ -4,7 +4,6 @@ module Files
 
     attr_accessor :master, :row_num, :row, :preload
 
-    # addressとtransactionはcacheを引数で渡すべき
     def initialize(master:, row_num:, row:, preload: {})
       @master = master
       @row_num = row_num
@@ -18,29 +17,26 @@ module Files
     # ここはValidatoeの共通処理 superで呼び出せるようにする
     def valid_errors
       errors = []
-      col = 0
-      @master["fields"].each do |field|
-        col = col + 1
+      @master[FileUploads::GenerateMaster::LEDGER_YAML_FIELDS].each.with_index do |field, idx|
+        col = idx + 1
         content = @master[field]
-        if content.present? && content["type"] == "date"
-          temp_errors = validate_date(content: content, col: col, row_num: @row_num, feild: field, value: @row[col - 1])
+        case content&.dig("type")
+        when "date"
+          temp_errors = validate_date(content: content, col: col, row_num: @row_num, field: field, value: @row[col - 1])
           errors.concat(temp_errors) if temp_errors.present?
-        end
-
-        if content.present? && content["type"] == "string"
-          temp_errors = validate_string(content: content, col: col, row_num: @row_num, feild: field, value: @row[col - 1])
+        when "string"
+          temp_errors = validate_string(content: content, col: col, row_num: @row_num, field: field, value: @row[col - 1])
           errors.concat(temp_errors) if temp_errors.present?
-        end
-
-        if content.present? && content["type"] == "bigdecimal"
-
+        when "bigdecimal"
+          temp_errors = validate_bigdecimal(content: content, col: col, row_num: @row_num, field: field, value: @row[col - 1])
+          errors.concat(temp_errors) if temp_errors.present?
         end
       end
       errors
     end
 
     def ledger_item_col_index
-      @master["fields"].index("ledger_item")
+      @master[FileUploads::GenerateMaster::LEDGER_YAML_FIELDS].index("ledger_item")
     end
 
     def find_ledger_item_by_name
@@ -61,7 +57,7 @@ module Files
           col: col_index + 1,
           attribute: "ledger_item",
           value: name,
-          messaga: "#{name}はledger_itemに存在しません"
+          message: "#{name}はledger_itemに存在しません"
         )
       end
     end
@@ -82,7 +78,7 @@ module Files
 
     # ledgerオブジェクトのためのデータを取得
     def data_for_ledger(field: "")
-      field_col_index = @master["fields"].index(field)
+      field_col_index = @master[FileUploads::GenerateMaster::LEDGER_YAML_FIELDS].index(field)
       value = @row[field_col_index]
       content = @master[field]
       if content.present? && content["type"] == "date"

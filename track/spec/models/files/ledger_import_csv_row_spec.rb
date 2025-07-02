@@ -67,7 +67,7 @@ RSpec.describe Files::LedgerImportCsvRow do
                                        col: 2,
                                        attribute: 'ledger_item',
                                        value: '通信',
-                                       messaga: "通信はledger_itemに存在しません"
+                                       message: "通信はledger_itemに存在しません"
                                      })
       end
     end

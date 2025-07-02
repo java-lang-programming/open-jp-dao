@@ -9,6 +9,7 @@ RSpec.describe FileUploads::LedgerCsv, type: :feature do
   let(:ledger_item_2) { create(:ledger_item_2) }
   let(:ledger_item_3) { create(:ledger_item_3) }
 
+
   describe 'validate_header_fileds' do
     let(:ledger_csv_header_sample_path) { "#{Rails.root}/spec/files/uploads/ledger_csv/ledger_csv_header_sample.csv" }
     # ヘッダーの属性数が多い
@@ -27,7 +28,7 @@ RSpec.describe FileUploads::LedgerCsv, type: :feature do
           col: nil,
           attribute: "",
           value: "",
-          messaga: "ヘッダの属性名の数が多いです。ファイルのヘッダー情報を再確認してください。"
+          message: "ヘッダの属性名の数が多いです。ファイルのヘッダー情報を再確認してください。"
         })
       end
 
@@ -39,7 +40,7 @@ RSpec.describe FileUploads::LedgerCsv, type: :feature do
           col: nil,
           attribute: "",
           value: "",
-          messaga: "ヘッダの属性名の数が不足しています。ファイルのヘッダー情報を再確認してください。"
+          message: "ヘッダの属性名の数が不足しています。ファイルのヘッダー情報を再確認してください。"
         })
       end
 
@@ -53,21 +54,21 @@ RSpec.describe FileUploads::LedgerCsv, type: :feature do
           col: 3,
           attribute: "name",
           value: "nale",
-          messaga: "ヘッダの属性名が不正です。正しい属性名はnameです。"
+          message: "ヘッダの属性名が不正です。正しい属性名はnameです。"
         })
         expect(result[1]).to eq({
           row: 1,
           col: 5,
           attribute: "proportion_rate",
           value: "proportion_late",
-          messaga: "ヘッダの属性名が不正です。正しい属性名はproportion_rateです。"
+          message: "ヘッダの属性名が不正です。正しい属性名はproportion_rateです。"
         })
         expect(result[2]).to eq({
           row: 1,
           col: 6,
           attribute: "proportion_amount",
           value: "proportion_bmount",
-          messaga: "ヘッダの属性名が不正です。正しい属性名はproportion_amountです。"
+          message: "ヘッダの属性名が不正です。正しい属性名はproportion_amountです。"
         })
       end
     end
@@ -102,21 +103,21 @@ RSpec.describe FileUploads::LedgerCsv, type: :feature do
           attribute: "date",
           col: 1,
           row: 2,
-          messaga: "dateのフォーマットが不正です。yyyy/mm/dd形式で入力してください。",
+          message: "dateのフォーマットが不正です。yyyy/mm/dd形式で入力してください。",
           value: "2025-01-06"
         })
         expect(errors[1]).to eq({
           attribute: "date",
           col: 1,
           row: 4,
-          messaga: "dateの値が不正です。yyyy/mm/dd形式で正しい日付を入力してください。",
+          message: "dateの値が不正です。yyyy/mm/dd形式で正しい日付を入力してください。",
           value: "2025/04/32"
         })
         expect(errors[2]).to eq({
           attribute: "date",
           col: 1,
           row: 6,
-          messaga: "dateが未記入です。dateは必須入力です。",
+          message: "dateが未記入です。dateは必須入力です。",
           value: nil
         })
       end
@@ -145,21 +146,21 @@ RSpec.describe FileUploads::LedgerCsv, type: :feature do
           attribute: "ledger_item",
           col: 2,
           row: 2,
-          messaga: "ledger_itemが未記入です。ledger_itemは必須入力です。",
+          message: "ledger_itemが未記入です。ledger_itemは必須入力です。",
           value: nil
         })
         expect(errors[1]).to eq({
           attribute: "ledger_item",
           col: 2,
           row: 5,
-          messaga: "ledger_itemの文字が100文字を超えています。100文字以下にしてください。",
+          message: "ledger_itemの文字が100文字を超えています。100文字以下にしてください。",
           value: "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
         })
         expect(errors[2]).to eq({
           attribute: "name",
           col: 3,
           row: 6,
-          messaga: "nameの文字が100文字を超えています。100文字以下にしてください。",
+          message: "nameの文字が100文字を超えています。100文字以下にしてください。",
           value: "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
         })
       end
@@ -186,11 +187,11 @@ RSpec.describe FileUploads::LedgerCsv, type: :feature do
         csv = FileUploads::LedgerCsv.new(address: addresses_eth, file_path: ledger_csv_sample_path)
         errors = csv.validate_errors_of_complex_data
         expect(errors.size).to eq(5)
-        expect(errors[0]).to eq({ row: 2, col: 2, attribute: "ledger_item", value: "通信費", messaga: "通信費はledger_itemに存在しません" })
-        expect(errors[1]).to eq({ row: 3, col: 2, attribute: "ledger_item", value: "通信費", messaga: "通信費はledger_itemに存在しません" })
-        expect(errors[2]).to eq({ row: 4, col: 2, attribute: "ledger_item", value: "通信費", messaga: "通信費はledger_itemに存在しません" })
-        expect(errors[3]).to eq({ row: 5, col: 2, attribute: "ledger_item", value: "通信費", messaga: "通信費はledger_itemに存在しません" })
-        expect(errors[4]).to eq({ row: 6, col: 2, attribute: "ledger_item", value: "通信費", messaga: "通信費はledger_itemに存在しません" })
+        expect(errors[0]).to eq({ row: 2, col: 2, attribute: "ledger_item", value: "通信費", message: "通信費はledger_itemに存在しません" })
+        expect(errors[1]).to eq({ row: 3, col: 2, attribute: "ledger_item", value: "通信費", message: "通信費はledger_itemに存在しません" })
+        expect(errors[2]).to eq({ row: 4, col: 2, attribute: "ledger_item", value: "通信費", message: "通信費はledger_itemに存在しません" })
+        expect(errors[3]).to eq({ row: 5, col: 2, attribute: "ledger_item", value: "通信費", message: "通信費はledger_itemに存在しません" })
+        expect(errors[4]).to eq({ row: 6, col: 2, attribute: "ledger_item", value: "通信費", message: "通信費はledger_itemに存在しません" })
       end
     end
   end
@@ -209,8 +210,8 @@ RSpec.describe FileUploads::LedgerCsv, type: :feature do
         csv = FileUploads::LedgerCsv.new(address: addresses_eth, file_path: ledger_2025_1_6_errors_path)
         errors = csv.validate_errors_first
         expect(errors.size).to eq(2)
-        expect(errors[0]).to eq({ row: 1, col: 5, attribute: "proportion_rate", value: "proportion_rete", messaga: "ヘッダの属性名が不正です。正しい属性名はproportion_rateです。" })
-        expect(errors[1]).to eq({ row: 2, col: 1, attribute: "date", value: "2025/01/32", messaga: "dateの値が不正です。yyyy/mm/dd形式で正しい日付を入力してください。" })
+        expect(errors[0]).to eq({ row: 1, col: 5, attribute: "proportion_rate", value: "proportion_rete", message: "ヘッダの属性名が不正です。正しい属性名はproportion_rateです。" })
+        expect(errors[1]).to eq({ row: 2, col: 1, attribute: "date", value: "2025/01/32", message: "dateの値が不正です。yyyy/mm/dd形式で正しい日付を入力してください。" })
       end
     end
   end

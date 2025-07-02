@@ -5,11 +5,6 @@ class LedgerCsvImportJob < ApplicationJob
   # LedgerCsvにエラーがある
   class LedgerCsvErrors < StandardError; end
 
-  rescue_from(Exception) do |exception|
-    Rails.error.report(exception)
-    raise exception
-  end
-
   def perform(ledger_csv:)
     begin
       # 実行中にする

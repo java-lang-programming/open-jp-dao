@@ -3,6 +3,8 @@ module FileUploads
   class GenerateMaster
     LEDGER_YAML = 1
 
+    LEDGER_YAML_FIELDS = "fields"
+
     DEFAULT_LEDGER_YAML_PATH = "lib/file_record/yamls/ledger.yml"
 
     attr_accessor :kind

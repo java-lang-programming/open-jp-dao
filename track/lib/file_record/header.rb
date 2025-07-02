@@ -22,14 +22,14 @@ module FileRecord
       # row col atribute value messaga
       if fields_size < csv_data_size
         row = 1
-        messaga = "ヘッダの属性名の数が多いです。ファイルのヘッダー情報を再確認してください。"
-        return [ error_data(row: row, messaga: messaga) ]
+        message = "ヘッダの属性名の数が多いです。ファイルのヘッダー情報を再確認してください。"
+        return [ error_data(row: row, message: message) ]
       end
 
       if fields_size > csv_data_size
         row = 1
-        messaga = "ヘッダの属性名の数が不足しています。ファイルのヘッダー情報を再確認してください。"
-        return [ error_data(row: row, messaga: messaga) ]
+        message = "ヘッダの属性名の数が不足しています。ファイルのヘッダー情報を再確認してください。"
+        return [ error_data(row: row, message: message) ]
       end
 
       # 数は同じでも、中身が違う場合があるのでチェック
@@ -41,8 +41,8 @@ module FileRecord
             col = idx + 1
             attribute = field
             value = csv_header[idx]
-            messaga = "ヘッダの属性名が不正です。正しい属性名は#{attribute}です。"
-            array << error_data(row: row, col: col, attribute: attribute, value: value, messaga: messaga)
+            message = "ヘッダの属性名が不正です。正しい属性名は#{attribute}です。"
+            array << error_data(row: row, col: col, attribute: attribute, value: value, message: message)
           end
         end
         result unless result.empty?
@@ -52,8 +52,8 @@ module FileRecord
     private
     # 色々な箇所で使うね Baseかな
     # TODO private
-    def error_data(row:, col: nil, attribute: "", value: "", messaga: "")
-      { row: row, col: col, attribute: attribute, value: value, messaga: messaga }
+    def error_data(row:, col: nil, attribute: "", value: "", message: "")
+      { row: row, col: col, attribute: attribute, value: value, message: message }
     end
   end
 end
