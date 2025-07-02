@@ -13,13 +13,9 @@ module FileUploads
       @address = address
       @file_path = file_path
       @master = FileUploads::GenerateMaster.new(kind: FileUploads::GenerateMaster::LEDGER_YAML).master
-      @preload = preload
+      @preload = { address: @address, ledger_items: LedgerItem.all }
       @csv_rows = make_csv_rows
       @import_file = nil
-    end
-
-    def preload
-      { address: @address, ledger_items: LedgerItem.all }
     end
 
     # csv_rowsを作成して返す
