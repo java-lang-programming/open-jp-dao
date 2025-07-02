@@ -12,16 +12,8 @@ module FileRecord
     #
     def validate_date(content:, col:, row_num:, field:, value:)
       errors = []
-      if content["require"] == true
-        unless value.present?
-          row = row_num
-          col = col
-          attribute = field
-          value = value
-          message = "#{field}が未記入です。#{field}は必須入力です。"
-          errors << error_data(row: row, col: col, attribute: attribute, value: value, message: message)
-        end
-      end
+      # 必須チェック
+      validate_require(errors: errors, content: content, col: col, row_num: row_num, field: field, value: value)
 
       if value.present? && content["options"].present?
         if content["options"]["format"] == "yyyy/mm/dd"
@@ -53,17 +45,8 @@ module FileRecord
 
     def validate_string(content:, col:, row_num:, field:, value:)
       errors = []
-      # 　これは全部同じ
-      if content["require"] == true
-        unless value.present?
-          row = row_num
-          col = col
-          attribute = field
-          value = value
-          message = "#{field}が未記入です。#{field}は必須入力です。"
-          errors << error_data(row: row, col: col, attribute: attribute, value: value, message: message)
-        end
-      end
+      # 必須チェック
+      validate_require(errors: errors, content: content, col: col, row_num: row_num, field: field, value: value)
 
       if value.present? && content["options"].present?
         max = content["options"]["max"]
@@ -86,7 +69,22 @@ module FileRecord
 
     def validate_bigdecimal(content:, col:, row_num:, field:, value:)
       errors = []
-      errors
+      # 必須チェック
+      validate_require(errors: errors, content: content, col: col, row_num: row_num, field: field, value: value)
+    end
+
+    # voidかな
+    def validate_require(errors: [], content:, col:, row_num:, field:, value:)
+      if content&.dig("require") == true
+        unless value.present?
+          row = row_num
+          col = col
+          attribute = field
+          value = value
+          message = "#{field}が未記入です。#{field}は必須入力です。"
+          errors << error_data(row: row, col: col, attribute: attribute, value: value, message: message)
+        end
+      end
     end
 
     def error_data(row:, col: nil, attribute: "", value: "", message: "")
