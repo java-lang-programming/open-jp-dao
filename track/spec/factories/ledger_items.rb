@@ -24,7 +24,7 @@ FactoryBot.define do
   end
 
   factory :ledger_item_4, class: LedgerItem do
-    id { 3 }
+    id { 4 }
     name { "新聞図書費" }
     kind { LedgerItem.kinds[:account_item] }
     summary { }
@@ -32,7 +32,7 @@ FactoryBot.define do
   end
 
   factory :ledger_item_5, class: LedgerItem do
-    id { 3 }
+    id { 5 }
     name { "国民年金保険料" }
     kind { LedgerItem.kinds[:drawings] }
     summary { }
