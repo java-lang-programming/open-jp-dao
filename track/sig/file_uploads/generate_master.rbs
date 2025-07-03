@@ -1,0 +1,13 @@
+module FileUploads
+  class GenerateMaster
+    LEDGER_YAML: Integer
+
+    DEFAULT_LEDGER_YAML_PATH: string
+
+    attr_accessor kind: Integer
+
+    def initialize: (kind: Integer) -> void
+
+    def master: -> untyped
+  end
+end

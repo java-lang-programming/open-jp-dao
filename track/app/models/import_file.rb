@@ -2,10 +2,12 @@ class ImportFile < ApplicationRecord
   enum :status, { ready: 1, in_progress: 2, failure: 8, completed: 9 }
   belongs_to :address
   belongs_to :job
+  has_many :import_file_errors
 
   has_one_attached :file
 
   # TODO 将来的にはjobによって切り分ける
+  # 　ここに個別のcsv処理が入るのはおかしいかな
   def make_csvs_dollar_yens_transactions
     preload_records =  { address: address, transaction_types: address.transaction_types }
     csvs = []

@@ -1,0 +1,31 @@
+class Job < ApplicationRecord
+  # belongs_to :ledger_item の定義
+  # 関連オブジェクトの型を指定します。
+  # `untyped` は、LedgerItem クラスのRBSがまだない場合や、
+  # 特定の型を厳密に指定しない場合に利用できます。
+  # LedgerItem のRBSがある場合は、`LedgerItem` と具体的に指定することを推奨します。
+  # 疑問符 `?` は、関連が存在しない可能性（`nil`の可能性）を示します。
+  # belongs_to のデフォルトは `optional: true` なので `?` を付けます。
+  # もし `optional: false` であれば `LedgerItem` のように `?` は不要です。
+  #def ledger_item: () -> LedgerItem?
+  #def ledger_item=: (LedgerItem?) -> LedgerItem?
+
+  # belongs_to :address の定義
+  # 同様に、関連オブジェクトの型を指定します。
+  #def address: () -> Address?
+  # def address=: (Address?) -> Address?
+
+  # ApplicationRecord を継承しているため、そのメソッドも利用可能です。
+  # 例えば、以下のようなメソッドが生えます（RBSで全てを網羅する必要はありません）。
+  # def id: () -> Integer
+  # def created_at: () -> Time
+  # def updated_at: () -> Time
+
+  # 新規レコード作成時のattributes
+  # 通常は `ActiveRecord::Base` や `ApplicationRecord` のRBSに定義されているため、
+  # ここで明示的に定義する必要はあまりありませんが、
+  # 特定の属性に対する型を指定したい場合は追加します。
+  # 例えば、次のように書くこともできます。
+  # def self.create: (untyped attributes) -> self
+  # def self.new: (untyped attributes) -> self
+end

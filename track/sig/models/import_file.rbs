@@ -1,0 +1,23 @@
+class ImportFile < ApplicationRecord
+  # ここから enumの宣言(これらはパースして自動生成やな。。。これはrubyじゃない方が良い。)
+  # ステータスの型リテラル（Enumに対応）
+  type status_type = :ready | :in_progress | :failure | :completed
+
+  # ステータス属性
+  attr_accessor status: status_type
+
+  def self.statuses: () -> { ready: Integer, in_progress: Integer, failure: Integer, completed: Integer }
+
+  def ready?: () -> bool
+  def in_progress?: () -> bool
+  def failure?: () -> bool
+  def completed?: () -> bool
+
+  def ready!: () -> void
+  def in_progress!: () -> void
+  def failure!: () -> void
+  def completed!: () -> void
+
+  def status_before_type_cast: () -> Integer
+  #　ここまでenumの宣言
+end

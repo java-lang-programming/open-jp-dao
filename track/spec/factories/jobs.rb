@@ -9,4 +9,10 @@ FactoryBot.define do
     name { "ドル円取引csvimport" }
     summary { "ドル円取引のcsvをimportします" }
   end
+
+  factory :job_3, class: Job do
+    id { Job::LEDGER_CSV_IMPORT }
+    name { "仕訳帳csvimport" }
+    summary { "仕訳帳のcsvをimportします" }
+  end
 end

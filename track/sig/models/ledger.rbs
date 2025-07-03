@@ -1,0 +1,17 @@
+class Ledger < ApplicationRecord
+  def address: () -> Address
+  def address=: (Address) -> Address
+
+  def build_address: (?Hash[Symbol, untyped]) -> Address
+
+  def calculate_recorded_amount: -> Integer
+
+  def create_address: (?Hash[Symbol, untyped]) -> Address
+  def create_address!: (?Hash[Symbol, untyped]) -> Address
+
+  attr_accessor face_value: Integer
+  attr_accessor proportion_rate: BigDecimal?
+  attr_accessor proportion_amount: BigDecimal?
+
+  def BigDecimal: (Integer) -> BigDecimal
+end

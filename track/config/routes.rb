@@ -48,6 +48,18 @@ Rails.application.routes.draw do
 
   resources :settings, only: [ :index ]
 
+  # v2
+  resources :ledgers do
+    collection do
+      get "csv_upload_new"
+      post "csv_upload"
+      # 結果を見る(何かをする必要がある)
+      get "csv_upload_confirm"
+      # 結果を見る
+      get "csv_upload_confirmation"
+    end
+  end
+
   post "sessions/logout"
   get "sessions/signout"
 

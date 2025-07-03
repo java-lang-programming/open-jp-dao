@@ -1,0 +1,29 @@
+module FileRecord
+  module Header
+    # yamlをloadする(モジュールかする)
+    # def yaml_load(path: path)
+    #   # pathは環境変数でも管理可能に
+    #   YAML.load_file(path)
+    # end
+    #
+    # ↑のコメントアウトされたメソッドをRBSに変換すると以下のようになります。
+    # コメントアウトされているため、RBSとしては出力しませんが、
+    # もし有効なメソッドであれば以下のようになります。
+    #
+    # def yaml_load: (path: String) -> Hash[String, untyped]
+
+    # 正常の場合は空配列を返す
+    # 戻り値の型は `Array[untyped]` またはより具体的に `Array[Hash[Symbol, untyped]]` と推測されます。
+    # error_data の戻り値のハッシュ構造に基づいて、より具体的な型を定義することも可能です。
+    # 例: `Array[{ row: Integer, col: Integer?, attribute: String, value: String, messaga: String }]`
+    def validate_header_fields: (file_path: String, master: Hash[String, untyped]) -> Array[untyped]
+
+    private
+
+    # 色々な箇所で使うね Baseかな
+    # TODO private
+    # 戻り値のハッシュのキーはシンボルです。
+    # `col` は `nil` も許容するため `Integer?` (Integer or nil) とします。
+    def error_data: (row: Integer, col: Integer?, attribute: String, value: String, messaga: String) -> { row: Integer, col: Integer?, attribute: String, value: String, messaga: String }
+  end
+end

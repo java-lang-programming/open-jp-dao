@@ -1,0 +1,6 @@
+class LedgerItem < ApplicationRecord
+  type kind_type = :ready | :in_progress | :failure | :completed
+
+  # ステータス属性
+  attr_accessor kind: kind_type
+end

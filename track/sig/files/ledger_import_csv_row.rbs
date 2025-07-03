@@ -1,0 +1,12 @@
+module Files
+  class LedgerImportCsvRow
+    attr_accessor master: untyped
+    attr_accessor preload: Hash[String, untyped]
+    attr_accessor row: untyped
+    attr_accessor row_num: untyped
+
+    def to_ledger: -> Ledger
+
+    def valid_errors: -> untyped
+  end
+end

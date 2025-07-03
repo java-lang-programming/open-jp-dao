@@ -36,6 +36,7 @@ class Apis::SessionsController < ApplicationController
     end
 
     # ENS情報を取得して更新する
+    # TODO 処理の時間がかかるので、非同期にするべき
     if address.ethereum?
       ens_response = address.fetch_ens(chain_id: params[:chain_id])
 
