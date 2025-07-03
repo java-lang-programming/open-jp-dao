@@ -273,4 +273,19 @@ RSpec.describe FileUploads::LedgerCsv, type: :feature do
       end
     end
   end
+
+  describe 'save_error' do
+    context 'エラーを保存' do
+      it "should be save error_json." do
+        job_3
+        csv = FileUploads::LedgerCsv.new(address: addresses_eth, file_path: fixture_file_upload(ledger_2025_1_6_errors_path))
+        errors = csv.validate_errors_first
+        csv.save_error(error_json: errors)
+
+        import_file_errors = addresses_eth.import_files.first.import_file_errors
+        expect(import_file_errors.size).to eq(1)
+        expect(import_file_errors.first.error_json).to eq(errors.to_json)
+      end
+    end
+  end
 end

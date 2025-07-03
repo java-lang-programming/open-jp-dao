@@ -79,6 +79,11 @@ module FileUploads
       @import_file.save
     end
 
+    def save_error(error_json:)
+      @import_file ||= create_import_file
+      @import_file.import_file_errors.create(error_json: error_json.to_json)
+    end
+
     def generate_ledgers
       @csv_rows.map(&:to_ledger)
     end

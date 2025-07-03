@@ -12,8 +12,8 @@ class LedgerCsvImportJob < ApplicationJob
 
       errors = ledger_csv.validate_errors_of_complex_data
       if errors.present?
-        # ここでエラーデータを保存する
-        raise LedgerCsvErrors unless @session.present?
+        ledger_csv.save_error(error_json: errors)
+        raise LedgerCsvErrors
       end
 
       # 　オブジェクトの生成

@@ -62,8 +62,6 @@ RSpec.describe "Ledgers", type: :request do
     let(:ledger_csv_sample_path) { "#{Rails.root}/spec/files/uploads/ledger_csv/ledger_csv_sample.csv" }
 
     context 'ログイン情報あり' do
-      # TODO
-
       before do
         # sigin処理
         mock_apis_verify(body: {})

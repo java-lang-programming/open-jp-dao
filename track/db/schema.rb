@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_06_25_001029) do
+ActiveRecord::Schema[8.0].define(version: 2025_07_02_233832) do
   create_table "active_storage_attachments", force: :cascade do |t|
     t.string "name", null: false
     t.string "record_type", null: false
@@ -77,6 +77,14 @@ ActiveRecord::Schema[8.0].define(version: 2025_06_25_001029) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["date"], name: "index_dollar_yens_on_date", unique: true
+  end
+
+  create_table "import_file_errors", force: :cascade do |t|
+    t.integer "import_file_id"
+    t.json "error_json"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["import_file_id"], name: "index_import_file_errors_on_import_file_id"
   end
 
   create_table "import_files", force: :cascade do |t|
