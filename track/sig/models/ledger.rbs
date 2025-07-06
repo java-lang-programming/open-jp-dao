@@ -14,4 +14,6 @@ class Ledger < ApplicationRecord
   attr_accessor proportion_amount: BigDecimal?
 
   def BigDecimal: (Integer) -> BigDecimal
+
+  def to_en: (BigDecimal) -> Integer
 end

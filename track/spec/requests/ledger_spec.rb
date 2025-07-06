@@ -83,7 +83,7 @@ RSpec.describe "Ledgers", type: :request do
       it "should be success." do
         job_3
         post csv_upload_ledgers_path, params: { import_file: { file: fixture_file_upload(ledger_csv_sample_path) } }
-        expect(response.status).to eq(204)
+        expect(response).to have_http_status(:ok)
       end
     end
   end

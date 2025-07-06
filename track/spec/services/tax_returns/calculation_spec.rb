@@ -2,7 +2,7 @@ require 'rails_helper'
 
 RSpec.describe TaxReturns::Calculation do
   let(:addresses_eth) { create(:addresses_eth) }
-  let(:ledger_2025_1_6_path) { "#{Rails.root}/spec/files/uploads/ledger_csv/2025_1_6.csv" }
+  let(:ledger_2025_1_6_path) { fixture_file_upload("#{Rails.root}/spec/files/uploads/ledger_csv/2025_1_6.csv") }
   let(:job_3) { create(:job_3) }
   let(:ledger_item_1) { create(:ledger_item_1) }
   let(:ledger_item_2) { create(:ledger_item_2) }
@@ -16,8 +16,9 @@ RSpec.describe TaxReturns::Calculation do
       ledger_item_2
       ledger_item_3
       # 　データ作成
-      ledger_csv = FileUploads::LedgerCsv.new(address: addresses_eth, file_path: fixture_file_upload(ledger_2025_1_6_path))
-      LedgerCsvImportJob.perform_now(ledger_csv: ledger_csv)
+      ledger_file = FileUploads::Ledgers::File.new(address: addresses_eth, file: ledger_2025_1_6_path)
+      import_file = ledger_file.create_import_file
+      LedgerCsvImportJob.perform_now(import_file_id: import_file.id)
     end
 
     after do
