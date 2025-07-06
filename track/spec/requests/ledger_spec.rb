@@ -61,6 +61,7 @@ RSpec.describe "Ledgers", type: :request do
     let(:job_3) { create(:job_3) }
     let(:ledger_csv_sample_path) { "#{Rails.root}/spec/files/uploads/ledger_csv/ledger_csv_sample.csv" }
 
+
     context 'ログイン情報あり' do
       before do
         # sigin処理
@@ -81,7 +82,7 @@ RSpec.describe "Ledgers", type: :request do
       # 画面遷移
       it "should be success." do
         job_3
-        post csv_upload_ledgers_path, params: { file: fixture_file_upload(ledger_csv_sample_path) }
+        post csv_upload_ledgers_path, params: { import_file: { file: fixture_file_upload(ledger_csv_sample_path) } }
         expect(response.status).to eq(204)
       end
     end
