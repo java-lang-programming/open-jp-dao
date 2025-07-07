@@ -65,8 +65,4 @@ class LedgersController < ApplicationViewController
       # https://zenn.dev/greendrop/articles/2024-11-07-de79415b55bff0
     end
   end
-
-  # def file_params
-  #   params.require(:import_file).permit(:file) # ActiveStorageなどを使う場合は :file を許可
-  # end
 end
