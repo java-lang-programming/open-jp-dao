@@ -53,12 +53,10 @@ Rails.application.routes.draw do
     collection do
       get "csv_upload_new"
       post "csv_upload"
-      # 結果を見る(何かをする必要がある)
-      get "csv_upload_confirm"
-      # 結果を見る
-      get "csv_upload_confirmation"
     end
   end
+
+  resources :tax_returns, only: [ :index ]
 
   post "sessions/logout"
   get "sessions/signout"

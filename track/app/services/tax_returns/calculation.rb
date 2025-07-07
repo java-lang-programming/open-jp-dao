@@ -15,23 +15,29 @@ module TaxReturns
       end_date = Time.new(@year, 12, 31)
       base = @address.ledgers.where(date: (start_date..end_date))
 
-      # これらの値はとりあえずhashかな。
       # 通信費
       communication_expense = base.where(ledger_item_id: 1).sum(:recorded_amount)
-      # puts "通信費"
-      # puts communication_expense
       # 水道光熱費
       utility_costs =  base.where(ledger_item_id: 2).sum(:recorded_amount)
-      # puts "水道光熱費"
-      # puts utility_costs
       # 消耗品費
       supplies_expense = base.where(ledger_item_id: 3).sum(:recorded_amount)
-      # puts "消耗品費"
-      # puts supplies_expense
+      # 為替差益
+      foreign_exchange_gain = @address.foreign_exchange_gain(year: @year)
       {
         communication_expense: communication_expense,
         utility_costs: utility_costs,
-        supplies_expense: supplies_expense
+        supplies_expense: supplies_expense,
+        foreign_exchange_gain: foreign_exchange_gain
+      }
+    end
+
+    def execute_on_screen
+      result = execute
+      {
+        communication_expense: Currency.en_with_unit(value: result[:communication_expense]),
+        utility_costs: Currency.en_with_unit(value: result[:utility_costs]),
+        supplies_expense: Currency.en_with_unit(value: result[:supplies_expense]),
+        foreign_exchange_gain: Currency.en_with_unit(value: result[:foreign_exchange_gain])
       }
     end
   end

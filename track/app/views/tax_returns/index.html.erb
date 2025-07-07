@@ -1,0 +1,187 @@
+<% content_for :title do %>WanWan 確定申告B<% end %>
+
+<% content_for :header do %>
+  <%= render "layouts/header", user: @user, notification: @notification %>
+<% end %>
+
+<section class="py-8">
+  <section>
+    <h2 class="text-2xl font-bold text-center mb-8">2025年お金の出入り（確定申告書B）</h2>
+
+    <h3 class="text-xl font-semibold text-center mb-6 mt-10">入金</h3>
+    <div class="flex justify-center py-4">
+      <div class="w-full max-w-md">
+        <ul class="divide-y divide-gray-200 dark:divide-gray-700">
+          <li class="py-3 sm:py-4">
+            <div class="flex items-center justify-between space-x-4 rtl:space-x-reverse">
+              <div class="flex-1 min-w-0">
+                <a href="./leaders?account_item_id=1" class="block text-sm font-medium text-gray-900 truncate dark:text-white">
+                  為替差益(外貨建取引の決済や換算時に、為替相場の変動によって生じる利益)
+                </a>
+              </div>
+              <div class="flex-shrink-0 text-base font-semibold text-gray-900 dark:text-white">
+                <%= @tax_return[:foreign_exchange_gain] %>
+              </div>
+            </div>
+          </li>
+          <li class="py-3 sm:py-4">
+            <div class="flex items-center justify-between space-x-4 rtl:space-x-reverse">
+              <div class="flex-1 min-w-0">
+                <a href="./leaders?account_item_id=1" class="block text-sm font-medium text-gray-900 truncate dark:text-white">
+                  雑所得
+                </a>
+              </div>
+              <div class="flex-shrink-0 text-base font-semibold text-gray-900 dark:text-white">
+                ¥10,000
+              </div>
+            </div>
+          </li>
+        </ul>
+      </div>
+    </div>
+
+    <h3 class="text-xl font-semibold text-center mb-6 mt-10">経費</h3>
+    <div class="flex justify-center py-4">
+      <div class="w-full max-w-md">
+        <ul class="divide-y divide-gray-200 dark:divide-gray-700">
+          <li class="py-3 sm:py-4">
+            <div class="flex items-center justify-between space-x-4 rtl:space-x-reverse">
+              <div class="flex-1 min-w-0">
+                <a href="../ledgers/index_v1.0.0.html?account_item_id=1" class="block text-sm font-medium text-gray-900 truncate dark:text-white">
+                  水道光熱費
+                </a>
+              </div>
+              <div class="flex-shrink-0 text-base font-semibold text-gray-900 dark:text-white">
+                <%= @tax_return[:utility_costs] %>
+              </div>
+            </div>
+          </li>
+          <li class="py-3 sm:py-4">
+            <div class="flex items-center justify-between space-x-4 rtl:space-x-reverse">
+              <div class="flex-1 min-w-0">
+                <a href="../ledgers/index_v1.0.0.html?account_item_id=2" class="block text-sm font-medium text-gray-900 truncate dark:text-white"> 
+                  通信費
+                </a>
+              </div>
+              <div class="flex-shrink-0 text-base font-semibold text-gray-900 dark:text-white">
+                <%= @tax_return[:communication_expense] %>
+              </div>
+            </div>
+          </li>
+          <li class="py-3 sm:py-4">
+            <div class="flex items-center justify-between space-x-4 rtl:space-x-reverse">
+              <div class="flex-1 min-w-0">
+                <p class="text-sm font-medium text-gray-900 truncate dark:text-white">
+                  消耗品費
+                </p>
+              </div>
+              <div class="flex-shrink-0 text-base font-semibold text-gray-900 dark:text-white">
+                <%= @tax_return[:supplies_expense] %>
+              </div>
+            </div>
+          </li>
+          <li class="py-3 sm:py-4">
+            <div class="flex items-center justify-between space-x-4 rtl:space-x-reverse">
+              <div class="flex-1 min-w-0">
+                <p class="text-sm font-medium text-gray-900 truncate dark:text-white">
+                  新聞図書費
+                </p>
+              </div>
+              <div class="flex-shrink-0 text-base font-semibold text-gray-900 dark:text-white">
+                ¥20,000
+              </div>
+            </div>
+          </li>
+        </ul>
+      </div>
+    </div>
+
+    <h3 class="text-xl font-semibold text-center mb-6 mt-10">税金</h3>
+    <div class="flex justify-center py-4">
+      <div class="w-full max-w-md">
+        <ul class="divide-y divide-gray-200 dark:divide-gray-700">
+          <li class="py-3 sm:py-4">
+            <div class="flex items-center justify-between space-x-4 rtl:space-x-reverse">
+              <div class="flex-1 min-w-0">
+                <a href="./leaders?account_item_id=1" class="block text-sm font-medium text-gray-900 truncate dark:text-white">
+                  国民年金
+                </a>
+              </div>
+              <div class="flex-shrink-0 text-base font-semibold text-gray-900 dark:text-white">
+                ¥120,222
+              </div>
+            </div>
+          </li>
+          <li class="py-3 sm:py-4">
+            <div class="flex items-center justify-between space-x-4 rtl:space-x-reverse">
+              <div class="flex-1 min-w-0">
+                <a href="./leaders?account_item_id=1" class="block text-sm font-medium text-gray-900 truncate dark:text-white">
+                  国民健康保険
+                </a>
+              </div>
+              <div class="flex-shrink-0 text-base font-semibold text-gray-900 dark:text-white">
+                ¥120,222
+              </div>
+            </div>
+          </li>
+          <li class="py-3 sm:py-4">
+            <div class="flex items-center justify-between space-x-4 rtl:space-x-reverse">
+              <div class="flex-1 min-w-0">
+                <p class="text-sm font-medium text-gray-900 truncate dark:text-white">
+                  確定拠出年金
+                </p>
+              </div>
+              <div class="flex-shrink-0 text-base font-semibold text-gray-900 dark:text-white">
+                ¥100,000
+              </div>
+            </div>
+          </li>
+          <li class="py-3 sm:py-4">
+            <div class="flex items-center justify-between space-x-4 rtl:space-x-reverse">
+              <div class="flex-1 min-w-0">
+                <p class="text-sm font-medium text-gray-900 truncate dark:text-white">
+                  小規模企業共済
+                </p>
+              </div>
+              <div class="flex-shrink-0 text-base font-semibold text-gray-900 dark:text-white">
+                ¥1,000
+              </div>
+            </div>
+          </li>
+        </ul>
+      </div>
+    </div>
+    
+    <h3 class="text-xl font-semibold text-center mb-6 mt-10">税金前払い</h3>
+    <div class="flex justify-center py-4">
+      <div class="w-full max-w-md">
+        <ul class="divide-y divide-gray-200 dark:divide-gray-700">
+          <li class="py-3 sm:py-4">
+            <div class="flex items-center justify-between space-x-4 rtl:space-x-reverse">
+              <div class="flex-1 min-w-0">
+                <a href="./leaders?account_item_id=1" class="block text-sm font-medium text-gray-900 truncate dark:text-white">
+                  所得税前払(1期)
+                </a>
+              </div>
+              <div class="flex-shrink-0 text-base font-semibold text-gray-900 dark:text-white">
+                ¥120,222
+              </div>
+            </div>
+          </li>
+          <li class="py-3 sm:py-4">
+            <div class="flex items-center justify-between space-x-4 rtl:space-x-reverse">
+              <div class="flex-1 min-w-0">
+                <p class="text-sm font-medium text-gray-900 truncate dark:text-white">
+                  所得税前払(2期)
+                </p>
+              </div>
+              <div class="flex-shrink-0 text-base font-semibold text-gray-900 dark:text-white">
+                ¥100,000
+              </div>
+            </div>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </section>
+</section>

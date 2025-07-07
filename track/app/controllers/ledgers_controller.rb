@@ -1,7 +1,11 @@
 class LedgersController < ApplicationViewController
   before_action :verify, only: [ :index, :csv_upload_new, :csv_upload ]
 
+  DEFAULT_LIMIT = 50
+
   def index
+    request = params.permit(:page)
+
     headers
     address = @session.address
 
@@ -10,6 +14,26 @@ class LedgersController < ApplicationViewController
     # DBの保存方法には気をつける。昔のはあまり見られないはずなので。。。
     # 検索表示用
     base_sql = address.ledgers.preload(:ledger_item)
+    total = base_sql.all.count
+
+    # ページング処理
+    pagy = SimplePagy::Pagy.new(request_page: request[:page], request_query: request).build(total: total)
+
+    ledgers = base_sql.limit(DEFAULT_LIMIT).offset(pagy.offset).order(date: :desc)
+    @ledgers = ledgers.map do |ledger|
+      {
+        id: ledger.id,
+        date: ledger.date.strftime("%Y/%m/%d"),
+        ledger_item_name: ledger.ledger_item.name,
+        name: ledger.name,
+        face_value: ledger.face_value_screen,
+        proportion_amount: ledger.proportion_amount_screen,
+        proportion_rate: ledger.proportion_rate_screen,
+        recorded_amount: ledger.recorded_amount_screen
+      }
+    end
+    # 下記がうまく言ったらpagyをそのまま置き換えるようにする
+    @page = { total: pagy.total, page: pagy.page, current_page: pagy.current_page, start_data_number: pagy.start_data_number, end_data_number: pagy.end_data_number, prev_query: pagy.prev_query, next_query: pagy.next_query, pages: pagy.pages_query }
   end
 
   def csv_upload_new

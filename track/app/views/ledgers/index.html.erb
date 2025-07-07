@@ -10,4 +10,78 @@
     <%= link_to "削除", new_dollar_yen_transaction_path, class: "bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded mr-2" %>
     <%= link_to "一括作成/更新", csv_upload_new_ledgers_path, class: "bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded" %>
   </div>
+
+  <div class="relative overflow-x-auto m-4">
+    <div>
+      <div class="my-4">
+        <p id="item-count" class="text-sm text-gray-500">検索結果: <%= @page[:start_data_number] %> - <%= @page[:end_data_number] %> / <%= @page[:total] %></p>
+      </div>
+
+      <% if @page[:page] >= 2 %>
+        <div class="flex flex-col space-y-4 items-center justify-center my-4">
+          <nav aria-label="Page navigation example">
+            <ul class="inline-flex -space-x-px text-sm">
+              <li>
+                <a href="./dollar_yen_transactions?<%= @page[:prev_query] %>" class="flex items-center justify-center px-3 h-8 ms-0 leading-tight text-gray-500 bg-white border border-e-0 border-gray-300 rounded-s-lg hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white">Previous</a>
+              </li>
+              <% @page[:pages].each do |page| %>
+                <li>
+                  <a href="./dollar_yen_transactions?<%= page[:query] %>" class="flex items-center justify-center px-3 h-8 leading-tight text-gray-500 <%=  page[:page] == @page[:current_page] ? "bg-blue-50" : "bg-white" %> border border-gray-300 <%=  page[:page] == @page[:current_page] ? "hover:bg-blue-100" : "hover:bg-gray-100" %> hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white"><%= page[:page] %></a>
+                </li>
+              <% end %>
+              <li>
+                <a href="./dollar_yen_transactions?<%= @page[:next_query] %>" class="flex items-center justify-center px-3 h-8 leading-tight text-gray-500 bg-white border border-gray-300 rounded-e-lg hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white">Next</a>
+              </li>
+            </ul>
+          </nav>
+        </div>
+      <% end %>
+    </div>
+
+
+    <!-- data表示開始 -->
+    <div class="list-container w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400 overflow-x-auto relative">
+        <div class="inline-block min-w-full"><!-- mobileの右側の色が抜ける対策 -->
+          <div class="grid grid-cols-[auto_minmax(100px,_1fr)_minmax(100px,_1fr)_minmax(100px,_1fr)_minmax(100px,_1fr)_minmax(100px,_1fr)_minmax(100px,_1fr)_minmax(100px,_1fr)] md:grid-cols-8 text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+                <div class="px-6 py-3 flex items-center w-auto">
+                    チェック
+                </div>
+                <div class="px-6 py-3 flex items-center">
+                    <a href="">日付</a>
+                </div>
+                <div class="px-6 py-3 flex items-center">
+                    勘定科目
+                </div>
+                <div class="px-6 py-3 flex items-center">
+                    名称
+                </div>
+                <div class="px-6 py-3 flex items-center">
+                    額面
+                </div>
+                <div class="px-6 py-3 flex items-center">
+                    按分額
+                </div>
+                <div class="px-6 py-3 flex items-center">
+                    按分率
+                </div>
+                <div class="px-6 py-3 flex items-center">
+                    計上額
+                </div>
+            </div>
+            <% @ledgers.each_with_index do |ledger, index| %>
+            <div class="item-row grid grid-cols-[auto_minmax(100px,_1fr)_minmax(100px,_1fr)_minmax(100px,_1fr)_minmax(100px,_1fr)_minmax(100px,_1fr)_minmax(100px,_1fr)_minmax(100px,_1fr)] md:grid-cols-8 bg-white border-b dark:bg-gray-800 dark:border-gray-700 border-gray-200" data-id="456">
+                <div class="px-6 py-4 font-normal flex items-center w-auto"><input id="default-checkbox" type="checkbox" value="" class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded-sm focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"></div>
+                <div class="px-6 py-4 font-normal flex items-center"><%= ledger[:date] %></div>
+                <div class="px-6 py-4 font-normal flex items-center"><%= ledger[:ledger_item_name] %></div>
+                <div class="px-6 py-4 font-normal flex items-center"><%= ledger[:name] %></div>
+                <div class="px-6 py-4 font-normal flex items-center"><%= ledger[:face_value] %></div>
+                <div class="px-6 py-4 font-normal flex items-center"><%= ledger[:proportion_amount] %></div>
+                <div class="px-6 py-4 font-normal flex items-center"><%= ledger[:proportion_rate] %></div>
+                <div class="px-6 py-4 font-normal flex items-center"><%= ledger[:recorded_amount] %></div>
+            </div>
+            <% end %>
+        </div>
+    </div>
+    <!-- data表示終了 -->
+  </div>
 </section>

@@ -1,9 +1,10 @@
 require 'rails_helper'
 
 RSpec.describe Address, type: :model do
-  describe 'ethereum?' do
-    let(:addresses_eth) { create(:addresses_eth) }
+  let(:addresses_eth) { create(:addresses_eth) }
+  let(:transaction_type5) { create(:transaction_type5, address: addresses_eth) }
 
+  describe 'ethereum?' do
     context 'ethereumの場合' do
       it 'should be true.' do
         expect(addresses_eth.ethereum?).to be true
@@ -12,8 +13,6 @@ RSpec.describe Address, type: :model do
   end
 
   describe 'metamask_format_address' do
-    let(:addresses_eth) { create(:addresses_eth) }
-
     context 'matamaskのaddress形式で返す' do
       it 'should be get metamask address format.' do
         expect(addresses_eth.metamask_format_address).to eq('0x00001...CC89D')
@@ -22,7 +21,6 @@ RSpec.describe Address, type: :model do
   end
 
   describe 'generate_dollar_yen_transactions_csv_import_file' do
-    let(:addresses_eth) { create(:addresses_eth) }
     let(:job_2) { create(:job_2) }
     let(:transaction_type1) { create(:transaction_type1, address: addresses_eth) }
     let(:transaction_type2) { create(:transaction_type2, address: addresses_eth) }
@@ -66,7 +64,6 @@ RSpec.describe Address, type: :model do
   end
 
   describe 'generate_dollar_yen_transactions_csv_export_import_file' do
-    let(:addresses_eth) { create(:addresses_eth) }
     let(:job_2) { create(:job_2) }
     let(:transaction_type1) { create(:transaction_type1, address: addresses_eth) }
     let(:transaction_type2) { create(:transaction_type2, address: addresses_eth) }
@@ -153,8 +150,6 @@ RSpec.describe Address, type: :model do
   end
 
   describe 'make_file_name' do
-    let(:addresses_eth) { create(:addresses_eth) }
-
     context 'file_pathを作成' do
       it 'should be file_name.' do
         file_name = addresses_eth.make_file_name
@@ -164,7 +159,6 @@ RSpec.describe Address, type: :model do
   end
 
   describe 'recalculation_need_dollar_yen_transactions_create' do
-    let(:addresses_eth) { create(:addresses_eth) }
     let(:transaction_type1) { create(:transaction_type1, address: addresses_eth) }
     let(:transaction_type2) { create(:transaction_type2, address: addresses_eth) }
     let(:transaction_type3) { create(:transaction_type3, address: addresses_eth) }
@@ -222,7 +216,6 @@ RSpec.describe Address, type: :model do
   end
 
   describe 'recalculation_need_dollar_yen_transactions_delete' do
-    let(:addresses_eth) { create(:addresses_eth) }
     let(:transaction_type1) { create(:transaction_type1, address: addresses_eth) }
     let(:transaction_type2) { create(:transaction_type2, address: addresses_eth) }
     let(:transaction_type3) { create(:transaction_type3, address: addresses_eth) }
@@ -290,7 +283,6 @@ RSpec.describe Address, type: :model do
   end
 
   describe 'recalculation_need_dollar_yen_transactions_update' do
-    let(:addresses_eth) { create(:addresses_eth) }
     let(:transaction_type1) { create(:transaction_type1, address: addresses_eth) }
     let(:transaction_type2) { create(:transaction_type2, address: addresses_eth) }
     let(:transaction_type3) { create(:transaction_type3, address: addresses_eth) }
@@ -358,7 +350,6 @@ RSpec.describe Address, type: :model do
   end
 
   describe 'base_dollar_yen_transaction_create' do
-    let(:addresses_eth) { create(:addresses_eth) }
     let(:transaction_type1) { create(:transaction_type1, address: addresses_eth) }
     let(:transaction_type2) { create(:transaction_type2, address: addresses_eth) }
     let(:transaction_type3) { create(:transaction_type3, address: addresses_eth) }
@@ -397,7 +388,6 @@ RSpec.describe Address, type: :model do
   end
 
   describe 'base_dollar_yen_transaction_delete' do
-    let(:addresses_eth) { create(:addresses_eth) }
     let(:transaction_type1) { create(:transaction_type1, address: addresses_eth) }
     let(:transaction_type2) { create(:transaction_type2, address: addresses_eth) }
     let(:transaction_type3) { create(:transaction_type3, address: addresses_eth) }
@@ -442,8 +432,6 @@ RSpec.describe Address, type: :model do
   end
 
   describe 'fetch_ens' do
-    let(:addresses_eth) { create(:addresses_eth) }
-
     it 'should ens success' do
       mock_apis_ens(
         status: 200,
@@ -459,7 +447,6 @@ RSpec.describe Address, type: :model do
   end
 
   describe 'display_address' do
-    let(:addresses_eth) { create(:addresses_eth) }
     let(:addresses_eth_with_ens) { create(:addresses_eth, ens_name: 'test.eth') }
 
     it 'should metamask_format_address when ens_name is empty.' do
@@ -468,6 +455,40 @@ RSpec.describe Address, type: :model do
 
     it 'should ens_eth when ens_name is found.' do
       expect(addresses_eth_with_ens.display_address).to eq('test.eth')
+    end
+  end
+
+  describe 'withdrawal_transaction_type_ids' do
+    before do
+      transaction_type5
+    end
+
+    it 'should get withdrawal_transaction_type_ids.' do
+      expect(addresses_eth.withdrawal_transaction_type_ids).to eq([ transaction_type5.id ])
+    end
+  end
+
+  describe 'foreign_exchange_gain' do
+    let(:dollar_yen_transaction44) { create(:dollar_yen_transaction44, transaction_type: transaction_type5, address: addresses_eth) }
+    let(:dollar_yen_transaction51) { create(:dollar_yen_transaction51, transaction_type: transaction_type5, address: addresses_eth) }
+
+    it 'should 0 when dollar_yen_transactions is empty.' do
+      expect(addresses_eth.foreign_exchange_gain(year: 2024)).to eq(0)
+    end
+
+    context '年別でforeign_exchange_gainを取得' do
+      before do
+        dollar_yen_transaction44
+        dollar_yen_transaction51
+      end
+
+      it 'should 2170 when year is 2024 and dollar_yen_transactions is empty.' do
+        expect(addresses_eth.foreign_exchange_gain(year: 2024)).to eq(2170)
+      end
+
+      it 'should 0 when year is 2025 and dollar_yen_transactions is empty.' do
+        expect(addresses_eth.foreign_exchange_gain(year: 2025)).to eq(0)
+      end
     end
   end
 end

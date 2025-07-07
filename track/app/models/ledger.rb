@@ -1,5 +1,7 @@
 
 class Ledger < ApplicationRecord
+  include ActionView::Helpers::NumberHelper
+
   belongs_to :ledger_item
   belongs_to :address
 
@@ -22,5 +24,24 @@ class Ledger < ApplicationRecord
 
   def to_en(value:)
     BigDecimal(value).floor(0).to_i
+  end
+
+  def face_value_screen
+    Currency.en_with_unit(value: face_value)
+  end
+
+  def proportion_amount_screen
+    return nil unless proportion_amount.present?
+    Currency.en_with_unit(value: proportion_amount)
+  end
+
+  def proportion_rate_screen
+    return nil unless proportion_rate.present?
+    proportion_rate.to_f
+  end
+
+  def recorded_amount_screen
+    return nil unless recorded_amount.present?
+    Currency.en_with_unit(value: recorded_amount)
   end
 end
