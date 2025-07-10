@@ -366,9 +366,7 @@ class DollarYenTransactionsController < ApplicationViewController
     @year = year.to_s
 
     # http://localhost:3000/apis/dollaryen/foreigne_exchange_gain?address=0x00001E868c62FA205d38BeBaB7B903322A4CC89D?year=2024
-    transaction_type_ids = address.transaction_types.where(kind: TransactionType.kinds[:withdrawal]).map do |t|
-      t.id
-    end
+    transaction_type_ids = address.withdrawal_transaction_type_ids
 
     # ここでwithdrawalを取得
     start_date = Time.new(year, 1, 1)

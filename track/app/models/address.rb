@@ -131,6 +131,21 @@ class Address < ApplicationRecord
     metamask_format_address
   end
 
+  # 出金のransaction_type_ids一覧
+  def withdrawal_transaction_type_ids
+    transaction_types.where(kind: :withdrawal).map(&:id)
+  end
+
+  # 為替差益(年度)
+  def foreign_exchange_gain(year: 1900)
+    start_date = Time.new(year, 1, 1)
+    end_date = Time.new(year, 12, 31)
+
+    dollaryen_transactions = dollar_yen_transactions.preload(:transaction_type).where(transaction_type_id: withdrawal_transaction_type_ids).where(date: (start_date..end_date))
+    # ここを外だしするべき クラスメソッドでserviceかな。。。
+    dollaryen_transactions.inject (0) { |sum, t| sum += Fraction.en(value: t.exchange_difference) }
+  end
+
   class << self
     def kind_errors(kind: nil)
       errors = []

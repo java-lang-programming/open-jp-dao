@@ -6,44 +6,42 @@
 
 <section class="py-8">
 
-  <div class="min-h-screen bg-white flex justify-center p-4 sm:p-6 md:p-8">
-    <div class="bg-white p-6 sm:p-8 rounded-lg w-full max-w-sm sm:max-w-md lg:max-w-lg">
-      <h2 class="text-xl sm:text-2xl font-bold text-center mb-4 sm:mb-6 text-gray-800">ファイルをアップロード</h2>
+  <%= form_with(model: @import_file, url: csv_upload_ledgers_path, data: { turbo: false }, html: { multipart: true, id: 'uploadForm' }) do |form| %>
+    <div class="min-h-screen bg-white flex justify-center p-4 sm:p-6 md:p-8">
+      <div class="bg-white p-6 sm:p-8 rounded-lg w-full max-w-sm sm:max-w-md lg:max-w-lg">
+        <h2 class="text-xl sm:text-2xl font-bold text-center mb-4 sm:mb-6 text-gray-800">ファイルをアップロード</h2>
 
-      <div
-        id="drop-area"
-        class="border-2 border-dashed border-gray-300 rounded-lg p-4 sm:p-6 mb-4 sm:mb-6 text-center cursor-pointer hover:border-blue-500 hover:bg-blue-50 transition duration-300 ease-in-out"
-      >
-        <input type="file" id="file-input" class="hidden" multiple />
-        <p class="text-sm sm:text-base text-gray-600 mb-2">ファイルをここにドラッグ＆ドロップ</p>
-        <p class="text-xs sm:text-sm text-gray-500">または</p>
-        <button
-          onclick="document.getElementById('file-input').click()"
-          class="mt-3 sm:mt-4 bg-blue-600 text-white px-5 py-2 sm:px-6 sm:py-2 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 transition duration-350 ease-in-out text-sm sm:text-base"
+        <div
+          id="drop-area"
+          class="border-2 border-dashed border-gray-300 rounded-lg p-4 sm:p-6 mb-4 sm:mb-6 text-center cursor-pointer hover:border-blue-500 hover:bg-blue-50 transition duration-300 ease-in-out"
         >
-          ファイルを選択
-        </button>
-      </div>
-
-      <div id="file-list" class="mb-4 sm:mb-6">
-        <h3 class="text-base sm:text-lg font-semibold text-gray-700 mb-2 sm:mb-3">選択されたファイル:</h3>
-        <ul id="selected-files" class="list-disc pl-4 sm:pl-5 text-gray-700 text-sm sm:text-base">
-          <li class="text-gray-500">ファイルが選択されていません</li>
-        </ul>
-        <p id="file-error" class="text-red-600 text-sm mt-2 hidden">※ CSVファイルのみアップロードできます。</p>
-      </div>
-
-      <button
-        id="upload-button"
-        class="w-full bg-green-600 text-white px-5 py-2 sm:px-6 sm:py-3 rounded-md hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-opacity-50 transition duration-350 ease-in-out text-base sm:text-lg"
-      >
-        アップロード開始
-      </button>
-
-      <div id="upload-status" class="mt-3 sm:mt-4 text-center text-xs sm:text-sm text-gray-600">
+          <%= form.file_field :file, id: 'file-input', class: 'hidden' %>
+          <p class="text-sm sm:text-base text-gray-600 mb-2">ファイルをここにドラッグ＆ドロップ</p>
+          <p class="text-xs sm:text-sm text-gray-500">または</p>
+          <button
+            type="button"
+            onclick="document.getElementById('file-input').click()"
+            class="mt-3 sm:mt-4 bg-blue-600 text-white px-5 py-2 sm:px-6 sm:py-2 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 transition duration-350 ease-in-out text-sm sm:text-base"
+          >
+            ファイルを選択
+          </button>
         </div>
+
+        <div id="file-list" class="mb-4 sm:mb-6">
+          <h3 class="text-base sm:text-lg font-semibold text-gray-700 mb-2 sm:mb-3">選択されたファイル:</h3>
+          <ul id="selected-files" class="list-disc pl-4 sm:pl-5 text-gray-700 text-sm sm:text-base">
+            <li class="text-gray-500">ファイルが選択されていません</li>
+          </ul>
+          <p id="file-error" class="text-red-600 text-sm mt-2 hidden">※ CSVファイルのみアップロードできます。</p>
+        </div>
+
+        <%= form.submit "アップロード開始", id: 'upload-button', class: 'w-full bg-green-600 text-white px-5 py-2 sm:px-6 sm:py-3 rounded-md hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-opacity-50 transition duration-350 ease-in-out text-base sm:text-lg', disabled: true %>
+
+        <div id="upload-status" class="mt-3 sm:mt-4 text-center text-xs sm:text-sm text-gray-600">
+          </div>
+      </div>
     </div>
-  </div>
+  <% end %>
 
 </section>
 
@@ -154,13 +152,39 @@
 
     // ここに実際のアップロード処理（例: FormDataとFetch APIを使った非同期通信）を記述
     // 例: setTimeoutでダミーのアップロード完了をシミュレート
-    setTimeout(() => {
+<%#     async function postData(file) {
+      const formData = new FormData();
+      formData.append('file', file);
+      alert('---');
+
+
+      try {
+        const response = await fetch('/ledgers/csv_upload', {
+          method: 'POST',
+          headers: {
+            'X-CSRF-Token': csrfToken // ここでCSRFトークンを追加
+          },
+          body: formData,
+        });
+        if (!response.ok) {
+          throw new Error('Network response was not ok ' + response.statusText);
+        }
+        const result = await response.json();
+        console.log('Success:', result);
+      } catch (error) {
+        console.error('Error:', error);
+      }
+    } %>
+
+    <%# postData(filesToUpload[0]); %>
+
+<%#     setTimeout(() => {
       uploadStatus.textContent = `${filesToUpload.length}個のCSVファイルのアップロードが完了しました！`;
       uploadStatus.className = 'mt-3 sm:mt-4 text-center text-xs sm:text-sm text-green-600';
       filesToUpload = []; // アップロード後ファイルをクリア
       selectedFilesList.innerHTML = '<li class="text-gray-500">ファイルが選択されていません</li>';
       uploadButton.disabled = true; // 再度アップロードできるように初期状態に戻す
       uploadButton.classList.add('opacity-50', 'cursor-not-allowed');
-    }, 2000);
+    }, 2000); %>
   });
 </script>

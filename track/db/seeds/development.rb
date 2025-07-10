@@ -71,8 +71,8 @@ puts "TransactionType作成終了"
 
 puts "Job作成開始"
 
-FactoryBot.build(:job_1)
-FactoryBot.build(:job_2)
+FactoryBot.create(:job_1)
+FactoryBot.create(:job_2)
 
 puts "Job作成終了"
 

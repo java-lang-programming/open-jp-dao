@@ -2,8 +2,8 @@ require 'rails_helper'
 
 RSpec.describe LedgerCsvImportJob, type: :job do
   let(:addresses_eth) { create(:addresses_eth) }
-  let(:ledger_2025_1_6_path) { "#{Rails.root}/spec/files/uploads/ledger_csv/2025_1_6.csv" }
-  let(:ledger_2025_1_6_errors_path) { "#{Rails.root}/spec/files/uploads/ledger_csv/2025_1_6_errors.csv" }
+  let(:ledger_2025_1_6_path) { fixture_file_upload("#{Rails.root}/spec/files/uploads/ledger_csv/2025_1_6.csv") }
+  let(:ledger_2025_1_6_errors_path) { fixture_file_upload("#{Rails.root}/spec/files/uploads/ledger_csv/2025_1_6_errors.csv") }
   let(:job_3) { create(:job_3) }
   let(:ledger_item_1) { create(:ledger_item_1) }
   let(:ledger_item_2) { create(:ledger_item_2) }
@@ -19,8 +19,9 @@ RSpec.describe LedgerCsvImportJob, type: :job do
     end
 
     it 'should be success.'  do
-      ledger_csv = FileUploads::LedgerCsv.new(address: addresses_eth, file_path: fixture_file_upload(ledger_2025_1_6_errors_path))
-      LedgerCsvImportJob.perform_now(ledger_csv: ledger_csv)
+      csv = FileUploads::Ledgers::File.new(address: addresses_eth, file: ledger_2025_1_6_errors_path)
+      import_file = csv.create_import_file
+      LedgerCsvImportJob.perform_now(import_file_id: import_file.id)
 
       expect(addresses_eth.import_files.first.status).to eq('failure')
       expect(addresses_eth.ledgers.size).to eq(0)
@@ -39,8 +40,9 @@ RSpec.describe LedgerCsvImportJob, type: :job do
     end
 
     it 'should be success.'  do
-      ledger_csv = FileUploads::LedgerCsv.new(address: addresses_eth, file_path: fixture_file_upload(ledger_2025_1_6_path))
-      LedgerCsvImportJob.perform_now(ledger_csv: ledger_csv)
+      csv = FileUploads::Ledgers::File.new(address: addresses_eth, file: ledger_2025_1_6_path)
+      import_file = csv.create_import_file
+      LedgerCsvImportJob.perform_now(import_file_id: import_file.id)
 
       expect(addresses_eth.import_files.first.status).to eq('completed')
       expect(addresses_eth.ledgers.size).to eq(25)

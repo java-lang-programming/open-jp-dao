@@ -38,4 +38,36 @@ FactoryBot.define do
     summary { }
     deleted_at { }
   end
+
+  factory :ledger_item_6, class: LedgerItem do
+    id { 6 }
+    name { "国民健康保険料" }
+    kind { LedgerItem.kinds[:drawings] }
+    summary { }
+    deleted_at { }
+  end
+
+  factory :ledger_item_7, class: LedgerItem do
+    id { 7 }
+    name { "確定拠出年金" }
+    kind { LedgerItem.kinds[:drawings] }
+    summary { }
+    deleted_at { }
+  end
+
+  factory :ledger_item_8, class: LedgerItem do
+    id { 8 }
+    name { "小規模企業共済" }
+    kind { LedgerItem.kinds[:drawings] }
+    summary { }
+    deleted_at { }
+  end
+
+  factory :ledger_item_9, class: LedgerItem do
+    id { 9 }
+    name { "為替差益" }
+    kind { LedgerItem.kinds[:account_item] }
+    summary { }
+    deleted_at { }
+  end
 end
