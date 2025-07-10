@@ -1,72 +1,95 @@
-.PHONY: dc_build dc_up dc_stop dc_rm_pid dc_dev_with_que dc_dev zeitwerk_check_prod mini_test rubocop rubocop_auto_correct steep_check bundle_install bundle_install_production outdated dev_init
-dc_build:
+RULE_REGEX := ^[a-zA-Z_][a-zA-Z0-9_-]+:
+RULE_AND_DESC_REGEX := $(RULE_REGEX).*?## .*$$
+EXTRA_COMMENT_REGEX := ^## .* ##$$
+.ONESHELL:
+.DEFAULT_GOAL := help
+.PHONY: help
+
+# INFO: 参考サイト - https://postd.cc/auto-documented-makefile/ https://zenn.dev/loglass/articles/0016-make-makefile
+help:
+	@grep -E $(RULE_AND_DESC_REGEX) $(MAKEFILE_LIST) | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-30s\033[0m %s\n", $$1, $$2}'
+
+## docker操作 ##
+dc_build: ## Docker環境のビルド
 	docker-compose -f .devcontainer/compose.yaml build
-dc_up:
+dc_up: ## Docker環境の立ち上げ
 	docker-compose -f .devcontainer/compose.yaml up
-dc_stop:
+dc_stop: ## Docker環境の停止
 	docker-compose -f .devcontainer/compose.yaml stop
-dc_rm_pid:
-	rm -f tmp/pids/server.pid
-dc_dev_with_que:
-	make dc_rm_pid
-	SOLID_QUEUE_IN_PUMA=1 bundle exec rails server -b 0.0.0.0
-dc_dev:
-	make log_clear
-	make dc_rm_pid
-	# ここで環境変数のチェック
+dc_in: ## Docker環境を立ち上げた後にコンテナの中に入る
+	docker exec -it devcontainer-wevb3-rails-dev-app-1 /bin/sh
+## DB操作 ##
+db_reset: ## データベースリセット
 	RAILS_ENV=development bundle exec rails db:reset
-	SOLID_QUEUE_IN_PUMA=1 RAILS_ENV=development bundle exec rails server -b 0.0.0.0
-dc_prod:
-	make log_clear
-	make dc_rm_pid
-	# ここで環境変数のチェック
-	RAILS_ENV=production bundle exec rails db:reset
-	SOLID_QUEUE_IN_PUMA=1 RAILS_ENV=production bundle exec rails server -b 0.0.0.0
-rails_info:
-	bundle exec rails about
-zeitwerk_check:
-	bundle exec rails zeitwerk:check
-zeitwerk_check_prod:
-	RAILS_ENV=production bundle exec rails zeitwerk:check
-brakeman:
-	bundle exec brakeman
-yjit_enabled:
-	bundle exec rails r 'p RubyVM::YJIT.enabled?'
-mini_test:
-	bundle exec rails test
-rubocop:
-	bundle exec rubocop
-rubocop_auto_correct:
-	bundle exec rubocop --auto-correct
-steep_check:
-	bundle exec steep check
-bundle_install:
+db_migrate: ## データベースmigrate
+	bundle exec rails db:migrate
+db_seed: ## データベースにseed投入
+	bundle exec rails db:seed
+## gemの管理 ##
+bundle_install: ## bundle install
 	bundle config set frozen false
 	bundle config set --local path 'vendor/bundle'
 	bundle install
-bundle_install_production:
+bundle_install_production: ## bundle install production
 	bundle config set frozen false
 	bundle config set --local path 'vendor/bundle'
 	bundle install --without test development
-outdated:
+outdated: ## outdated gemの表示
 	bundle outdated
-migrate:
-	bundle exec rails db:migrate
-reset:
-	bundle exec rails db:reset
-rspec:
-	bundle exec rspec spec --backtrace
-log_clear:
+## rails操作 ##
+rails_info: ## railsの情報
+	bundle exec rails about
+log_clear: ## ログ削除
 	bundle exec rails log:clear
-seed:
-	bundle exec rails db:seed
-sqlite3_open:
-	sqlite3 storage/development.sqlite3
-sqlite3_queue_open:
-	sqlite3 storage/development_queue.sqlite3
-sqlite3_chmod:
-	chmod 777 storage/development.sqlite3
-sqlite3_queue:
-	chmod 777 storage/development_queue.sqlite3
-solid_queue_start:
+remove_pid: ## プロセスIDファイル削除
+	rm -f tmp/pids/server.pid
+brakeman: ## brakeman実行
+	bundle exec brakeman
+rubocop: ## rubocopを実行
+	bundle exec rubocop
+rubocop_auto_correct: ## rubocopでコードを自動修正
+	bundle exec rubocop --auto-correct
+zeitwerk_check: ## zeitwerkモードが有効であることを確認
+	bundle exec rails zeitwerk:check
+zeitwerk_check_prod: ## zeitwerkモードが有効であることを本番環境で確認
+	RAILS_ENV=production bundle exec rails zeitwerk:check
+yjit_enabled: ## YJITが有効であることを確認
+	bundle exec rails r 'p RubyVM::YJIT.enabled?'
+steep_check: ## 型チェック
+	bundle exec steep check
+ci: ## CIを走らせる
+	@echo "##### run rubocop #####"
+	make rubocop
+	@echo "##### run rubocop auto correct #####"
+	make rubocop_auto_correct
+	@echo "##### run brakeman #####"
+	make brakeman
+	@echo "##### run zeitwerk_check #####"
+	make zeitwerk_check
+	@echo "##### run zeitwerk_check_prod #####"
+	make zeitwerk_check_prod
+	@echo "##### run yjit_enabled #####"
+	make yjit_enabled
+launch_dev: ## railsを開発環境で立ち上げ
+	make log_clear
+	make remove_pid
+	make db_reset
+	SOLID_QUEUE_IN_PUMA=1 RAILS_ENV=development bundle exec rails server -b 0.0.0.0
+launch_prod: ## railsを本番環境で立ち上げ
+	make log_clear
+	make dc_rm_pid
+	RAILS_ENV=production bundle exec rails db:reset
+	SOLID_QUEUE_IN_PUMA=1 RAILS_ENV=production bundle exec rails server -b 0.0.0.0
+solid_queue_start: ## solid_queueを立ち上げる
 	bundle exec rake solid_queue:start
+rspec: ## rspec実行
+	bundle exec rspec spec --backtrace
+## sqlite操作 ##
+sqlite3_open: ## DBを開く
+	sqlite3 storage/development.sqlite3
+sqlite3_queue_open: ## queueのDBを開く
+	sqlite3 storage/development_queue.sqlite3
+sqlite3_chmod: ## dbのchmod
+	chmod 777 storage/development.sqlite3
+sqlite3_queue: ## queueのchmod
+	chmod 777 storage/development_queue.sqlite3
