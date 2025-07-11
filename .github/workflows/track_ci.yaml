@@ -70,7 +70,7 @@ jobs:
 
       - name: Run database create
         working-directory: track
-        run: make migrate
+        run: make db_migrate
 
       - name: Run Rspec
         working-directory: track
