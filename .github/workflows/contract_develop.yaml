@@ -6,12 +6,8 @@ on:
       - main
       - develop
       - feature/*
-    paths-ignore:
-      - backend/*
-      - track/*
-      - docs/*
-      - .gitignore
-      - '**.md'
+    paths:
+      - 'contracts/**' # このパス以下の変更のみトリガー
 
 # https://engineering.teknasyon.com/solidity-and-hardhat-continuous-integration-via-github-actions-f64c0e760df7
 jobs:
