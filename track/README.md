@@ -102,17 +102,3 @@ bundle exec rails generate controller import_files
 bundle exec rails generate controller ledger index
 bundle exec rails generate controller top
 
-      create  app/controllers/ledger_controller.rb
-       route  get "ledger/index"
-      invoke  tailwindcss
-      create    app/views/ledger
-      create    app/views/ledger/index.html.erb
-      invoke  rspec
-      create    spec/requests/ledger_spec.rb
-      create    spec/views/ledger
-      create    spec/views/ledger/index.html.tailwindcss_spec.rb
-      invoke  helper
-      create    app/helpers/ledger_helper.rb
-      invoke    rspec
-      create      spec/helpers/ledger_helper_spec.rb
-Coverage report generated for RSpec to /usr/src/app/coverage.
