@@ -7,10 +7,13 @@ class ApplicationViewController < ActionController::Base
   class ChainGateConnectionRefused < StandardError; end
   # ChainGateのverifyが失敗
   class ChainGateVerifyFailure < StandardError; end
+  # データが見つからない
+  class NotFoundData < StandardError; end
 
   rescue_from NotFoundSession, with: :redirect_not_found_session_page
   rescue_from ChainGateConnectionRefused, with: :redirect_chain_gate_connection_refused_page
   rescue_from ChainGateVerifyFailure, with: :redirect_chain_gate_verify_failure_page
+  rescue_from NotFoundData, with: :redirect_not_found_data_page
 
   def redirect_not_found_session_page
     render template: "errors/not_found_session"
@@ -23,6 +26,10 @@ class ApplicationViewController < ActionController::Base
 
   def redirect_chain_gate_verify_failure_page
     render template: "errors/chain_gate_verify_failure"
+  end
+
+  def redirect_not_found_data_page
+    render template: "errors/not_found_data", status: :not_found
   end
 
   allow_browser versions: :modern

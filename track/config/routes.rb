@@ -44,7 +44,11 @@ Rails.application.routes.draw do
   end
   resources :transaction_types
 
-  resources :import_files, only: [ :index ]
+  resources :import_files, only: [ :index ] do
+    member do
+      get "result"
+    end
+  end
 
   resources :settings, only: [ :index ]
 

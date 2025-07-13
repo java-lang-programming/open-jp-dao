@@ -1,5 +1,5 @@
 class ImportFilesController < ApplicationViewController
-  before_action :verify, only: [ :index ]
+  before_action :verify, only: [ :index, :result ]
 
   DEFAULT_LIMIT = 50
   DEFAULT_OFFSET = 0
@@ -26,6 +26,19 @@ class ImportFilesController < ApplicationViewController
         job_name: import_file.job.name,
         status: import_file.status_on_screen
       }
+    end
+  end
+
+  def result
+    headers
+    address = @session.address
+
+    id = params[:id]
+
+    @import_file = address.import_files.where(id: id).first
+
+    unless @import_file.present?
+      raise NotFoundData
     end
   end
 
