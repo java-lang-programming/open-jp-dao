@@ -35,12 +35,12 @@ RSpec.describe FileUploads::Ledgers::ImportFile, type: :feature do
         import_file = csv.create_import_file
         csv = FileUploads::Ledgers::ImportFile.new(import_file: import_file)
         errors = csv.validate_errors_of_complex_data
-        expect(errors.size).to eq(5)
-        expect(errors[0]).to eq({ row: 2, col: 2, attribute: "ledger_item", value: "通信費", message: "通信費はledger_itemに存在しません" })
-        expect(errors[1]).to eq({ row: 3, col: 2, attribute: "ledger_item", value: "通信費", message: "通信費はledger_itemに存在しません" })
-        expect(errors[2]).to eq({ row: 4, col: 2, attribute: "ledger_item", value: "通信費", message: "通信費はledger_itemに存在しません" })
-        expect(errors[3]).to eq({ row: 5, col: 2, attribute: "ledger_item", value: "通信費", message: "通信費はledger_itemに存在しません" })
-        expect(errors[4]).to eq({ row: 6, col: 2, attribute: "ledger_item", value: "通信費", message: "通信費はledger_itemに存在しません" })
+        expect(errors[:errors].size).to eq(5)
+        expect(errors[:errors][0]).to eq({ row: 2, col: 2, attribute: "ledger_item", value: "通信費", message: "通信費はledger_itemに存在しません" })
+        expect(errors[:errors][1]).to eq({ row: 3, col: 2, attribute: "ledger_item", value: "通信費", message: "通信費はledger_itemに存在しません" })
+        expect(errors[:errors][2]).to eq({ row: 4, col: 2, attribute: "ledger_item", value: "通信費", message: "通信費はledger_itemに存在しません" })
+        expect(errors[:errors][3]).to eq({ row: 5, col: 2, attribute: "ledger_item", value: "通信費", message: "通信費はledger_itemに存在しません" })
+        expect(errors[:errors][4]).to eq({ row: 6, col: 2, attribute: "ledger_item", value: "通信費", message: "通信費はledger_itemに存在しません" })
       end
     end
   end

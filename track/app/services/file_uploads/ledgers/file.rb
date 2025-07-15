@@ -50,15 +50,20 @@ module FileUploads
         all_errors = []
         @csv_rows.each do |csv_row|
           errors = csv_row.valid_errors
-          all_errors.concat(errors) if errors.present?
+          all_errors.concat(errors[:errors]) if errors[:errors].present?
         end
-        all_errors
+        return all_errors unless all_errors.present?
+        ImportFileError.error_json_hash(errors: all_errors)
       end
 
       def validate_errors_first
+        all_errors = []
         header_errors = validate_headers
         simple_data_errors = validate_errors_of_simple_data
-        header_errors.concat(simple_data_errors)
+        all_errors.concat(header_errors[:errors]) if header_errors.present?
+        all_errors.concat(simple_data_errors[:errors]) if simple_data_errors.present?
+        return ImportFileError.error_json_hash(errors: all_errors) if all_errors.present?
+        []
       end
 
       def create_import_file

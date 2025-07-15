@@ -28,7 +28,7 @@
                     <%= import_file_h[:job_name] %>
                 </td>
                 <td class="px-6 py-4"><%= import_file_h[:status] %></td>
-                <td class="px-6 py-4"><%= link_to "ドル円外貨預金元帳", dollar_yen_transactions_path %></td>
+                <td class="px-6 py-4"><%= link_to "確認", result_import_file_path(import_file_h[:id]) %></td>
             </tr>
           <% end %>
         </tbody>        

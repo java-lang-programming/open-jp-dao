@@ -10,6 +10,7 @@ RSpec.describe FileUploads::Ledgers::File, type: :feature do
   let(:ledger_item_2) { create(:ledger_item_2) }
   let(:ledger_item_3) { create(:ledger_item_3) }
 
+
   describe 'validate_header_fileds' do
     let(:ledger_csv_header_sample_path) { fixture_file_upload("#{Rails.root}/spec/files/uploads/ledger_csv/ledger_csv_header_sample.csv") }
     # ヘッダーの属性数が多い
@@ -23,7 +24,8 @@ RSpec.describe FileUploads::Ledgers::File, type: :feature do
       # ヘッダーの属性が多い
       it "should be errors when failure" do
         csv = FileUploads::Ledgers::File.new(address: addresses_eth, file: ledger_csv_many_header_sample_path)
-        expect(csv.validate_headers[0]).to eq({
+        result = csv.validate_headers
+        expect(result[:errors][0]).to eq({
           row: 1,
           col: nil,
           attribute: "",
@@ -35,7 +37,8 @@ RSpec.describe FileUploads::Ledgers::File, type: :feature do
       # 　ヘッダーの属性が少ない
       it "should be errors when failure" do
         csv = FileUploads::Ledgers::File.new(address: addresses_eth, file: ledger_csv_shortage_header_sample_path)
-        expect(csv.validate_headers[0]).to eq({
+        result = csv.validate_headers
+        expect(result[:errors][0]).to eq({
           row: 1,
           col: nil,
           attribute: "",
@@ -48,22 +51,22 @@ RSpec.describe FileUploads::Ledgers::File, type: :feature do
       it "should be errors when failure" do
         csv = FileUploads::Ledgers::File.new(address: addresses_eth, file: ledger_csv_invalid_name_header_sample_path)
         result = csv.validate_headers
-        expect(result.size).to eq(3)
-        expect(result[0]).to eq({
+        expect(result[:errors].size).to eq(3)
+        expect(result[:errors][0]).to eq({
           row: 1,
           col: 3,
           attribute: "name",
           value: "nale",
           message: "ヘッダの属性名が不正です。正しい属性名はnameです。"
         })
-        expect(result[1]).to eq({
+        expect(result[:errors][1]).to eq({
           row: 1,
           col: 5,
           attribute: "proportion_rate",
           value: "proportion_late",
           message: "ヘッダの属性名が不正です。正しい属性名はproportion_rateです。"
         })
-        expect(result[2]).to eq({
+        expect(result[:errors][2]).to eq({
           row: 1,
           col: 6,
           attribute: "proportion_amount",
@@ -97,22 +100,22 @@ RSpec.describe FileUploads::Ledgers::File, type: :feature do
       it "should be date errors array." do
         csv = FileUploads::Ledgers::File.new(address: addresses_eth, file: ledger_csv_sample_date_errors_path)
         errors = csv.validate_errors_of_simple_data
-        expect(errors.size).to eq(3)
-        expect(errors[0]).to eq({
+        expect(errors[:errors].size).to eq(3)
+        expect(errors[:errors][0]).to eq({
           attribute: "date",
           col: 1,
           row: 2,
           message: "dateのフォーマットが不正です。yyyy/mm/dd形式で入力してください。",
           value: "2025-01-06"
         })
-        expect(errors[1]).to eq({
+        expect(errors[:errors][1]).to eq({
           attribute: "date",
           col: 1,
           row: 4,
           message: "dateの値が不正です。yyyy/mm/dd形式で正しい日付を入力してください。",
           value: "2025/04/32"
         })
-        expect(errors[2]).to eq({
+        expect(errors[:errors][2]).to eq({
           attribute: "date",
           col: 1,
           row: 6,
@@ -139,22 +142,22 @@ RSpec.describe FileUploads::Ledgers::File, type: :feature do
       it "should be empty array." do
         csv = FileUploads::Ledgers::File.new(address: addresses_eth, file: ledger_csv_sample_string_errors_path)
         errors = csv.validate_errors_of_simple_data
-        expect(errors.size).to eq(3)
-        expect(errors[0]).to eq({
+        expect(errors[:errors].size).to eq(3)
+        expect(errors[:errors][0]).to eq({
           attribute: "ledger_item",
           col: 2,
           row: 2,
           message: "ledger_itemが未記入です。ledger_itemは必須入力です。",
           value: nil
         })
-        expect(errors[1]).to eq({
+        expect(errors[:errors][1]).to eq({
           attribute: "ledger_item",
           col: 2,
           row: 5,
           message: "ledger_itemの文字が100文字を超えています。100文字以下にしてください。",
           value: "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
         })
-        expect(errors[2]).to eq({
+        expect(errors[:errors][2]).to eq({
           attribute: "name",
           col: 3,
           row: 6,
@@ -178,9 +181,9 @@ RSpec.describe FileUploads::Ledgers::File, type: :feature do
       it "should be errors array." do
         csv = FileUploads::Ledgers::File.new(address: addresses_eth, file: ledger_2025_1_6_errors_path)
         errors = csv.validate_errors_first
-        expect(errors.size).to eq(2)
-        expect(errors[0]).to eq({ row: 1, col: 5, attribute: "proportion_rate", value: "proportion_rete", message: "ヘッダの属性名が不正です。正しい属性名はproportion_rateです。" })
-        expect(errors[1]).to eq({ row: 2, col: 1, attribute: "date", value: "2025/01/32", message: "dateの値が不正です。yyyy/mm/dd形式で正しい日付を入力してください。" })
+        expect(errors[:errors].size).to eq(2)
+        expect(errors[:errors][0]).to eq({ row: 1, col: 5, attribute: "proportion_rate", value: "proportion_rete", message: "ヘッダの属性名が不正です。正しい属性名はproportion_rateです。" })
+        expect(errors[:errors][1]).to eq({ row: 2, col: 1, attribute: "date", value: "2025/01/32", message: "dateの値が不正です。yyyy/mm/dd形式で正しい日付を入力してください。" })
       end
     end
   end

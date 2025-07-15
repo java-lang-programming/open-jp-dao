@@ -19,7 +19,6 @@ class LedgerCsvImportJob < ApplicationJob
       # ここからオリジナル
       ledger_import_file = FileUploads::Ledgers::ImportFile.new(import_file: import_file)
 
-      # ledger_csv = FileUploads::LedgerCsv.new(address: import_file.address, file: import_file.file)
       errors = ledger_import_file.validate_errors_of_complex_data
       if errors.present?
         ledger_import_file.save_error(error_json: errors)

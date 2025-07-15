@@ -43,10 +43,11 @@ module FileUploads
           error = csv_row.validate_error_of_name
           all_errors << error if error.present?
         end
-        all_errors
+        return ImportFileError.error_json_hash(errors: all_errors) if all_errors.present?
+        []
       end
 
-      def save_error(error_json:)
+      def  save_error(error_json:)
         @import_file.import_file_errors.create(error_json: error_json.to_json)
       end
 

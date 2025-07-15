@@ -32,7 +32,7 @@ module Files
           errors.concat(temp_errors) if temp_errors.present?
         end
       end
-      errors
+      ImportFileError.error_json_hash(errors: errors)
     end
 
     def ledger_item_col_index
@@ -52,7 +52,7 @@ module Files
       unless ledger_item.present?
         col_index = ledger_item_col_index
         name = @row[col_index]
-        error_data(
+        ImportFileError.error_json_data(
           row: @row_num,
           col: col_index + 1,
           attribute: "ledger_item",

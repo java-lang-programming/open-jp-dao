@@ -46,32 +46,22 @@ class LedgersController < ApplicationViewController
     headers
     address = @session.address
 
-    # 　TODO 現在処理している非同期処理がある場合は実行しない
-
-    # file = params[:file]
-    # file = params.require(:import_file).permit(:file)
     file = params[:import_file][:file]
 
-    # @image = ImportFile.new(image_params)
-
     unless file.present?
-      # jsのチェックがあれば来ないはず
       redirect_to csv_upload_new_ledgers_path, flash: { errors: [ "uploadファイルが存在しません。ファイルを選択ボタンからファイルを選択してください" ] }
       nil
     end
 
-    # uploaded_file = file[:file]
     ledger_file = FileUploads::Ledgers::File.new(address: address, file: file)
 
-    # ledger_csv = FileUploads::LedgerCsv.new(address: address, file: file)
-    # headerとbodyの思い処理以外の簡単なチェックを行う
     # ユーザーのUXを考えて軽いチェックは同期でやる
     errors = ledger_file.validate_errors_first
     if errors.present?
       # ここでエラー一覧に遷移するべき
-      redirect_to csv_upload_dollar_yen_transactions_path, flash: { errors: errors }
-      # render json: { errors: errors }, status: :bad_request
-      nil
+      flash[:errors] = errors
+      render :csv_upload
+      return
     end
 
     # import_fileデータの作成
@@ -79,7 +69,6 @@ class LedgersController < ApplicationViewController
 
     # ここから非同期処理
     begin
-      # LedgerCsvImportJob.perform_later(ledger_csv: ledger_csv)
       LedgerCsvImportJob.perform_later(import_file_id: import_file.id)
     rescue => e
       logger.error "LedgerCsvImportJobに失敗しました: #{e}"
