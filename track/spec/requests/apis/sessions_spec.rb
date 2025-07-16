@@ -26,9 +26,12 @@ RSpec.describe "Apis::SessionsController", type: :request do
       end
 
       context "kind" do
+        before do
+          mock_apis_verify(body: {})
+        end
+
         # kindが未入力
         it "returns status code bad request when kind is empty." do
-          mock_apis_verify(body: {})
           get apis_sessions_nonce_path
           post apis_sessions_signin_path, params: { address: "0xaaaa", chain_id: 1, message: "message", signature: "signature", domain: "aiueo.com" }
           expect(response).to have_http_status(:bad_request)
@@ -38,30 +41,11 @@ RSpec.describe "Apis::SessionsController", type: :request do
 
         # kindが布石な値
         it "returns status code bad request when kind is empty." do
-          mock_apis_verify(body: {})
           get apis_sessions_nonce_path
           post apis_sessions_signin_path, params: { address: "0xaaaa", kind: 3, chain_id: 1, message: "message", signature: "signature", domain: "aiueo.com" }
           expect(response).to have_http_status(:bad_request)
           json = JSON.parse(response.body, symbolize_names: true)
           expect(json).to eq({ errors: [ { msg: "kindが不正な値です" } ] })
-        end
-      end
-
-      context "ens fetch error(eth connect error)" do
-        before do
-          mock_apis_verify(body: {})
-          mock_apis_ens(
-            status: 403,
-            body:  { errors: { code: 'E0000002', message: 'イーサリアムに接続できませんでした', detail: "接続先のステータスを確認してください" } }
-          )
-        end
-
-        it "returns status code bad request when kind is empty." do
-          get apis_sessions_nonce_path
-          post apis_sessions_signin_path, params: { address: "0xaaaa", kind: Address.kinds[:ethereum], chain_id: 1, signature: "signature", domain: "aiueo.com" }
-          expect(response).to have_http_status(:unauthorized)
-          json = JSON.parse(response.body, symbolize_names: true)
-          expect(json).to eq({ errors: [ { msg: "イーサリアムに接続できませんでした" } ] })
         end
       end
 
@@ -111,7 +95,9 @@ RSpec.describe "Apis::SessionsController", type: :request do
 
         # 値の確認
         address = Address.where(address: "0xaaaa").first
-        expect(address.ens_name).to eq("test.eth")
+        # ここは非同期
+        # expect(address.ens_name).to eq("test.eth")
+        expect(address.ens_name).to be nil
         session = address.sessions.first
         expect(session.chain_id).to eq(1)
         expect(session.message).to eq("message")
@@ -135,7 +121,9 @@ RSpec.describe "Apis::SessionsController", type: :request do
           # 更新データ取得
           temp_address = Address.where(id: addresses_eth.id).first
 
-          expect(temp_address.ens_name).to eq("test.eth")
+          # ここは非同期
+          # expect(temp_address.ens_name).to eq("test.eth")
+          expect(temp_address.ens_name).to be nil
           expect(session.chain_id).to eq(1)
           expect(session.message).to eq("message")
           expect(session.chain_id).to eq(1)
