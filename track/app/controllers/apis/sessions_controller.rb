@@ -35,19 +35,9 @@ class Apis::SessionsController < ApplicationController
       address.save
     end
 
-    # ENS情報を取得して更新する
-    # TODO 処理の時間がかかるので、非同期にするべき
+    # ENS情報を取得して更新する(処理の時間がかかるので非同期)
     if address.ethereum?
-      ens_response = address.fetch_ens(chain_id: params[:chain_id])
-
-      status, res = ens_response.result
-      if status != 200
-        render json: { errors: [ { msg: res[:errors][:message] } ] }, status: :unauthorized
-        return
-      end
-
-      address.ens_name = res[:ens_name]
-      address.save
+      EthereumDataFetchJob.perform_later(address_id: address.id, chain_id: params[:chain_id])
     end
 
     # TODO railsのテストコードでsignedが対応されたらテストコードもリファクタリング

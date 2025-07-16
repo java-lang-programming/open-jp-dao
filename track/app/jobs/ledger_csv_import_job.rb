@@ -1,10 +1,7 @@
 # 　レビューにかける
 class LedgerCsvImportJob < ApplicationJob
-  # BaseCsvImportJob
   queue_as :csv
 
-  # 　ますは動くようにして試験を書く。その後、リファクタリング。両方に適用する。ログはloggableを使う。
-  # LedgerCsvにエラーがある
   class LedgerCsvErrors < StandardError; end
 
   def perform(import_file_id:)
