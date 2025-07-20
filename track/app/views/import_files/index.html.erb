@@ -1,36 +1,39 @@
-<% content_for :title do %>WanWan csvインポート結果画面<% end %>
+<% content_for :title do %>WanWan csvインポート一覧画面<% end %>
 
 <% content_for :header do %>
   <%= render "layouts/header", user: @user, notification: @notification %>
 <% end %>
 
-<p>csvインポート結果画面</p>
-<p>全<%= @total %>件</p>
+<section class="py-8">
 <% if @total > 0 %>
-      <table border="2">
-        <thead>
-          <tr>
-            <th scope="col" class="px-6 py-3">No</th>
-            <th scope="col" class="px-6 py-3">実行日</th>
-            <th scope="col" class="px-6 py-3">タスク</th>
-            <th scope="col" class="px-6 py-3">ステータス</th>
-            <th scope="col" class="px-6 py-3">確認</th>
-          </tr>
-        </thead>
-        <tbody>
-          <% @import_files.each_with_index do |import_file_h, index| %>
-            <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
-                <th><%= index + 1 %></th>
-                <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
-                    <%= import_file_h[:date] %>
-                </th>
-                <td class="px-6 py-4">
-                    <%= import_file_h[:job_name] %>
-                </td>
-                <td class="px-6 py-4"><%= import_file_h[:status] %></td>
-                <td class="px-6 py-4"><%= link_to "確認", result_import_file_path(import_file_h[:id]) %></td>
-            </tr>
-          <% end %>
-        </tbody>        
-      </table>
+    <div class="relative overflow-x-auto m-4">
+      <!-- start -->
+      <div class="list-container w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400 overflow-x-auto relative">
+          <div class="inline-block min-w-full"><!-- mobileの右側の色が抜ける対策 -->
+            <div class="grid grid-cols-[auto_minmax(100px,_1fr)_minmax(100px,_1fr)_minmax(100px,_1fr)_minmax(100px,_1fr)_minmax(100px,_1fr)_minmax(100px,_1fr)_minmax(100px,_1fr)] md:grid-cols-4 text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+                  <div class="px-6 py-3 flex items-center">
+                      実行日
+                  </div>
+                  <div class="px-6 py-3 flex items-center">
+                      タスク
+                  </div>
+                  <div class="px-6 py-3 flex items-center">
+                      ステータス
+                  </div>
+                  <div class="px-6 py-3 flex items-center">
+                      詳細結果
+                  </div>
+              </div>
+              <% @import_files.each_with_index do |import_file_h, index| %>
+                <div class="item-row grid grid-cols-[auto_minmax(100px,_1fr)_minmax(100px,_1fr)_minmax(100px,_1fr)_minmax(100px,_1fr)_minmax(100px,_1fr)_minmax(100px,_1fr)_minmax(100px,_1fr)] md:grid-cols-4 bg-white border-b dark:bg-gray-800 dark:border-gray-700 border-gray-200" data-id="456">
+                    <div class="px-6 py-4 font-normal flex items-center"><%= import_file_h[:date] %></div>
+                    <div class="px-6 py-4 font-normal flex items-center"><%= import_file_h[:job_name] %></div>
+                    <div class="px-6 py-4 font-normal flex items-center"><%= import_file_h[:status] %></div>
+                    <div class="px-6 py-4 font-normal flex items-center"><%= link_to "確認", result_import_file_path(import_file_h[:id]) %></div>
+                </div>
+              <% end %>
+          </div>
+      </div>
+    </div>
 <% end %>
+</section>

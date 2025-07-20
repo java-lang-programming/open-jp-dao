@@ -12,32 +12,7 @@
   </div>
 
   <div class="relative overflow-x-auto m-4">
-    <div>
-      <div class="my-4">
-        <p id="item-count" class="text-sm text-gray-500">検索結果: <%= @page[:start_data_number] %> - <%= @page[:end_data_number] %> / <%= @page[:total] %></p>
-      </div>
-
-      <% if @page[:page] >= 2 %>
-        <div class="flex flex-col space-y-4 items-center justify-center my-4">
-          <nav aria-label="Page navigation example">
-            <ul class="inline-flex -space-x-px text-sm">
-              <li>
-                <a href="./dollar_yen_transactions?<%= @page[:prev_query] %>" class="flex items-center justify-center px-3 h-8 ms-0 leading-tight text-gray-500 bg-white border border-e-0 border-gray-300 rounded-s-lg hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white">Previous</a>
-              </li>
-              <% @page[:pages].each do |page| %>
-                <li>
-                  <a href="./dollar_yen_transactions?<%= page[:query] %>" class="flex items-center justify-center px-3 h-8 leading-tight text-gray-500 <%=  page[:page] == @page[:current_page] ? "bg-blue-50" : "bg-white" %> border border-gray-300 <%=  page[:page] == @page[:current_page] ? "hover:bg-blue-100" : "hover:bg-gray-100" %> hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white"><%= page[:page] %></a>
-                </li>
-              <% end %>
-              <li>
-                <a href="./dollar_yen_transactions?<%= @page[:next_query] %>" class="flex items-center justify-center px-3 h-8 leading-tight text-gray-500 bg-white border border-gray-300 rounded-e-lg hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white">Next</a>
-              </li>
-            </ul>
-          </nav>
-        </div>
-      <% end %>
-    </div>
-
+    <%= render "shared/paging", page: @page, url: "ledgers" %>
 
     <!-- data表示開始 -->
     <div class="list-container w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400 overflow-x-auto relative">
