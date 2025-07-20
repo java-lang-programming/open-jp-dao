@@ -161,9 +161,9 @@
             <button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mr-2" onclick="./new_v1.0.0.html">
               作成
             </button>
-            <button class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded mr-2">
-              削除
-            </button>
+            <button id="deleteButton" class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded mr-2">
+        削除
+    </button>
             <button class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">
               一括作成/更新
             </button>
@@ -185,7 +185,7 @@
           <div class="relative overflow-x-auto m-4">
             <div>
               <div class="my-4">
-                <p id="item-count" class="text-sm text-gray-500">検索結果: 1 - 20 / 218</p>
+                <p id="item-count" class="text-sm text-gray-500">検索結果: 1 - 20 / <span id="current-items-count">218</span></p>
               </div>
               <div class="flex flex-col space-y-4 items-center justify-center my-4">
 
@@ -251,7 +251,7 @@
                         </div>
                     </div>
                     <div class="item-row grid grid-cols-[auto_minmax(100px,_1fr)_minmax(100px,_1fr)_minmax(100px,_1fr)_minmax(100px,_1fr)_minmax(100px,_1fr)_minmax(100px,_1fr)_minmax(100px,_1fr)] md:grid-cols-8 bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-100" data-id="456">
-                        <div class="px-6 py-4 font-normal flex items-center w-auto"><input id="default-checkbox" type="checkbox" value="" class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded-sm focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"></div>
+                        <div class="px-6 py-4 font-normal flex items-center items-center w-auto"><input id="default-checkbox" type="checkbox" value="" class="item-checkbox w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded-sm focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"></div>
                         <div class="px-6 py-4 font-normal flex items-center">2020/04/01</div>
                         <div class="px-6 py-4 font-normal flex items-center">通信費</div>
                         <div class="px-6 py-4 font-normal flex items-center">エンヒカリ</div>
@@ -261,7 +261,7 @@
                         <div class="px-6 py-4 font-normal flex items-center">¥3,854</div>
                     </div>
                     <div class="item-row grid grid-cols-[auto_minmax(100px,_1fr)_minmax(100px,_1fr)_minmax(100px,_1fr)_minmax(100px,_1fr)_minmax(100px,_1fr)_minmax(100px,_1fr)_minmax(100px,_1fr)] md:grid-cols-8 bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-100" data-id="456">
-                        <div class="px-6 py-4 font-normal flex items-center w-auto"><input id="default-checkbox" type="checkbox" value="" class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded-sm focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"></div>
+                        <div class="px-6 py-4 font-normal flex items-center items-center w-auto"><input id="default-checkbox" type="checkbox" value="" class="item-checkbox w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded-sm focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"></div>
                         <div class="px-6 py-4 font-normal flex items-center">2025/03/27</div>
                         <div class="px-6 py-4 font-normal flex items-center">通信費</div>
                         <div class="px-6 py-4 font-normal flex items-center">エンヒカリ</div>
@@ -271,7 +271,7 @@
                         <div class="px-6 py-4 font-normal flex items-center">¥1,866</div>
                     </div>
                     <div class="item-row grid grid-cols-[auto_minmax(100px,_1fr)_minmax(100px,_1fr)_minmax(100px,_1fr)_minmax(100px,_1fr)_minmax(100px,_1fr)_minmax(100px,_1fr)_minmax(100px,_1fr)] md:grid-cols-8 bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-100" data-id="456">
-                        <div class="px-6 py-4 font-normal flex items-center w-auto"><input id="default-checkbox" type="checkbox" value="" class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded-sm focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"></div>
+                        <div class="px-6 py-4 font-normal flex items-center items-center w-auto"><input id="default-checkbox" type="checkbox" value="" class="item-checkbox w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded-sm focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"></div>
                         <div class="px-6 py-4 font-normal flex items-center">2025/06/04</div>
                         <div class="px-6 py-4 font-normal flex items-center">消耗品費</div>
                         <div class="px-6 py-4 font-normal flex items-center">RubyMine</div>
@@ -342,4 +342,107 @@
       </div>
     </section>
   </body>
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const deleteButton = document.getElementById('deleteButton');
+        const deleteModal = document.getElementById('deleteModal');
+        const closeModalButtons = document.querySelectorAll('.close-modal-button');
+        const confirmDeleteButton = document.getElementById('confirmDeleteButton');
+        const deletingItemInfo = document.getElementById('deletingItemInfo');
+        // const itemCountSpan = document.getElementById('current-items-count');
+        const itemRows = document.querySelectorAll('.item-row'); // 一覧の各行
+        const itemCheckboxes = document.querySelectorAll('.item-checkbox'); // 各行のチェックボックス
+        alert(itemCheckboxes);
+
+        // 初期表示時に削除ボタンの有効/無効を設定
+        updateDeleteButtonState();
+        // updateItemCount();
+
+        // モーダルを表示する関数
+        const openModal = () => {
+            const checkedItems = getCheckedItemIds();
+            if (checkedItems.length === 0) {
+                alert('削除する項目を選択してください。');
+                return;
+            }
+
+            // 選択された項目情報をモーダルに表示
+            const itemNames = checkedItems.map(id => {
+                const row = document.querySelector(`.item-row[data-id="${id}"]`);
+                return row ? row.children[3].textContent : ''; // 4番目の要素（名称）
+            }).filter(name => name !== '');
+            deletingItemInfo.textContent = itemNames.join(', ');
+
+            deleteModal.classList.remove('hidden');
+        };
+
+        // モーダルを閉じる関数
+        const closeModal = () => {
+            deleteModal.classList.add('hidden');
+        };
+
+        // 「削除」ボタンがクリックされたらモーダルを表示
+        deleteButton.addEventListener('click', openModal);
+
+        // モーダルを閉じるボタン、またはモーダルオーバーレイがクリックされたらモーダルを閉じる
+        closeModalButtons.forEach(button => {
+            button.addEventListener('click', closeModal);
+        });
+
+        deleteModal.addEventListener('click', (event) => {
+            if (event.target === deleteModal) {
+                closeModal();
+            }
+        });
+
+        // 削除確認ボタンがクリックされた時の処理 (実際にはRailsにリクエストを送る)
+        confirmDeleteButton.addEventListener('click', () => {
+            const checkedIds = getCheckedItemIds();
+            if (checkedIds.length > 0) {
+                // ここでRailsへの削除リクエストを送信
+                // 例: window.location.href = `/items/delete?ids=${checkedIds.join(',')}`;
+                console.log('削除するID:', checkedIds);
+                alert('選択された項目を削除します。 (このアラートは開発用です)');
+                closeModal();
+                // TODO: 削除後、Railsから新しい一覧を取得するか、JSでDOMを更新する処理
+            } else {
+                alert('削除する項目が選択されていません。');
+            }
+        });
+
+        // チェックボックスの状態が変わったら削除ボタンの有効/無効を更新
+        itemCheckboxes.forEach(checkbox => {
+            checkbox.addEventListener('change', updateDeleteButtonState);
+        });
+
+        // 削除ボタンの有効/無効を更新する関数
+        function updateDeleteButtonState() {
+            const checkedCount = document.querySelectorAll('.item-checkbox:checked').length;
+            if (checkedCount > 0) {
+                deleteButton.removeAttribute('disabled');
+                deleteButton.classList.remove('opacity-50', 'cursor-not-allowed');
+            } else {
+                deleteButton.setAttribute('disabled', 'true');
+                deleteButton.classList.add('opacity-50', 'cursor-not-allowed');
+            }
+        }
+
+        // 現在の表示件数を更新する関数
+        // function updateItemCount() {
+        //     itemCountSpan.textContent = itemRows.length;
+        // }
+
+        // チェックされた項目のdata-idを取得する関数
+        function getCheckedItemIds() {
+            const checkedIds = [];
+            document.querySelectorAll('.item-checkbox:checked').forEach(checkbox => {
+                const row = checkbox.closest('.item-row');
+                if (row) {
+                    checkedIds.push(row.dataset.id);
+                }
+            });
+            return checkedIds;
+        }
+    });
+</script>
 </html>

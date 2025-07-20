@@ -11,6 +11,16 @@
     <%= link_to "一括作成/更新", csv_upload_new_ledgers_path, class: "bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded" %>
   </div>
 
+  <div class="bg-white flex justify-between px-6">
+    <div>
+        <%= form_with url: ledgers_path, method: :get, local: true do |form| %>
+          <%= render "shared/ledger_items_select_box", form: form, ledger_items: @ledger_items, ledger_item_id: @ledger_item_id %>
+
+          <%= form.submit '検索', :name => nil, class: "text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 rounded-lg text-sm px-4 py-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800" %>
+        <% end %>
+    </div>
+  </div>
+
   <div class="relative overflow-x-auto m-4">
     <%= render "shared/paging", page: @page, url: "ledgers" %>
 

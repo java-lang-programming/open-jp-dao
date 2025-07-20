@@ -4,16 +4,25 @@ class LedgersController < ApplicationViewController
   DEFAULT_LIMIT = 50
 
   def index
-    request = params.permit(:page)
+    request = params.permit(:ledger_item_id, :page)
 
     headers
     address = @session.address
 
+    # 検索項目取得
+    @ledger_items = LedgerItem.all
+
+    # 検索パラメーター(TODO テスト)
+    @ledger_item_id = nil
+    if request[:ledger_item_id].present?
+      @ledger_item_id = request[:ledger_item_id].to_i
+    end
 
     # デフォルトはその年だけ
     # DBの保存方法には気をつける。昔のはあまり見られないはずなので。。。
     # 検索表示用
     base_sql = address.ledgers.preload(:ledger_item)
+    base_sql = base_sql.where(ledger_item_id: @ledger_item_id) if @ledger_item_id.present?
     total = base_sql.all.count
 
     # ページング処理
