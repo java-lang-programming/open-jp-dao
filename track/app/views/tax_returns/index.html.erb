@@ -52,7 +52,7 @@
             <div class="flex items-center justify-between space-x-4 rtl:space-x-reverse">
               <div class="flex-1 min-w-0">
                 <a href="../ledgers/index_v1.0.0.html?account_item_id=1" class="block text-sm font-medium text-gray-900 truncate dark:text-white">
-                  水道光熱費
+                  <%= link_to "水道光熱費", ledgers_path(ledger_item_id: 2) %>
                 </a>
               </div>
               <div class="flex-shrink-0 text-base font-semibold text-gray-900 dark:text-white">
@@ -63,8 +63,8 @@
           <li class="py-3 sm:py-4">
             <div class="flex items-center justify-between space-x-4 rtl:space-x-reverse">
               <div class="flex-1 min-w-0">
-                <a href="../ledgers/index_v1.0.0.html?account_item_id=2" class="block text-sm font-medium text-gray-900 truncate dark:text-white"> 
-                  通信費
+                <a href="../ledgers/index_v1.0.0.html?account_item_id=2" class="block text-sm font-medium text-gray-900 truncate dark:text-white">
+                  <%= link_to "通信費", ledgers_path(ledger_item_id: 1) %>
                 </a>
               </div>
               <div class="flex-shrink-0 text-base font-semibold text-gray-900 dark:text-white">
@@ -73,10 +73,10 @@
             </div>
           </li>
           <li class="py-3 sm:py-4">
-            <div class="flex items-center justify-between space-x-4 rtl:space-x-reverse">
+            <div class="flex items-center justify-betwe　en space-x-4 rtl:space-x-reverse">
               <div class="flex-1 min-w-0">
                 <p class="text-sm font-medium text-gray-900 truncate dark:text-white">
-                  消耗品費
+                  <%= link_to "消耗品費", ledgers_path(ledger_item_id: 3) %>
                 </p>
               </div>
               <div class="flex-shrink-0 text-base font-semibold text-gray-900 dark:text-white">
@@ -88,7 +88,7 @@
             <div class="flex items-center justify-between space-x-4 rtl:space-x-reverse">
               <div class="flex-1 min-w-0">
                 <p class="text-sm font-medium text-gray-900 truncate dark:text-white">
-                  新聞図書費
+                  <%= link_to "新聞図書費", ledgers_path(ledger_item_id: 4) %>
                 </p>
               </div>
               <div class="flex-shrink-0 text-base font-semibold text-gray-900 dark:text-white">
