@@ -1,0 +1,196 @@
+<!doctype html>
+<html>
+<head>
+  <!-- https://v1.tailwindcss.com/components/alerts -->
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" type="text/css" href="../css/foreign_exchange_gain_index.css" />
+  <!--<style type="text/css">
+    @media(min-width: 1280px) {
+      .container {
+        max-width: 1280px;
+      }
+    }
+
+    /* 一番上の header */
+    .header1 {
+      display: flex;
+      padding: 1.25rem;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    /* 一番上の headerのサイト名 */
+    .header1_site_name {
+      font-weight: 700;
+      font-size: 1.125rem;
+      line-height: 1.75rem;
+      text-decoration: inherit;
+    }
+
+    .header1_nav {
+      margin-left:auto;
+    }
+
+    .btn_sign {
+      border-width: 1px;
+      border-radius: 0.75rem;
+      padding-top: 0.75rem;
+      padding-bottom: 0.75rem;
+    }
+
+    .header2 {
+      display: flex;
+      padding: 1.25rem;
+      margin-left: auto;
+      margin-right: auto;
+      --tw-bg-opacity: 1;
+      background-color: rgb(249 250 251 / var(--tw-bg-opacity, 1));
+    }
+
+    .header2_nav {
+      display: inline-flex;
+      list-style-type: none;
+    }
+
+    .header2_nav_li {
+      margin-left: 20px;
+      margin-right: 20px;
+
+    }
+
+    .main {
+      padding-top: 6rem;
+      padding-bottom: 6rem;
+      padding-left: 1.25rem;
+      padding-right: 1.25rem;
+    }
+
+    .main_content {
+      --tw-bg-opacity: 1;
+      background-color: rgb(243 244 246 / var(--tw-bg-opacity, 1));
+      border-radius: 0.5rem;
+      padding: 2rem;
+    }
+
+
+
+  </style>-->
+</head>
+  <body>
+    <section>
+      <!-- header -->
+      <!-- TODO 背景をwhite -->
+      <div class="container">
+        <heade>
+          <!-- header 1行目 -->
+          <div x-data="{ open: open }" class="bg-white mx-auto flex max-w-screen-xl p-5 md:flex-row">
+            <div class="flex flex-row items-center justify-between lg:justify-start">
+              <a href="#" class="text-lg font-bold text-blue-600 lg:pr-8">Wan 
+                <sup>2</sup>
+              </a>
+            </div>
+            <nav :class="{'flex': open, 'hidden': !open}" class="hidden grow flex-col pb-4 md:flex md:flex-row md:justify-end md:pb-0 lg:pl-2">
+              <div class="inline-flex list-none items-center gap-2 lg:ml-auto">
+                <!-- TODO ボタンの色red -->
+                <button class="flex items-center rounded-xl border-gray-600 py-2.5 text-center font-medium text-white transition duration-500 ease-in-out bg-red-700 hover:bg-red-800 focus:outline-none focus:ring-4 focus:ring-gray-500 focus:ring-offset-2 lg:px-8">ログアウト</button>
+              </div>
+            </nav>
+          </div>
+
+          <!-- header 2行目 TODO お問い合わせを右に-->
+          <div class="mx-auto max-w-screen-xl">
+            <div class="overflow-y-auto whitespace-nowrap bg-gray-50 p-5">
+              <ul class="inline-flex list-none items-center">
+                <!-- <li>
+              <a href="#" class="mr-1 rounded-md px-4 py-1 text-base text-gray-500 ring-offset-2 ring-offset-current transition duration-500 ease-in-out hover:text-blue-600 focus:outline-none focus:ring-2">Home</a>
+            </li>-->
+                <li>
+                  <a href="../dollar_yen_transactions/index.html" class="mr-1 rounded-md px-4 py-1 text-base text-gray-500 ring-offset-2 ring-offset-current transition duration-500 ease-in-out hover:text-blue-600 focus:outline-none focus:ring-2">確定申告B</a>
+                </li>
+                <li class="font-bold underline">仕訳帳</li>
+                <li>
+                  <a href="#" class="mr-1 rounded-md px-4 py-1 text-base text-gray-500 ring-offset-2 ring-offset-current transition duration-500 ease-in-out hover:text-blue-600 focus:outline-none focus:ring-2">お知らせ・ご案内</a>
+                </li>
+                <li>
+                  <a href="../settings/index.html" class="mr-1 rounded-md px-4 py-1 text-base text-gray-500 ring-offset-2 ring-offset-current transition duration-500 ease-in-out hover:text-blue-600 focus:outline-none focus:ring-2">設定</a>
+                </li>
+              </ul>
+            </div>
+          </div>
+          <!-- login情報 -->
+          <div class="bg-white mx-auto max-w-screen-xl py-4">
+            <div class="mx-auto flex items-center justify-between px-4">
+              <div class="text-left">0x91582...CC89D(hoverで長い表示)</div>
+              <div class="text-center">munbai</div>
+              <div class="text-right">最終ログイン:2025/01/09</div>
+            </div>
+          </div>
+          <!-- imformation -->
+          <div class="bg-white mx-auto max-w-screen-xl py-4">
+            <div class="mx-auto flex px-4">
+              <div class="mx-auto">確定申告は2026年2月から開始されます。早めに準備をしておきましょう。</div>
+            </div>
+          </div>
+        </heade>
+
+        <section class="py-8">
+
+          <div class="bg-white flex justify-end px-6 py-4">
+            <a href="javascript:history.back()" 
+               class="inline-flex items-center px-4 py-2 
+                      border border-transparent rounded-md 
+                      shadow-sm text-sm font-medium text-gray-800 
+                      bg-gray-200 hover:bg-gray-300 
+                      focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500">
+              <svg class="h-5 w-5 mr-2 -ml-1 text-gray-600" 
+                   xmlns="http://www.w3.org/2000/svg" 
+                   viewBox="0 0 20 20" 
+                   fill="currentColor" 
+                   aria-hidden="true">
+                <path fill-rule="evenodd" 
+                      d="M12.793 4.293a1 1 0 011.414 1.414L10.414 10l3.793 3.793a1 1 0 01-1.414 1.414L9 11.414l-3.793 3.793a1 1 0 01-1.414-1.414L7.586 10 3.793 6.207a1 1 0 011.414-1.414L9 8.586l3.793-3.793z" 
+                      clip-rule="evenodd" />
+              </svg>
+              戻る
+            </a>
+          </div>
+
+          <div class="flex justify-center">
+            <p class="text-green-700 p-3 rounded-md text-center font-semibold text-lg max-w-lg w-full">
+              import処理に成功しました
+            </p>
+          </div>
+
+        </section>
+        <!-- body -->
+        <footer class="bg-white rounded-lg shadow-sm dark:bg-gray-900 m-4">
+          <div class="w-full max-w-screen-xl mx-auto p-4 md:py-8">
+            <div class="sm:flex sm:justify-center sm:items-center">
+              <!--<a href="https://flowbite.com/" class="flex items-center mb-4 sm:mb-0 space-x-3 rtl:space-x-reverse">
+                <img src="https://flowbite.com/docs/images/logo.svg" class="h-8" alt="Flowbite Logo" />
+                <span class="self-center text-2xl font-semibold whitespace-nowrap dark:text-white">Flowbite</span>
+            </a>-->
+              <ul class="flex flex-wrap items-center mb-6 text-sm font-medium text-gray-500 sm:mb-0 dark:text-gray-400">
+                <li>
+                  <a href="./terms.html" class="hover:underline me-4 md:me-6">利用規約</a>
+                </li>
+                <li>
+                  <a href="#" class="hover:underline me-4 md:me-6">プライバシーポリシー</a>
+                </li>
+                <li>
+                  <a href="#" class="hover:underline">Contact</a>
+                </li>
+              </ul>
+            </div>
+            <hr class="my-6 border-gray-200 sm:mx-auto dark:border-gray-700 lg:my-8" />
+            <span class="block text-sm text-gray-500 sm:text-center dark:text-gray-400">© 2025 
+              <a href="https://flowbite.com/" class="hover:underline">Marsa</a>. All Rights Reserved.
+            </span>
+          </div>
+        </footer>
+      </div>
+    </section>
+  </body>
+</html>

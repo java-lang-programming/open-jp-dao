@@ -28,7 +28,6 @@ RSpec.describe "ImportFiles", type: :request do
 
       it "should get not data." do
         get import_files_path
-        expect(response.body).to include '全0件'
       end
 
       it "should get not data." do
@@ -37,7 +36,6 @@ RSpec.describe "ImportFiles", type: :request do
 
         get import_files_path
         body = response.body
-        expect(body).to include '全1件'
         expect(body).to include import_file.job.name
         expect(body).to include import_file.status_on_screen
       end

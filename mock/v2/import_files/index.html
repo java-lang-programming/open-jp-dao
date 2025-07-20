@@ -1,0 +1,179 @@
+<!doctype html>
+<html>
+<head>
+  <!-- https://v1.tailwindcss.com/components/alerts -->
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" type="text/css" href="../css/foreign_exchange_gain_index.css" />
+  <!--<style type="text/css">
+    @media(min-width: 1280px) {
+      .container {
+        max-width: 1280px;
+      }
+    }
+
+    /* 一番上の header */
+    .header1 {
+      display: flex;
+      padding: 1.25rem;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    /* 一番上の headerのサイト名 */
+    .header1_site_name {
+      font-weight: 700;
+      font-size: 1.125rem;
+      line-height: 1.75rem;
+      text-decoration: inherit;
+    }
+
+    .header1_nav {
+      margin-left:auto;
+    }
+
+    .btn_sign {
+      border-width: 1px;
+      border-radius: 0.75rem;
+      padding-top: 0.75rem;
+      padding-bottom: 0.75rem;
+    }
+
+    .header2 {
+      display: flex;
+      padding: 1.25rem;
+      margin-left: auto;
+      margin-right: auto;
+      --tw-bg-opacity: 1;
+      background-color: rgb(249 250 251 / var(--tw-bg-opacity, 1));
+    }
+
+    .header2_nav {
+      display: inline-flex;
+      list-style-type: none;
+    }
+
+    .header2_nav_li {
+      margin-left: 20px;
+      margin-right: 20px;
+
+    }
+
+    .main {
+      padding-top: 6rem;
+      padding-bottom: 6rem;
+      padding-left: 1.25rem;
+      padding-right: 1.25rem;
+    }
+
+    .main_content {
+      --tw-bg-opacity: 1;
+      background-color: rgb(243 244 246 / var(--tw-bg-opacity, 1));
+      border-radius: 0.5rem;
+      padding: 2rem;
+    }
+
+
+
+  </style>-->
+</head>
+<body>
+  <!-- ここで全体のコンテナを囲む-->
+
+  <!-- header -->
+<div class="container">
+  <header>
+    <!-- header 1行目 -->
+    <div class="header1">
+      <div>
+        <a href="#" class="header1_site_name">EKISA</a>
+      </div>
+
+      <!-- navigation -->
+      <nav
+        class="header1_nav">
+        <div>
+          <button class="btn_sign">ログアウト</button>
+        </div>
+      </nav>
+    </div>
+
+    <!-- header 2行目 TODO お問い合わせを右に-->
+    <div class="header2">
+      <div>
+        <ul class="header2_nav">
+          <li>
+            <a href="#"
+              class="header2_nav_li">Home</a>
+          </li>
+          <li>
+            <a href="#"
+              class="header2_nav_li">お知らせ・ご案内</a>
+          </li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="header3">
+      <div class="header3_item">0x72329g8wewejuiuiwerwerw</div>
+      <div class="header3_item">munbai</div>
+      <div class="header3_item">最終ログイン:2025/01/09</div>
+    </div>
+  </header>
+
+  <section class="information">
+    <div class="bg-indigo-900 text-center py-4 lg:px-4">
+      <div class="p-2 bg-indigo-800 items-center text-indigo-100 leading-none lg:rounded-full flex lg:inline-flex" role="alert">
+        <span class="flex rounded-full bg-indigo-500 uppercase px-2 py-1 text-xs font-bold mr-3">New</span>
+        <span class="font-semibold mr-2 text-left flex-auto">Get the coolest t-shirts from our brand new store</span>
+        <svg class="fill-current opacity-75 h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M12.95 10.707l.707-.707L8 4.343 6.586 5.757 10.828 10l-4.242 4.243L8 15.657l4.95-4.95z"/></svg>
+      </div>
+    </div>
+  </section>
+
+
+  <!-- body -->
+  <section class="py-8">
+    <div class="relative overflow-x-auto m-4">
+      <!-- account_itemsにデータがある時は最初からチェックしておく -->
+      <!-- 登録 ledgersテーブルにチェックしたデータを登録 account_itemsから名称を取得 なければaccount_itemsに登録 ある場合は按分や調整金を取得 -->
+      <!-- 以下をdivにする。絶対将来的なことを考えると間違いない できればresuponnsibu -->
+      <!-- start -->
+      <div class="list-container w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400 overflow-x-auto relative">
+          <div class="inline-block min-w-full"><!-- mobileの右側の色が抜ける対策 -->
+            <div class="grid grid-cols-[auto_minmax(100px,_1fr)_minmax(100px,_1fr)_minmax(100px,_1fr)_minmax(100px,_1fr)_minmax(100px,_1fr)_minmax(100px,_1fr)_minmax(100px,_1fr)] md:grid-cols-4 text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+                  <div class="px-6 py-3 flex items-center">
+                      実行日
+                  </div>
+                  <div class="px-6 py-3 flex items-center">
+                      タスク
+                  </div>
+                  <div class="px-6 py-3 flex items-center">
+                      ステータス
+                  </div>
+                  <div class="px-6 py-3 flex items-center">
+                      詳細結果
+                  </div>
+              </div>
+              <div class="item-row grid grid-cols-[auto_minmax(100px,_1fr)_minmax(100px,_1fr)_minmax(100px,_1fr)_minmax(100px,_1fr)_minmax(100px,_1fr)_minmax(100px,_1fr)_minmax(100px,_1fr)] md:grid-cols-4 bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-100" data-id="456">
+                  <div class="px-6 py-4 font-normal flex items-center">1</div>
+                  <div class="px-6 py-4 font-normal flex items-center">1</div>
+                  <div class="px-6 py-4 font-normal flex items-center">date</div>
+                  <div class="px-6 py-4 font-normal flex items-center">asasdasda</div>
+              </div>
+              <div class="item-row grid grid-cols-[auto_minmax(100px,_1fr)_minmax(100px,_1fr)_minmax(100px,_1fr)_minmax(100px,_1fr)_minmax(100px,_1fr)_minmax(100px,_1fr)_minmax(100px,_1fr)] md:grid-cols-4 bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-100" data-id="456">
+                  <div class="px-6 py-4 font-normal flex items-center">2</div>
+                  <div class="px-6 py-4 font-normal flex items-center">3</div>
+                  <div class="px-6 py-4 font-normal flex items-center">rate</div>
+                  <div class="px-6 py-4 font-normal flex items-center">100</div>
+              </div>
+          </div>
+      </div>
+    </div>
+  </section>
+
+</div>
+
+</body>
+</html>
