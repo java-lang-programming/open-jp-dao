@@ -1,5 +1,5 @@
 class LedgersController < ApplicationViewController
-  before_action :verify, only: [ :index, :csv_upload_new, :csv_upload ]
+  before_action :verify, only: [ :index, :destroy_multiple, :csv_upload_new, :csv_upload ]
 
   DEFAULT_LIMIT = 50
 
@@ -43,6 +43,18 @@ class LedgersController < ApplicationViewController
     end
     # 下記がうまく言ったらpagyをそのまま置き換えるようにする
     @page = { total: pagy.total, page: pagy.page, current_page: pagy.current_page, start_data_number: pagy.start_data_number, end_data_number: pagy.end_data_number, prev_query: pagy.prev_query, next_query: pagy.next_query, pages: pagy.pages_query }
+  end
+
+  def destroy_multiple
+    headers
+    address = @session.address
+
+    ledger_ids = params[:ledger_ids]
+
+    # jsでチェックするのでledger_idsのチェックは不要
+    address.ledgers.where(id: ledger_ids).destroy_all
+
+    redirect_to ledgers_path
   end
 
   def csv_upload_new

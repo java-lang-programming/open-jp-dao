@@ -6,6 +6,9 @@ RSpec.describe "Ledgers", type: :request do
   let(:ledger_item_1) { create(:ledger_item_1) }
   let(:ledger_item_2) { create(:ledger_item_2) }
   let(:ledger_item_3) { create(:ledger_item_3) }
+  let(:ledger_1) { create(:ledger_1, ledger_item: ledger_item_1, address: addresses_eth) }
+  let(:ledger_2) { create(:ledger_2, ledger_item: ledger_item_1, address: addresses_eth) }
+  let(:ledger_3) { create(:ledger_3, ledger_item: ledger_item_1, address: addresses_eth) }
   let(:ledger_csv_sample_path) { fixture_file_upload("#{Rails.root}/spec/files/uploads/ledger_csv/ledger_csv_sample.csv") }
 
   describe "GET /index" do
@@ -42,6 +45,32 @@ RSpec.describe "Ledgers", type: :request do
       end
     end
   end
+
+  describe "post /destroy_multiple_ledgers" do
+    context 'ログイン情報あり' do
+      before do
+        ledger_1
+        ledger_2
+        ledger_3
+        # sigin処理
+        mock_apis_verify(body: {})
+        mock_apis_ens(
+          status: 200,
+          body: { ens_name: "test.eth" }
+        )
+        get apis_sessions_nonce_path
+        post apis_sessions_signin_path, params: { address: addresses_eth.address, kind: Address.kinds[:ethereum], chain_id: 1, message: "message", signature: "signature", domain: "aiueo.com" }
+      end
+
+      # 画面遷移
+      it "should be success." do
+        post destroy_multiple_ledgers_path, params: { ledger_ids: [ ledger_1.id, ledger_2.id ] }
+        expect(response).to have_http_status(:found)
+        expect(Ledger.all.size).to eq(1)
+      end
+    end
+  end
+
 
   describe "GET /csv_upload_new" do
     context 'ログイン情報なし' do

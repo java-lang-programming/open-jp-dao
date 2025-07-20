@@ -1,0 +1,230 @@
+<!doctype html>
+<html>
+<head>
+  <!-- lint https://csslint.net/ ->
+  <!-- https://v1.tailwindcss.com/components/alerts -->
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body>
+  <!-- ここで全体のコンテナを囲む-->
+
+  <!-- header -->
+<div class="container">
+  <header>
+    <!-- header 1行目 -->
+    <div class="header_nav_first">
+      <div class="left_side"><a href="#" class="site_name">WanWan</a></div>
+      
+      <!-- navigation -->
+      <nav class="nav">
+        <div>
+          <button class="btn_session">ログアウト</button>
+        </div>
+      </nav>
+    </div>
+
+    <!-- header 2行目-->
+    <div class="header_nav_second">
+      <div>
+        <ul class="ul_nav">
+          <li class="li_nav">
+            <a href="#" class="li_nav_link">Home</a>
+          </li>
+          <li class="li_nav"><a href="#" class="li_nav_link">お知らせ・ご案内</a>
+          </li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="header_session">
+      <div class="item">0x72329g8wewejuiuiwerwerw</div>
+      <div class="item">munbai</div>
+      <div class="item">最終ログイン:&nbsp;2025/01/09</div>
+    </div>
+  </header>
+
+  <section class="information">
+    <div>
+      <span>New</span>
+      <span >Get the coolest t-shirts from our brand new store</span>
+    </div>
+  </section>
+
+
+  <!-- body start-->
+  <!-- TODO liにマウスを乗せるとホバーをさせる -->
+  <!-- borderは欲しい -->
+  <section>
+
+    <div class="font-sans bg-gray-100 p-4">
+
+        <div class="max-w-4xl mx-auto bg-white shadow-md rounded-lg p-6">
+            <h1 class="text-2xl font-bold text-center mb-6">青色申告決算書</h1>
+            <h2 class="text-xl font-bold text-center mb-8">損益計算書 (令和〇年分)</h2>
+
+            <div class="grid grid-cols-2 gap-4 mb-6">
+                <div>
+                    <p class="text-sm">事業所所在地</p>
+                    <p class="border-b border-gray-300 pb-1"></p>
+                </div>
+                <div>
+                    <p class="text-sm">氏名</p>
+                    <p class="border-b border-gray-300 pb-1"></p>
+                </div>
+                <div>
+                    <p class="text-sm">屋号</p>
+                    <p class="border-b border-gray-300 pb-1"></p>
+                </div>
+                <div>
+                    <p class="text-sm">整理番号</p>
+                    <p class="border-b border-gray-300 pb-1"></p>
+                </div>
+            </div>
+
+            <div class="mb-8">
+                <h3 class="text-lg font-semibold border-b pb-2 mb-4">I. 収入金額等</h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-4">
+                    <div class="flex justify-between items-center pb-2 border-b border-gray-200">
+                        <span class="font-medium">売上(収入)金額</span>
+                        <input type="text" class="text-right border border-gray-300 rounded px-2 py-1 w-40" placeholder="0">
+                    </div>
+                    <div class="flex justify-between items-center pb-2 border-b border-gray-200">
+                        <span class="font-medium">家事消費</span>
+                        <input type="text" class="text-right border border-gray-300 rounded px-2 py-1 w-40" placeholder="0">
+                    </div>
+                    <div class="flex justify-between items-center pb-2 border-b border-gray-200">
+                        <span class="font-medium">その他収入</span>
+                        <input type="text" class="text-right border border-gray-300 rounded px-2 py-1 w-40" placeholder="0">
+                    </div>
+                    <div class="flex justify-between items-center pb-2 border-b border-gray-200">
+                        <span class="font-bold">売上(収入)金額合計</span>
+                        <input type="text" class="text-right border border-gray-300 rounded px-2 py-1 w-40 bg-gray-100 font-bold" placeholder="0">
+                    </div>
+                </div>
+            </div>
+
+            <div class="mb-8">
+                <h3 class="text-lg font-semibold border-b pb-2 mb-4">II. 売上原価</h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-4">
+                    <div class="flex justify-between items-center pb-2 border-b border-gray-200">
+                        <span class="font-medium">期首商品(製品)棚卸高</span>
+                        <input type="text" class="text-right border border-gray-300 rounded px-2 py-1 w-40" placeholder="0">
+                    </div>
+                    <div class="flex justify-between items-center pb-2 border-b border-gray-200">
+                        <span class="font-medium">仕入金額</span>
+                        <input type="text" class="text-right border border-gray-300 rounded px-2 py-1 w-40" placeholder="0">
+                    </div>
+                    <div class="flex justify-between items-center pb-2 border-b border-gray-200">
+                        <span class="font-medium">期末商品(製品)棚卸高</span>
+                        <input type="text" class="text-right border border-gray-300 rounded px-2 py-1 w-40" placeholder="0">
+                    </div>
+                    <div class="flex justify-between items-center pb-2 border-b border-gray-200">
+                        <span class="font-bold">売上原価合計</span>
+                        <input type="text" class="text-right border border-gray-300 rounded px-2 py-1 w-40 bg-gray-100 font-bold" placeholder="0">
+                    </div>
+                </div>
+            </div>
+
+            <div class="mb-8">
+                <h3 class="text-lg font-semibold border-b pb-2 mb-4">III. 経費</h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-4">
+                    <div class="flex justify-between items-center pb-2 border-b border-gray-200">
+                        <span class="font-medium">租税公課</span>
+                        <input type="text" class="text-right border border-gray-300 rounded px-2 py-1 w-40" placeholder="0">
+                    </div>
+                    <div class="flex justify-between items-center pb-2 border-b border-gray-200">
+                        <span class="font-medium">荷造運賃</span>
+                        <input type="text" class="text-right border border-gray-300 rounded px-2 py-1 w-40" placeholder="0">
+                    </div>
+                    <div class="flex justify-between items-center pb-2 border-b border-gray-200">
+                        <span class="font-medium">水道光熱費</span>
+                        <input type="text" class="text-right border border-gray-300 rounded px-2 py-1 w-40" placeholder="0">
+                    </div>
+                    <div class="flex justify-between items-center pb-2 border-b border-gray-200">
+                        <span class="font-medium">旅費交通費</span>
+                        <input type="text" class="text-right border border-gray-300 rounded px-2 py-1 w-40" placeholder="0">
+                    </div>
+                    <div class="flex justify-between items-center pb-2 border-b border-gray-200">
+                        <span class="font-medium">通信費</span>
+                        <input type="text" class="text-right border border-gray-300 rounded px-2 py-1 w-40" placeholder="0">
+                    </div>
+                    <div class="flex justify-between items-center pb-2 border-b border-gray-200">
+                        <span class="font-medium">消耗品費</span>
+                        <input type="text" class="text-right border border-gray-300 rounded px-2 py-1 w-40" placeholder="0">
+                    </div>
+                    <div class="flex justify-between items-center pb-2 border-b border-gray-200">
+                        <span class="font-medium">接待交際費</span>
+                        <input type="text" class="text-right border border-gray-300 rounded px-2 py-1 w-40" placeholder="0">
+                    </div>
+                    <div class="flex justify-between items-center pb-2 border-b border-gray-200">
+                        <span class="font-medium">修繕費</span>
+                        <input type="text" class="text-right border border-gray-300 rounded px-2 py-1 w-40" placeholder="0">
+                    </div>
+                    <div class="flex justify-between items-center pb-2 border-b border-gray-200">
+                        <span class="font-medium">減価償却費</span>
+                        <input type="text" class="text-right border border-gray-300 rounded px-2 py-1 w-40" placeholder="0">
+                    </div>
+                    <div class="flex justify-between items-center pb-2 border-b border-gray-200">
+                        <span class="font-medium">福利厚生費</span>
+                        <input type="text" class="text-right border border-gray-300 rounded px-2 py-1 w-40" placeholder="0">
+                    </div>
+                    <div class="flex justify-between items-center pb-2 border-b border-gray-200">
+                        <span class="font-medium">地代家賃</span>
+                        <input type="text" class="text-right border border-gray-300 rounded px-2 py-1 w-40" placeholder="0">
+                    </div>
+                    <div class="flex justify-between items-center pb-2 border-b border-gray-200">
+                        <span class="font-medium">利子割引料</span>
+                        <input type="text" class="text-right border border-gray-300 rounded px-2 py-1 w-40" placeholder="0">
+                    </div>
+                    <div class="flex justify-between items-center pb-2 border-b border-gray-200">
+                        <span class="font-medium">貸倒金</span>
+                        <input type="text" class="text-right border border-gray-300 rounded px-2 py-1 w-40" placeholder="0">
+                    </div>
+                    <div class="flex justify-between items-center pb-2 border-b border-gray-200">
+                        <span class="font-medium">雑費</span>
+                        <input type="text" class="text-right border border-gray-300 rounded px-2 py-1 w-40" placeholder="0">
+                    </div>
+                     <div class="flex justify-between items-center pb-2 border-b border-gray-200">
+                        <span class="font-bold">経費合計</span>
+                        <input type="text" class="text-right border border-gray-300 rounded px-2 py-1 w-40 bg-gray-100 font-bold" placeholder="0">
+                    </div>
+                </div>
+            </div>
+
+            <div class="mb-8">
+                <h3 class="text-lg font-semibold border-b pb-2 mb-4">IV. 所得金額</h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-4">
+                    <div class="flex justify-between items-center pb-2 border-b border-gray-200">
+                        <span class="font-bold">青色申告特別控除前の所得金額</span>
+                        <input type="text" class="text-right border border-gray-300 rounded px-2 py-1 w-40 bg-gray-100 font-bold" placeholder="0">
+                    </div>
+                    <div class="flex justify-between items-center pb-2 border-b border-gray-200">
+                        <span class="font-medium">青色申告特別控除額</span>
+                        <input type="text" class="text-right border border-gray-300 rounded px-2 py-1 w-40" placeholder="0">
+                    </div>
+                    <div class="flex justify-between items-center pb-2 border-b border-gray-200">
+                        <span class="font-bold">所得金額</span>
+                        <input type="text" class="text-right border border-gray-300 rounded px-2 py-1 w-40 bg-gray-100 font-bold" placeholder="0">
+                    </div>
+                </div>
+            </div>
+
+            <p class="text-sm text-gray-600 text-center mt-8">
+                ※ この損益計算書は国税庁の様式を参考に作成しています。実際の提出時には、最新の国税庁の様式をご確認ください。
+            </p>
+
+        </div>
+
+    </div>
+
+  </section>
+  <!-- body end -->
+
+
+
+</div>
+
+</body>
+</html>

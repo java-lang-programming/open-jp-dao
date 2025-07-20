@@ -1,11 +1,34 @@
 FactoryBot.define do
-  factory :ledger do
-    date { "2025-06-25 09:10:29" }
-    name { "MyString" }
-    ledgers_item_id { 1 }
-    face_value { "9.99" }
-    proportion_rate { "9.99" }
-    proportion_amount { "9.99" }
-    recorded { "9.99" }
+  factory :ledger_1, class: Ledger do
+    date { "2025-01-06 09:10:29" }
+    name { "MFクラウド" }
+    ledger_item {  }
+    face_value { 1848 }
+    proportion_rate { 1 }
+    proportion_amount {  }
+    recorded_amount { 1848 }
+    address { }
+  end
+
+  factory :ledger_2, class: Ledger do
+    date { "2025-03-04 09:10:29" }
+    name { "MFクラウド" }
+    ledger_item {  }
+    face_value { 1848 }
+    proportion_rate { 1 }
+    proportion_amount {  }
+    recorded_amount { 1848 }
+    address { }
+  end
+
+  factory :ledger_3, class: Ledger do
+    date { "2025-04-04 09:10:29" }
+    name { "MFクラウド" }
+    ledger_item {  }
+    face_value { 1848 }
+    proportion_rate { 1 }
+    proportion_amount {  }
+    recorded_amount { 1848 }
+    address { }
   end
 end

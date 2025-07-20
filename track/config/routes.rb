@@ -57,6 +57,9 @@ Rails.application.routes.draw do
     collection do
       get "csv_upload_new"
       post "csv_upload"
+      # POSTリクエストで複数のIDを受け取り、削除するアクション
+      # POST /ledgers/destroy_multiple
+      post "destroy_multiple"
     end
   end
 
