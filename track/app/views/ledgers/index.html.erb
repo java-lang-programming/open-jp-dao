@@ -4,10 +4,21 @@
   <%= render "layouts/header", user: @user, notification: @notification %>
 <% end %>
 
+<style>
+    /** 一旦これで **/
+    .hidden {
+      display: none;
+    }
+
+    .bg-opacity-50 {
+      background-color: rgb(75 85 99 / 0.5);
+    }
+</style>
+
 <section class="py-8">
   <div class="bg-white flex justify-end px-6 py-4">
     <%= link_to "作成", new_dollar_yen_transaction_path, class: "bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mr-2" %>
-    <%= link_to "削除", new_dollar_yen_transaction_path, class: "bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded mr-2" %>
+    <button id="deleteButton" class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded mr-2">削除</button>
     <%= link_to "一括作成/更新", csv_upload_new_ledgers_path, class: "bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded" %>
   </div>
 
@@ -54,8 +65,8 @@
                 </div>
             </div>
             <% @ledgers.each_with_index do |ledger, index| %>
-            <div class="item-row grid grid-cols-[auto_minmax(100px,_1fr)_minmax(100px,_1fr)_minmax(100px,_1fr)_minmax(100px,_1fr)_minmax(100px,_1fr)_minmax(100px,_1fr)_minmax(100px,_1fr)] md:grid-cols-8 bg-white border-b dark:bg-gray-800 dark:border-gray-700 border-gray-200" data-id="456">
-                <div class="px-6 py-4 font-normal flex items-center w-auto"><input id="default-checkbox" type="checkbox" value="" class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded-sm focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"></div>
+            <div class="item-row grid grid-cols-[auto_minmax(100px,_1fr)_minmax(100px,_1fr)_minmax(100px,_1fr)_minmax(100px,_1fr)_minmax(100px,_1fr)_minmax(100px,_1fr)_minmax(100px,_1fr)] md:grid-cols-8 bg-white border-b dark:bg-gray-800 dark:border-gray-700 border-gray-200" data-id="<%= ledger[:id] %>">
+                <div class="px-6 py-4 font-normal flex items-center w-auto"><input id="default-checkbox" type="checkbox" value="" class="item-checkbox w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded-sm focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"></div>
                 <div class="px-6 py-4 font-normal flex items-center"><%= ledger[:date] %></div>
                 <div class="px-6 py-4 font-normal flex items-center"><%= ledger[:ledger_item_name] %></div>
                 <div class="px-6 py-4 font-normal flex items-center"><%= ledger[:name] %></div>
@@ -68,5 +79,154 @@
         </div>
     </div>
     <!-- data表示終了 -->
+
+    <!-- modal 外出しにする -->
+    <div id="deleteModal" class="modal-overlay fixed inset-0 bg-gray-600 bg-opacity-50 flex items-center justify-center z-50 hidden">
+      <div class="modal-content relative bg-white rounded-lg shadow-xl w-11/12 md:max-w-sm mx-auto p-6">
+          <button class="close-modal-button absolute top-4 right-4 text-gray-500 hover:text-gray-800 focus:outline-none">
+              <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+              </svg>
+          </button>
+
+          <h3 class="text-lg font-semibold text-gray-900 mb-4">本当に削除しますか？</h3>
+          <p class="text-gray-700 mb-6">
+              この操作は元に戻せません。<br>
+              <span id="deletingItemInfo" class="font-medium text-blue-700"></span> を削除します。
+          </p>
+          <div class="flex justify-end space-x-3">
+              <button class="close-modal-button px-4 py-2 bg-gray-200 text-gray-800 rounded hover:bg-gray-300 focus:outline-none">
+                  キャンセル
+              </button>
+              <button id="confirmDeleteButton" class="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700 focus:outline-none">
+                  削除
+              </button>
+          </div>
+       </div>
+    </div>
+
   </div>
 </section>
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const deleteButton = document.getElementById('deleteButton');
+        const deleteModal = document.getElementById('deleteModal');
+        const closeModalButtons = document.querySelectorAll('.close-modal-button');
+        const confirmDeleteButton = document.getElementById('confirmDeleteButton');
+        const deletingItemInfo = document.getElementById('deletingItemInfo');
+        const itemRows = document.querySelectorAll('.item-row'); // 一覧の各行
+        const itemCheckboxes = document.querySelectorAll('.item-checkbox'); // 各行のチェックボックス
+
+        // 初期表示時に削除ボタンの有効/無効を設定
+        updateDeleteButtonState();
+
+        // モーダルを表示する関数
+        const openModal = () => {
+            const checkedItems = getCheckedItemIds();
+            //alert(checkedItems);
+            if (checkedItems.length === 0) {
+                alert('削除する項目を選択してください。');
+                return;
+            }
+
+            // 選択された項目情報をモーダルに表示
+            const itemNames = checkedItems.map(id => {
+                const row = document.querySelector(`.item-row[data-id="${id}"]`);
+                return row ? row.children[3].textContent : ''; // 4番目の要素（名称）
+            }).filter(name => name !== '');
+
+            deletingItemInfo.textContent = itemNames.join(', ');
+
+            deleteModal.classList.remove('hidden');
+        };
+
+        // モーダルを閉じる関数
+        const closeModal = () => {
+            deleteModal.classList.add('hidden');
+        };
+
+        // 「削除」ボタンがクリックされたらモーダルを表示
+        deleteButton.addEventListener('click', openModal);
+
+        // モーダルを閉じるボタン、またはモーダルオーバーレイがクリックされたらモーダルを閉じる
+        closeModalButtons.forEach(button => {
+            button.addEventListener('click', closeModal);
+        });
+
+        deleteModal.addEventListener('click', (event) => {
+            if (event.target === deleteModal) {
+                closeModal();
+            }
+        });
+
+        // 削除確認ボタンがクリックされた時の処理 (実際にはRailsにリクエストを送る)
+        confirmDeleteButton.addEventListener('click', () => {
+            const checkedIds = getCheckedItemIds();
+            if (checkedIds.length > 0) {
+                // ここでRailsへの削除リクエストを送信
+                // 例: window.location.href = `/items/delete?ids=${checkedIds.join(',')}`;
+                // 関数か
+                const form = document.createElement('form');
+                form.method = 'POST';
+                form.action = 'ledgers/destroy_multiple'; // 送信先のURL (Railsのパスに置き換える)
+
+                // 2. CSRFトークンを追加 (Railsアプリケーションの場合必須)
+                const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+                const csrfInput = document.createElement('input');
+                csrfInput.type = 'hidden';
+                csrfInput.name = 'authenticity_token'; // Railsが期待するパラメータ名
+                csrfInput.value = csrfToken;
+                form.appendChild(csrfInput);
+
+                // 3. ledgerIds配列の各要素を隠しフィールドとして追加
+                checkedIds.forEach(id => {
+                    const input = document.createElement('input');
+                    input.type = 'hidden';
+                    input.name = 'ledger_ids[]'; // ★ここが重要: 配列として受け取るための命名規則
+                    input.value = id;
+                    form.appendChild(input);
+                });
+
+                // 4. 生成したフォームを<body>に追加
+                document.body.appendChild(form);
+
+                // 5. フォームを送信
+                form.submit();
+
+                closeModal();
+            } else {
+                alert('削除する項目が選択されていません。');
+            }
+        });
+
+        // チェックボックスの状態が変わったら削除ボタンの有効/無効を更新
+        itemCheckboxes.forEach(checkbox => {
+            checkbox.addEventListener('change', updateDeleteButtonState);
+        });
+
+        // 削除ボタンの有効/無効を更新する関数
+        function updateDeleteButtonState() {
+            const checkedCount = document.querySelectorAll('.item-checkbox:checked').length;
+            if (checkedCount > 0) {
+                deleteButton.removeAttribute('disabled');
+                deleteButton.classList.remove('opacity-50', 'cursor-not-allowed');
+            } else {
+                deleteButton.setAttribute('disabled', 'true');
+                deleteButton.classList.add('opacity-50', 'cursor-not-allowed');
+            }
+        }
+
+        // チェックされた項目のdata-idを取得する関数
+        function getCheckedItemIds() {
+            const checkedIds = [];
+            document.querySelectorAll('.item-checkbox:checked').forEach(checkbox => {
+                const row = checkbox.closest('.item-row');
+                if (row) {
+                    checkedIds.push(row.dataset.id);
+                }
+            });
+            return checkedIds;
+        }
+    });
+
+</script>
