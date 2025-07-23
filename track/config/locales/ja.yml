@@ -1,0 +1,59 @@
+# Files in the config/locales directory are used for internationalization and
+# are automatically loaded by Rails. If you want to use locales other than
+# English, add the necessary files in this directory.
+#
+# To use the locales, use `I18n.t`:
+#
+#     I18n.t "hello"
+#
+# In views, this is aliased to just `t`:
+#
+#     <%= t("hello") %>
+#
+# To use a different locale, set it with `I18n.locale`:
+#
+#     I18n.locale = :es
+#
+# This would use the information in config/locales/es.yml.
+#
+# To learn more about the API, please read the Rails Internationalization guide
+# at https://guides.rubyonrails.org/i18n.html.
+#
+# Be aware that YAML interprets the following case-insensitive strings as
+# booleans: `true`, `false`, `on`, `off`, `yes`, `no`. Therefore, these strings
+# must be quoted to be interpreted as strings. For example:
+#
+#     en:
+#       "yes": yup
+#       enabled: "ON"
+
+ja:
+  activerecord:
+    attributes:
+      ledger:
+        date: 日付
+        name: 名前
+        face_value: 額面
+        proportion_rate: 按分率
+        proportion_amount: 按分額
+      dollar_yen_transaction:
+        date: 日付
+        deposit_quantity: 受け取った米ドル
+        deposit_rate: 米ドル円レート
+        withdrawal_quantity: 売却した米ドル
+        exchange_en: 受け取った日本円
+    activemodel:
+      attributes:
+        requests/dollar_yens_transaction:
+          date: 日付
+          deposit_quantity: 預入数量米ドル
+          deposit_rate: 預入レート
+    errors:
+      messages:
+        blank: を入力してください
+        too_many_decimal_places: は小数点以下2桁以内で入力してください
+        must_be_integer: は整数で入力してください
+        too_long: は%{count}文字以内で入力してください
+        not_a_number: は数値で入力してください
+        not_an_integer: は整数で入力してください
+        must_be_greater_than_or_equal_to_zero: は0以上の値で入力してください

@@ -67,6 +67,8 @@ TransactionType.create!(
    address: address1
 )
 
+FactoryBot.create(:transaction_type6, address: address1)
+
 puts "TransactionType作成終了"
 
 puts "Job作成開始"

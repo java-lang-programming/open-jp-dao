@@ -2,6 +2,13 @@
 class Ledger < ApplicationRecord
   include ActionView::Helpers::NumberHelper
 
+  validates :date, presence: true
+  validates :name, presence: true, length: { minimum: 1, maximum: 50 }
+  validates :face_value, presence: true, numericality: { only_integer: true }
+  validates :proportion_rate, numericality: { allow_nil: true }, format: { with: /\A\d{1,3}(\.\d{1,2})?\z/,
+      message: :too_many_decimal_places, allow_nil: true }
+  validates :proportion_amount, numericality: { only_integer: true, message: :must_be_integer }, allow_nil: true
+
   belongs_to :ledger_item
   belongs_to :address
 

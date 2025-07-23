@@ -8,9 +8,11 @@
 
 <%= form_with model: @dollar_yen_transaction, url: dollar_yen_transactions_path, data: { turbo: false }, class:"form_transaction" do |form|  %>
   <%= form.hidden_field :date %>
-  <%= form.hidden_field :transaction_type, value: @dollar_yen_transaction.transaction_type.id %>
+  <%= form.hidden_field :transaction_type_id, value: @dollar_yen_transaction.transaction_type.id %>
   <%= form.hidden_field :deposit_quantity %>
   <%= form.hidden_field :deposit_rate %>
+  <%= form.hidden_field :withdrawal_quantity %>
+  <%= form.hidden_field :exchange_en %>
   <button type="submit" class="btn_submit">実行する</button>
   <input type="button" class="btn_submit" value="実行しない"/>
 <% end %>

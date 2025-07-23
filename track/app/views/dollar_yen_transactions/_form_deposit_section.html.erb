@@ -1,32 +1,14 @@
     <div class="tw_mb-5">
-      <% if @errors[:deposit_quantity_msg].present? %>
-        <div class="text-red-600 text-sm mb-1">
-          <p><%= @errors[:deposit_quantity_msg] %></p>
-        </div>
-      <% end %>
-      <label for="en_dollar_value" class="block text-gray-700 text-sm mb-2">受け取った米ドル*
-        <% if @errors[:deposit_quantity_msg].blank? && @errors[:deposit_quantity_class].include?("ok") %>
-          <span class="ml-2 text-green-500 ok-status">ok</span>
-        <% end %>
-      </label>
-      <%= form.text_field :deposit_quantity, class: @errors[:deposit_quantity_class], id: "default-datepicker", placeholder: "預入数量米ドル" %>
+      <div id="deposit_quantity_error" class="text-red-600 text-sm mb-1 <%= form_status[:deposit_quantity][:status] == 'failure' ? '' : 'hidden' %>">
+        <p><%= form_status[:deposit_quantity][:msg] %></p>
+      </div>
+      <label for="deposit_quantity" class="block text-gray-700 text-sm font-bold mb-2">受け取った米ドル*<span id="name_ok" class="ml-2 text-green-500 <%= form_status[:deposit_quantity][:status] != 'complete' ? 'hidden' : '' %>">OK</span></label>
+      <%= form.text_field :deposit_quantity, class: "shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline", placeholder: "預入数量米ドル" %>
     </div>
     <div class="tw_mb-5">
-      <% if @errors[:deposit_rate_msg].present? %>
-        <div class="text-red-600 text-sm mb-1">
-          <p><%= @errors[:deposit_rate_msg] %></p>
-        </div>
-      <% end %>
-      <label for="jp_en_rate" class="block text-gray-700 text-sm mb-2">米ドル円レート*
-        <% if @errors[:deposit_rate_msg].blank? && @errors[:deposit_rate_class].include?("ok") %>
-          <span class="ml-2 text-green-500 ok-status">ok</span>
-        <% end %>
-      </label>
-      <%= form.text_field :deposit_rate, class: @errors[:deposit_rate_class], id: "default-datepicker", placeholder: "預入レート" %>
-    </div>
-    <!--<div class="form_checkbox_section">
-      <div class="h-5">
-        <input id="auto_rate" type="checkbox" value="" class="form_checkbox" />
+      <div id="deposit_rate_error" class="text-red-600 text-sm mb-1 <%= form_status[:deposit_rate][:status] == 'failure' ? '' : 'hidden' %>">
+        <p><%= form_status[:deposit_rate][:msg] %></p>
       </div>
-      <label for="auto_rate" class="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300">米ドル円レート自動反映</label>
-    </div>-->
+      <label for="deposit_rate" class="block text-gray-700 text-sm font-bold mb-2">米ドル円レート*<span id="name_ok" class="ml-2 text-green-500 <%= form_status[:deposit_rate][:status] != 'complete' ? 'hidden' : '' %>">OK</span></label>
+      <%= form.text_field :deposit_rate, class: "shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline", placeholder: "預入レート" %>
+    </div>

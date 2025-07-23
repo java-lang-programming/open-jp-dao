@@ -28,4 +28,10 @@ FactoryBot.define do
     kind { 2 }
     address { }
   end
+
+  factory :transaction_type6, class: TransactionType do
+    name { "現地源泉税還付" }
+    kind { 1 }
+    address { }
+  end
 end

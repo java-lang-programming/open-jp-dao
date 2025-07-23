@@ -80,11 +80,26 @@ RSpec.describe "DollarYenTransactions", type: :request do
         post apis_sessions_signin_path, params: { address: addresses_eth.address, kind: Address.kinds[:ethereum], chain_id: 1, message: "message", signature: "signature", domain: "aiueo.com" }
       end
 
-      it "should get not data when date is not found." do
-        get new_dollar_yen_transaction_path
-        body = response.body
-        expect(body).to include 'ドル円外貨預金元帳 新規作成'
-        expect(body).to include "#{addresses_eth.metamask_format_address}"
+      # transaction_typesがない場合
+      context 'transaction_types is not found' do
+        it "should get not data when date is not found." do
+          get new_dollar_yen_transaction_path
+          # リダイレクト先の検証
+          expect(response).to redirect_to(transaction_types_path)
+          # ステータスコードの検証
+          expect(response).to have_http_status(302)
+        end
+      end
+
+      # transaction_typesがある場合
+      context 'transaction_types is found' do
+        it "should get data when date is not found." do
+          create(:transaction_type1, address: addresses_eth)
+          get new_dollar_yen_transaction_path
+          body = response.body
+          expect(body).to include 'ドル円外貨預金元帳 新規作成'
+          expect(body).to include "#{addresses_eth.metamask_format_address}"
+        end
       end
     end
   end

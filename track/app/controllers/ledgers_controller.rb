@@ -9,8 +9,8 @@ class LedgersController < ApplicationViewController
     headers
     address = @session.address
 
-    # 検索項目取得
-    @ledger_items = LedgerItem.all
+    # 画面表示項目
+    assign_screen_items
 
     # 検索パラメーター(TODO テスト)
     @ledger_item_id = nil
@@ -43,6 +43,40 @@ class LedgersController < ApplicationViewController
     end
     # 下記がうまく言ったらpagyをそのまま置き換えるようにする
     @page = { total: pagy.total, page: pagy.page, current_page: pagy.current_page, start_data_number: pagy.start_data_number, end_data_number: pagy.end_data_number, prev_query: pagy.prev_query, next_query: pagy.next_query, pages: pagy.pages_query }
+  end
+
+  def new
+    headers
+    @ledger = Ledger.new
+    view = Views::LedgerForm.new
+    @forms = view.form
+    assign_screen_items
+  end
+
+  def create
+    request = params.require(:ledger).permit(:date, :ledger_item_id, :name, :face_value, :proportion_rate, :proportion_amount)
+    headers
+    address = @session.address
+
+
+    ledger = Ledger.new(request)
+    ledger.address = address
+    # 以下に移行してテストも書く
+    # view/forms/ledger
+    view = Views::LedgerForm.new
+    @forms = view.form
+    unless ledger.valid?
+      view.execute(ledger: ledger)
+      @forms = view.form
+      @ledger = ledger
+      assign_screen_items
+      render :new
+      return
+    end
+    ledger.recorded_amount = ledger.calculate_recorded_amount
+    ledger.save
+
+    redirect_to ledgers_path
   end
 
   def destroy_multiple
@@ -98,5 +132,11 @@ class LedgersController < ApplicationViewController
       # ログを解析して拾えること
       # https://zenn.dev/greendrop/articles/2024-11-07-de79415b55bff0
     end
+  end
+
+  private
+
+  def assign_screen_items
+    @ledger_items = LedgerItem.all
   end
 end
