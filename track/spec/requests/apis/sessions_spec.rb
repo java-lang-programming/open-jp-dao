@@ -63,7 +63,7 @@ RSpec.describe "Apis::SessionsController", type: :request do
           post apis_sessions_signin_path, params: { address: "0xaaaa", kind: Address.kinds[:ethereum], chain_id: 1, signature: "signature", domain: "aiueo.com" }
           expect(response).to have_http_status(:bad_request)
           json = JSON.parse(response.body, symbolize_names: true)
-          expect(json).to eq({ errors: [ { msg: "Message can't be blank" } ] })
+          expect(json).to eq({ errors: [ { msg: "Message を入力してください" } ] })
         end
 
         it "returns status code bad request when signature is empty." do
@@ -71,7 +71,7 @@ RSpec.describe "Apis::SessionsController", type: :request do
           post apis_sessions_signin_path, params: { address: "0xaaaa", kind: Address.kinds[:ethereum], chain_id: 1,  message: "message", domain: "aiueo.com" }
           expect(response).to have_http_status(:bad_request)
           json = JSON.parse(response.body, symbolize_names: true)
-          expect(json).to eq({ errors: [ { msg: "Signature can't be blank" } ] })
+          expect(json).to eq({ errors: [ { msg: "Signature を入力してください" } ] })
         end
       end
     end

@@ -70,4 +70,12 @@ FactoryBot.define do
     summary { }
     deleted_at { }
   end
+
+  factory :ledger_item_10, class: LedgerItem do
+    id { 10 }
+    name { "予定納税第1期" }
+    kind { LedgerItem.kinds[:drawings] }
+    summary { }
+    deleted_at { }
+  end
 end

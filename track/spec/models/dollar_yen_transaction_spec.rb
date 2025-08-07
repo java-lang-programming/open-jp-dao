@@ -4,10 +4,40 @@ require 'rails_helper'
 RSpec.describe DollarYenTransaction, type: :model do
   let(:addresses_eth) { create(:addresses_eth) }
   let(:transaction_type1) { create(:transaction_type1, address: addresses_eth) }
+  let(:dollar_yen_transaction1) { create(:dollar_yen_transaction1, transaction_type: transaction_type1, address: addresses_eth) }
+  let(:dollar_yen_transaction2) { create(:dollar_yen_transaction2, transaction_type: transaction_type1, address: addresses_eth) }
+  let(:dollar_yen_transaction3) { create(:dollar_yen_transaction3, transaction_type: transaction_type1, address: addresses_eth) }
+
+  describe 'find_previous_dollar_yen_transactions' do
+    context 'data not found' do
+      it 'should be nil.' do
+        dollar_yen_transaction1
+        expect(dollar_yen_transaction1.find_previous_dollar_yen_transactions).to be nil
+      end
+    end
+
+    context 'data found' do
+      # idと日付の順番が一致する
+      it 'should be fetched previous_dollar_yen_transaction.' do
+        dollar_yen_transaction1
+        dollar_yen_transaction2
+        dollar_yen_transaction3
+        expect(dollar_yen_transaction3.find_previous_dollar_yen_transactions).to eq(dollar_yen_transaction2)
+      end
+
+      # idと日付の順番が一致しない
+      it 'should be fetched previous_dollar_yen_transaction.' do
+        dollar_yen_transaction3
+        dollar_yen_transaction2
+        dollar_yen_transaction1
+        expect(dollar_yen_transaction3.find_previous_dollar_yen_transactions).to eq(dollar_yen_transaction2)
+      end
+
+      # 同じ日付がある場合
+    end
+  end
 
   describe 'deposit?' do
-    let(:addresses_eth) { create(:addresses_eth) }
-    let(:transaction_type1) { create(:transaction_type1, address: addresses_eth) }
     let(:transaction_type5) { create(:transaction_type5, address: addresses_eth) }
     let(:dollar_yen_transaction1) { create(:dollar_yen_transaction1, transaction_type: transaction_type1, address: addresses_eth) }
     let(:dollar_yen_transaction44) { create(:dollar_yen_transaction44, transaction_type: transaction_type5, address: addresses_eth) }
@@ -24,8 +54,6 @@ RSpec.describe DollarYenTransaction, type: :model do
   end
 
   describe 'withdrawal?' do
-    let(:addresses_eth) { create(:addresses_eth) }
-    let(:transaction_type1) { create(:transaction_type1, address: addresses_eth) }
     let(:transaction_type5) { create(:transaction_type5, address: addresses_eth) }
     let(:dollar_yen_transaction1) { create(:dollar_yen_transaction1, transaction_type: transaction_type1, address: addresses_eth) }
     let(:dollar_yen_transaction44) { create(:dollar_yen_transaction44, transaction_type: transaction_type5, address: addresses_eth) }
@@ -50,7 +78,7 @@ RSpec.describe DollarYenTransaction, type: :model do
       it 'should be NG when string rate.' do
         dyt = DollarYenTransaction.new(transaction_type: transaction_type1, deposit_rate: 'aaa')
         dyt.valid?
-        expect(dyt.errors.messages[:deposit_rate]).to include('is not a number')
+        expect(dyt.errors.messages[:deposit_rate]).to include('は数値で入力してください')
       end
     end
 
@@ -82,7 +110,7 @@ RSpec.describe DollarYenTransaction, type: :model do
       it 'should be NG when string deposit_quantity.' do
         dyt = DollarYenTransaction.new(transaction_type: transaction_type1, deposit_quantity: 'aaa')
         dyt.valid?
-        expect(dyt.errors.messages[:deposit_quantity]).to include('is not a number')
+        expect(dyt.errors.messages[:deposit_quantity]).to include('は数値で入力してください')
       end
     end
 

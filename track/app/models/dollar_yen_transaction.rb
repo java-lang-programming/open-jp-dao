@@ -9,8 +9,38 @@ class DollarYenTransaction < ApplicationRecord
   # validates :date, presence: true
   # https://railsguides.jp/active_record_validations.html#%E3%82%AB%E3%82%B9%E3%82%BF%E3%83%A0%E3%83%A1%E3%82%BD%E3%83%83%E3%83%89
   # validate :date_valid
-  validates :deposit_rate, numericality: true, if: :deposit?
-  validates :deposit_quantity, numericality: true, if: :deposit?
+  validates :date, presence: true
+
+  with_options if: :deposit? do
+    validates :deposit_rate, presence: true
+    validates :deposit_rate, numericality: {
+                               allow_nil: false,
+                               message: :not_a_number
+                             }
+    validates :deposit_rate, numericality: {
+                               greater_than_or_equal_to: 0,
+                               message: :must_be_greater_than_or_equal_to_zero
+                             }
+    validates :deposit_rate, format: {
+                               with: /\A\d+(\.\d{1,2})?\z/,
+                               message: :too_many_decimal_places
+                             }
+
+    validates :deposit_quantity, presence: true
+    validates :deposit_quantity, numericality: {
+                                   allow_nil: false,
+                                   message: :not_a_number
+                                 }
+    validates :deposit_quantity, numericality: {
+                                   greater_than_or_equal_to: 0,
+                                   message: :must_be_greater_than_or_equal_to_zero
+                                 }
+    validates :deposit_quantity, format: {
+                                   with: /\A\d+(\.\d{1,2})?\z/,
+                                   message: :too_many_decimal_places
+                                 }
+  end
+
   validates :withdrawal_quantity, numericality: true, if: :withdrawal?
   validates :exchange_en, numericality: true, if: :withdrawal?
 
@@ -131,11 +161,11 @@ class DollarYenTransaction < ApplicationRecord
       transaction.withdrawal?
     end
 
-    reuslt = withdrawal_transactions.inject(0) do |result, item|
+    result = withdrawal_transactions.inject(0) do |result, item|
       result + BigDecimal(item.exchange_difference)
     end
 
-    { sum: reuslt, withdrawal_transactions: withdrawal_transactions }
+    { sum: result, withdrawal_transactions: withdrawal_transactions }
   end
 
   # csv importを作成する
@@ -153,9 +183,9 @@ class DollarYenTransaction < ApplicationRecord
     File.write(csv_file_path, csv_data)
   end
 
-  # 　同一日付のデータがあった場合の試験
+  # addressに似たようなのがある
   def find_previous_dollar_yen_transactions
-    address.dollar_yen_transactions.where("date < ?", date).order("id").first
+    address.dollar_yen_transactions.where("date <= ?", date).where.not(id: id).order(date: :asc).order(id: :asc).last
   end
 
   def deposit_rate_on_screen

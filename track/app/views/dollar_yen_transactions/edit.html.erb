@@ -20,11 +20,11 @@
       <label for="transaction_kind" class="form_label">取引種別*</label>
       <%= form.select :transaction_type_id, @transaction_types.collect { |c| [c.name, c.id, { "data-kind": c.kind }] }, {}, { class: "form_input" } %>
     </div>
-    <div id="deposit_section" style="display: <%= @deposit_section_block %>">
-      <%= render partial: "form_deposit_section", locals: { form: form, dollar_yen_transaction: @dollar_yen_transaction, errors: @errors } %>
+    <div id="deposit_section" style="display: <%= @form_status[:deposit?] ? 'block;' : 'none;' %>">
+      <%= render partial: "form_deposit_section", locals: { form: form, form_status: @form_status, dollar_yen_transaction: @dollar_yen_transaction, errors: @errors } %>
     </div>
-    <div id="withdrawal_section" style="display: <%= @withdrawal_section_block %>">
-      <%= render partial: "form_withdrawal_section", locals: { form: form, dollar_yen_transaction: @dollar_yen_transaction, errors: @errors } %>
+    <div id="withdrawal_section" style="display: <%= @form_status[:withdrawal?] ? 'block;' : 'none;' %>">
+      <%= render partial: "form_withdrawal_section", locals: { form: form, form_status: @form_status, dollar_yen_transaction: @dollar_yen_transaction, errors: @errors } %>
     </div>
     <%= form.submit '更新', class: "bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mr-2" %>
   <% end %>

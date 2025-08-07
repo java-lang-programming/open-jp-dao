@@ -1,0 +1,63 @@
+<% content_for :title do %>WanWan 仕訳データ作成<% end %>
+
+<% content_for :header do %>
+  <%= render "layouts/header", user: @user, notification: @notification %>
+<% end %>
+
+  <section class="py-8">
+    <div class="min-h-screen flex justify-center bg-white p-4">
+
+　　 <%= form_with(model: @ledger, url: ledgers_path, class: "w-full max-w-lg bg-white p-8 rounded-lg", data: { turbo: false }, html: { multipart: true, id: 'ledgerCreateForm' }) do |form| %>
+        <div class="mb-5">
+          <!-- 日付は確実にview compoment -->
+          <div id="dateError" class="text-red-600 text-sm mb-1 hidden">
+            <p>日付が不正です。(yyyy/mm/dd形式で入力してください)</p>
+          </div>
+          <label class="block text-gray-700 text-sm font-bold mb-2" for="default-datepicker">
+            日付*<span id="dateOk" class="ml-2 text-green-500 hidden">OK</span>
+          </label>
+          <%= form.text_field :date, class: "shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline", placeholder: "YYYY/MM/DD" %>
+        </div>
+        <div class="mb-5">
+          <label for="transaction_kind" class="block text-gray-700 text-sm font-bold mb-2">勘定科目*</label>
+          <%= form.select :ledger_item_id, @ledger_items.collect { |c| [c.name, c.id]}, {selected: @ledger.ledger_item_id }, { class: "shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" } %>
+        </div>
+        <div class="mb-5">
+          <div id="name_error" class="text-red-600 text-sm mb-1 <%= @forms[:name][:status] == 'failure' ? '' : 'hidden' %>">
+            <p><%= @forms[:name][:msg] %></p>
+          </div>
+          <label for="name" class="block text-gray-700 text-sm font-bold mb-2">名称*<span id="name_ok" class="ml-2 text-green-500 <%= @forms[:name][:status] != 'complete' ? 'hidden' : '' %>">OK</span>
+          </label>
+          <%= form.text_field :name, class: "shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline", placeholder: "名称" %>
+        </div>
+        <div class="mb-5">
+          <div id="face_value_error" class="text-red-600 text-sm mb-1 <%= @forms[:face_value][:status] == 'failure' ? '' : 'hidden' %>">
+            <p><%= @forms[:face_value][:msg] %></p>
+          </div>
+          <label for="face_value" class="block text-gray-700 text-sm font-bold mb-2">
+            額面*<span id="face_value_ok" class="ml-2 text-green-500 <%= @forms[:face_value][:status] != 'complete' ? 'hidden' : '' %>">OK</span>
+          </label>
+          <%= form.text_field :face_value, class: "shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline", placeholder: "名称" %>
+        </div>
+        <div class="mb-5">
+          <div id="allotmentRateError" class="text-red-600 text-sm mb-1 hidden">
+            <p>按分率が不正です。(0超1.0までの数値を入力してください)</p>
+          </div>
+          <label for="allotment_rate" class="block text-gray-700 text-sm font-bold mb-2">
+            按分率<span id="allotmentRateOk" class="ml-2 text-red-500 hidden">NG</span>
+          </label>
+          <%= form.text_field :proportion_rate, class: "shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline", placeholder: "按分率" %>
+        </div>
+        <div class="mb-5">
+          <div id="proportion_amount_error" class="text-red-600 text-sm mb-1 <%= @forms[:proportion_amount][:status] == 'failure' ? '' : 'hidden' %>">
+            <p><%= @forms[:proportion_amount][:msg] %></p>
+          </div>
+          <label for="proportion_amount" class="block text-gray-700 text-sm font-bold mb-2">
+            按分額<span id="allotmentAmountOk" class="ml-2 text-green-500 <%= @forms[:proportion_amount][:status] != 'complete' ? 'hidden' : '' %>">OK</span>
+          </label>
+          <%= form.text_field :proportion_amount, class: "shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline", placeholder: "按分額" %>
+        </div>
+        <button type="submit" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline mr-2">登録</button>
+      <% end %>
+    </div>
+  </section>
