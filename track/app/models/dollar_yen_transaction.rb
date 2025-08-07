@@ -11,33 +11,35 @@ class DollarYenTransaction < ApplicationRecord
   # validate :date_valid
   validates :date, presence: true
 
-  validates :deposit_rate, presence: true, if: :deposit?
-  validates :deposit_rate, numericality: {
-                             allow_nil: false,
-                             message: :not_a_number
-                           }, if: :deposit?
-  validates :deposit_rate, numericality: {
-                             greater_than_or_equal_to: 0,
-                             message: :must_be_greater_than_or_equal_to_zero
-                           }, if: :deposit?
-  validates :deposit_rate, format: {
-                             with: /\A\d+(\.\d{1,2})?\z/,
-                             message: :too_many_decimal_places
-                          }, if: :deposit?
+  with_options if: :deposit? do
+    validates :deposit_rate, presence: true
+    validates :deposit_rate, numericality: {
+                               allow_nil: false,
+                               message: :not_a_number
+                             }
+    validates :deposit_rate, numericality: {
+                               greater_than_or_equal_to: 0,
+                               message: :must_be_greater_than_or_equal_to_zero
+                             }
+    validates :deposit_rate, format: {
+                               with: /\A\d+(\.\d{1,2})?\z/,
+                               message: :too_many_decimal_places
+                             }
 
-  validates :deposit_quantity, presence: true, if: :deposit?
-  validates :deposit_quantity, numericality: {
-                                 allow_nil: false,
-                                 message: :not_a_number
-                               }, if: :deposit?
-  validates :deposit_quantity, numericality: {
-                                 greater_than_or_equal_to: 0,
-                                 message: :must_be_greater_than_or_equal_to_zero
-                               }, if: :deposit?
-  validates :deposit_quantity, format: {
-                                 with: /\A\d+(\.\d{1,2})?\z/,
-                                 message: :too_many_decimal_places
-                               }, if: :deposit?
+    validates :deposit_quantity, presence: true
+    validates :deposit_quantity, numericality: {
+                                   allow_nil: false,
+                                   message: :not_a_number
+                                 }
+    validates :deposit_quantity, numericality: {
+                                   greater_than_or_equal_to: 0,
+                                   message: :must_be_greater_than_or_equal_to_zero
+                                 }
+    validates :deposit_quantity, format: {
+                                   with: /\A\d+(\.\d{1,2})?\z/,
+                                   message: :too_many_decimal_places
+                                 }
+  end
 
   validates :withdrawal_quantity, numericality: true, if: :withdrawal?
   validates :exchange_en, numericality: true, if: :withdrawal?
@@ -159,11 +161,11 @@ class DollarYenTransaction < ApplicationRecord
       transaction.withdrawal?
     end
 
-    reuslt = withdrawal_transactions.inject(0) do |result, item|
+    result = withdrawal_transactions.inject(0) do |result, item|
       result + BigDecimal(item.exchange_difference)
     end
 
-    { sum: reuslt, withdrawal_transactions: withdrawal_transactions }
+    { sum: result, withdrawal_transactions: withdrawal_transactions }
   end
 
   # csv importを作成する
