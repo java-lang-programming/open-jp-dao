@@ -369,6 +369,9 @@ GEM
     unicode-emoji (4.0.4)
     uri (1.0.3)
     useragent (0.16.11)
+    view_component (4.0.1)
+      activesupport (>= 7.1.0, < 8.1)
+      concurrent-ruby (~> 1)
     webmock (3.25.1)
       addressable (>= 2.8.0)
       crack (>= 0.3.2)
@@ -418,6 +421,7 @@ DEPENDENCIES
   tailwindcss-ruby
   turbo-rails
   tzinfo-data
+  view_component
   webmock
 
 BUNDLED WITH

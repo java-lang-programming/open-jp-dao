@@ -26,28 +26,32 @@ module Views
         @form_status[:date] = { status: STATUS_COMPLETE, msg: nil }
       end
 
-      if dollar_yen_transaction.errors[:deposit_quantity].present?
-        @form_status[:deposit_quantity] = { status: STATUS_FAILURE, msg: error_msg(dollar_yen_transaction: dollar_yen_transaction, attribute: :deposit_quantity) }
-      else
-        @form_status[:deposit_quantity] = { status: STATUS_COMPLETE, msg: nil }
+      if dollar_yen_transaction.deposit?
+        if dollar_yen_transaction.errors[:deposit_quantity].present?
+          @form_status[:deposit_quantity] = { status: STATUS_FAILURE, msg: error_msg(dollar_yen_transaction: dollar_yen_transaction, attribute: :deposit_quantity) }
+        else
+          @form_status[:deposit_quantity] = { status: STATUS_COMPLETE, msg: nil }
+        end
+
+        if dollar_yen_transaction.errors[:deposit_rate].present?
+          @form_status[:deposit_rate] = { status: STATUS_FAILURE, msg: error_msg(dollar_yen_transaction: dollar_yen_transaction, attribute: :deposit_rate) }
+        else
+          @form_status[:deposit_rate] = { status: STATUS_COMPLETE, msg: nil }
+        end
       end
 
-      if dollar_yen_transaction.errors[:deposit_rate].present?
-        @form_status[:deposit_rate] = { status: STATUS_FAILURE, msg: error_msg(dollar_yen_transaction: dollar_yen_transaction, attribute: :deposit_rate) }
-      else
-        @form_status[:deposit_rate] = { status: STATUS_COMPLETE, msg: nil }
-      end
+      if dollar_yen_transaction.withdrawal?
+        if dollar_yen_transaction.errors[:withdrawal_quantity].present?
+          @form_status[:withdrawal_quantity] = { status: STATUS_FAILURE, msg: error_msg(dollar_yen_transaction: dollar_yen_transaction, attribute: :withdrawal_quantity) }
+        else
+          @form_status[:withdrawal_quantity] = { status: STATUS_COMPLETE, msg: nil }
+        end
 
-      if dollar_yen_transaction.errors[:withdrawal_quantity].present?
-        @form_status[:withdrawal_quantity] = { status: STATUS_FAILURE, msg: error_msg(dollar_yen_transaction: dollar_yen_transaction, attribute: :withdrawal_quantity) }
-      else
-        @form_status[:withdrawal_quantity] = { status: STATUS_COMPLETE, msg: nil }
-      end
-
-      if dollar_yen_transaction.errors[:exchange_en].present?
-        @form_status[:exchange_en] = { status: STATUS_FAILURE, msg: error_msg(dollar_yen_transaction: dollar_yen_transaction, attribute: :exchange_en) }
-      else
-        @form_status[:exchange_en] = { status: STATUS_COMPLETE, msg: nil }
+        if dollar_yen_transaction.errors[:exchange_en].present?
+          @form_status[:exchange_en] = { status: STATUS_FAILURE, msg: error_msg(dollar_yen_transaction: dollar_yen_transaction, attribute: :exchange_en) }
+        else
+          @form_status[:exchange_en] = { status: STATUS_COMPLETE, msg: nil }
+        end
       end
     end
 
