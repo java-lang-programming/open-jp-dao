@@ -6,22 +6,21 @@
 
 <section class="py-8">
   <%= form_with model: @dollar_yen_transaction, url: create_confirmation_dollar_yen_transactions_path, data: { turbo: false }, class:"form_transaction" do |form|  %>
-    <div class="tw_mb-5">
-      <div id="date_error" class="text-red-600 text-sm mb-1 <%= @form_status[:date][:status] == 'failure' ? '' : 'hidden' %>">
-        <p><%= @form_status[:date][:msg] %></p>
-      </div>
-      <label class="block text-gray-700 text-sm font-bold mb-2" for="default-datepicker">日付*<span id="dateOk" class="ml-2 text-green-500 hidden">OK</span></label>
-      <%= form.text_field :date, class: "shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline", placeholder: "日付(yyyy-mm-dd)", required: true %>
-    </div>
+    <%= render FormTextFieldComponent.new(
+      form: form,
+      attribute: :date,
+      form_status: @form_status,
+      placeholder_key: "activerecord.attributes.dollar_yen_transaction.date"
+    ) %>
     <div class="tw_mb-5">
       <label for="transaction_kind" class="form_label">取引種別*</label>
       <%= form.select :transaction_type_id, @transaction_types.collect { |c| [c.name, c.id, { "data-kind": c.kind }] }, {}, { class: "form_input", onchange: "onChangeKind(this);" } %>
     </div>
     <div id="deposit_section" style="display: <%= @form_status[:deposit?] ? 'block;' : 'none;' %>">
-      <%= render partial: "form_deposit_section", locals: { form: form, form_status: @form_status, dollar_yen_transaction: @dollar_yen_transaction, errors: @errors } %>
+      <%= render partial: "form_deposit_section", locals: { form: form, form_status: @form_status } %>
     </div>
     <div id="withdrawal_section" style="display: <%= @form_status[:withdrawal?] ? 'block;' : 'none;' %>">
-      <%= render partial: "form_withdrawal_section", locals: { form: form, form_status: @form_status, dollar_yen_transaction: @dollar_yen_transaction, errors: @errors } %>
+      <%= render partial: "form_withdrawal_section", locals: { form: form, form_status: @form_status} %>
     </div>
     <%= form.submit '登録', class: "bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mr-2" %>
   <% end %>

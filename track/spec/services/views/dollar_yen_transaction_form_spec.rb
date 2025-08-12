@@ -62,6 +62,8 @@ RSpec.describe Views::DollarYenTransactionForm do
         expect(form_status[:date]).to eq({ status: "failure", msg: "日付を入力してください" })
         expect(form_status[:deposit_quantity]).to eq({ status: "failure", msg: "受け取った米ドルを入力してください" })
         expect(form_status[:deposit_rate]).to eq({ status: "failure", msg: "米ドル円レートを入力してください" })
+        expect(form_status[:withdrawal_quantity]).to eq({ status: Views::Status::STATUS_READY, msg: nil })
+        expect(form_status[:exchange_en]).to eq({ status: Views::Status::STATUS_READY, msg: nil })
       end
 
       # deposit_quantity
@@ -78,6 +80,8 @@ RSpec.describe Views::DollarYenTransactionForm do
           expect(form_status[:date]).to eq({ status: "complete", msg: nil })
           expect(form_status[:deposit_quantity]).to eq({ status: "failure", msg: "受け取った米ドルは数値で入力してください" })
           expect(form_status[:deposit_rate]).to eq({ status: "complete", msg: nil })
+          expect(form_status[:withdrawal_quantity]).to eq({ status: Views::Status::STATUS_READY, msg: nil })
+          expect(form_status[:exchange_en]).to eq({ status: Views::Status::STATUS_READY, msg: nil })
         end
 
         # 小数点の桁のエラー
@@ -92,6 +96,8 @@ RSpec.describe Views::DollarYenTransactionForm do
           expect(form_status[:date]).to eq({ status: "complete", msg: nil })
           expect(form_status[:deposit_quantity]).to eq({ status: "failure", msg: "受け取った米ドルは小数点以下2桁以内で入力してください" })
           expect(form_status[:deposit_rate]).to eq({ status: "complete", msg: nil })
+          expect(form_status[:withdrawal_quantity]).to eq({ status: Views::Status::STATUS_READY, msg: nil })
+          expect(form_status[:exchange_en]).to eq({ status: Views::Status::STATUS_READY, msg: nil })
         end
 
         # マイナスを付加した場合
@@ -106,6 +112,8 @@ RSpec.describe Views::DollarYenTransactionForm do
           expect(form_status[:date]).to eq({ status: "complete", msg: nil })
           expect(form_status[:deposit_quantity]).to eq({ status: "failure", msg: "受け取った米ドルは0以上の値で入力してください" })
           expect(form_status[:deposit_rate]).to eq({ status: "complete", msg: nil })
+          expect(form_status[:withdrawal_quantity]).to eq({ status: Views::Status::STATUS_READY, msg: nil })
+          expect(form_status[:exchange_en]).to eq({ status: Views::Status::STATUS_READY, msg: nil })
         end
 
         # 成功
@@ -120,6 +128,8 @@ RSpec.describe Views::DollarYenTransactionForm do
           expect(form_status[:date]).to eq({ status: "complete", msg: nil })
           expect(form_status[:deposit_quantity]).to eq({ status: "complete", msg: nil })
           expect(form_status[:deposit_rate]).to eq({ status: "complete", msg: nil })
+          expect(form_status[:withdrawal_quantity]).to eq({ status: Views::Status::STATUS_READY, msg: nil })
+          expect(form_status[:exchange_en]).to eq({ status: Views::Status::STATUS_READY, msg: nil })
         end
       end
 
@@ -137,6 +147,8 @@ RSpec.describe Views::DollarYenTransactionForm do
           expect(form_status[:date]).to eq({ status: "complete", msg: nil })
           expect(form_status[:deposit_quantity]).to eq({ status: "complete", msg: nil })
           expect(form_status[:deposit_rate]).to eq({ status: "failure", msg: "米ドル円レートは数値で入力してください" })
+          expect(form_status[:withdrawal_quantity]).to eq({ status: Views::Status::STATUS_READY, msg: nil })
+          expect(form_status[:exchange_en]).to eq({ status: Views::Status::STATUS_READY, msg: nil })
         end
 
         # 小数点の桁のエラー
@@ -151,6 +163,8 @@ RSpec.describe Views::DollarYenTransactionForm do
           expect(form_status[:date]).to eq({ status: "complete", msg: nil })
           expect(form_status[:deposit_quantity]).to eq({ status: "complete", msg: nil })
           expect(form_status[:deposit_rate]).to eq({ status: "failure", msg: "米ドル円レートは小数点以下2桁以内で入力してください" })
+          expect(form_status[:withdrawal_quantity]).to eq({ status: Views::Status::STATUS_READY, msg: nil })
+          expect(form_status[:exchange_en]).to eq({ status: Views::Status::STATUS_READY, msg: nil })
         end
 
         # マイナスを付加した場合
@@ -165,6 +179,8 @@ RSpec.describe Views::DollarYenTransactionForm do
           expect(form_status[:date]).to eq({ status: Views::Status::STATUS_COMPLETE, msg: nil })
           expect(form_status[:deposit_quantity]).to eq({ status: Views::Status::STATUS_COMPLETE, msg: nil })
           expect(form_status[:deposit_rate]).to eq({ status: Views::Status::STATUS_FAILURE, msg: "米ドル円レートは0以上の値で入力してください" })
+          expect(form_status[:withdrawal_quantity]).to eq({ status: Views::Status::STATUS_READY, msg: nil })
+          expect(form_status[:exchange_en]).to eq({ status: Views::Status::STATUS_READY, msg: nil })
         end
 
         # 成功
@@ -179,6 +195,8 @@ RSpec.describe Views::DollarYenTransactionForm do
           expect(form_status[:date]).to eq({ status: Views::Status::STATUS_COMPLETE, msg: nil })
           expect(form_status[:deposit_quantity]).to eq({ status: Views::Status::STATUS_COMPLETE, msg: nil })
           expect(form_status[:deposit_rate]).to eq({ status: Views::Status::STATUS_COMPLETE, msg: nil })
+          expect(form_status[:withdrawal_quantity]).to eq({ status: Views::Status::STATUS_READY, msg: nil })
+          expect(form_status[:exchange_en]).to eq({ status: Views::Status::STATUS_READY, msg: nil })
         end
       end
     end
@@ -204,6 +222,8 @@ RSpec.describe Views::DollarYenTransactionForm do
           form_status = view_form.form_status
 
           expect(form_status[:date]).to eq({ status: Views::Status::STATUS_COMPLETE, msg: nil })
+          expect(form_status[:deposit_quantity]).to eq({ status: Views::Status::STATUS_READY, msg: nil })
+          expect(form_status[:deposit_rate]).to eq({ status: Views::Status::STATUS_READY, msg: nil })
           expect(form_status[:withdrawal_quantity]).to eq({ status: Views::Status::STATUS_FAILURE, msg: "売却した米ドルは数値で入力してください" })
           expect(form_status[:exchange_en]).to eq({ status: Views::Status::STATUS_COMPLETE, msg: nil })
         end

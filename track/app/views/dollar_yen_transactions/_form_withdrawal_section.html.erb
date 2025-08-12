@@ -1,16 +1,12 @@
-    <div class="tw_mb-5">
-      <div id="withdrawal_quantity_error" class="text-red-600 text-sm mb-1 <%= form_status[:withdrawal_quantity][:status] == 'failure' ? '' : 'hidden' %>">
-        <p><%= form_status[:withdrawal_quantity][:msg] %></p>
-      </div>
-      <label for="withdrawal_quantity" class="form_label">売却した米ドル*<span id="name_ok" class="ml-2 text-green-500 <%= form_status[:withdrawal_quantity][:status] != 'complete' ? 'hidden' : '' %>">OK</span></label>
-      <%= form.text_field :withdrawal_quantity, class: "shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline", placeholder: "売却した米ドル" %>
-    </div>
-    <div class="tw_mb-5">
-      <div id="exchange_en_error" class="text-red-600 text-sm mb-1 <%= form_status[:exchange_en][:status] == 'failure' ? '' : 'hidden' %>">
-        <p><%= form_status[:exchange_en][:msg] %></p>
-      </div>
-      <label for="exchange_en" class="form_label">受け取った日本円*<span id="name_ok" class="ml-2 text-green-500 <%= form_status[:exchange_en][:status] != 'complete' ? 'hidden' : '' %>">OK</span></label>
-      <%= form.text_field :exchange_en, class: "shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline", placeholder: "受け取った日本円" %>
-    </div>
-
-
+    <%= render FormTextFieldComponent.new(
+      form: form,
+      attribute: :withdrawal_quantity,
+      form_status: form_status,
+      placeholder_key: "activerecord.attributes.dollar_yen_transaction.withdrawal_quantity"
+    ) %>
+    <%= render FormTextFieldComponent.new(
+      form: form,
+      attribute: :exchange_en,
+      form_status: form_status,
+      placeholder_key: "activerecord.attributes.dollar_yen_transaction.exchange_en"
+    ) %>
