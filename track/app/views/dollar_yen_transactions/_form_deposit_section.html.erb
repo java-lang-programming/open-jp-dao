@@ -1,12 +1,14 @@
-    <%= render FormTextFieldComponent.new(
-      form: form,
-      attribute: :deposit_quantity,
-      form_status: form_status,
-      placeholder_key: "activerecord.attributes.dollar_yen_transaction.deposit_quantity"
-    ) %>
-    <%= render FormTextFieldComponent.new(
-      form: form,
-      attribute: :deposit_rate,
-      form_status: form_status,
-      placeholder_key: "activerecord.attributes.dollar_yen_transaction.deposit_rate"
-    ) %>
+    <div class="tw_mb-5">
+      <div id="deposit_quantity_error" class="text-red-600 text-sm mb-1 <%= form_status[:deposit_quantity][:status] == 'failure' ? '' : 'hidden' %>">
+        <p><%= form_status[:deposit_quantity][:msg] %></p>
+      </div>
+      <label for="deposit_quantity" class="block text-gray-700 text-sm font-bold mb-2">受け取った米ドル*<span id="name_ok" class="ml-2 text-green-500 <%= form_status[:deposit_quantity][:status] != 'complete' ? 'hidden' : '' %>">OK</span></label>
+      <%= form.text_field :deposit_quantity, class: "shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline", placeholder: "預入数量米ドル" %>
+    </div>
+    <div class="tw_mb-5">
+      <div id="deposit_rate_error" class="text-red-600 text-sm mb-1 <%= form_status[:deposit_rate][:status] == 'failure' ? '' : 'hidden' %>">
+        <p><%= form_status[:deposit_rate][:msg] %></p>
+      </div>
+      <label for="deposit_rate" class="block text-gray-700 text-sm font-bold mb-2">米ドル円レート*<span id="name_ok" class="ml-2 text-green-500 <%= form_status[:deposit_rate][:status] != 'complete' ? 'hidden' : '' %>">OK</span></label>
+      <%= form.text_field :deposit_rate, class: "shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline", placeholder: "預入レート" %>
+    </div>
