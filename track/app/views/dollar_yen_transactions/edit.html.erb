@@ -5,29 +5,32 @@
 <% end %>
 
 <section class="py-8">
-  <div class="bg-white mx-auto max-w-screen-xl py-4">
-    <div class="mx-auto flex px-4">
-      <div class="mx-auto">*日付と異なる取引種別の変更はできません。変更したい場合は、削除してから新しい取引データを作成してください。</div>
+  <div class="min-h-screen flex justify-center bg-white p-4">
+    <div class="w-full max-w-lg">
+      <h1 class="text-3xl font-bold text-center mb-6 text-gray-900">更新</h1>
+      <div class="mx-auto py-3">
+        <p class="text-sm">*以前に設定した日付と異なる取引種別の変更はできません。変更したい場合は削除してから新しい取引データを作成してください。</p></div>
+      <%= form_with model: @dollar_yen_transaction, url: edit_confirmation_dollar_yen_transaction_path(@dollar_yen_transaction), data: { turbo: false }, method: :put, class:"form_transaction" do |form|  %>
+        <div class="tw_mb-5">
+          <label class="form_label">日付<span class="text-xs bg-red-500 text-white font-bold px-2 py-1 ml-2 rounded">必須</span></label>
+          <%= form.text_field :date, class: "form_input", id: "default-datepicker", placeholder: "Select date", readonly: true %>
+        </div>
+        <div class="tw_mb-5">
+          <label for="transaction_kind" class="form_label">取引種別<span class="text-xs bg-red-500 text-white font-bold px-2 py-1 ml-2 rounded">必須</span></label>
+          <%= form.select :transaction_type_id, @transaction_types.collect { |c| [c.name, c.id, { "data-kind": c.kind }] }, {}, { class: "form_input" } %>
+        </div>
+        <div id="deposit_section" style="display: <%= @form_status[:deposit?] ? 'block;' : 'none;' %>">
+          <%= render partial: "form_deposit_section", locals: { form: form, form_status: @form_status, dollar_yen_transaction: @dollar_yen_transaction, errors: @errors } %>
+        </div>
+        <div id="withdrawal_section" style="display: <%= @form_status[:withdrawal?] ? 'block;' : 'none;' %>">
+          <%= render partial: "form_withdrawal_section", locals: { form: form, form_status: @form_status, dollar_yen_transaction: @dollar_yen_transaction, errors: @errors } %>
+        </div>
+        <div class="flex justify-center">
+          <%= form.submit '更新', class: "bg-blue-600 hover:bg-blue-800 text-white font-bold py-3 px-6 rounded focus:outline-none focus:shadow-outline mr-2 text-lg" %>
+        </div>
+      <% end %>
     </div>
   </div>
-
-  <%= form_with model: @dollar_yen_transaction, url: edit_confirmation_dollar_yen_transaction_path(@dollar_yen_transaction), data: { turbo: false }, method: :put, class:"form_transaction" do |form|  %>
-    <div class="tw_mb-5">
-      <label class="form_label">日付*</label>
-      <%= form.text_field :date, class: "form_input", id: "default-datepicker", placeholder: "Select date", readonly: true %>
-    </div>
-    <div class="tw_mb-5">
-      <label for="transaction_kind" class="form_label">取引種別*</label>
-      <%= form.select :transaction_type_id, @transaction_types.collect { |c| [c.name, c.id, { "data-kind": c.kind }] }, {}, { class: "form_input" } %>
-    </div>
-    <div id="deposit_section" style="display: <%= @form_status[:deposit?] ? 'block;' : 'none;' %>">
-      <%= render partial: "form_deposit_section", locals: { form: form, form_status: @form_status, dollar_yen_transaction: @dollar_yen_transaction, errors: @errors } %>
-    </div>
-    <div id="withdrawal_section" style="display: <%= @form_status[:withdrawal?] ? 'block;' : 'none;' %>">
-      <%= render partial: "form_withdrawal_section", locals: { form: form, form_status: @form_status, dollar_yen_transaction: @dollar_yen_transaction, errors: @errors } %>
-    </div>
-    <%= form.submit '更新', class: "bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mr-2" %>
-  <% end %>
 </section>
 
 
