@@ -30,6 +30,7 @@ bundle_install: ## bundle install
 	bundle config set frozen false
 	bundle config set --local path 'vendor/bundle'
 	bundle install
+	bundle clean --force
 bundle_install_production: ## bundle install production
 	bundle config set frozen false
 	bundle config set --local path 'vendor/bundle'
