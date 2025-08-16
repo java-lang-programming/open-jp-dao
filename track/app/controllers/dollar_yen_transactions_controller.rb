@@ -1,4 +1,6 @@
 class DollarYenTransactionsController < ApplicationViewController
+  include Nav
+
   before_action :verify, only: [ :index, :new, :create_confirmation, :create, :edit, :edit_confirmation, :update, :delete_confirmation, :destroy, :foreign_exchange_gain, :csv_upload, :csv_import ]
 
   skip_before_action :verify_authenticity_token, only: [ :update, :destroy ]
@@ -11,6 +13,7 @@ class DollarYenTransactionsController < ApplicationViewController
 
     header_session
     address = @session.address
+    @navs = transactions_navs(selected: DOLLAR_YEN_TRANSACTION)
     # 検索表示用
     @transaction_types = address.transaction_types
     # ダウンロード表示用(TODO テスト)
@@ -55,6 +58,7 @@ class DollarYenTransactionsController < ApplicationViewController
   def new
     header_session
     address = @session.address
+    @navs = transactions_navs(selected: DOLLAR_YEN_TRANSACTION)
 
     @transaction_types = address.transaction_types
     if @transaction_types.empty?
@@ -71,6 +75,7 @@ class DollarYenTransactionsController < ApplicationViewController
   def create_confirmation
     header_session
     address = @session.address
+    @navs = transactions_navs(selected: DOLLAR_YEN_TRANSACTION)
 
     @transaction_types = address.transaction_types
     if @transaction_types.empty?
@@ -118,8 +123,8 @@ class DollarYenTransactionsController < ApplicationViewController
   # 作成
   def create
     header_session
-
     address = @session.address
+    @navs = transactions_navs(selected: DOLLAR_YEN_TRANSACTION)
 
     dyt = form_dollar_yen_transaction(params: params, address: address)
 
@@ -135,6 +140,7 @@ class DollarYenTransactionsController < ApplicationViewController
   def edit
     header_session
     address = @session.address
+    @navs = transactions_navs(selected: DOLLAR_YEN_TRANSACTION)
     @dollar_yen_transaction = address.dollar_yen_transactions.where(id: params[:id]).first
     @transaction_types = address.transaction_types.where(kind: @dollar_yen_transaction.transaction_type.kind)
 
@@ -145,6 +151,7 @@ class DollarYenTransactionsController < ApplicationViewController
   def edit_confirmation
     header_session
     address = @session.address
+    @navs = transactions_navs(selected: DOLLAR_YEN_TRANSACTION)
 
     request = params.require(:dollar_yen_transaction).permit(:date, :transaction_type_id, :deposit_quantity, :deposit_rate, :withdrawal_quantity, :exchange_en)
     transaction_type = address.transaction_types.where(id: request[:transaction_type_id]).first
@@ -202,6 +209,7 @@ class DollarYenTransactionsController < ApplicationViewController
 
   def update
     address = @session.address
+    @navs = transactions_navs(selected: DOLLAR_YEN_TRANSACTION)
 
     request = params.require(:dollar_yen_transaction).permit(:id, :date, :transaction_type_id, :deposit_quantity, :deposit_rate)
     dollar_yen_transaction = address.dollar_yen_transactions.where(id: params[:id]).first
@@ -222,8 +230,8 @@ class DollarYenTransactionsController < ApplicationViewController
 
   def delete_confirmation
     header_session
-
     address = @session.address
+    @navs = transactions_navs(selected: DOLLAR_YEN_TRANSACTION)
 
     @dollar_yen_transaction = address.dollar_yen_transactions.where(id: params[:id]).first
 
@@ -244,6 +252,7 @@ class DollarYenTransactionsController < ApplicationViewController
   # https://www.airteams.net/media/articles/1830
   def destroy
     address = @session.address
+    @navs = transactions_navs(selected: DOLLAR_YEN_TRANSACTION)
 
     # ここはテスト可能にする
     # ターゲット
@@ -266,11 +275,13 @@ class DollarYenTransactionsController < ApplicationViewController
     header_session
 
     address = @session.address
+    @navs = transactions_navs(selected: EXCHANGE_GAIN)
 
     base_sql = address.dollar_yen_transactions
     @dollar_yen_transactions_total = base_sql.all.count
 
     # データが存在しない場合はドル円外貨預金元帳に遷移する
+    # メッセージがないとわからん
     redirect_to dollar_yen_transactions_path if @dollar_yen_transactions_total == 0
 
     # データのある年度を取得 sqlite3のみ(postgres:EXTRACT(year FROM date))
@@ -316,6 +327,7 @@ class DollarYenTransactionsController < ApplicationViewController
 
   def csv_upload
     header_session
+    @navs = transactions_navs(selected: DOLLAR_YEN_TRANSACTION)
     @import_file = ImportFile.new
   end
 
@@ -331,6 +343,7 @@ class DollarYenTransactionsController < ApplicationViewController
 
     session = find_session_by_cookie
     address = session.address
+    @navs = transactions_navs(selected: DOLLAR_YEN_TRANSACTION)
 
     service = FileUploads::DollarYenTransactionDepositCsv.new(address: address, file: file)
     errors = service.validation_errors

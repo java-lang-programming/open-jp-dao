@@ -89,19 +89,21 @@
     </div>
   </nav>
 
+  <% if @navs.present? %>
   <div class="mx-auto max-w-screen-xl">
     <div class="overflow-y-auto whitespace-nowrap bg-gray-50 p-5">
       <ul class="inline-flex list-none items-center">
-        <li><%= link_to "為替差益", foreign_exchange_gain_dollar_yen_transactions_path, class: "mr-1 rounded-md px-4 py-1 text-base text-gray-500 ring-offset-2 ring-offset-current transition duration-500 ease-in-out hover:text-blue-600 focus:outline-none focus:ring-2" %></li>
-        <li>
-          <%= link_to "ドル円外貨預金元帳", dollar_yen_transactions_path, class: "mr-1 rounded-md px-4 py-1 text-base text-gray-500 ring-offset-2 ring-offset-current transition duration-500 ease-in-out hover:text-blue-600 focus:outline-none focus:ring-2" %>
-        </li>
-        <li>
-          <%= link_to "取引種類", transaction_types_path, class: "mr-1 rounded-md px-4 py-1 text-base text-gray-500 ring-offset-2 ring-offset-current transition duration-500 ease-in-out hover:text-blue-600 focus:outline-none focus:ring-2" %>
-        </li>
+        <% @navs.each do |nav| %>
+          <% if nav[:selected] == true %>
+            <li class="font-bold underline decoration-green-500 decoration-4 mr-1 px-4 py-1"><%= nav[:name] %></li>
+          <% else%>
+            <li><%= link_to nav[:name], nav[:path], class: "mr-1 rounded-md px-4 py-1 text-base text-gray-500 ring-offset-2 ring-offset-current transition duration-500 ease-in-out hover:text-blue-600 focus:outline-none focus:ring-2" %></li>
+          <% end %>
+        <% end %>
       </ul>
     </div>
   </div>
+  <% end %>
 
   <!-- login情報 -->
   <div class="bg-white mx-auto max-w-screen-xl py-4">
