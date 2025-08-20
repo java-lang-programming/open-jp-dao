@@ -21,6 +21,8 @@ Rails.application.routes.draw do
       resources :downloads, only: [ :show ]
     end
 
+    get "downloads/:filename", to: "downloads#show", as: :download, constraints: { filename: /.+/ }
+
     get "sessions/nonce"
     post "sessions/verify"
     post "sessions/signin"
