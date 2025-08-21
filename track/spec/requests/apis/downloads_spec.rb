@@ -18,7 +18,7 @@ RSpec.describe "Apis::Downloads", type: :request do
         get apis_download_path(filename: "not_found.csv")
 
         expect(response).to have_http_status(:not_found)
-        expect(response.parsed_body["error"]).to eq("File not found")
+        expect(response.parsed_body["error"]).to eq("File not Permit")
       end
     end
   end
