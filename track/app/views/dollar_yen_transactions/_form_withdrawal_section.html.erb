@@ -2,11 +2,13 @@
       form: form,
       attribute: :withdrawal_quantity,
       form_status: form_status,
-      placeholder_key: "activerecord.attributes.dollar_yen_transaction.withdrawal_quantity"
+      placeholder_key: "activerecord.attributes.dollar_yen_transaction.withdrawal_quantity",
+      required: true
     ) %>
     <%= render FormTextFieldComponent.new(
       form: form,
       attribute: :exchange_en,
       form_status: form_status,
-      placeholder_key: "activerecord.attributes.dollar_yen_transaction.exchange_en"
+      placeholder_key: "activerecord.attributes.dollar_yen_transaction.exchange_en",
+      required: true
     ) %>

@@ -1,4 +1,5 @@
 class LedgersController < ApplicationViewController
+  include Nav
   before_action :verify, only: [ :index, :destroy_multiple, :csv_upload_new, :csv_upload ]
 
   DEFAULT_LIMIT = 50
@@ -8,6 +9,7 @@ class LedgersController < ApplicationViewController
 
     headers
     address = @session.address
+    @navs = ledgers_navs(selected: LEDGERS)
 
     # 画面表示項目
     assign_screen_items
@@ -47,6 +49,7 @@ class LedgersController < ApplicationViewController
 
   def new
     headers
+    @navs = ledgers_navs(selected: LEDGERS)
     @ledger = Ledger.new
     view = Views::LedgerForm.new
     @forms = view.form
@@ -57,6 +60,7 @@ class LedgersController < ApplicationViewController
     request = params.require(:ledger).permit(:date, :ledger_item_id, :name, :face_value, :proportion_rate, :proportion_amount)
     headers
     address = @session.address
+    @navs = ledgers_navs(selected: LEDGERS)
 
 
     ledger = Ledger.new(request)
@@ -93,6 +97,7 @@ class LedgersController < ApplicationViewController
 
   def csv_upload_new
     headers
+    @navs = ledgers_navs(selected: LEDGERS)
     @import_file = ImportFile.new
   end
 
@@ -100,6 +105,7 @@ class LedgersController < ApplicationViewController
   def csv_upload
     headers
     address = @session.address
+    @navs = ledgers_navs(selected: LEDGERS)
 
     file = params[:import_file][:file]
 

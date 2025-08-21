@@ -2,11 +2,13 @@
       form: form,
       attribute: :deposit_quantity,
       form_status: form_status,
-      placeholder_key: "activerecord.attributes.dollar_yen_transaction.deposit_quantity"
+      placeholder_key: "activerecord.attributes.dollar_yen_transaction.deposit_quantity",
+      required: true
     ) %>
     <%= render FormTextFieldComponent.new(
       form: form,
       attribute: :deposit_rate,
       form_status: form_status,
-      placeholder_key: "activerecord.attributes.dollar_yen_transaction.deposit_rate"
+      placeholder_key: "activerecord.attributes.dollar_yen_transaction.deposit_rate",
+      required: true
     ) %>

@@ -5,25 +5,33 @@
 <% end %>
 
 <section class="py-8">
-  <%= form_with model: @dollar_yen_transaction, url: create_confirmation_dollar_yen_transactions_path, data: { turbo: false }, class:"form_transaction" do |form|  %>
-    <%= render FormTextFieldComponent.new(
-      form: form,
-      attribute: :date,
-      form_status: @form_status,
-      placeholder_key: "activerecord.attributes.dollar_yen_transaction.date"
-    ) %>
-    <div class="tw_mb-5">
-      <label for="transaction_kind" class="form_label">取引種別*</label>
-      <%= form.select :transaction_type_id, @transaction_types.collect { |c| [c.name, c.id, { "data-kind": c.kind }] }, {}, { class: "form_input", onchange: "onChangeKind(this);" } %>
+  <div class="min-h-screen flex justify-center bg-white p-4">
+    <div class="w-full max-w-lg">
+　　  <h1 class="text-3xl font-bold text-center mb-6 text-gray-900">新規登録</h1>
+      <%= form_with model: @dollar_yen_transaction, url: create_confirmation_dollar_yen_transactions_path, data: { turbo: false }, class:"bg-white p-8 rounded-lg" do |form|  %>
+        <%= render FormTextFieldComponent.new(
+          form: form,
+          attribute: :date,
+          form_status: @form_status,
+          placeholder_key: "activerecord.attributes.dollar_yen_transaction.date",
+          required: true
+        ) %>
+        <div class="tw_mb-5">
+          <label for="transaction_kind" class="form_label">取引種別<span class="text-xs bg-red-500 text-white font-bold px-2 py-1 ml-2 rounded">必須</span></label>
+          <%= form.select :transaction_type_id, @transaction_types.collect { |c| [c.name, c.id, { "data-kind": c.kind }] }, {}, { class: "form_input", onchange: "onChangeKind(this);" } %>
+        </div>
+        <div id="deposit_section" style="display: <%= @form_status[:deposit?] ? 'block;' : 'none;' %>">
+          <%= render partial: "form_deposit_section", locals: { form: form, form_status: @form_status } %>
+        </div>
+        <div id="withdrawal_section" style="display: <%= @form_status[:withdrawal?] ? 'block;' : 'none;' %>">
+          <%= render partial: "form_withdrawal_section", locals: { form: form, form_status: @form_status} %>
+        </div>
+        <div class="flex justify-center">
+          <%= form.submit '登録', class: "bg-blue-600 hover:bg-blue-800 text-white font-bold py-3 px-6 rounded focus:outline-none focus:shadow-outline mr-2 text-lg" %>
+        </div>
+      <% end %>
     </div>
-    <div id="deposit_section" style="display: <%= @form_status[:deposit?] ? 'block;' : 'none;' %>">
-      <%= render partial: "form_deposit_section", locals: { form: form, form_status: @form_status } %>
-    </div>
-    <div id="withdrawal_section" style="display: <%= @form_status[:withdrawal?] ? 'block;' : 'none;' %>">
-      <%= render partial: "form_withdrawal_section", locals: { form: form, form_status: @form_status} %>
-    </div>
-    <%= form.submit '登録', class: "bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mr-2" %>
-  <% end %>
+  </div>
 </section>
 
 <script>

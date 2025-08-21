@@ -7,6 +7,30 @@ RSpec.describe FormTextFieldComponent, type: :component do
   let(:attribute) { :deposit_quantity }
   let(:placeholder_key) { "activerecord.attributes.dollar_yen_transaction.deposit_quantity" }
 
+  describe "#required?" do
+    let(:form_status) { { deposit_quantity: { status: 'complete' } } }
+    context "必須項目の有無" do
+      it "trueを返すこと" do
+        component = described_class.new(form: form, attribute: attribute, form_status: form_status, placeholder_key: placeholder_key, required: true)
+        expect(component.required?).to be true
+      end
+
+      it "デフォルトはfalseを返すこと" do
+        component = described_class.new(form: form, attribute: attribute, form_status: form_status, placeholder_key: placeholder_key)
+        expect(component.required?).to be false
+      end
+    end
+  end
+
+  # これはできない
+  # describe "#placeholder_text" do
+  #   let(:form_status) { { deposit_quantity: { status: 'complete' } } }
+  #   it "文字列を返すこと" do
+  #     component = described_class.new(form: form, attribute: attribute, form_status: form_status, placeholder_key: placeholder_key, required: true)
+  #     expect(component.placeholder_text).to eq('aaa')
+  #   end
+  # end
+
   describe "#border_color_class" do
     context "フォームのステータスが 'complete' の場合" do
       let(:form_status) { { deposit_quantity: { status: 'complete' } } }

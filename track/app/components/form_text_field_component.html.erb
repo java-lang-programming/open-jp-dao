@@ -4,7 +4,10 @@
   </div>
   
   <label for="<%= @attribute %>" class="block text-gray-700 text-sm font-bold mb-2">
-    <%= placeholder_text %>*
+    <%= placeholder_text %>
+    <% if required? %>
+    <span class="text-xs bg-red-500 text-white font-bold px-2 py-1 ml-2 rounded">必須</span>
+    <% end %>
     <span id="<%= @attribute %>_ok" class="ml-2 text-green-500 <%= ok_hidden_class %>">OK</span>
   </label>
   

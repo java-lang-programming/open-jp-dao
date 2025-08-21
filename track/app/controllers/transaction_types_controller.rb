@@ -1,10 +1,13 @@
 class TransactionTypesController < ApplicationViewController
+  include Nav
+
   before_action :verify, only: [ :index, :edit, :new, :destroy ]
 
   skip_before_action :verify_authenticity_token, only: [ :destroy ]
 
   def index
     header_session
+    @navs = transactions_navs(selected: TRANSACTION_TYPE)
     base_sql = @session.address.transaction_types
     @total = base_sql.all.count
     @transaction_types = base_sql.order(id: :asc)
@@ -12,12 +15,14 @@ class TransactionTypesController < ApplicationViewController
 
   def new
     header_session
+    @navs = transactions_navs(selected: TRANSACTION_TYPE)
     @kinds = TransactionType.kinds_collection
     @transaction_type = TransactionType.new
   end
 
   def create
     header_session
+    @navs = transactions_navs(selected: TRANSACTION_TYPE)
     request = params.require(:transaction_type).permit(:name, :kind)
     transaction_type = TransactionType.new(name: request[:name], kind: request[:kind].to_i, address: @session.address)
     transaction_type.save
@@ -27,6 +32,7 @@ class TransactionTypesController < ApplicationViewController
 
   def edit
     header_session
+    @navs = transactions_navs(selected: TRANSACTION_TYPE)
     @kinds = TransactionType.kinds_collection
     @dollar_yen_transactions_count = @session.address.dollar_yen_transactions.where(transaction_type_id: params[:id]).count
     @transaction_type = @session.address.transaction_types.where(id: params[:id]).first
@@ -34,6 +40,7 @@ class TransactionTypesController < ApplicationViewController
 
   def update
     header_session
+    @navs = transactions_navs(selected: TRANSACTION_TYPE)
     request = params.require(:transaction_type).permit(:name, :kind)
     transaction_type = @session.address.transaction_types.where(id: params[:id]).first
     transaction_type.name = request[:name]
