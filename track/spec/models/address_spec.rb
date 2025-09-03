@@ -1,5 +1,6 @@
 require 'rails_helper'
 
+
 RSpec.describe Address, type: :model do
   let(:addresses_eth) { create(:addresses_eth) }
   let(:transaction_type5) { create(:transaction_type5, address: addresses_eth) }
@@ -387,7 +388,7 @@ RSpec.describe Address, type: :model do
     end
   end
 
-  describe 'base_dollar_yen_transaction_delete' do
+  describe 'prev_dollar_yen_transactions' do
     let(:transaction_type1) { create(:transaction_type1, address: addresses_eth) }
     let(:transaction_type2) { create(:transaction_type2, address: addresses_eth) }
     let(:transaction_type3) { create(:transaction_type3, address: addresses_eth) }
@@ -401,32 +402,44 @@ RSpec.describe Address, type: :model do
     let(:dollar_yen_transaction3_2) { create(:dollar_yen_transaction3, transaction_type: transaction_type2, address: addresses_eth) }
     let(:dollar_yen_transaction4) { create(:dollar_yen_transaction4, transaction_type: transaction_type1, address: addresses_eth) }
 
-    context '削除データ以外の既存データがない' do
-      it 'should get empty active record for delete.' do
-        dollar_yen_transaction1
+    context '引数にidを指定' do
+      context '削除データ以外の既存データがない' do
+        it 'should get empty active record for delete.' do
+          dollar_yen_transaction1
 
-        base_dollar_yen_transaction = addresses_eth.base_dollar_yen_transaction_delete(target_date: dollar_yen_transaction1.date, id: dollar_yen_transaction1.id)
-        expect(base_dollar_yen_transaction).to be nil
+          prev_dollar_yen_transactions = addresses_eth.prev_dollar_yen_transactions(target_date: dollar_yen_transaction1.date, id: dollar_yen_transaction1.id)
+          expect(prev_dollar_yen_transactions.count).to eq(0)
+        end
+      end
+
+      context '既存データがある' do
+        # 削除によって再計算のベースになるデータを取得する
+        # 条件: 同じ日のトランザジュションデータがある
+        #      同じ日以外にも変更必要な取引データがある
+        it 'should get base dollar_yen_transaction for delete.' do
+          dollar_yen_transaction1
+          dollar_yen_transaction2_same_day_1
+          dollar_yen_transaction2_same_day_2
+          # これを削除予定
+          dollar_yen_transaction2_same_day_3
+          dollar_yen_transaction2_same_day_4
+          dollar_yen_transaction3
+          dollar_yen_transaction3_2
+          dollar_yen_transaction4
+
+          prev_dollar_yen_transactions = addresses_eth.prev_dollar_yen_transactions(target_date: dollar_yen_transaction2_same_day_3.date, id: dollar_yen_transaction2_same_day_3.id)
+          expect(prev_dollar_yen_transactions.count).to eq(3)
+          expect(prev_dollar_yen_transactions.last).to eq(dollar_yen_transaction2_same_day_2)
+        end
       end
     end
 
-    context '既存データがある' do
-      # 削除によって再計算のベースになるデータを取得する
-      # 条件: 同じ日のトランザジュションデータがある
-      #      同じ日以外にも変更必要な取引データがある
-      it 'should get base dollar_yen_transaction for delete.' do
+    context '引数にidを指定しない' do
+      it '自身を含むアクティブレコードを返す' do
         dollar_yen_transaction1
-        dollar_yen_transaction2_same_day_1
-        dollar_yen_transaction2_same_day_2
-        # 　これを削除予定
-        dollar_yen_transaction2_same_day_3
-        dollar_yen_transaction2_same_day_4
-        dollar_yen_transaction3
-        dollar_yen_transaction3_2
-        dollar_yen_transaction4
 
-        base_dollar_yen_transaction = addresses_eth.base_dollar_yen_transaction_delete(target_date: dollar_yen_transaction2_same_day_3.date, id: dollar_yen_transaction2_same_day_3.id)
-        expect(base_dollar_yen_transaction).to eq(dollar_yen_transaction2_same_day_2)
+        prev_dollar_yen_transactions = addresses_eth.prev_dollar_yen_transactions(target_date: dollar_yen_transaction1.date)
+        expect(prev_dollar_yen_transactions).to eq([ dollar_yen_transaction1 ])
       end
     end
   end

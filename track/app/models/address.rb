@@ -99,22 +99,26 @@ class Address < ApplicationRecord
     dollar_yen_transactions.where("date <= ?", target_date).order(date: :asc).order(date: :asc).order(id: :asc).last
   end
 
-  # 削除時に再計算対象の1つ手前のdollar_yen_transactionを返す
+  # 削除時に再計算対象の1つ手前からのdollar_yen_transactionsを返す
   #
   # @param target_date [Date] 日付
   # @param id [Integer] 削除対象のid
-  # @return [DollarYenTransaction | nil] 削除時に再計算対象の1つ手前のdollar_yen_transactions
-  def base_dollar_yen_transaction_delete(target_date:, id:)
-    dollar_yen_transactions.where("date <= ?", target_date).where.not(id: id).where("id < ?", id).order(date: :asc).order(id: :asc).last
+  # @return [DollarYenTransaction | nil] 削除時に再計算対象の1つ手前からのdollar_yen_transactions
+  def prev_dollar_yen_transactions(target_date:, id: nil)
+    if id.present?
+      return dollar_yen_transactions.where("date <= ?", target_date).where.not(id: id).where("id < ?", id).order(date: :asc).order(id: :asc)
+    end
+    dollar_yen_transactions.where("date <= ?", target_date).order(date: :asc).order(id: :asc)
   end
 
+  # deprecated prev_dollar_yen_transactionsに移行する
   # 更新時に再計算対象の1つ手前のdollar_yen_transactionを返す
   #
   # @param target_date [Date] 日付
   # @param id [Integer] 更新対象のid
   # @return [DollarYenTransaction | nil] 更新時に再計算対象の1つ手前のdollar_yen_transactions
   def base_dollar_yen_transaction_update(target_date:, id:)
-    base_dollar_yen_transaction_delete(target_date: target_date, id: id)
+    dollar_yen_transactions.where("date <= ?", target_date).where.not(id: id).where("id < ?", id).order(date: :asc).order(id: :asc).last
   end
 
   # encを取得する

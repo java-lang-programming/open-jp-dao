@@ -4,9 +4,11 @@ require 'rails_helper'
 RSpec.describe DollarYenTransaction, type: :model do
   let(:addresses_eth) { create(:addresses_eth) }
   let(:transaction_type1) { create(:transaction_type1, address: addresses_eth) }
+  let(:transaction_type5) { create(:transaction_type5, address: addresses_eth) }
   let(:dollar_yen_transaction1) { create(:dollar_yen_transaction1, transaction_type: transaction_type1, address: addresses_eth) }
   let(:dollar_yen_transaction2) { create(:dollar_yen_transaction2, transaction_type: transaction_type1, address: addresses_eth) }
   let(:dollar_yen_transaction3) { create(:dollar_yen_transaction3, transaction_type: transaction_type1, address: addresses_eth) }
+  let(:dollar_yen_transaction44) { create(:dollar_yen_transaction44, transaction_type: transaction_type5, address: addresses_eth) }
 
   describe 'find_previous_dollar_yen_transactions' do
     context 'data not found' do
@@ -235,8 +237,6 @@ RSpec.describe DollarYenTransaction, type: :model do
     end
   end
 
-
-  # 　次はmakeattriburte
   describe 'calculate_balance_quantity' do
     let(:addresses_eth) { create(:addresses_eth) }
     let(:transaction_type1) { create(:transaction_type1, address: addresses_eth) }
@@ -245,7 +245,6 @@ RSpec.describe DollarYenTransaction, type: :model do
     let(:dollar_yen_transaction1) { create(:dollar_yen_transaction1, transaction_type: transaction_type1, address: addresses_eth) }
     let(:dollar_yen_transaction2) { create(:dollar_yen_transaction2, transaction_type: transaction_type1, address: addresses_eth) }
     let(:dollar_yen_transaction43) { create(:dollar_yen_transaction43, transaction_type: transaction_type2, address: addresses_eth) }
-    let(:dollar_yen_transaction44) { create(:dollar_yen_transaction44, transaction_type: transaction_type5, address: addresses_eth) }
 
     context '入金の数量データを作成' do
       # 初回
@@ -271,7 +270,7 @@ RSpec.describe DollarYenTransaction, type: :model do
 
         target_date = Date.new(2020, 6, 19)
         dyt = DollarYenTransaction.new(transaction_type: transaction_type1, date: target_date, deposit_rate: 105.95, deposit_quantity: 10.76, address: addresses_eth)
-        balance_quantity = dyt.calculate_balance_quantity
+        balance_quantity = dyt.calculate_balance_quantity(previous_dollar_yen_transactions: dollar_yen_transaction1)
         expect(balance_quantity).to eq(dollar_yen_transaction1.balance_quantity + dyt.deposit_quantity)
       end
 
@@ -289,8 +288,14 @@ RSpec.describe DollarYenTransaction, type: :model do
         dollar_yen_transaction43
         target_date = Date.new(2024, 2, 1)
         dyt = DollarYenTransaction.new(transaction_type: transaction_type5, date: target_date, withdrawal_quantity: 88, address: addresses_eth)
-        balance_quantity = dyt.calculate_balance_quantity
+        balance_quantity = dyt.calculate_balance_quantity(previous_dollar_yen_transactions: dollar_yen_transaction43)
         expect(balance_quantity).to eq(dollar_yen_transaction44.balance_quantity)
+      end
+
+      context '例外の発生' do
+        it '出金で前の取引がない場合はエラー' do
+          expect { dollar_yen_transaction44.calculate_balance_quantity }.to raise_error(DollarYenTransaction::NotFoundPreviousDollarYenTransaction)
+        end
       end
     end
   end
@@ -317,7 +322,7 @@ RSpec.describe DollarYenTransaction, type: :model do
 
         target_date = Date.new(2020, 6, 19)
         dyt = DollarYenTransaction.new(transaction_type: transaction_type1, date: target_date, deposit_rate: 105.95, deposit_quantity: 10.76, address: addresses_eth)
-        balance_quantity = dyt.calculate_balance_en
+        balance_quantity = dyt.calculate_balance_en(previous_dollar_yen_transactions: dollar_yen_transaction1)
         expect(balance_quantity).to eq(dollar_yen_transaction1.balance_en + dyt.calculate_deposit_en)
       end
 
@@ -327,22 +332,17 @@ RSpec.describe DollarYenTransaction, type: :model do
         dollar_yen_transaction1
         target_date = Date.new(2020, 6, 19)
         dyt2 = DollarYenTransaction.new(transaction_type: transaction_type1, date: target_date, deposit_rate: 105.95, deposit_quantity: 10.76, address: addresses_eth)
-        balance_en = dyt2.calculate_balance_en
+        balance_en = dyt2.calculate_balance_en(previous_dollar_yen_transactions: dollar_yen_transaction1)
         expect(balance_en).to eq(dollar_yen_transaction2.balance_en)
       end
 
-      # テスト(というか設計がおかしい)
-      # 次データの引数あり
-      # it 'should be next balance_en.' do
-      #   target_date = Date.new(2020, 6, 19)
-      #   dyt = DollarYenTransaction.new(transaction_type: transaction_type1, date: target_date, deposit_rate: 105.95, deposit_quantity: 10.76, address: addresses_eth)
-      #   row = dyt.to_csv_import_format
-      #   preload_records = { address: addresses_eth, transaction_types: addresses_eth.transaction_types }
-      #   csv = Files::DollarYenTransactionDepositCsv.new(address: addresses_eth, row_num: -1, row: row, preload_records: preload_records)
-      #   previous_dollar_yen_transactions = csv.to_dollar_yen_transaction
-      #   balance_quantity = dyt.calculate_balance_en(previous_dollar_yen_transactions: previous_dollar_yen_transactions)
-      #   expect(balance_quantity).to eq(dyt.calculate_balance_en)
-      # end
+      context '出金' do
+        context '例外の発生' do
+          it '出金で前の取引がない場合はエラー' do
+            expect { dollar_yen_transaction44.calculate_balance_en }.to raise_error(DollarYenTransaction::NotFoundPreviousDollarYenTransaction)
+          end
+        end
+      end
     end
   end
 
@@ -510,6 +510,7 @@ RSpec.describe DollarYenTransaction, type: :model do
     end
   end
 
+  # 　チェックが甘すぎ
   describe 'generate_upsert_dollar_yens_transactions' do
     let(:addresses_eth) { create(:addresses_eth) }
     let(:transaction_type1) { create(:transaction_type1, address: addresses_eth) }
@@ -526,6 +527,7 @@ RSpec.describe DollarYenTransaction, type: :model do
     let(:dollar_yen_transaction4) { create(:dollar_yen_transaction4, transaction_type: transaction_type1, address: addresses_eth) }
 
     context 'create' do
+      # generate_upsert_dollar_yens_transactions_2
       # 日付が重複していない
       # 途中にデータを入れる
       # create
@@ -657,6 +659,175 @@ RSpec.describe DollarYenTransaction, type: :model do
         expect(dollar_yens_transactions[1].id).to eq(dollar_yen_transaction3.id)
         expect(dollar_yens_transactions[2].date).to eq(dollar_yen_transaction4.date)
         expect(dollar_yens_transactions[2].id).to eq(dollar_yen_transaction4.id)
+      end
+    end
+  end
+
+  # メソッドの名称を変える
+  describe 'generate_upsert_dollar_yens_transactions_2' do
+    let(:dollar_yen_transaction2) { build(:dollar_yen_transaction2, transaction_type: transaction_type1, address: addresses_eth) }
+
+    it '初期データを登録する' do
+      dollar_yen_transaction1 = build(:dollar_yen_transaction1, transaction_type: transaction_type1, address: addresses_eth)
+
+      dyt = DollarYenTransaction.new
+      dyt.address = addresses_eth
+      dyt.date = dollar_yen_transaction1.date
+      dyt.transaction_type = dollar_yen_transaction1.transaction_type
+      dyt.deposit_quantity = dollar_yen_transaction1.deposit_quantity
+      dyt.deposit_rate = dollar_yen_transaction1.deposit_rate
+
+      current_dollar_yen_transactions = addresses_eth.dollar_yen_transactions
+      # 初期データであることを確認
+      expect(current_dollar_yen_transactions.size).to eq(0)
+
+      upsert_dollar_yens_transactions = dyt.generate_upsert_dollar_yens_transactions_2
+      expect(upsert_dollar_yens_transactions.size).to eq(1)
+      result = upsert_dollar_yens_transactions.first
+      expect(result.date).to eq(dollar_yen_transaction1.date)
+      expect(result.balance_en_on_screen).to eq('¥423')
+      expect(result.balance_rate_on_screen).to eq(106.54)
+      expect(result.balance_quantity_on_screen).to eq(3.97)
+    end
+
+    it '初期データがあって次の日付のデータを登録する' do
+      dollar_yen_transaction1
+
+      dyt = DollarYenTransaction.new
+      dyt.address = addresses_eth
+      dyt.date = dollar_yen_transaction2.date
+      dyt.transaction_type = dollar_yen_transaction2.transaction_type
+      dyt.deposit_quantity = dollar_yen_transaction2.deposit_quantity
+      dyt.deposit_rate = dollar_yen_transaction2.deposit_rate
+
+      dollar_yen_transactions = addresses_eth.dollar_yen_transactions
+      upsert_dollar_yens_transactions = dyt.generate_upsert_dollar_yens_transactions_2
+      expect(upsert_dollar_yens_transactions.size).to eq(1)
+      result1 = upsert_dollar_yens_transactions[0]
+      expect(result1.date).to eq(dollar_yen_transaction2.date)
+      expect(result1.balance_en_on_screen).to eq('¥1,563')
+      expect(result1.balance_rate_on_screen).to eq(106.1)
+      expect(result1.balance_quantity_on_screen).to eq(14.73)
+    end
+
+    it 'データ複数あって真ん中の日付にデータを投入する' do
+      dollar_yen_transaction1
+      dollar_yen_transaction3
+
+      dyt = DollarYenTransaction.new
+      dyt.address = addresses_eth
+      dyt.date = dollar_yen_transaction2.date
+      dyt.transaction_type = dollar_yen_transaction2.transaction_type
+      dyt.deposit_quantity = dollar_yen_transaction2.deposit_quantity
+      dyt.deposit_rate = dollar_yen_transaction2.deposit_rate
+
+      dollar_yen_transactions = addresses_eth.dollar_yen_transactions
+
+      upsert_dollar_yens_transactions = dyt.generate_upsert_dollar_yens_transactions_2
+      expect(upsert_dollar_yens_transactions.size).to eq(2)
+      result = upsert_dollar_yens_transactions[0]
+      expect(result.date).to eq(dollar_yen_transaction2.date)
+      expect(result.balance_en_on_screen).to eq('¥1,563')
+      expect(result.balance_rate_on_screen).to eq(106.1)
+      expect(result.balance_quantity_on_screen).to eq(14.73)
+      result2 = upsert_dollar_yens_transactions[1]
+      expect(result2.date).to eq(dollar_yen_transaction3.date)
+      expect(result2.balance_en_on_screen).to eq('¥3,100')
+      expect(result2.balance_rate_on_screen).to eq(105.22)
+      expect(result2.balance_quantity_on_screen).to eq(29.46)
+    end
+
+    it '初期データが複数あって最後のデータを登録する' do
+      dollar_yen_transaction1
+      dollar_yen_transaction3
+
+      dyt = DollarYenTransaction.new
+      dyt.address = addresses_eth
+      dyt.date = dollar_yen_transaction2.date
+      dyt.transaction_type = dollar_yen_transaction2.transaction_type
+      dyt.deposit_quantity = dollar_yen_transaction2.deposit_quantity
+      dyt.deposit_rate = dollar_yen_transaction2.deposit_rate
+
+      dollar_yen_transactions = addresses_eth.dollar_yen_transactions
+      upsert_dollar_yens_transactions = dyt.generate_upsert_dollar_yens_transactions_2
+      expect(upsert_dollar_yens_transactions.size).to eq(2)
+
+      result1 = upsert_dollar_yens_transactions[0]
+      expect(result1.date).to eq(dollar_yen_transaction2.date)
+      expect(result1.balance_en_on_screen).to eq('¥1,563')
+      expect(result1.balance_rate_on_screen).to eq(106.1)
+      expect(result1.balance_quantity_on_screen).to eq(14.73)
+      result2 = upsert_dollar_yens_transactions[1]
+      expect(result2.date).to eq(dollar_yen_transaction3.date)
+      expect(result2.balance_en_on_screen).to eq('¥3,100')
+      expect(result2.balance_rate_on_screen).to eq(105.22)
+      expect(result2.balance_quantity_on_screen).to eq(29.46)
+    end
+  end
+
+  describe 'generate_upsert_dollar_yens_transactions_3' do
+    # 　同じデータで更新
+    it '同じデータで更新' do
+      dollar_yen_transaction1
+      dollar_yen_transaction2
+      dollar_yen_transaction3
+
+      # 同じデータで更新
+      dyt = DollarYenTransaction.new
+      dyt.id = dollar_yen_transaction3.id
+      dyt.address = addresses_eth
+      dyt.date = dollar_yen_transaction3.date
+      dyt.transaction_type = dollar_yen_transaction3.transaction_type
+      dyt.deposit_quantity = dollar_yen_transaction3.deposit_quantity
+      dyt.deposit_rate = dollar_yen_transaction3.deposit_rate
+
+      dollar_yen_transactions = addresses_eth.dollar_yen_transactions
+      upsert_dollar_yens_transactions = dyt.generate_upsert_dollar_yens_transactions_3
+      expect(upsert_dollar_yens_transactions.size).to eq(1)
+      result1 = upsert_dollar_yens_transactions[0]
+
+      expect(result1.balance_en_on_screen).to eq('¥3,100')
+      expect(result1.balance_rate_on_screen).to eq(105.22)
+      expect(result1.balance_quantity_on_screen).to eq(29.46)
+    end
+  end
+
+  # メソッドの名称を変える
+  describe 'generate_upsert_dollar_yens_transactions_4' do
+    context '最初の日付データの取引削除' do
+      before do
+        dollar_yen_transaction1
+        dollar_yen_transaction2
+      end
+
+      it '最初の日付データの次のデータが初期データになっていること' do
+        dollar_yens_transactions = dollar_yen_transaction1.generate_upsert_dollar_yens_transactions_4
+        expect(dollar_yens_transactions.size).to eq(1)
+        first_data = dollar_yens_transactions.first
+        expect(first_data.date).to eq(dollar_yen_transaction2.date)
+        expect(first_data.balance_en_on_screen).to eq('¥1,140')
+        expect(first_data.balance_rate_on_screen).to eq(105.94)
+        expect(first_data.balance_quantity_on_screen).to eq(10.76)
+      end
+    end
+
+    context '削除パターンチェック' do
+      before do
+        dollar_yen_transaction1
+        dollar_yen_transaction2
+        dollar_yen_transaction3
+      end
+
+      context '全体の最初の日の次の日付データの取引削除' do
+        it '3番目のデータが返ってくる' do
+          dollar_yens_transactions = dollar_yen_transaction2.generate_upsert_dollar_yens_transactions_4
+          expect(dollar_yens_transactions.size).to eq(1)
+          first_data = dollar_yens_transactions.first
+          expect(first_data.date).to eq(dollar_yen_transaction3.date)
+          expect(first_data.balance_en_on_screen).to eq('¥1,960')
+          expect(first_data.balance_rate_on_screen).to eq(104.81)
+          expect(first_data.balance_quantity_on_screen).to eq(18.7)
+        end
       end
     end
   end

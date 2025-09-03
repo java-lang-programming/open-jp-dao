@@ -8,10 +8,12 @@ module CsvImports
       @import_file = import_file
     end
 
+    # recalculation_csvsとprev_dollar_yen_transactionを返す
     # csvs [Files::]
     def upsert_dollar_yen_transaction_csvs(csvs:)
       # その日以前のデータを取得してきてdollar_yen_transactionsを作成する
       oldest_date = @import_file.get_oldest_date(csvs: csvs)
+
       # 以前データより新しいやつは更新が必要なので取得(再計算が必要なデータ)
       address = @import_file.address
 
@@ -30,7 +32,16 @@ module CsvImports
       # recalculation_csvs_soretd_id = recalculation_csvs.sort_by { |csv| csv.id }
 
       # 日付順に並べる
-      recalculation_csvs.sort_by { |csv| csv.date }
+      csvs = recalculation_csvs.sort_by { |csv| csv.date }
+
+      prev_dollar_yen_transactions = address.prev_dollar_yen_transactions(target_date: oldest_date)
+      count = prev_dollar_yen_transactions.count
+
+      # 日付が前のトランザクションがある
+      if count > 0
+        return { prev_dollar_yen_transactions: prev_dollar_yen_transactions.last, recalculation_csvs: csvs }
+      end
+      { prev_dollar_yen_transactions: nil, recalculation_csvs: csv }
     end
 
     def generate_dollar_yens_transactions
@@ -39,11 +50,14 @@ module CsvImports
       csvs = @import_file.make_csvs_dollar_yens_transactions
       # csvの日付で既存のtransactionより前のデータがあるかを判断
       has_past_date = @import_file.include_past_dollar_yen_transaction?(csvs: csvs)
+      prev_dollar_yen_transaction = nil
       if has_past_date
         type = CsvImports::DollarYensTransactions::GENERATE_KIND_UPSERT
-        csvs = upsert_dollar_yen_transaction_csvs(csvs: csvs)
+        data = upsert_dollar_yen_transaction_csvs(csvs: csvs)
+        csvs = data[:recalculation_csvs]
+        prev_dollar_yen_transaction = data[:prev_dollar_yen_transactions]
       end
-      dollar_yen_transactions = Files::DollarYenTransactionDepositCsv.make_dollar_yen_transactions(csvs: csvs)
+      dollar_yen_transactions = Files::DollarYenTransactionDepositCsv.make_dollar_yen_transactions(csvs: csvs, prev_dollar_yen_transaction:)
       { type: type, dollar_yens_transactions: dollar_yen_transactions }
     end
 
