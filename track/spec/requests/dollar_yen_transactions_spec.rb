@@ -400,10 +400,18 @@ RSpec.describe "DollarYenTransactions", type: :request do
 
         delete dollar_yen_transaction_path(dollar_yen_transaction2)
         expect(response.status).to eq(302)
+
+        # 値の確認
+        result = addresses_eth.dollar_yen_transactions
+        expect(result.size).to eq(2)
+
+        updated_tra3 = result.where(id: dollar_yen_transaction3.id).first
+        expect(updated_tra3.balance_rate_on_screen).to eq(104.81)
+        expect(updated_tra3.balance_quantity_on_screen).to eq(18.7)
+        expect(updated_tra3.balance_en_on_screen).to eq('¥1,960')
       end
     end
   end
-
 
   describe "get /foreign_exchange_gain" do
     let(:addresses_eth) { create(:addresses_eth) }

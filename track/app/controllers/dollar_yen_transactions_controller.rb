@@ -100,15 +100,15 @@ class DollarYenTransactionsController < ApplicationViewController
     recalculation_need_count = address.recalculation_need_dollar_yen_transactions_create(target_date: dyt.date).count
     # 影響ないデータはそのまま更新して一覧画面
     if recalculation_need_count == 0
-      csv = dyt.to_files_dollar_yen_transaction_csv(row_num: -1, preload_records: @session.preload_records)
-      dollar_yen_transaction = csv.to_dollar_yen_transaction(previous_dollar_yen_transactions: nil)
-      if dollar_yen_transaction.save
-        # 　リダイレクト時にデータを取得?
+      # これでやるようにリファクタ
+      begin
+        DollarYenTransactionsUpdateJob.perform_now(dollar_yen_transaction: dyt, kind: DollarYenTransaction::KIND_CREATE)
         redirect_to dollar_yen_transactions_path, flash: { notice: "取引データを追加しました" }
         return
+      rescue => e
+        render :new
+        return
       end
-      render :new
-      return
     end
 
     if recalculation_need_count > 50
@@ -157,8 +157,8 @@ class DollarYenTransactionsController < ApplicationViewController
     transaction_type = address.transaction_types.where(id: request[:transaction_type_id]).first
     @transaction_types = address.transaction_types.where(kind: transaction_type.kind)
 
-    # ここから
-    dyt = address.dollar_yen_transactions.where(id: params[:id]).first
+    dyt = form_dollar_yen_transaction(params: params, address: address)
+    dyt.id = params[:id].to_i
 
     view = Views::DollarYenTransactionForm.new(transaction_type: dyt.transaction_type)
     @form_status = view.form_status
@@ -171,33 +171,19 @@ class DollarYenTransactionsController < ApplicationViewController
     end
 
     @dollar_yen_transaction = dyt
-    @dollar_yen_transaction.deposit_quantity = BigDecimal(request[:deposit_quantity])
-    @dollar_yen_transaction.deposit_rate = BigDecimal(request[:deposit_rate])
 
-    recalculation_need_count = address.recalculation_need_dollar_yen_transactions_update(target_date: @dollar_yen_transaction.date, id: @dollar_yen_transaction.id).count
+    recalculation_need_count = address.recalculation_need_dollar_yen_transactions_update(target_date: dyt.date, id: dyt.id).count
 
     # 最新データだけの場合はそのまま更新
     if recalculation_need_count == 0
-      csv = @dollar_yen_transaction.to_files_dollar_yen_transaction_csv(row_num: -1, preload_records: @session.preload_records)
-      dollar_yen_transaction = csv.to_dollar_yen_transaction(previous_dollar_yen_transactions: address.base_dollar_yen_transaction_update(target_date: @dollar_yen_transaction.date, id: @dollar_yen_transaction.id))
-      # 　TODO ここでswap(ますはこれから)
-      @dollar_yen_transaction.transaction_type = transaction_type
-      @dollar_yen_transaction.deposit_en = dollar_yen_transaction.deposit_en
-      @dollar_yen_transaction.withdrawal_rate = dollar_yen_transaction.withdrawal_rate
-      @dollar_yen_transaction.withdrawal_quantity = dollar_yen_transaction.withdrawal_quantity
-      @dollar_yen_transaction.withdrawal_en = dollar_yen_transaction.withdrawal_en
-      @dollar_yen_transaction.balance_rate = dollar_yen_transaction.balance_rate
-      @dollar_yen_transaction.balance_quantity = dollar_yen_transaction.balance_quantity
-      @dollar_yen_transaction.balance_en = dollar_yen_transaction.balance_en
-      @dollar_yen_transaction.exchange_en = dollar_yen_transaction.exchange_en
-      @dollar_yen_transaction.exchange_difference = dollar_yen_transaction.exchange_difference
-
-      if @dollar_yen_transaction.save
-        # 　リダイレクト時にデータを取得?
+      begin
+        DollarYenTransactionsUpdateJob.perform_now(dollar_yen_transaction: dyt, kind: DollarYenTransaction::KIND_UPDATE)
         redirect_to dollar_yen_transactions_path, flash: { notice: "取引データを更新しました" }
         return
+      rescue => e
+        render :edit
+        return
       end
-      return :edit
     end
 
     if recalculation_need_count > 50
@@ -211,19 +197,14 @@ class DollarYenTransactionsController < ApplicationViewController
     address = @session.address
     @navs = transactions_navs(selected: DOLLAR_YEN_TRANSACTION)
 
-    request = params.require(:dollar_yen_transaction).permit(:id, :date, :transaction_type_id, :deposit_quantity, :deposit_rate)
-    dollar_yen_transaction = address.dollar_yen_transactions.where(id: params[:id]).first
-    transaction_type = address.transaction_types.where(id: request[:transaction_type_id]).first
+    dyt = form_dollar_yen_transaction(params: params, address: address)
+    dyt.id = params[:id].to_i
 
-    dollar_yen_transaction.transaction_type = transaction_type
-    dollar_yen_transaction.deposit_quantity = BigDecimal(request[:deposit_quantity])
-    dollar_yen_transaction.deposit_rate = BigDecimal(request[:deposit_rate])
-
-    recalculation_need_count = address.recalculation_need_dollar_yen_transactions_update(target_date: dollar_yen_transaction.date, id: dollar_yen_transaction.id).count
+    recalculation_need_count = address.recalculation_need_dollar_yen_transactions_update(target_date: dyt.date, id: dyt.id).count
     if recalculation_need_count > 50
-      DollarYenTransactionsUpdateJob.perform_later(dollar_yen_transaction: dollar_yen_transaction, kind: DollarYenTransaction::KIND_UPDATE)
+      DollarYenTransactionsUpdateJob.perform_later(dollar_yen_transaction: dyt, kind: DollarYenTransaction::KIND_UPDATE)
     else
-      DollarYenTransactionsUpdateJob.perform_now(dollar_yen_transaction: dollar_yen_transaction, kind: DollarYenTransaction::KIND_UPDATE)
+      DollarYenTransactionsUpdateJob.perform_now(dollar_yen_transaction: dyt, kind: DollarYenTransaction::KIND_UPDATE)
       redirect_to dollar_yen_transactions_path, flash: { notice: "取引データを更新・追加しました" }
     end
   end
@@ -254,12 +235,8 @@ class DollarYenTransactionsController < ApplicationViewController
     address = @session.address
     @navs = transactions_navs(selected: DOLLAR_YEN_TRANSACTION)
 
-    # ここはテスト可能にする
-    # ターゲット
+    # 削除対象
     dollar_yen_transaction = address.dollar_yen_transactions.where(id: params[:id]).first
-
-    # 基準となる取引
-    base_dollar_yen_transaction = address.base_dollar_yen_transaction_delete(target_date: dollar_yen_transaction.date, id: dollar_yen_transaction.id)
 
     # 再計算が必要な取引
     recalculation_need_count = address.recalculation_need_dollar_yen_transactions_delete(target_date: dollar_yen_transaction.date, id: dollar_yen_transaction.id).count

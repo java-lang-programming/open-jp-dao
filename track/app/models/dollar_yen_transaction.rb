@@ -1,6 +1,9 @@
 class DollarYenTransaction < ApplicationRecord
   include ActionView::Helpers::NumberHelper
 
+  # 前の取引がない
+  class NotFoundPreviousDollarYenTransaction < StandardError; end
+
   belongs_to :transaction_type
   belongs_to :address
 
@@ -100,19 +103,40 @@ class DollarYenTransaction < ApplicationRecord
     BigDecimal(exchange_en) - BigDecimal(withdrawal_en)
   end
 
+  # 旧型　全部テストが通ったら削除
+  # 残帳簿価格 数量米ドルの計算
+  #
+  # @param previous_dollar_yen_transactions [Files::DollarYenTransactionDepositCsv or nil] csvのファイルオブジェクト
+  # @return [BigDecimal] 数量米ドル
+  # def calculate_balance_quantity(previous_dollar_yen_transactions: nil)
+  #   if transaction_type.deposit?
+  #     unless previous_dollar_yen_transactions.present?
+  #       if type == 'delete'
+  #         previous_balance_quantity
+  #       end
+  #       return previous_balance_quantity
+  #     end
+  #     # return previous_balance_quantity unless previous_dollar_yen_transactions.present?
+  #     BigDecimal(previous_dollar_yen_transactions.balance_quantity) + BigDecimal(deposit_quantity)
+  #   elsif transaction_type.withdrawal?
+  #     unless previous_dollar_yen_transactions.present?
+  #       previous_dollar_yen_transactions = find_previous_dollar_yen_transactions
+  #       raise StandardError, "error!" unless previous_dollar_yen_transactions.present?
+  #     end
+  #     BigDecimal(previous_dollar_yen_transactions.balance_quantity) - BigDecimal(withdrawal_quantity)
+  #   end
+  # end
+
   # 残帳簿価格 数量米ドルの計算
   #
   # @param previous_dollar_yen_transactions [Files::DollarYenTransactionDepositCsv or nil] csvのファイルオブジェクト
   # @return [BigDecimal] 数量米ドル
   def calculate_balance_quantity(previous_dollar_yen_transactions: nil)
     if transaction_type.deposit?
-      return previous_balance_quantity unless previous_dollar_yen_transactions.present?
+      return BigDecimal(deposit_quantity) unless previous_dollar_yen_transactions.present?
       BigDecimal(previous_dollar_yen_transactions.balance_quantity) + BigDecimal(deposit_quantity)
     elsif transaction_type.withdrawal?
-      unless previous_dollar_yen_transactions.present?
-        previous_dollar_yen_transactions = find_previous_dollar_yen_transactions
-        raise StandardError, "error!" unless previous_dollar_yen_transactions.present?
-      end
+      raise NotFoundPreviousDollarYenTransaction unless previous_dollar_yen_transactions.present?
       BigDecimal(previous_dollar_yen_transactions.balance_quantity) - BigDecimal(withdrawal_quantity)
     end
   end
@@ -121,22 +145,37 @@ class DollarYenTransaction < ApplicationRecord
     BigDecimal(balance_en) / BigDecimal(balance_quantity)
   end
 
+  # 　以前の仕様。テストが通って不要なら破棄
+  # # 残帳簿価格 残高円の計算
+  # #
+  # # @param previous_dollar_yen_transactions [Files::DollarYenTransactionDepositCsv or nil] csvのファイルオブジェクト
+  # # @return [BigDecimal]  残高円
+  # def calculate_balance_en(previous_dollar_yen_transactions: nil)
+  #   if transaction_type.deposit?
+  #     # 　TODO ここおかしクネ？
+  #     unless previous_dollar_yen_transactions.present?
+  #       return previous_balance_en unless previous_dollar_yen_transactions.present?
+  #     end
+  #     BigDecimal(previous_dollar_yen_transactions.balance_en) + calculate_deposit_en
+  #   elsif transaction_type.withdrawal?
+  #     unless previous_dollar_yen_transactions.present?
+  #       previous_dollar_yen_transactions = find_previous_dollar_yen_transactions
+  #       raise StandardError, "error!" unless previous_dollar_yen_transactions.present?
+  #     end
+  #     BigDecimal(previous_dollar_yen_transactions.balance_en) - calculate_withdrawal_en(previous_dollar_yen_transactions: previous_dollar_yen_transactions)
+  #   end
+  # end
+
   # 残帳簿価格 残高円の計算
   #
   # @param previous_dollar_yen_transactions [Files::DollarYenTransactionDepositCsv or nil] csvのファイルオブジェクト
   # @return [BigDecimal]  残高円
   def calculate_balance_en(previous_dollar_yen_transactions: nil)
     if transaction_type.deposit?
-      # 　TODO ここおかしクネ？
-      unless previous_dollar_yen_transactions.present?
-        return previous_balance_en unless previous_dollar_yen_transactions.present?
-      end
+      return calculate_deposit_en unless previous_dollar_yen_transactions.present?
       BigDecimal(previous_dollar_yen_transactions.balance_en) + calculate_deposit_en
     elsif transaction_type.withdrawal?
-      unless previous_dollar_yen_transactions.present?
-        previous_dollar_yen_transactions = find_previous_dollar_yen_transactions
-        raise StandardError, "error!" unless previous_dollar_yen_transactions.present?
-      end
+      raise NotFoundPreviousDollarYenTransaction unless previous_dollar_yen_transactions.present?
       BigDecimal(previous_dollar_yen_transactions.balance_en) - calculate_withdrawal_en(previous_dollar_yen_transactions: previous_dollar_yen_transactions)
     end
   end
@@ -372,12 +411,11 @@ class DollarYenTransaction < ApplicationRecord
     end
   end
 
+  # 　ここのprevも変更だな。多分
   def generate_upsert_dollar_yens_transactions_2
     # 共通化する
     preload_records = { address: address, transaction_types: address.transaction_types }
 
-    # 計算の基準
-    base_dollar_yen_transaction = address.base_dollar_yen_transaction_create(target_date: date)
     # 再計算が必要なデータ
     recalculation_need_dollar_yen_transactions = address.recalculation_need_dollar_yen_transactions_create(target_date: date)
 
@@ -385,8 +423,17 @@ class DollarYenTransaction < ApplicationRecord
       dollar_yen_transaction.to_files_dollar_yen_transaction_csv(row_num: -1, preload_records: preload_records)
     end
 
-    # 　新規データ + 再計算が必要なデータ
+    # 新規データ + 再計算が必要なデータ
     upsert_csvs = [ to_files_dollar_yen_transaction_csv(row_num: -1, preload_records: preload_records) ].concat(recalculation_csvs)
+
+    # 最新トランザクション
+    prev_dollar_yen_transactions = address.prev_dollar_yen_transactions(target_date: date)
+
+    base_dollar_yen_transaction = nil
+    if prev_dollar_yen_transactions.count != 0
+      # 前のデータがある場合はベースとなるデータを作成
+      base_dollar_yen_transaction = prev_dollar_yen_transactions.last
+    end
 
     Files::DollarYenTransactionDepositCsv.make_dollar_yen_transactions(csvs: upsert_csvs, prev_dollar_yen_transaction: base_dollar_yen_transaction)
   end
@@ -395,8 +442,8 @@ class DollarYenTransaction < ApplicationRecord
   def generate_upsert_dollar_yens_transactions_3
     # 共通化する
     preload_records = { address: address, transaction_types: address.transaction_types }
-    # 計算の基準
-    base_dollar_yen_transaction = address.base_dollar_yen_transaction_update(target_date: date, id: id)
+    # # 計算の基準
+    # base_dollar_yen_transaction = address.base_dollar_yen_transaction_update(target_date: date, id: id)
     # 再計算が必要なデータ
     recalculation_need_dollar_yen_transactions = address.recalculation_need_dollar_yen_transactions_update(target_date: date, id: id)
 
@@ -404,24 +451,47 @@ class DollarYenTransaction < ApplicationRecord
       dollar_yen_transaction.to_files_dollar_yen_transaction_csv(row_num: -1, preload_records: preload_records)
     end
 
-    # 　更新データ + 再計算が必要なデータ
+    # 更新データ + 再計算が必要なデータ
     upsert_csvs = [ to_files_dollar_yen_transaction_csv(row_num: -1, preload_records: preload_records) ].concat(recalculation_csvs)
+
+    # 最新トランザクション
+    prev_dollar_yen_transactions = address.prev_dollar_yen_transactions(target_date: date, id: id)
+
+    base_dollar_yen_transaction = nil
+    if prev_dollar_yen_transactions.count != 0
+      # 前のデータがある場合はベースとなるデータを作成
+      base_dollar_yen_transaction = prev_dollar_yen_transactions.last
+    end
 
     Files::DollarYenTransactionDepositCsv.make_dollar_yen_transactions(csvs: upsert_csvs, prev_dollar_yen_transaction: base_dollar_yen_transaction)
   end
 
-  # 　削除の場合
+  # 削除の場合が特殊すぎて難しい...なんとかしたい
   def generate_upsert_dollar_yens_transactions_4
+    # TODO addressから共通化
     preload_records = { address: address, transaction_types: address.transaction_types }
-
-    # 計算の基準
-    base_dollar_yen_transaction = address.base_dollar_yen_transaction_update(target_date: date, id: id)
 
     # 再計算が必要なデータ
     recalculation_need_dollar_yen_transactions = address.recalculation_need_dollar_yen_transactions_update(target_date: date, id: id)
+    # 日付より前のデータ
+    prev_dollar_yen_transactions_count = address.prev_dollar_yen_transactions(target_date: date, id: id).count
+    recalculation_csvs = recalculation_need_dollar_yen_transactions.map.with_index do |dollar_yen_transaction, idx|
+      # 　一番最初の日付データ削除の場合
+      if prev_dollar_yen_transactions_count == 0 && idx == 0
+        # 新しく最初のデータになる取引をcsvオブジェクトにする
+        csv = dollar_yen_transaction.to_files_dollar_yen_transaction_csv(row_num: -1, preload_records: preload_records)
+        # 計算してdollar_yen_transactionに変換
+        new_first_dollar_yen_transaction = csv.to_dollar_yen_transaction(previous_dollar_yen_transactions: nil)
+        new_first_dollar_yen_transaction.to_files_dollar_yen_transaction_csv(row_num: -1, preload_records: preload_records)
+      else
+        dollar_yen_transaction.to_files_dollar_yen_transaction_csv(row_num: -1, preload_records: preload_records)
+      end
+    end
 
-    recalculation_csvs = recalculation_need_dollar_yen_transactions.map do |dollar_yen_transaction|
-      dollar_yen_transaction.to_files_dollar_yen_transaction_csv(row_num: -1, preload_records: preload_records)
+    base_dollar_yen_transaction = nil
+    if prev_dollar_yen_transactions_count != 0
+      # 前のデータがある場合はベースとなるデータを作成
+      base_dollar_yen_transaction = address.prev_dollar_yen_transactions(target_date: date, id: id).last
     end
 
     Files::DollarYenTransactionDepositCsv.make_dollar_yen_transactions(csvs: recalculation_csvs, prev_dollar_yen_transaction: base_dollar_yen_transaction)
