@@ -20,7 +20,7 @@
     <%= link_to "入力例", new_ledger_path, class: "hidden bg-white border border-black text-black hover:bg-gray-100 font-bold py-2 px-4 rounded" %>
   </div>
 
-  <%= form_with(model: @import_file, url: csv_import_dollar_yen_transactions_path, data: { turbo: false }, html: { multipart: true, id: 'uploadForm' }) do |form| %>
+  <%= form_with(model: @import_file, url: csv_import_dollar_yen_transactions_path, data: { turbo: false }, local: true, multipart: true, html: { id: 'uploadForm' }) do |form| %>
     <%= render "shared/upload_form", form: form %>
   <% end %>
 
@@ -103,6 +103,8 @@
       }
       selectedFilesList.appendChild(listItem);
     });
+
+    alert(filesToUpload);
 
     // 不正なファイルが含まれていた場合、エラーメッセージを表示
     if (hasInvalidFile) {
