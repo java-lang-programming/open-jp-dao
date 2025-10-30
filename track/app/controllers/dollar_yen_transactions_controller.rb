@@ -311,7 +311,8 @@ class DollarYenTransactionsController < ApplicationViewController
   def csv_import
     @user = user
 
-    file = params[:import_file][:file]
+    import_params = params.require(:import_file).permit(:file)
+    file = import_params[:file]
 
     unless file.present?
       redirect_to csv_upload_dollar_yen_transactions_path, flash: { errors: [ "uploadファイルが存在しません。ファイルを選択ボタンからファイルを選択してください" ] }
