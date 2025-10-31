@@ -118,6 +118,16 @@
       // 選択されたファイルが全て不正だった場合
       selectedFilesList.innerHTML = '<li class="text-gray-500">有効なファイルが選択されていません</li>';
     }
+
+    // ドラッグ＆ドロップで選択したファイルを設定する
+    if (filesToUpload.length > 0) {
+      // 直接の設定は無理なので、DataTransfer を経由して fileInput.files = dataTransfer.files すればOK
+      const dataTransfer = new DataTransfer();
+      for (const file of filesToUpload) {
+        dataTransfer.items.add(file);
+      }
+      fileInput.files = dataTransfer.files; // OK!
+    }
   }
 
   // アップロードボタンのクリック処理 (ダミー)
