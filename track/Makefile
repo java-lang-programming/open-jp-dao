@@ -47,7 +47,7 @@ remove_pid: ## プロセスIDファイル削除
 brakeman: ## brakeman実行
 	bundle exec brakeman
 rubocop: ## rubocopを実行
-	bundle exec rubocop
+	bin/rubocop
 rubocop_auto_correct: ## rubocopでコードを自動修正
 	bundle exec rubocop --auto-correct
 zeitwerk_check: ## zeitwerkモードが有効であることを確認
@@ -94,3 +94,5 @@ sqlite3_chmod: ## dbのchmod
 	chmod 777 storage/development.sqlite3
 sqlite3_queue: ## queueのchmod
 	chmod 777 storage/development_queue.sqlite3
+local_ci: ## local ci
+	bin/ci

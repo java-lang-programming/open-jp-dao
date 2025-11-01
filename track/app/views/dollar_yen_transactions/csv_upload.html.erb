@@ -20,7 +20,7 @@
     <%= link_to "入力例", new_ledger_path, class: "hidden bg-white border border-black text-black hover:bg-gray-100 font-bold py-2 px-4 rounded" %>
   </div>
 
-  <%= form_with(model: @import_file, url: csv_import_dollar_yen_transactions_path, data: { turbo: false }, html: { multipart: true, id: 'uploadForm' }) do |form| %>
+  <%= form_with(model: @import_file, url: csv_import_dollar_yen_transactions_path, data: { turbo: false }, local: true, multipart: true, html: { id: 'uploadForm' }) do |form| %>
     <%= render "shared/upload_form", form: form %>
   <% end %>
 
@@ -117,6 +117,16 @@
     if (filesToUpload.length === 0 && selectedFileArray.length > 0) {
       // 選択されたファイルが全て不正だった場合
       selectedFilesList.innerHTML = '<li class="text-gray-500">有効なファイルが選択されていません</li>';
+    }
+
+    // ドラッグ＆ドロップで選択したファイルを設定する
+    if (filesToUpload.length > 0) {
+      // 直接の設定は無理なので、DataTransfer を経由して fileInput.files = dataTransfer.files すればOK
+      const dataTransfer = new DataTransfer();
+      for (const file of filesToUpload) {
+        dataTransfer.items.add(file);
+      }
+      fileInput.files = dataTransfer.files; // OK!
     }
   }
 
