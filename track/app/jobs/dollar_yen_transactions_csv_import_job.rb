@@ -16,9 +16,10 @@ class DollarYenTransactionsCsvImportJob < ApplicationJob
       dollar_yens_transactions = ci.generate_dollar_yens_transactions
 
       if dollar_yens_transactions[:type] == CsvImports::DollarYensTransactions::GENERATE_KIND_INSERT
-        DollarYenTransaction.import dollar_yens_transactions[:dollar_yens_transactions], validate: true
+        # DollarYenTransaction.insert_all(dollar_yens_transactions[:dollar_yens_transactions])
+        DollarYenTransaction.import dollar_yens_transactions[:dollar_yens_transactions], validate: false
       elsif dollar_yens_transactions[:type] == CsvImports::DollarYensTransactions::GENERATE_KIND_UPSERT
-        DollarYenTransaction.import dollar_yens_transactions[:dollar_yens_transactions], on_duplicate_key_update: { conflict_target: [ :id ], columns: [ :deposit_rate, :deposit_quantity, :deposit_en, :balance_rate, :balance_quantity, :balance_en ] },  validate: true
+        DollarYenTransaction.import dollar_yens_transactions[:dollar_yens_transactions], on_duplicate_key_update: { conflict_target: [ :id ], columns: [ :deposit_rate, :deposit_quantity, :deposit_en, :balance_rate, :balance_quantity, :balance_en ] },  validate: false
       else
         raise Exception("unexpected type")
       end
@@ -27,7 +28,17 @@ class DollarYenTransactionsCsvImportJob < ApplicationJob
       import_file.save
     rescue => e
       if import_file.present?
+        error_json = ImportFileError.error_json_data(
+          row: -1,
+          col: -1,
+          attribute: "例外処理",
+          value: "import",
+          message: "#{e}"
+        )
         import_file.status = ImportFile.statuses[:failure]
+        import_file.import_file_errors.create(
+          error_json: ImportFileError.error_json_hash(errors: [ error_json ]).to_json
+        )
         import_file.save
       end
       Rails.error.report(e)
