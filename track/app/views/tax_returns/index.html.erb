@@ -20,11 +20,11 @@
             <div class="flex items-center justify-between space-x-4 rtl:space-x-reverse">
               <div class="flex-1 min-w-0">
                 <a href="./leaders?account_item_id=1" class="block text-sm font-medium text-gray-900 truncate dark:text-white">
-                  為替差益(外貨建取引の決済や換算時に、為替相場の変動によって生じる利益)
+                  為替差益
                 </a>
               </div>
               <div class="flex-shrink-0 text-base font-semibold text-gray-900 dark:text-white">
-                <%= @tax_return[:foreign_exchange_gain] %>
+                <%= number_to_currency(@tax_return[:foreign_exchange_gain], unit: "¥", precision: 0) %>
               </div>
             </div>
           </li>
@@ -56,7 +56,7 @@
                 </a>
               </div>
               <div class="flex-shrink-0 text-base font-semibold text-gray-900 dark:text-white">
-                <%= @tax_return[:utility_costs] %>
+                <%= number_to_currency(@tax_return[:utility_costs], unit: "¥", precision: 0) %>
               </div>
             </div>
           </li>
@@ -68,7 +68,7 @@
                 </a>
               </div>
               <div class="flex-shrink-0 text-base font-semibold text-gray-900 dark:text-white">
-                <%= @tax_return[:communication_expense] %>
+                <%= number_to_currency(@tax_return[:communication_expense], unit: "¥", precision: 0) %>
               </div>
             </div>
           </li>
@@ -80,7 +80,7 @@
                 </p>
               </div>
               <div class="flex-shrink-0 text-base font-semibold text-gray-900 dark:text-white">
-                <%= @tax_return[:supplies_expense] %>
+                <%= number_to_currency(@tax_return[:supplies_expense], unit: "¥", precision: 0) %>
               </div>
             </div>
           </li>
@@ -92,7 +92,7 @@
                 </p>
               </div>
               <div class="flex-shrink-0 text-base font-semibold text-gray-900 dark:text-white">
-                ¥20,000
+                ¥0
               </div>
             </div>
           </li>
@@ -107,24 +107,20 @@
           <li class="py-3 sm:py-4">
             <div class="flex items-center justify-between space-x-4 rtl:space-x-reverse">
               <div class="flex-1 min-w-0">
-                <a href="./leaders?account_item_id=1" class="block text-sm font-medium text-gray-900 truncate dark:text-white">
-                  国民年金
-                </a>
+                <%= link_to "国民年金保険", ledgers_path(ledger_item_id: LedgerItem::ID_NATIONAL_PENSION_INSURANCE_PREMIUM), {class: "block text-sm font-medium text-gray-900 truncate dark:text-white"} %>
               </div>
               <div class="flex-shrink-0 text-base font-semibold text-gray-900 dark:text-white">
-                ¥120,222
+                <%= number_to_currency(@tax_return[:supplies_national_pension_insurance_premium], unit: "¥", precision: 0) %>
               </div>
             </div>
           </li>
           <li class="py-3 sm:py-4">
             <div class="flex items-center justify-between space-x-4 rtl:space-x-reverse">
               <div class="flex-1 min-w-0">
-                <a href="./leaders?account_item_id=1" class="block text-sm font-medium text-gray-900 truncate dark:text-white">
-                  国民健康保険
-                </a>
+                <%= link_to "国民健康保険", ledgers_path(ledger_item_id: LedgerItem::ID_NATIONAL_HEALTH_INSURANCE), {class: "block text-sm font-medium text-gray-900 truncate dark:text-white"} %>
               </div>
               <div class="flex-shrink-0 text-base font-semibold text-gray-900 dark:text-white">
-                ¥120,222
+                <%= number_to_currency(@tax_return[:national_health_insurance], unit: "¥", precision: 0) %>
               </div>
             </div>
           </li>
@@ -144,11 +140,11 @@
             <div class="flex items-center justify-between space-x-4 rtl:space-x-reverse">
               <div class="flex-1 min-w-0">
                 <p class="text-sm font-medium text-gray-900 truncate dark:text-white">
-                  小規模企業共済
+                  <%= link_to "小規模企業共済", ledgers_path(ledger_item_id: LedgerItem::ID_SMALL_BUSINESS_MUTUAL_AID), {class: "block text-sm font-medium text-gray-900 truncate dark:text-white"} %>
                 </p>
               </div>
               <div class="flex-shrink-0 text-base font-semibold text-gray-900 dark:text-white">
-                ¥1,000
+                <%= number_to_currency(@tax_return[:small_business_mutual_aid], unit: "¥", precision: 0) %>
               </div>
             </div>
           </li>
