@@ -59,7 +59,7 @@ FactoryBot.define do
     id { 8 }
     name { "小規模企業共済" }
     kind { LedgerItem.kinds[:drawings] }
-    summary { '小規模企業の経営者や役員、個人事業主などのための、積み立てによる退職金制度です。'}
+    summary { '小規模企業の経営者や役員、個人事業主などのための、積み立てによる退職金制度です。' }
     deleted_at { }
   end
 

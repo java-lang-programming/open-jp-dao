@@ -38,7 +38,6 @@ module TaxReturns
         national_health_insurance: national_health_insurance,
         small_business_mutual_aid: small_business_mutual_aid
       }
-
     end
 
     def execute_on_screen
