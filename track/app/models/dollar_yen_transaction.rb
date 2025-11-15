@@ -103,30 +103,6 @@ class DollarYenTransaction < ApplicationRecord
     BigDecimal(exchange_en) - BigDecimal(withdrawal_en)
   end
 
-  # 旧型　全部テストが通ったら削除
-  # 残帳簿価格 数量米ドルの計算
-  #
-  # @param previous_dollar_yen_transactions [Files::DollarYenTransactionDepositCsv or nil] csvのファイルオブジェクト
-  # @return [BigDecimal] 数量米ドル
-  # def calculate_balance_quantity(previous_dollar_yen_transactions: nil)
-  #   if transaction_type.deposit?
-  #     unless previous_dollar_yen_transactions.present?
-  #       if type == 'delete'
-  #         previous_balance_quantity
-  #       end
-  #       return previous_balance_quantity
-  #     end
-  #     # return previous_balance_quantity unless previous_dollar_yen_transactions.present?
-  #     BigDecimal(previous_dollar_yen_transactions.balance_quantity) + BigDecimal(deposit_quantity)
-  #   elsif transaction_type.withdrawal?
-  #     unless previous_dollar_yen_transactions.present?
-  #       previous_dollar_yen_transactions = find_previous_dollar_yen_transactions
-  #       raise StandardError, "error!" unless previous_dollar_yen_transactions.present?
-  #     end
-  #     BigDecimal(previous_dollar_yen_transactions.balance_quantity) - BigDecimal(withdrawal_quantity)
-  #   end
-  # end
-
   # 残帳簿価格 数量米ドルの計算
   #
   # @param previous_dollar_yen_transactions [Files::DollarYenTransactionDepositCsv or nil] csvのファイルオブジェクト
@@ -144,27 +120,6 @@ class DollarYenTransaction < ApplicationRecord
   def calculate_balance_rate(balance_quantity:, balance_en:)
     BigDecimal(balance_en) / BigDecimal(balance_quantity)
   end
-
-  # 　以前の仕様。テストが通って不要なら破棄
-  # # 残帳簿価格 残高円の計算
-  # #
-  # # @param previous_dollar_yen_transactions [Files::DollarYenTransactionDepositCsv or nil] csvのファイルオブジェクト
-  # # @return [BigDecimal]  残高円
-  # def calculate_balance_en(previous_dollar_yen_transactions: nil)
-  #   if transaction_type.deposit?
-  #     # 　TODO ここおかしクネ？
-  #     unless previous_dollar_yen_transactions.present?
-  #       return previous_balance_en unless previous_dollar_yen_transactions.present?
-  #     end
-  #     BigDecimal(previous_dollar_yen_transactions.balance_en) + calculate_deposit_en
-  #   elsif transaction_type.withdrawal?
-  #     unless previous_dollar_yen_transactions.present?
-  #       previous_dollar_yen_transactions = find_previous_dollar_yen_transactions
-  #       raise StandardError, "error!" unless previous_dollar_yen_transactions.present?
-  #     end
-  #     BigDecimal(previous_dollar_yen_transactions.balance_en) - calculate_withdrawal_en(previous_dollar_yen_transactions: previous_dollar_yen_transactions)
-  #   end
-  # end
 
   # 残帳簿価格 残高円の計算
   #
@@ -185,12 +140,6 @@ class DollarYenTransaction < ApplicationRecord
     dollar_yen_transaction.withdrawal_rate = dollar_yen_transaction.calculate_withdrawal_rate(previous_dollar_yen_transactions: previous_dollar_yen_transactions) if dollar_yen_transaction.withdrawal?
     dollar_yen_transaction
   end
-  # def calculate(previous_dollar_yen_transactions: nil)
-  #   @deposit_en = calculate_deposit_en if deposit?
-  #   puts deposit?
-  #   puts calculate_deposit_en.inspect
-  #   # self
-  # end
 
   # 為替差益計算
   def self.calculate_foreign_exchange_gain(start_date:, end_date:)
