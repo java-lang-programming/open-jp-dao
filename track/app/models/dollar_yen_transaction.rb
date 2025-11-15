@@ -102,7 +102,7 @@ class DollarYenTransaction < ApplicationRecord
   def calculate_exchange_difference(withdrawal_en:)
     BigDecimal(exchange_en) - BigDecimal(withdrawal_en)
   end
-  
+
   # 残帳簿価格 数量米ドルの計算
   #
   # @param previous_dollar_yen_transactions [Files::DollarYenTransactionDepositCsv or nil] csvのファイルオブジェクト
