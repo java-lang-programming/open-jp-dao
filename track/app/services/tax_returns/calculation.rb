@@ -39,15 +39,5 @@ module TaxReturns
         small_business_mutual_aid: small_business_mutual_aid
       }
     end
-
-    def execute_on_screen
-      result = execute
-      {
-        communication_expense: Currency.en_with_unit(value: result[:communication_expense]),
-        utility_costs: Currency.en_with_unit(value: result[:utility_costs]),
-        supplies_expense: Currency.en_with_unit(value: result[:supplies_expense]),
-        foreign_exchange_gain: Currency.en_with_unit(value: result[:foreign_exchange_gain])
-      }
-    end
   end
 end
