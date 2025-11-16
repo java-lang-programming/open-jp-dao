@@ -45,7 +45,7 @@ log_clear: ## ログ削除
 remove_pid: ## プロセスIDファイル削除
 	rm -f tmp/pids/server.pid
 brakeman: ## brakeman実行
-	bundle exec brakeman
+	bin/rubocop
 rubocop: ## rubocopを実行
 	bin/rubocop
 rubocop_auto_correct: ## rubocopでコードを自動修正

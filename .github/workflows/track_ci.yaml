@@ -32,16 +32,16 @@ jobs:
           ruby-version: ${{ matrix.ruby-version }}
           bundler-cache: true
 
-      - name: ci
-        working-directory: track
-        run: make local_ci
-
-      # - name: Install packages
-      #   run: gem install bundler -v $BUNDLER_VESION
-
-      # - name: Bundle install
+      # - name: ci
       #   working-directory: track
-      #   run: make bundle_install
+      #   run: make local_ci
+
+      - name: Install packages
+        run: gem install bundler -v $BUNDLER_VESION
+
+      - name: Bundle install
+        working-directory: track
+        run: make bundle_install
 
       - name: rails info
         working-directory: track
@@ -60,22 +60,22 @@ jobs:
         working-directory: track
         run: make yjit_enabled
 
-      # - name: Run brakeman
-      #   working-directory: track
-      #   run: make brakeman
+      - name: Run brakeman
+        working-directory: track
+        run: make brakeman
 
-      # - name: Run ruboCop
-      #   working-directory: track
-      #   run: make rubocop
+      - name: Run ruboCop
+        working-directory: track
+        run: make rubocop
 
       # - name: Run steep(試験導入)
       #   working-directory: track
       #   run: make steep_check
 
-      # - name: Run database create
-      #   working-directory: track
-      #   run: make db_migrate
+      - name: Run database create
+        working-directory: track
+        run: make db_migrate
 
-      # - name: Run Rspec
-      #   working-directory: track
-      #   run: make rspec
+      - name: Run Rspec
+        working-directory: track
+        run: make rspec
