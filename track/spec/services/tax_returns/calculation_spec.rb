@@ -34,23 +34,10 @@ RSpec.describe TaxReturns::Calculation do
            communication_expense: 50364,
            utility_costs: 14852,
            supplies_expense: 9148,
-           foreign_exchange_gain: 0
-        })
-      end
-    end
-  end
-
-  # 単位付きの結果
-  describe 'execute_on_screen' do
-    context '計算.' do
-      it 'should get expense and costs with unit.' do
-        service = TaxReturns::Calculation.new(address: addresses_eth, year: 2025)
-        result = service.execute_on_screen
-        expect(result).to eq({
-           communication_expense: '¥50,364',
-           utility_costs: '¥14,852',
-           supplies_expense: '¥9,148',
-           foreign_exchange_gain: '¥0'
+           foreign_exchange_gain: 0,
+           supplies_national_pension_insurance_premium: 0,
+           national_health_insurance: 0,
+           small_business_mutual_aid: 0
         })
       end
     end

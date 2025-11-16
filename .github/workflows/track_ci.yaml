@@ -18,7 +18,7 @@ jobs:
     runs-on: ubuntu-24.04
     strategy:
       matrix:
-        ruby-version: ["3.4.5", "3.5.0-preview1"]
+        ruby-version: ["3.4.7", "3.5.0-preview1"]
     steps:
       - name: Install packages
         run: sudo apt-get update && sudo apt-get install --no-install-recommends -y libjemalloc2 sqlite3
@@ -31,6 +31,10 @@ jobs:
         with:
           ruby-version: ${{ matrix.ruby-version }}
           bundler-cache: true
+
+      # - name: ci
+      #   working-directory: track
+      #   run: make local_ci
 
       - name: Install packages
         run: gem install bundler -v $BUNDLER_VESION

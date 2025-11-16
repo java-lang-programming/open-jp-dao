@@ -8,7 +8,7 @@ CI.run do
   step "Security: Importmap vulnerability audit", "bin/importmap audit"
   step "Security: Brakeman code analysis", "bin/brakeman --quiet --no-pager --exit-on-warn --exit-on-error"
 
-  # step "Tests: Rails", "bin/rails test"
+  step "Tests: Rails", "bundle exec rspec"
   # step "Tests: System", "bin/rails test:system"
   # step "Tests: Seeds", "env RAILS_ENV=test bin/rails db:seed:replant"
 
