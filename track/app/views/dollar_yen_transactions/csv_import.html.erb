@@ -4,6 +4,17 @@
   <%= render "layouts/header", user: @user, notification: @notification %>
 <% end %>
 
-<p>ドル円外貨預金元帳のアップロードに成功しました。</p>
-<p>アップロードしたファイルは、非同期でインポート処理が実行されます。</p>
-<p><%= link_to "csvインポート結果画面", import_files_path %>で、アップロード結果をご確認ください。</p>
+<section class="py-8">
+  <% if flash[:errors].present? %>
+    <%= render "shared/import_files/list", import_file_errors: flash[:errors][:errors] %>
+  <% else %>
+    <div class="flex justify-center bg-white p-4 sm:p-6">
+      <div class="bg-white p-6 sm:p-8 rounded-lg text-center max-w-md w-full">
+        <p class="text-xl sm:text-2xl font-semibold text-gray-800 mb-4">アップロードに成功しました</p>
+        <p class="text-base sm:text-lg text-gray-600 mb-6">アップロードしたファイルは、非同期で処理が実行されます。</p>
+        <p class="text-base sm:text-lg text-gray-600 mb-6">csvインポート結果画面で、アップロード結果をご確認ください。</p>
+        <%= link_to "csvインポート結果画面", import_files_path, class: "inline-block bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 sm:py-3 sm:px-6 rounded-lg transition duration-300 ease-in-out text-base sm:text-lg" %>
+      </div>
+    </div>
+  <% end %>
+</section>
