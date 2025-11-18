@@ -1,4 +1,4 @@
-<% content_for :title do %>WanWan csvインポート一覧画面<% end %>
+<% content_for :title do %>WanWan <%= t('views.import_files.index') %><% end %>
 
 <% content_for :header do %>
   <%= render "layouts/header", user: @user, notification: @notification %>
@@ -28,7 +28,21 @@
                 <div class="item-row grid grid-cols-[auto_minmax(100px,_1fr)_minmax(100px,_1fr)_minmax(100px,_1fr)_minmax(100px,_1fr)_minmax(100px,_1fr)_minmax(100px,_1fr)_minmax(100px,_1fr)] md:grid-cols-4 bg-white border-b dark:bg-gray-800 dark:border-gray-700 border-gray-200" data-id="456">
                     <div class="px-6 py-4 font-normal flex items-center"><%= import_file_h[:date] %></div>
                     <div class="px-6 py-4 font-normal flex items-center"><%= import_file_h[:job_name] %></div>
-                    <div class="px-6 py-4 font-normal flex items-center"><%= import_file_h[:status] %></div>
+                    <div class="px-6 py-4 font-normal flex items-center">
+                      <% if import_file_h[:status] == 'ready' %>
+                        準備中
+                      <% elsif import_file_h[:status] == 'in_progress' %>
+                        実行中
+                      <% elsif import_file_h[:status] == 'completed' %>
+                        <svg class="success-icon" width="20" height="20" viewBox="0 0 24 24" fill="#28a745">
+                          <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+                        </svg>
+                      <% elsif import_file_h[:status] == 'failure' %>
+                        <svg class="failure-icon" width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                          <path d="M12 2C6.47 2 2 6.47 2 12s4.47 10 10 10 10-4.47 10-10S17.53 2 12 2zm5 13.59L15.59 17 12 13.41 8.41 17 7 15.59 10.59 12 7 8.41 8.41 7 12 10.59 15.59 7 17 8.41 13.41 12 17 15.59z"/>
+                        </svg>
+                      <% end %>
+                    </div>
                     <div class="px-6 py-4 font-normal flex items-center"><%= link_to "確認", result_import_file_path(import_file_h[:id]) %></div>
                 </div>
               <% end %>

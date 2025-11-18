@@ -6,6 +6,8 @@ class ImportFile < ApplicationRecord
 
   has_one_attached :file
 
+  attr_accessor :target_path
+
   # TODO 将来的にはjobによって切り分ける
   # 　ここに個別のcsv処理が入るのはおかしいかな
   def make_csvs_dollar_yens_transactions
@@ -43,19 +45,16 @@ class ImportFile < ApplicationRecord
     csvs.map(&:target_date).min
   end
 
-  # @return [String] 画面表示ステータス
-  def status_on_screen
-    case status
-    when "ready"
-      "準備中"
-    when "in_progress"
-      "実行中"
-    when "failure"
-      "失敗"
-    when "completed"
-      "完了"
-    else
-      "エラー"
+  def target_screen
+    if job.id == Job::DOLLAR_YENS_TRANSACTIONS_CSV_IMPORT
+      I18n.t("views.dollar_yen_transactions.index")
     end
+  end
+  def set_target_path(target_path:)
+    @target_path = target_path
+  end
+
+  def get_target_path
+    @target_path
   end
 end

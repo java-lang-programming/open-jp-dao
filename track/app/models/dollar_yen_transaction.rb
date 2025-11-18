@@ -177,13 +177,11 @@ class DollarYenTransaction < ApplicationRecord
   end
 
   def deposit_rate_on_screen
-    return BigDecimal(deposit_rate).floor(2).to_f if deposit_rate.present?
-    nil
+    Currency.dollar_with_unit(value: deposit_rate)
   end
 
   def deposit_quantity_on_screen
-    return BigDecimal(deposit_quantity).floor(2).to_f if deposit_quantity.present?
-    nil
+    Currency.dollar_with_unit(value: deposit_quantity)
   end
 
   # @return [ActiveSupport::SafeBuffer|nil] 画面で表示するdeposit 円換算
@@ -199,8 +197,7 @@ class DollarYenTransaction < ApplicationRecord
   # withdrawal_rateを表示する。データがない場合はnil
   #
   def withdrawal_rate_on_screen
-    return BigDecimal(withdrawal_rate).floor(2).to_f if withdrawal_rate.present?
-    nil
+    Currency.dollar_with_unit(value: withdrawal_rate)
   end
 
   # @return [float|nil] 画面で表示するwithdrawal_quantity
@@ -208,8 +205,7 @@ class DollarYenTransaction < ApplicationRecord
   # withdrawal_quantityを表示する。データがない場合はnil
   #
   def withdrawal_quantity_on_screen
-    return BigDecimal(withdrawal_quantity).floor(2).to_f if withdrawal_quantity.present?
-    nil
+    Currency.dollar_with_unit(value: withdrawal_quantity)
   end
 
   # @return [ActiveSupport::SafeBuffer|nil] 画面で表示するwithdrawal_en
@@ -234,13 +230,11 @@ class DollarYenTransaction < ApplicationRecord
   end
 
   def balance_rate_on_screen
-    return BigDecimal(balance_rate).floor(2).to_f if balance_rate.present?
-    nil
+    Currency.dollar_with_unit(value: balance_rate)
   end
 
   def balance_quantity_on_screen
-    return BigDecimal(balance_quantity).floor(2).to_f if balance_quantity.present?
-    nil
+    Currency.dollar_with_unit(value: balance_quantity)
   end
 
   # @return [ActiveSupport::SafeBuffer|nil] 残帳簿価格 円換算

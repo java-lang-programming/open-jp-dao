@@ -35,19 +35,20 @@ class DollarYenTransactionsController < ApplicationViewController
 
     dollaryen_transactions = base_sql.limit(DEFAULT_LIMIT).offset(pagy.offset).order(date: :desc,  transaction_type_id: :asc)
     # result = base_sql.order(date: :desc,  transaction_type_id: :asc)
+    # TODO ここの関数をrailsに
     @dollaryen_transactions = dollaryen_transactions.map do |dollaryen_transaction|
       {
         id: dollaryen_transaction.id,
         date: dollaryen_transaction.date.strftime("%Y/%m/%d"),
         transaction_type_name: dollaryen_transaction.transaction_type.name,
-        deposit_rate: Unit.add_unit(value: dollaryen_transaction.deposit_rate_on_screen, unit: Unit::EN_DOLLAR),
-        deposit_quantity: Unit.add_unit(value: dollaryen_transaction.deposit_quantity_on_screen, unit: Unit::EN_DOLLAR),
+        deposit_rate: dollaryen_transaction.deposit_rate_on_screen,
+        deposit_quantity: dollaryen_transaction.deposit_quantity_on_screen,
         deposit_en: dollaryen_transaction.deposit_en_screen,
-        withdrawal_rate: Unit.add_unit(value: dollaryen_transaction.withdrawal_rate_on_screen, unit: Unit::EN_DOLLAR),
-        withdrawal_quantity: Unit.add_unit(value: dollaryen_transaction.withdrawal_quantity_on_screen, unit: Unit::EN_DOLLAR),
+        withdrawal_rate: dollaryen_transaction.withdrawal_rate_on_screen,
+        withdrawal_quantity: dollaryen_transaction.withdrawal_quantity_on_screen,
         withdrawal_en: dollaryen_transaction.withdrawal_en_on_screen,
-        balance_rate: Unit.add_unit(value: dollaryen_transaction.balance_rate_on_screen, unit: Unit::EN_DOLLAR),
-        balance_quantity: Unit.add_unit(value: dollaryen_transaction.balance_quantity_on_screen, unit: Unit::EN_DOLLAR),
+        balance_rate: dollaryen_transaction.balance_rate_on_screen,
+        balance_quantity: dollaryen_transaction.balance_quantity_on_screen,
         balance_en: dollaryen_transaction.balance_en_on_screen
       }
     end
@@ -252,7 +253,7 @@ class DollarYenTransactionsController < ApplicationViewController
     header_session
 
     address = @session.address
-    @navs = transactions_navs(selected: EXCHANGE_GAIN)
+    @navs = transactions_navs(selected: EXCHANGE_GAIN_AND_LOSSES)
 
     base_sql = address.dollar_yen_transactions
     @dollar_yen_transactions_total = base_sql.all.count

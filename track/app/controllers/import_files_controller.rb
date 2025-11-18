@@ -19,12 +19,12 @@ class ImportFilesController < ApplicationViewController
     base_sql = session.address.import_files
 
     @total = base_sql.all.count
-    @import_files = base_sql.order(created_at: :desc).map do |import_file|
+    @import_files = base_sql.limit(limit).offset(offset).order(created_at: :desc).map do |import_file|
       {
         id: import_file.id,
         date: import_file.created_at.strftime("%Y/%m/%d %H:%M:%S"),
         job_name: import_file.job.name,
-        status: import_file.status_on_screen
+        status: import_file.status
       }
     end
   end
@@ -39,6 +39,10 @@ class ImportFilesController < ApplicationViewController
 
     unless @import_file.present?
       raise NotFoundData
+    end
+
+    if @import_file.job.id == Job::DOLLAR_YENS_TRANSACTIONS_CSV_IMPORT
+      @import_file.set_target_path(target_path: dollar_yen_transactions_path)
     end
   end
 

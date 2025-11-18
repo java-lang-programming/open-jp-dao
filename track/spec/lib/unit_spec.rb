@@ -9,7 +9,7 @@ RSpec.describe "Unit", type: :feature do
     context 'transaction kind is 1' do
       # 数量米ドル
       it "should get 預入 数量米ドル表示." do
-        expect(Unit.add_unit(value: dollar_yen_transaction1.deposit_rate_on_screen, unit: Unit::EN_DOLLAR)).to eq('$106.59')
+        expect(Unit.add_unit(value: dollar_yen_transaction1.deposit_rate, unit: Unit::EN_DOLLAR)).to eq('$106.59')
       end
 
       it "should get 預入 円換算表示." do

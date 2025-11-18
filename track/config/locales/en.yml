@@ -29,3 +29,14 @@
 
 en:
   hello: "Hello world"
+  header:
+    nav:
+      dollar_yen_transactions:
+        exchange: "FX Gain/Loss"
+        ledger: "FCD GL (USD/JPY)"
+        type: "Trade Type"
+  views:
+    dollar_yen_transactions:
+      index: "FCD GL (USD/JPY)"
+    import_files:
+      index: "csv Import Results Page"
