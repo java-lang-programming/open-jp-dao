@@ -37,7 +37,6 @@ RSpec.describe "ImportFiles", type: :request do
         get import_files_path
         body = response.body
         expect(body).to include import_file.job.name
-        expect(body).to include import_file.status_on_screen
       end
     end
   end

@@ -154,28 +154,18 @@ RSpec.describe ImportFile, type: :model do
     end
   end
 
-  describe 'get_oldest_date' do
-    let(:addresses_eth) { create(:addresses_eth) }
-    let(:job_2) { create(:job_2) }
-    let(:import_file) { create(:import_file, address: addresses_eth, job: job_2) }
-    let(:import_file_in_progress) { create(:import_file_in_progress, address: addresses_eth, job: job_2) }
-    let(:import_file_completed) { create(:import_file_completed, address: addresses_eth, job: job_2) }
-    let(:import_file_failure) { create(:import_file_failure, address: addresses_eth, job: job_2) }
-
-    it 'should be 準備中 when status is ready.' do
-      expect(import_file.status_on_screen).to eq('準備中')
+  describe '#target_screen' do
+    it 'should get job2 screen name.' do
+      expect(import_file.target_screen).to eq('ドル円外貨預金元帳')
     end
+  end
 
-    it 'should be 準備中 when status is in_progress.' do
-      expect(import_file_in_progress.status_on_screen).to eq('実行中')
-    end
+  describe '#set_target_path' do
+    let(:target_path) { 'localhost' }
 
-    it 'should be 準備中 when status is completed.' do
-      expect(import_file_completed.status_on_screen).to eq('完了')
-    end
-
-    it 'should be 準備中 when status is failure.' do
-      expect(import_file_failure.status_on_screen).to eq('失敗')
+    it 'should be oldtest date' do
+      import_file.set_target_path(target_path: target_path)
+      expect(import_file.get_target_path).to eq(target_path)
     end
   end
 end

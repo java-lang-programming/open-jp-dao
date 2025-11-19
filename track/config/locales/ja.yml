@@ -57,3 +57,14 @@ ja:
         not_a_number: は数値で入力してください
         not_an_integer: は整数で入力してください
         must_be_greater_than_or_equal_to_zero: は0以上の値で入力してください
+  header:
+    nav:
+      dollar_yen_transactions:
+        exchange: "為替差損益"
+        ledger: "ドル円外貨預金元帳"
+        type: "取引種別"
+  views:
+    dollar_yen_transactions:
+      index: "ドル円外貨預金元帳"
+    import_files:
+      index: "csvインポート結果画面"

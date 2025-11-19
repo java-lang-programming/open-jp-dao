@@ -32,7 +32,6 @@ class LedgerCsvImportJob < ApplicationJob
       import_file.status = :completed
       import_file.save
     rescue => e
-      puts e
       if import_file.present?
         import_file.status = :failure
         import_file.save

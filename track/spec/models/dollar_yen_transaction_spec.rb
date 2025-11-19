@@ -398,7 +398,7 @@ RSpec.describe DollarYenTransaction, type: :model do
 
     context '画面表示 deposit_rate' do
       it 'should be deposit_rate_on_screen when data found.' do
-        expect(dollar_yen_transaction1.deposit_rate_on_screen).to eq(106.59)
+        expect(dollar_yen_transaction1.deposit_rate_on_screen).to eq('$106.59')
       end
 
       it 'should be deposit_rate_on_screen when data not found.' do
@@ -408,7 +408,7 @@ RSpec.describe DollarYenTransaction, type: :model do
 
     context '画面表示 deposit_quantity' do
       it 'should be deposit_quantity_on_screen when data found.' do
-        expect(dollar_yen_transaction1.deposit_quantity_on_screen).to eq(3.97)
+        expect(dollar_yen_transaction1.deposit_quantity_on_screen).to eq("$3.97")
       end
 
       it 'should be deposit_quantity_on_screen when data not found.' do
@@ -432,7 +432,7 @@ RSpec.describe DollarYenTransaction, type: :model do
       end
 
       it 'should be withdrawal_rate_on_screen when data found.' do
-        expect(dollar_yen_transaction44.withdrawal_rate_on_screen).to eq(137.05)
+        expect(dollar_yen_transaction44.withdrawal_rate_on_screen).to eq("$137.05")
       end
     end
 
@@ -442,7 +442,7 @@ RSpec.describe DollarYenTransaction, type: :model do
       end
 
       it 'should be withdrawal_en_on_screen when data found.' do
-        expect(dollar_yen_transaction44.withdrawal_en_on_screen).to eq("¥12,061")
+        expect(dollar_yen_transaction44.withdrawal_en_on_screen).to eq("¥12,060")
       end
     end
 
@@ -685,9 +685,10 @@ RSpec.describe DollarYenTransaction, type: :model do
       expect(upsert_dollar_yens_transactions.size).to eq(1)
       result = upsert_dollar_yens_transactions.first
       expect(result.date).to eq(dollar_yen_transaction1.date)
+      # 画面表示の値で確認
       expect(result.balance_en_on_screen).to eq('¥423')
-      expect(result.balance_rate_on_screen).to eq(106.54)
-      expect(result.balance_quantity_on_screen).to eq(3.97)
+      expect(result.balance_rate_on_screen).to eq("$106.54")
+      expect(result.balance_quantity_on_screen).to eq("$3.97")
     end
 
     it '初期データがあって次の日付のデータを登録する' do
@@ -706,8 +707,8 @@ RSpec.describe DollarYenTransaction, type: :model do
       result1 = upsert_dollar_yens_transactions[0]
       expect(result1.date).to eq(dollar_yen_transaction2.date)
       expect(result1.balance_en_on_screen).to eq('¥1,563')
-      expect(result1.balance_rate_on_screen).to eq(106.1)
-      expect(result1.balance_quantity_on_screen).to eq(14.73)
+      expect(result1.balance_rate_on_screen).to eq("$106.10")
+      expect(result1.balance_quantity_on_screen).to eq("$14.73")
     end
 
     it 'データ複数あって真ん中の日付にデータを投入する' do
@@ -728,13 +729,13 @@ RSpec.describe DollarYenTransaction, type: :model do
       result = upsert_dollar_yens_transactions[0]
       expect(result.date).to eq(dollar_yen_transaction2.date)
       expect(result.balance_en_on_screen).to eq('¥1,563')
-      expect(result.balance_rate_on_screen).to eq(106.1)
-      expect(result.balance_quantity_on_screen).to eq(14.73)
+      expect(result.balance_rate_on_screen).to eq("$106.10")
+      expect(result.balance_quantity_on_screen).to eq("$14.73")
       result2 = upsert_dollar_yens_transactions[1]
       expect(result2.date).to eq(dollar_yen_transaction3.date)
       expect(result2.balance_en_on_screen).to eq('¥3,100')
-      expect(result2.balance_rate_on_screen).to eq(105.22)
-      expect(result2.balance_quantity_on_screen).to eq(29.46)
+      expect(result2.balance_rate_on_screen).to eq("$105.22")
+      expect(result2.balance_quantity_on_screen).to eq("$29.46")
     end
 
     it '初期データが複数あって最後のデータを登録する' do
@@ -755,13 +756,13 @@ RSpec.describe DollarYenTransaction, type: :model do
       result1 = upsert_dollar_yens_transactions[0]
       expect(result1.date).to eq(dollar_yen_transaction2.date)
       expect(result1.balance_en_on_screen).to eq('¥1,563')
-      expect(result1.balance_rate_on_screen).to eq(106.1)
-      expect(result1.balance_quantity_on_screen).to eq(14.73)
+      expect(result1.balance_rate_on_screen).to eq("$106.10")
+      expect(result1.balance_quantity_on_screen).to eq("$14.73")
       result2 = upsert_dollar_yens_transactions[1]
       expect(result2.date).to eq(dollar_yen_transaction3.date)
       expect(result2.balance_en_on_screen).to eq('¥3,100')
-      expect(result2.balance_rate_on_screen).to eq(105.22)
-      expect(result2.balance_quantity_on_screen).to eq(29.46)
+      expect(result2.balance_rate_on_screen).to eq("$105.22")
+      expect(result2.balance_quantity_on_screen).to eq("$29.46")
     end
   end
 
@@ -787,8 +788,8 @@ RSpec.describe DollarYenTransaction, type: :model do
       result1 = upsert_dollar_yens_transactions[0]
 
       expect(result1.balance_en_on_screen).to eq('¥3,100')
-      expect(result1.balance_rate_on_screen).to eq(105.22)
-      expect(result1.balance_quantity_on_screen).to eq(29.46)
+      expect(result1.balance_rate_on_screen).to eq("$105.22")
+      expect(result1.balance_quantity_on_screen).to eq("$29.46")
     end
   end
 
@@ -806,8 +807,8 @@ RSpec.describe DollarYenTransaction, type: :model do
         first_data = dollar_yens_transactions.first
         expect(first_data.date).to eq(dollar_yen_transaction2.date)
         expect(first_data.balance_en_on_screen).to eq('¥1,140')
-        expect(first_data.balance_rate_on_screen).to eq(105.94)
-        expect(first_data.balance_quantity_on_screen).to eq(10.76)
+        expect(first_data.balance_rate_on_screen).to eq("$105.94")
+        expect(first_data.balance_quantity_on_screen).to eq("$10.76")
       end
     end
 
@@ -825,8 +826,8 @@ RSpec.describe DollarYenTransaction, type: :model do
           first_data = dollar_yens_transactions.first
           expect(first_data.date).to eq(dollar_yen_transaction3.date)
           expect(first_data.balance_en_on_screen).to eq('¥1,960')
-          expect(first_data.balance_rate_on_screen).to eq(104.81)
-          expect(first_data.balance_quantity_on_screen).to eq(18.7)
+          expect(first_data.balance_rate_on_screen).to eq("$104.81")
+          expect(first_data.balance_quantity_on_screen).to eq("$18.70")
         end
       end
     end

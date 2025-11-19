@@ -1,5 +1,5 @@
 module Nav
-  EXCHANGE_GAIN = 1
+  EXCHANGE_GAIN_AND_LOSSES = 1
   DOLLAR_YEN_TRANSACTION = 2
   TRANSACTION_TYPE = 3
 
@@ -8,11 +8,11 @@ module Nav
 
   ACCOUNT = 1
 
-  def transactions_navs(selected: EXCHANGE_GAIN)
+  def transactions_navs(selected: EXCHANGE_GAIN_AND_LOSSES)
     [
-      { id: 1, name: "為替差益", path: foreign_exchange_gain_dollar_yen_transactions_path, selected: selected == 1 },
-      { id: 2, name: "ドル円外貨預金元帳", path: dollar_yen_transactions_path, selected: selected == 2 },
-      { id: 3, name: "取引種類", path: transaction_types_path, selected: selected == 3 }
+      { id: 1, name: I18n.t("header.nav.dollar_yen_transactions.exchange"), path: foreign_exchange_gain_dollar_yen_transactions_path, selected: selected == 1 },
+      { id: 2, name: I18n.t("header.nav.dollar_yen_transactions.ledger"), path: dollar_yen_transactions_path, selected: selected == 2 },
+      { id: 3, name: I18n.t("header.nav.dollar_yen_transactions.type"), path: transaction_types_path, selected: selected == 3 }
     ]
   end
 
