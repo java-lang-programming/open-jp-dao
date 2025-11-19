@@ -11,8 +11,18 @@ RUN cp /usr/share/zoneinfo/Asia/Tokyo /etc/localtime
 
 # Install base packages
 RUN apt-get update -qq && \
-    apt-get install --no-install-recommends -y curl libjemalloc2 libvips sqlite3 && \
-    rm -rf /var/lib/apt/lists/* /var/cache/apt/archives
+    apt-get install --no-install-recommends -y \
+      curl \
+      libjemalloc2 \
+      libvips \
+      sqlite3 \
+      gcc \
+      make \
+      libc-dev \
+      libffi-dev \
+      libsodium23 \
+      libsodium-dev \
+    && rm -rf /var/lib/apt/lists/* /var/cache/apt/archives
 
 ENV APP_ROOT=/usr/src/app
 RUN mkdir ${APP_ROOT}
