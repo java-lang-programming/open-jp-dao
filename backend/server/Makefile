@@ -26,6 +26,7 @@ unit_test:
 unit_test_client:
 	poetry run pytest -s --cache-clear tests/test_main.py
 	poetry run pytest -s --cache-clear tests/test_sessions.py
+	poetry run pytest -s --cache-clear tests/test_solana.py
 launch_dev_server: ## unicornを開発環境で立ち上げ
 	uvicorn src.main:app --reload --host=0.0.0.0
 launch_pro_server:
