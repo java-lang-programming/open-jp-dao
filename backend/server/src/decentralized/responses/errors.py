@@ -35,3 +35,5 @@ class ErrorCodes:
     ERROR_VOTE_CREATE = "EVC00001"
     # votec showのエラー
     ERROR_VOTE_SHOW = "EVS00001"
+    # solana verifyエラー
+    SOLANA_VERIFY_ERROR = "S0000001"

@@ -20,8 +20,10 @@ from src.exceptions.invalid_format_address_exception import (
 )
 from src.exceptions.not_connected_exception import NotConnectedException
 from src.exceptions.siwe_message_verify_exception import SiweMessageVerifyException
+from src.exceptions.solana_verify_exception import SolanaVerifyException
 
 from src.routers import sessions
+from src.routers import solana
 
 # from src.decentralized.exceptions.employee_authority_worker_nft_minted import (
 #     EmployeeAuthorityWorkerNFTMinted,
@@ -33,6 +35,7 @@ from src.routers import sessions
 
 app = FastAPI()
 app.include_router(sessions.router)
+app.include_router(solana.router)
 # app.include_router(votes.router)
 
 origins = [
@@ -79,6 +82,14 @@ async def invalid_format_address_exception_handler(
 async def siwe_message_verify_exception_handler(
     request: Request, exc: SiweMessageVerifyException
 ):
+    return JSONResponse(
+        status_code=400,
+        content=exc.errors,
+    )
+
+
+@app.exception_handler(SolanaVerifyException)
+async def solana_verify_exception_handler(request: Request, exc: SolanaVerifyException):
     return JSONResponse(
         status_code=400,
         content=exc.errors,
