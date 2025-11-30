@@ -11,4 +11,4 @@ help:
 
 ## docker操作 ##
 dev: ## 立ち上げる
-	npm run dev
+	pnpm dev

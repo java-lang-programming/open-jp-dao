@@ -6,6 +6,7 @@ Rails.application.routes.draw do
   get "top" => "top#index"
 
   namespace :apis do
+    post "solana/signin"
     get "import_files/index"
     get "notifications/index"
     resources :dollar_yens do

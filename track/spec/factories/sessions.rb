@@ -19,13 +19,13 @@ FactoryBot.define do
     domain { "localhost" }
   end
 
-  factory :session_polygon_mainnet, class: Session do
+  factory :session_solana, class: Session do
     address {  }
     ip_address { "190.32.11.1" }
     user_agent { "chrome" }
-    chain_id { Session::POLYGON_MAINNET }
+    chain_id { Session::SOLANA }
     message { "aaasadsdasasdsa" }
-    signature { "aw32323423423423423432" }
-    domain { "localhost" }
+    signature { "Beaaeradasdasdads" }
+    domain { nil }
   end
 end

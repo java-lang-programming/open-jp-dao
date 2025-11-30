@@ -1,5 +1,6 @@
 import { SiweMessage } from 'siwe';
 import { fetchSessionsNonce, postSessionsSignin, postVerify } from "../repo/sessions";
+import { postSolanasSignin } from "../repo/solanas";
 
 export const ERROR_MATAMASK_ETH_REQUEST_ACCOUNTS = "ERROR_MATAMASK_ETH_REQUEST_ACCOUNTS";
 export const ERROR_FETCH_SESSION_NONCE_ERROR = "ERROR_FETCH_SESSION_NONCE_ERROR";
@@ -43,6 +44,41 @@ export const requestEthAccountsViaMetamask = async(providerWithInfo) => {
 }
 
 /**
+//  * @description Phantomを介してアカウントを取得する
+//  * @function
+//  */
+export const connectSolanaViaPhantom = async(providerWithInfo) => {
+  let accounts = null
+  try {
+    // ウォレット接続
+    return await providerWithInfo.connect({ onlyIfTrusted: true });
+  } catch (err) {
+    if (err.code === 4001) {
+      const error = new Error("Phantom wallet connection was cancelled by the user.");
+      error.code = "PHANTOM_CONNECT_CANCELLED";
+      // 以下を画面に出したい
+      console.log("ウォレット接続がキャンセルされました");
+      return;
+    }
+    console.log(err.code);
+    // if (err.code === "PHANTOM_CONNECT_CANCELLED") {
+    //   // ユーザーが閉じただけ → 何もしない or UI 表示
+    //   console.log("ウォレット接続がキャンセルされました");
+    //   return;
+    // }
+
+    // if (err.code === "PHANTOM_ALREADY_CONNECTED") {
+    //   // すでに接続済み → 再度 connect しない
+    //   console.log("すでに接続済みです");
+    //   return;
+    // }
+
+    // その他のエラー
+    // showToast("Phantomへの接続に失敗しました");
+  }
+}
+
+/**
 //  * @description pythonのnonce apiを呼び出す
 //  * @function
 //  */
@@ -63,9 +99,21 @@ export const sessionsSigninResponse = async(body) => {
   try {
     return await postSessionsSignin(body)
   } catch (err) {
-    // TODO これはslackいき
+    // TODO これはapiにログを投げる tagでフロント
     console.error(err);
     const error = new Error("postSessionsSignin error");
+    error.code = "ERROR_POST_SESSION_SIGNIN_ERROR";
+    throw error;
+  }
+}
+
+export const solanaSigninResponse = async(body) => {
+  try {
+    return await postSolanasSignin(body)
+  } catch (err) {
+    // TODO これはapiにログを投げる
+    console.error(err);
+    const error = new Error("postSolanasSignin error");
     error.code = "ERROR_POST_SESSION_SIGNIN_ERROR";
     throw error;
   }
@@ -95,6 +143,18 @@ export const makePostSessionsSigninBody = (chainId, message, signature, nonce, d
   };
   return JSON.stringify(obj);
 }
+
+// makePostSolanaSigninBody(message, publicKey, bs58signature)
+export const makePostSolanaSigninBody = (message, publicKey, bs58signature) => {
+  const obj = {
+    public_key: publicKey,
+    signature_b58: bs58signature,
+    message,
+    kind: 2
+  };
+  return JSON.stringify(obj);
+}
+
 
 // /**
 //  * @description rails apiに接続してsigninする

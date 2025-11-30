@@ -84,7 +84,7 @@ launch_prod: ## railsを本番環境で立ち上げ
 solid_queue_start: ## solid_queueを立ち上げる
 	bundle exec rake solid_queue:start
 rspec: ## rspec実行
-	bundle exec rspec spec --backtrace
+	bundle exec rspec spec/requests/apis/solana_spec.rb --backtrace
 ## sqlite操作 ##
 sqlite3_open: ## DBを開く
 	sqlite3 storage/development.sqlite3

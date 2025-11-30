@@ -3,6 +3,9 @@ from solathon.publickey import PublicKey
 import base58
 import logging
 
+from solathon.utils import verify_signature
+from solathon.publickey import PublicKey
+
 from fastapi import APIRouter
 
 from src.decentralized.requests.solana.verify import Verify
@@ -18,12 +21,13 @@ logger = logging.getLogger(__name__)
 @router.post("/api/solana/verify", tags=["solana"])
 async def verify(verify: Verify):
     try:
+
         result = verify_signature(
             public_key=PublicKey(verify.public_key),
             signature=base58.b58decode(verify.signature_b58),
             message=verify.message.encode("utf-8"),
         )
-        if not result:
+        if result is not None:
             raise ValueError("signature invalid")
     except Exception as e:
         logger.error(f"Solana verify failed: {e}", exc_info=True)

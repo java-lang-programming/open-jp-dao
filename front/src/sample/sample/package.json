@@ -10,6 +10,7 @@
     "lint:fix": "eslint --fix ./src/app/page.js"
   },
   "dependencies": {
+    "bs58": "^6.0.0",
     "ethers": "^6.13.3",
     "next": "14.2.14",
     "react": "^18",
