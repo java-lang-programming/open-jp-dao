@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from pydantic import BaseModel, validator
+from pydantic import BaseModel, field_validator
 from solathon.publickey import PublicKey
 import base58
 
@@ -9,7 +9,7 @@ class Verify(BaseModel):
     signature_b58: str
     message: str
 
-    @validator("public_key")
+    @field_validator("public_key")
     def validate_public_key(cls, v):
         try:
             PublicKey(v)
@@ -17,7 +17,7 @@ class Verify(BaseModel):
             raise ValueError("Invalid public key")
         return v
 
-    @validator("signature_b58")
+    @field_validator("signature_b58")
     def validate_b58(cls, v):
         try:
             base58.b58decode(v)
