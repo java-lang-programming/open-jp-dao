@@ -13,7 +13,7 @@ client = TestClient(app)
 # -------------------------
 # 正常系：署名が正しい場合
 # -------------------------
-@patch("src.routers.solana.verify_signature", return_value=True)
+@patch("src.routers.solana.verify_signature", return_value=None)
 @patch("src.routers.solana.PublicKey", return_value="MockedPublicKey")
 def test_verify_success(mock_pubkey, mock_verify_sig):
     body = {
@@ -29,6 +29,8 @@ def test_verify_success(mock_pubkey, mock_verify_sig):
 
     mock_verify_sig.assert_called_once()
 
+# TODO publiv keyのチェック
+# signatureのチェックも必要
 # -------------------------
 # 異常系：verify_signature が False を返す
 # -------------------------
