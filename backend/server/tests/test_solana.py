@@ -1,54 +1,104 @@
 # routers/solana.pyのテスト
 
+import os
+import base58
+import pytest
+
 from fastapi.testclient import TestClient
 
 from unittest.mock import patch
 
 from src.main import app
 
-from src.decentralized.responses.errors import ErrorCodes
 
 client = TestClient(app)
 
-# -------------------------
-# 正常系：署名が正しい場合
-# -------------------------
-@patch("src.routers.solana.verify_signature", return_value=None)
-@patch("src.routers.solana.PublicKey", return_value="MockedPublicKey")
-def test_verify_success(mock_pubkey, mock_verify_sig):
-    body = {
-        "public_key": "ExamplePublicKey",
-        "signature_b58": "3MNQE1X",  # valid-ish base58 (簡易でOK)
-        "message": "hello"
+# ---------- 共通データ ----------
+@pytest.fixture
+def valid_public_key():
+    # 32byte を base58 で encode → valid Solana public key
+    key_bytes = os.urandom(32)
+    return base58.b58encode(key_bytes).decode()
+
+
+@pytest.fixture
+def valid_signature():
+    sig = os.urandom(64)
+    return base58.b58encode(sig).decode()
+
+
+@pytest.fixture
+def valid_message():
+    return "hello solana"
+
+
+# ---------- 正常系 ----------
+def test_verify_success(valid_public_key, valid_signature, valid_message):
+    payload = {
+        "public_key": valid_public_key,
+        "signature_b58": valid_signature,
+        "message": valid_message,
     }
 
-    response = client.post("/api/solana/verify", json=body)
+    # verify_signature を常に None に mock
+    with patch("src.routers.solana.verify_signature", return_value=None):
+        res = client.post("/api/solana/verify", json=payload)
 
-    assert response.status_code == 200
-    assert response.json() == {"verified": True}
+    assert res.status_code == 200
+    assert res.json() == {"verified": True}
 
-    mock_verify_sig.assert_called_once()
-
-# TODO publiv keyのチェック
-# signatureのチェックも必要
-# -------------------------
-# 異常系：verify_signature が False を返す
-# -------------------------
-@patch("src.routers.solana.verify_signature", return_value=False)
-@patch("src.routers.solana.PublicKey", return_value="MockedPublicKey")
-def test_verify_invalid_signature(mock_pubkey, mock_verify_sig):
-    body = {
-        "public_key": "ExamplePublicKey",
-        "signature_b58": "3MNQE1X",
-        "message": "hello"
+# ---------- 異常系：public key validation ----------
+def test_invalid_public_key(valid_signature, valid_message):
+    payload = {
+        "public_key": "BAD",   # validator で確実にNG
+        "signature_b58": valid_signature,
+        "message": valid_message,
     }
 
-    response = client.post("/api/solana/verify", json=body)
+    res = client.post("/api/solana/verify", json=payload)
 
-    assert response.status_code == 400  # SolanaVerifyException の想定
-    data = response.json()
+    assert res.status_code == 422
+    assert "Invalid public key" in str(res.json())
 
-    assert data["errors"]["code"] == ErrorCodes.SOLANA_VERIFY_ERROR
-    assert data["errors"]["message"] == "solana verify error"
+# ---------- 異常系：signature_b58 validation ----------
+def test_invalid_signature_b58(valid_public_key, valid_message):
+    payload = {
+        "public_key": valid_public_key,
+        "signature_b58": "!!!!",  # base58 として decode 不可
+        "message": valid_message,
+    }
 
-    mock_verify_sig.assert_called_once()
+    res = client.post("/api/solana/verify", json=payload)
+
+    assert res.status_code == 422
+    assert "Invalid signature" in str(res.json())
+
+# ---------- 異常系：verify_signature が例外 ----------
+def test_verify_signature_raises(valid_public_key, valid_signature, valid_message):
+    payload = {
+        "public_key": valid_public_key,
+        "signature_b58": valid_signature,
+        "message": valid_message,
+    }
+
+    # verify_signature が例外を投げるよう mock
+    with patch("src.routers.solana.verify_signature", side_effect=Exception("boom")):
+        res = client.post("/api/solana/verify", json=payload)
+
+    assert res.status_code == 400
+    assert "solana verify error" in res.json()["errors"]["message"]
+
+# ---------- 異常系：verify_signature が None 以外 ----------
+def test_verify_signature_invalid(valid_public_key, valid_signature, valid_message):
+    payload = {
+        "public_key": valid_public_key,
+        "signature_b58": valid_signature,
+        "message": valid_message,
+    }
+
+    # result != None → signature invalid
+    with patch("src.routers.solana.verify_signature", return_value="INVALID"):
+        res = client.post("/api/solana/verify", json=payload)
+
+    assert res.status_code == 400
+    assert "signature invalid" in res.json()["errors"]["detail"]

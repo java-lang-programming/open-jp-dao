@@ -1,10 +1,7 @@
 from solathon.utils import verify_signature
-from solathon.publickey import PublicKey
-import base58
+from base58 import b58decode
 import logging
 
-from solathon.utils import verify_signature
-from solathon.publickey import PublicKey
 
 from fastapi import APIRouter
 
@@ -21,10 +18,9 @@ logger = logging.getLogger(__name__)
 @router.post("/api/solana/verify", tags=["solana"])
 async def verify(verify: Verify):
     try:
-
         result = verify_signature(
-            public_key=PublicKey(verify.public_key),
-            signature=base58.b58decode(verify.signature_b58),
+            public_key=verify.public_key,
+            signature=b58decode(verify.signature_b58),
             message=verify.message.encode("utf-8"),
         )
         if result is not None:
