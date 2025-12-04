@@ -85,7 +85,7 @@ def test_verify_signature_raises(valid_public_key, valid_signature, valid_messag
     with patch("src.routers.solana.verify_signature", side_effect=Exception("boom")):
         res = client.post("/api/solana/verify", json=payload)
 
-    assert res.status_code == 400
+    assert res.status_code == 401
     assert "solana verify error" in res.json()["errors"]["message"]
 
 # ---------- 異常系：verify_signature が None 以外 ----------
@@ -100,5 +100,5 @@ def test_verify_signature_invalid(valid_public_key, valid_signature, valid_messa
     with patch("src.routers.solana.verify_signature", return_value="INVALID"):
         res = client.post("/api/solana/verify", json=payload)
 
-    assert res.status_code == 400
+    assert res.status_code == 401
     assert "signature invalid" in res.json()["errors"]["detail"]

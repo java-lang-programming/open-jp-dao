@@ -91,7 +91,7 @@ async def siwe_message_verify_exception_handler(
 @app.exception_handler(SolanaVerifyException)
 async def solana_verify_exception_handler(request: Request, exc: SolanaVerifyException):
     return JSONResponse(
-        status_code=400,
+        status_code=401,
         content=exc.errors,
     )
 
