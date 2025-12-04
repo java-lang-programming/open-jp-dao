@@ -15,6 +15,7 @@ router = APIRouter()
 logger = logging.getLogger(__name__)
 
 
+# 成功時のmodelを指定する
 @router.post("/api/solana/verify", tags=["solana"])
 async def verify(verify: Verify):
     try:
@@ -32,7 +33,7 @@ async def verify(verify: Verify):
                 code=ErrorCodes.SOLANA_VERIFY_ERROR,
                 message="solana verify error",
                 detail=repr(e),
-            ).to_dict()
+            ).create()
         )
 
     return {"verified": True}

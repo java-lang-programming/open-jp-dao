@@ -86,7 +86,7 @@ def test_verify_signature_raises(valid_public_key, valid_signature, valid_messag
         res = client.post("/api/solana/verify", json=payload)
 
     assert res.status_code == 401
-    assert "solana verify error" in res.json()["errors"]["message"]
+    assert "solana verify error" in res.json()["errors"][0]["message"]
 
 # ---------- 異常系：verify_signature が None 以外 ----------
 def test_verify_signature_invalid(valid_public_key, valid_signature, valid_message):
@@ -101,4 +101,4 @@ def test_verify_signature_invalid(valid_public_key, valid_signature, valid_messa
         res = client.post("/api/solana/verify", json=payload)
 
     assert res.status_code == 401
-    assert "signature invalid" in res.json()["errors"]["detail"]
+    assert "signature invalid" in res.json()["errors"][0]["detail"]
