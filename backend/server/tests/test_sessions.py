@@ -31,14 +31,14 @@ def test_api_verify_invalid_chain():
     data = {"chain_id": 2, "message": "aa", "signature": "aaa", "nonce": "aaa", "domain": "local"}
     response = client.post("/api/verify", json=data)
     assert response.status_code == 400
-    assert response.json() == {'errors': {'code': 'E0000001', 'message': 'chain_id error', 'detail': "ExceptionInvalidChainID('invalid chain id. chain id must be 1 or 8545 or 11155111')"}}
+    assert response.json() == {'errors': [{'code': 'E0000001', 'message': 'chain_id error', 'detail': "ExceptionInvalidChainID('invalid chain id. chain id must be 1 or 8545 or 11155111')"}]}
 
 # post /api/verifyでイーサリアムの接続に失敗した場合
 def test_api_verify_not_conneced_ethereum():
     data = {"chain_id": 8545, "message": "aa", "signature": "aaa", "nonce": "aaa", "domain": "local"}
     response = client.post("/api/verify", json=data)
     assert response.status_code == 403
-    assert response.json() == {'errors': {'code': 'E0000002', 'detail': '接続先のステータスを確認してください', 'message': 'イーサリアムに接続できませんでした'}}
+    assert response.json() == {'errors': [{'code': 'E0000002', 'detail': '接続先のステータスを確認してください', 'message': 'イーサリアムに接続できませんでした'}]}
 
 # post /api/verifyでverifyに失敗した場合
 def test_api_verify_fails_authorized():
@@ -50,7 +50,7 @@ def test_api_verify_fails_authorized():
 
         response = client.post("/api/verify", json=data)
         assert response.status_code == 400
-        assert response.json() == {'errors': {'code': 'E0000003', 'message': 'SiweMessage verify error', 'detail': 'ValueError()'}}
+        assert response.json() == {'errors': [{'code': 'E0000003', 'message': 'SiweMessage verify error', 'detail': 'ValueError()'}]}
 
 # post /api/verifyでverifyに成功した場合(mock)
 def test_api_verify_success():
@@ -70,13 +70,13 @@ def test_api_verify_success():
 def test_api_ethereum_ens_invalid_chain():
     response = client.get("/api/ethereum/2/address/test/ens")
     assert response.status_code == 400
-    assert response.json() == {'errors': {'code': 'E0000001', 'message': 'chain_id error', 'detail': "ExceptionInvalidChainID('invalid chain id. chain id must be 1 or 8545 or 11155111')"}}
+    assert response.json() == {'errors': [{'code': 'E0000001', 'message': 'chain_id error', 'detail': "ExceptionInvalidChainID('invalid chain id. chain id must be 1 or 8545 or 11155111')"}]}
 
 # get /api/ethereum/{chain_id}/address/{address}/ensでイーサリアムの接続に失敗した場合
 def test_api_ethereum_ens_not_conneced_ethereum():
     response = client.get("/api/ethereum/8545/address/test/ens")
     assert response.status_code == 403
-    assert response.json() == {'errors': {'code': 'E0000002', 'detail': '接続先のステータスを確認してください', 'message': 'イーサリアムに接続できませんでした'}}
+    assert response.json() == {'errors': [{'code': 'E0000002', 'detail': '接続先のステータスを確認してください', 'message': 'イーサリアムに接続できませんでした'}]}
 
 # get /api/ethereum/{chain_id}/address/{address}/ensでイーサリアムの接続に失敗した場合
 def test_api_ethereum_ens_invalid_address():
@@ -87,7 +87,7 @@ def test_api_ethereum_ens_invalid_address():
 
         response = client.get("/api/ethereum/8545/address/aaaa/ens")
         assert response.status_code == 400
-        assert response.json() == {'errors': {'code': 'E0000004', 'detail': 'イーサリアムのアドレスを確認してください', 'message': 'イーサリアムのアドレスが不正です'}}
+        assert response.json() == {'errors': [{'code': 'E0000004', 'detail': 'イーサリアムのアドレスを確認してください', 'message': 'イーサリアムのアドレスが不正です'}]}
 
 # get /api/ethereum/{chain_id}/address/{address}/ensでens取得
 def test_api_ethereum_ens_success():

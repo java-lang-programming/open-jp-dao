@@ -41,7 +41,7 @@ async def verify(verify: Verify):
                 code=ErrorCodes.INVALID_CHAIN_ID,
                 message="chain_id error",
                 detail=repr(e),
-            ).to_dict()
+            ).create()
         )
 
     ethereum = Ethereum(url=Chains.url_via_chain_id(chain_id=int_chain_id))
@@ -51,7 +51,7 @@ async def verify(verify: Verify):
                 code=ErrorCodes.NOT_CONNECTED_ETHEREUM,
                 message="イーサリアムに接続できませんでした",
                 detail="接続先のステータスを確認してください",
-            ).to_dict()
+            ).create()
         )
 
     try:
@@ -65,7 +65,7 @@ async def verify(verify: Verify):
                 code=ErrorCodes.SIWE_MESSAGE_VERIFY_ERROR,
                 message="SiweMessage verify error",
                 detail=repr(e),
-            ).to_dict()
+            ).create()
         )
 
 
@@ -84,7 +84,7 @@ async def ens_address(chain_id: str, address: str):
                 code=ErrorCodes.INVALID_CHAIN_ID,
                 message="chain_id error",
                 detail=repr(e),
-            ).to_dict()
+            ).create()
         )
 
     ethereum = Ethereum(url=Chains.url_via_chain_id(chain_id=int_chain_id))
@@ -94,7 +94,7 @@ async def ens_address(chain_id: str, address: str):
                 code=ErrorCodes.NOT_CONNECTED_ETHEREUM,
                 message="イーサリアムに接続できませんでした",
                 detail="接続先のステータスを確認してください",
-            ).to_dict()
+            ).create()
         )
 
     if not ethereum.is_checksum_address(address):
@@ -103,7 +103,7 @@ async def ens_address(chain_id: str, address: str):
                 code=ErrorCodes.INVALID_FORMAT_ADDRESS_ERROR,
                 message="イーサリアムのアドレスが不正です",
                 detail="イーサリアムのアドレスを確認してください",
-            ).to_dict()
+            ).create()
         )
 
     ens_name = ethereum.ens_name(address=address)
