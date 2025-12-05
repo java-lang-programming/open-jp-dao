@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
-from typing import Dict, List
-from src.decentralized.responses.errors import ErrorDict
+from src.exceptions.app_base_exception import AppBaseException
 
 
-class SolanaVerifyException(Exception):
-    def __init__(self, errors: Dict[str, List[ErrorDict]]):
-        super().__init__("Solana verification failed")
-        self.errors = errors
+class SolanaVerifyException(AppBaseException):
+    status_code = 401
+
+    def __init__(self, errors):
+        super().__init__(errors, message="Solana verification failed")

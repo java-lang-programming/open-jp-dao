@@ -20,7 +20,9 @@ from src.exceptions.invalid_format_address_exception import (
 )
 from src.exceptions.not_connected_exception import NotConnectedException
 from src.exceptions.siwe_message_verify_exception import SiweMessageVerifyException
-from src.exceptions.solana_verify_exception import SolanaVerifyException
+
+
+from src.exceptions.app_base_exception import AppBaseException
 
 from src.routers import sessions
 from src.routers import solana
@@ -88,10 +90,10 @@ async def siwe_message_verify_exception_handler(
     )
 
 
-@app.exception_handler(SolanaVerifyException)
-async def solana_verify_exception_handler(request: Request, exc: SolanaVerifyException):
+@app.exception_handler(AppBaseException)
+async def app_base_exception_handler(request: Request, exc: AppBaseException):
     return JSONResponse(
-        status_code=401,
+        status_code=exc.status_code,
         content=exc.errors,
     )
 
