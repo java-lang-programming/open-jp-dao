@@ -1,8 +1,4 @@
-require "rbnacl"
-require "base58"
-
 class Apis::SolanaController < ApplicationController
-
   def signin
     # addressを意味する
     target_address = params[:public_key]
@@ -47,11 +43,11 @@ class Apis::SolanaController < ApplicationController
     verify_params = {
       public_key: target_address,
       signature_b58: session.signature,
-      message: session.message + "改ざん"
+      message: session.message
     }
 
-    puts "verify_params"
-    puts verify_params.inspect
+    # puts "verify_params"
+    # puts verify_params.inspect
 
     response = ChainGate::Repositories::Solana::Verify.new(params: verify_params).fetch
 

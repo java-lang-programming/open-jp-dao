@@ -26,11 +26,11 @@ RSpec.describe ChainGate::Repositories::Solana::Verify do
           signature_b58: signature_b58,
           message: message
         },
-        body: {verified: true}
+        body: { verified: true }
       )
       res = repo.fetch
       expect(res.status_code).to eq(200)
-      expect(res.result).to eq({"verified": true})
+      expect(res.result).to eq({ "verified": true })
     end
 
     it 'unprocessable_content' do
