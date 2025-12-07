@@ -9,7 +9,7 @@ module ChainGate
         def initialize(status:, response:)
           self.status = status
           case status
-          when HTTP_BAD_REQUEST
+          when HTTP_UNAUTHORIZED, HTTP_UNPROCESSABLE_CONTENT
             self.error_symbol = to_sym_json(body: response.body)
           when HTTP_OK
             self.success_symbol = to_sym_json(body: response.body)
@@ -20,6 +20,11 @@ module ChainGate
 
         def status_code
           status
+        end
+
+        def result
+          return self.success_symbol if self.status == HTTP_OK
+          self.error_symbol
         end
       end
     end

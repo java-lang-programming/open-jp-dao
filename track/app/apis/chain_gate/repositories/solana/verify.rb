@@ -19,9 +19,13 @@ module ChainGate
             ChainGate::Responses::Solana::Verify.new(
               status: ChainGate::Responses::Base::HTTP_OK, response: response
             )
-          when Net::HTTPBadRequest then
+          when Net::HTTPUnauthorized then
             ChainGate::Responses::Solana::Verify.new(
-              status: ChainGate::Responses::Base::HTTP_BAD_REQUEST, response: response
+              status: ChainGate::Responses::Base::HTTP_UNAUTHORIZED, response: response
+            )
+          when Net::HTTPUnprocessableEntity then
+            ChainGate::Responses::Solana::Verify.new(
+              status: ChainGate::Responses::Base::HTTP_UNPROCESSABLE_CONTENT, response: response
             )
           else
             ChainGate::Responses::Solana::Verify.new(
