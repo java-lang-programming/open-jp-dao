@@ -72,4 +72,5 @@ RSpec.configure do |config|
   # config.filter_gems_from_backtrace("gem name")
   config.include Mocks::Apis::ChainGate::Verify
   config.include Mocks::Apis::ChainGate::Ens
+  config.include Mocks::Apis::ChainGate::Solana
 end

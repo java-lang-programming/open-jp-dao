@@ -1,5 +1,6 @@
 'use client';
 
+import bs58 from 'bs58';
 import Image from "next/image";
 import { useEffect, useState, Suspense } from 'react';
 import { BrowserProvider } from 'ethers';
@@ -12,7 +13,7 @@ import Eip6963Loading from "./components/sessions/eip6963_loading";
 import SigninLoading from "./components/sessions/signin_loading";
 import MetamaskNotFound from "./components/sessions/metamask_not_found";
 import SigninSuccess from "./components/sessions/signin_success";
-import { makeMessage, requestEthAccountsViaMetamask, nonceResponse, makePostSessionsSigninBody, sessionsSigninResponse, sessionsVerifyResponse, ERROR_MATAMASK_ETH_REQUEST_ACCOUNTS } from "./usecases/singin";
+import { makeMessage, requestEthAccountsViaMetamask, connectSolanaViaPhantom, nonceResponse, makePostSessionsSigninBody, makePostSolanaSigninBody, sessionsSigninResponse, solanaSigninResponse, sessionsVerifyResponse, ERROR_MATAMASK_ETH_REQUEST_ACCOUNTS } from "./usecases/singin";
 import { ForeignExchangeGainIndex } from "./page_urls";
 import { useRouter } from 'next/navigation'
 
@@ -105,11 +106,64 @@ export default function Home() {
   }
 
 
+  const handleSolanaConnect = async(providerWithInfo)=> {
+    if (!providerWithInfo?.isPhantom) {
+      setErrors([{"code": err.code, "msg": "Phantom以外のwalletでは認証できません。"}]);
+      return;
+    }
+
+    // setProvider(providerWithInfo);
+    setWalletProcessing(true);
+    // ここから下をmetamask signinでまとめる
+    try {
+      const response = await connectSolanaViaPhantom(providerWithInfo);
+
+      const publicKey = response.publicKey.toString();
+      console.log("Connected:", publicKey);
+
+      // ↓ サーバーログイン用の署名(このメッセージは外だしが良い)
+      const message = "Sign in with phantom to the WanWan.";
+      const encoded = new TextEncoder().encode(message);
+      // メッセージにサイン
+      const { signature } = await providerWithInfo.signMessage(encoded, "utf8");
+      // bs58でエンコード
+      const bs58signature = bs58.encode(signature);
+
+      console.log("bs58Signature:", bs58signature);
+
+      // パラメーター作成
+      const body = makePostSolanaSigninBody(message, publicKey, bs58signature)
+
+      const res_signin = await solanaSigninResponse(body)
+
+      console.log(res_signin);
+
+      // わかりにくいので200で統一しよう....
+      if (res_signin.status == 201) {
+        setSignin(true);
+        // ここで認証に成功しましたがるとさらに良い。
+        router.push(ForeignExchangeGainIndex)
+        return
+      }      
+    } catch (err) {
+      console.log("ここにくる");
+      console.log(err);
+    }
+    setWalletProcessing(false);
+  }
+
+
+  // イーサリアム(MetaMask)とsolana(Phantom)を検出する
   const providerDetails = async () => {
-    let providerDetails = [];
+    let providers = {
+      evm: [],      // MetaMask など EVM wallet
+      solana: null, // Phantom
+    };
+    // let providerDetails = [];
     function onAnnouncement(event) {
-      if (event.detail.info.name === 'MetaMask') {
-        providerDetails.push(event.detail);
+      if (event.detail?.info?.name === 'MetaMask') {
+        // providerDetails.push(event.detail);
+        providers.evm.push(event.detail);
       }
     }
     window.addEventListener("eip6963:announceProvider", onAnnouncement);
@@ -117,19 +171,28 @@ export default function Home() {
     window.dispatchEvent(new Event("eip6963:requestProvider"));
     // remove
     window.removeEventListener("eip6963:announceProvider", onAnnouncement);
-    return providerDetails;
+
+    // ---- Solana (Phantom) detection ----
+    if ("solana" in window) {
+      const solana = window.solana;
+      if (solana?.isPhantom) {
+        providers.solana = solana;
+      }
+    }
+
+    return providers;
   }
 
   useEffect(() => {
     // 初回処理
     const init = async () => {
       // 認証
-      const res_verify = await sessionsVerifyResponse()
-      if (res_verify.status == 201) {
-        setSignin(true);
-        router.push(ForeignExchangeGainIndex)
-        return
-      }
+      // const res_verify = await sessionsVerifyResponse()
+      // if (res_verify.status == 201) {
+      //   setSignin(true);
+      //   router.push(ForeignExchangeGainIndex)
+      //   return
+      // }
 
       // metamask検出
       const providers = await providerDetails();
@@ -179,11 +242,18 @@ export default function Home() {
                     ))
                   }
                   {
-                    walletProcessing === false && providers.length > 0 && providers.map((provider)=>(
+                    walletProcessing === false && providers.evm.length > 0 && providers.evm.map((provider)=>(
                         <button key={provider.info.uuid} onClick={()=>handleConnect(provider)} >
                           <Image src={provider.info.icon} alt={provider.info.name} width="100" height="100" />
                         </button>
                       )
+                    )
+                  }
+                  {
+                    walletProcessing === false && providers.solana && (
+                      <button onClick={()=>handleSolanaConnect(providers.solana)} >
+                        <Image src="/Phantom-Icon_Square.svg" alt="Phantom Wallet" width="100" height="100" />
+                      </button>
                     )
                   }
                   {

@@ -1,25 +1,26 @@
 # -*- coding: utf-8 -*-
+from dataclasses import dataclass, asdict
+from typing import TypedDict, Dict, cast
 
 
+class ErrorDict(TypedDict):
+    code: int
+    message: str
+    detail: str
+
+
+@dataclass
 class Errors:
     code: int
     message: str
     detail: str
 
-    def __init__(self, code: str, message: str, detail: str):
-        self.code = code
-        self.message = message
-        self.detail = detail
+    def to_dict(self) -> ErrorDict:
+        return cast(ErrorDict, asdict(self))
 
-    # def create(self, engagement_targets_job_categories: any):
-    def to_dict(self) -> dict:
-        error: dict = {}
-        error["code"] = self.code
-        error["message"] = self.message
-        error["detail"] = self.detail
-        errors: dict = {}
-        errors["errors"] = error
-        return errors
+    # エラーレスポンスを作成する
+    def create(self) -> Dict[str, list[ErrorDict]]:
+        return {"errors": [self.to_dict()]}
 
 
 class ErrorCodes:
@@ -35,3 +36,5 @@ class ErrorCodes:
     ERROR_VOTE_CREATE = "EVC00001"
     # votec showのエラー
     ERROR_VOTE_SHOW = "EVS00001"
+    # solana verifyエラー
+    SOLANA_VERIFY_ERROR = "S0000001"
