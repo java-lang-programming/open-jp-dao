@@ -32,7 +32,7 @@ unit_test_client:
 launch_dev_server: ## unicornを開発環境で立ち上げ
 	uvicorn src.main:app --reload --host=0.0.0.0
 launch_prod_server: ## gunicornで本番環境を立ち上げ
-	gunicorn src.main:app --workers 4 --worker-class uvicorn.workers.UvicornWorker --bind 0.0.0.0:8000 --log-level info --access-logfile '-' --error-logfile '-'
+	gunicorn src.main:app --workers 2 --worker-class uvicorn.workers.UvicornWorker --bind 0.0.0.0:8000 --log-level info --access-logfile '-' --error-logfile '-'
 lib_show:
 	poetry show
 outdated:
