@@ -37,7 +37,10 @@ RSpec.describe TaxReturns::Calculation do
            foreign_exchange_gain: 0,
            supplies_national_pension_insurance_premium: 0,
            national_health_insurance: 0,
-           small_business_mutual_aid: 0
+           dc: 0,
+           small_business_mutual_aid: 0,
+           first_estimated_income_tax_prepayment: 0,
+           second_estimated_income_tax_prepayment: 0
         })
       end
     end

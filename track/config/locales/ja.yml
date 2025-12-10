@@ -68,3 +68,8 @@ ja:
       index: "ドル円外貨預金元帳"
     import_files:
       index: "csvインポート結果画面"
+    tax_returns:
+      items:
+        dc: "確定拠出年金"
+        first_estimated_income_tax_prepayment: "予定納税第1期"
+        second_estimated_income_tax_prepayment: "予定納税第2期"

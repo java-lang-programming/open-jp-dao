@@ -48,7 +48,7 @@ FactoryBot.define do
   end
 
   factory :ledger_item_7, class: LedgerItem do
-    id { 7 }
+    id { LedgerItem::ID_DC }
     name { "確定拠出年金" }
     kind { LedgerItem.kinds[:drawings] }
     summary { }
@@ -56,7 +56,7 @@ FactoryBot.define do
   end
 
   factory :ledger_item_8, class: LedgerItem do
-    id { 8 }
+    id { LedgerItem::ID_SMALL_BUSINESS_MUTUAL_AID }
     name { "小規模企業共済" }
     kind { LedgerItem.kinds[:drawings] }
     summary { '小規模企業の経営者や役員、個人事業主などのための、積み立てによる退職金制度です。' }
@@ -72,7 +72,7 @@ FactoryBot.define do
   end
 
   factory :ledger_item_10, class: LedgerItem do
-    id { 10 }
+    id { LedgerItem::ID_FIRST_ESTIMATED_INCOME_TAX_PREPAYMENT }
     name { "予定納税第1期" }
     kind { LedgerItem.kinds[:drawings] }
     summary { '前年分の所得金額や税額などを基に計算した予定納税基準額が15万円以上となる場合には、原則、この予定納税基準額の３分の１相当額をそれぞれ７月(第１期分)と11月(第２期分)に納めることとなっています。 この制度を「予定納税」といいます。' }
@@ -80,7 +80,7 @@ FactoryBot.define do
   end
 
   factory :ledger_item_11, class: LedgerItem do
-    id { 11 }
+    id { LedgerItem::ID_SECOND_ESTIMATED_INCOME_TAX_PREPAYMENT }
     name { "予定納税第2期" }
     kind { LedgerItem.kinds[:drawings] }
     summary { '前年分の所得金額や税額などを基に計算した予定納税基準額が15万円以上となる場合には、原則、この予定納税基準額の３分の１相当額をそれぞれ７月(第１期分)と11月(第２期分)に納めることとなっています。 この制度を「予定納税」といいます。' }
