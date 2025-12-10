@@ -8,14 +8,16 @@ readme = "README.md"
 [tool.poetry.dependencies]
 python = "^3.12"
 web3 = "^7.7.0"
-ruff = "^0.4.4"
-black = "^24.4.2"
-pytest = "^8.2.1"
 fastapi = "^0.111.0"
 uvicorn = {extras = ["standard"], version = "^0.29.0"}
 siwe = "^4.4.0"
 solathon = "^1.0.7"
+gunicorn = "^23.0.0"
 
+[tool.poetry.group.dev.dependencies]
+ruff = "^0.4.4"
+black = "^24.4.2"
+pytest = "^8.2.1"
 
 [build-system]
 requires = ["poetry-core"]

@@ -11,7 +11,6 @@ COPY ./server/pyproject.toml ./server/poetry.lock* ./
 
 # poetryをinstallしてpoetryの設定をする(venv のファイルをプロジェクトディレクトリの下には置かない、並行installをしない、venv を作らずグローバルにパッケージをインストール)
 RUN pip install poetry \
-  && poetry config virtualenvs.in-project false && poetry config installer.parallel false && poetry config virtualenvs.create false && poetry install --no-root
+  && poetry config virtualenvs.in-project false && poetry config installer.parallel false && poetry config virtualenvs.create false && poetry install --with dev --no-interaction --no-ansi --no-root
 
 EXPOSE 8080
-

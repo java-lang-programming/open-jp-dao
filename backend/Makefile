@@ -19,3 +19,11 @@ dc_stop: ## Docker環境の停
 # コンテナに入る
 in_cont: ## Docker環境を立ち上げた後にコンテナの中に入る
 	docker exec -it open-jp-dao-python-server-dev /bin/sh
+build_prod: ## 本番用のコンテナをbuildする
+	docker build -t blockchain-gateway-prod:latest .
+run_prod: ## 本番用のコンテナをdocker runする
+	docker run -p 8001:8000 --name blockchain-gateway-prod -e WORKERS=4 blockchain-gateway-prod:latest
+stop_prod: ## 本番用のコンテナを停止する
+	docker stop blockchain-gateway-prod
+rm_prod: ## 本番用のコンテナを削除する
+	docker rm -f blockchain-gateway-prod

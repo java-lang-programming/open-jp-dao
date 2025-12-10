@@ -1,6 +1,6 @@
 ## backend
 
-0pen JP Daoで利用するpythonコード
+0pen JP Daoで利用するブロックチェーン接続API
 
 ## コンテナに入る
 

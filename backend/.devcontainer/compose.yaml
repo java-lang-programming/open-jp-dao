@@ -2,7 +2,7 @@ services:
   open-jp-dao-python-server-dev:
     build:
       context: ..
-      dockerfile: .devcontainer/Dockerfile
+      dockerfile: .devcontainer/Dockerfile.dev
     image: open-jp-dao-python-server-dev
     container_name: open-jp-dao-python-server-dev
     tty: true
