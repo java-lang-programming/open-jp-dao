@@ -128,11 +128,11 @@
             <div class="flex items-center justify-between space-x-4 rtl:space-x-reverse">
               <div class="flex-1 min-w-0">
                 <p class="text-sm font-medium text-gray-900 truncate dark:text-white">
-                  確定拠出年金
+                  <%= link_to t('views.tax_returns.items.dc'), ledgers_path(ledger_item_id: LedgerItem::ID_DC), {class: "block text-sm font-medium text-gray-900 truncate dark:text-white"} %>
                 </p>
               </div>
               <div class="flex-shrink-0 text-base font-semibold text-gray-900 dark:text-white">
-                ¥100,000
+                <%= number_to_currency(@tax_return[:dc], unit: "¥", precision: 0) %>
               </div>
             </div>
           </li>
@@ -160,11 +160,11 @@
             <div class="flex items-center justify-between space-x-4 rtl:space-x-reverse">
               <div class="flex-1 min-w-0">
                 <a href="./leaders?account_item_id=1" class="block text-sm font-medium text-gray-900 truncate dark:text-white">
-                  所得税前払(1期)
+                  <%= link_to t('views.tax_returns.items.first_estimated_income_tax_prepayment'), ledgers_path(ledger_item_id: LedgerItem::ID_FIRST_ESTIMATED_INCOME_TAX_PREPAYMENT), {class: "block text-sm font-medium text-gray-900 truncate dark:text-white"} %>
                 </a>
               </div>
               <div class="flex-shrink-0 text-base font-semibold text-gray-900 dark:text-white">
-                ¥120,222
+                <%= number_to_currency(@tax_return[:first_estimated_income_tax_prepayment], unit: "¥", precision: 0) %>
               </div>
             </div>
           </li>
@@ -172,11 +172,11 @@
             <div class="flex items-center justify-between space-x-4 rtl:space-x-reverse">
               <div class="flex-1 min-w-0">
                 <p class="text-sm font-medium text-gray-900 truncate dark:text-white">
-                  所得税前払(2期)
+                  <%= link_to t('views.tax_returns.items.second_estimated_income_tax_prepayment'), ledgers_path(ledger_item_id: LedgerItem::ID_SECOND_ESTIMATED_INCOME_TAX_PREPAYMENT), {class: "block text-sm font-medium text-gray-900 truncate dark:text-white"} %>
                 </p>
               </div>
               <div class="flex-shrink-0 text-base font-semibold text-gray-900 dark:text-white">
-                ¥100,000
+                <%= number_to_currency(@tax_return[:second_estimated_income_tax_prepayment], unit: "¥", precision: 0) %>
               </div>
             </div>
           </li>

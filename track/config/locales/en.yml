@@ -40,3 +40,8 @@ en:
       index: "FCD GL (USD/JPY)"
     import_files:
       index: "csv Import Results Page"
+    tax_returns:
+      items:
+        dc: "DC"
+        first_estimated_income_tax_prepayment: "first_estimated_income_tax_prepayment"
+        second_estimated_income_tax_prepayment: "second_estimated_income_tax_prepayment"

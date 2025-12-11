@@ -27,8 +27,14 @@ module TaxReturns
       supplies_national_pension_insurance_premium = base.where(ledger_item_id: LedgerItem::ID_NATIONAL_PENSION_INSURANCE_PREMIUM).sum(:recorded_amount)
       # 国民健康保険料
       national_health_insurance = base.where(ledger_item_id: LedgerItem::ID_NATIONAL_HEALTH_INSURANCE).sum(:recorded_amount)
+      # 確定拠出年金
+      dc = base.where(ledger_item_id: LedgerItem::ID_DC).sum(:recorded_amount)
       # 小規模共済
       small_business_mutual_aid = base.where(ledger_item_id: LedgerItem::ID_SMALL_BUSINESS_MUTUAL_AID).sum(:recorded_amount)
+      # 予定納税第1期
+      first_estimated_income_tax_prepayment = base.where(ledger_item_id: LedgerItem::ID_FIRST_ESTIMATED_INCOME_TAX_PREPAYMENT).sum(:recorded_amount)
+      # 予定納税第2期
+      second_estimated_income_tax_prepayment = base.where(ledger_item_id: LedgerItem::ID_SECOND_ESTIMATED_INCOME_TAX_PREPAYMENT).sum(:recorded_amount)
       {
         communication_expense: communication_expense,
         utility_costs: utility_costs,
@@ -36,7 +42,10 @@ module TaxReturns
         foreign_exchange_gain: foreign_exchange_gain,
         supplies_national_pension_insurance_premium: supplies_national_pension_insurance_premium,
         national_health_insurance: national_health_insurance,
-        small_business_mutual_aid: small_business_mutual_aid
+        dc: dc,
+        small_business_mutual_aid: small_business_mutual_aid,
+        first_estimated_income_tax_prepayment: first_estimated_income_tax_prepayment,
+        second_estimated_income_tax_prepayment: second_estimated_income_tax_prepayment
       }
     end
   end
