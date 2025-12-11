@@ -75,7 +75,7 @@ RSpec.describe Files::LedgerImportCsvRow do
       end
     end
   end
-  
+
   describe 'data_for_ledger' do
     context 'csvに記述されたnameのエラーを取得する' do
       it 'should get date.' do
