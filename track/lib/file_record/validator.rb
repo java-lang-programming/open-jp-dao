@@ -43,6 +43,27 @@ module FileRecord
       errors
     end
 
+    def validate_money_en(content:, col:, row_num:, field:, value:)
+      errors = []
+      # 必須チェック
+      validate_require(errors: errors, content: content, col: col, row_num: row_num, field: field, value: value)
+
+      if value.present?
+        normalized = value.to_s
+                          .delete(",")
+                          .gsub(/\A'|'?\Z/, "")
+
+        # 数値化できなければ後で validate が拾う
+        begin
+          Integer(normalized)
+        rescue ArgumentError, TypeError
+          message = "#{field}は数値、もしくはカンマ区切りの数値です。"
+          errors << error_data(row: row_num, col: col, attribute: field, value: value, message: message)
+        end
+      end
+      errors
+    end
+
     def validate_string(content:, col:, row_num:, field:, value:)
       errors = []
       # 必須チェック

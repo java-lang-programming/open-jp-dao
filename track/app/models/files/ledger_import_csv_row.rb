@@ -2,6 +2,10 @@ module Files
   class LedgerImportCsvRow
     include FileRecord::Validator
 
+    # そのうち外だし
+    # データがお金の円
+    TYPE_MONEY_EN = "money_en"
+
     attr_accessor :master, :row_num, :row, :preload
 
     def initialize(master:, row_num:, row:, preload: {})
@@ -26,6 +30,9 @@ module Files
           errors.concat(temp_errors) if temp_errors.present?
         when "string"
           temp_errors = validate_string(content: content, col: col, row_num: @row_num, field: field, value: @row[col - 1])
+          errors.concat(temp_errors) if temp_errors.present?
+        when TYPE_MONEY_EN
+          temp_errors = validate_money_en(content: content, col: col, row_num: @row_num, field: field, value: @row[col - 1])
           errors.concat(temp_errors) if temp_errors.present?
         when "bigdecimal"
           temp_errors = validate_bigdecimal(content: content, col: col, row_num: @row_num, field: field, value: @row[col - 1])
@@ -90,8 +97,9 @@ module Files
         return value
       end
 
-      if content.present? && content["type"] == "integer"
-        return value.to_i
+      if content.present? && content["type"] == TYPE_MONEY_EN
+        # 関数にする
+        return money_en_to_integer(value: value)
       end
 
       if content.present? && content["type"] == "bigdecimal" && value.present?
@@ -99,6 +107,15 @@ module Files
       end
 
       nil
+    end
+
+    # お金の円をintegerにする
+    def money_en_to_integer(value:)
+      normalized = value.to_s
+                        .delete(",")
+                        .gsub(/\A'|'?\Z/, "")
+
+      Integer(normalized)
     end
   end
 end

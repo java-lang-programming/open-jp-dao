@@ -12,6 +12,9 @@ RSpec.describe Files::LedgerImportCsvRow do
   let(:row_1) {
     [ '2025/01/06', '通信費', 'MFクラウド', '1848', nil, nil ]
   }
+  let(:row_1_comma_separated_face_value) {
+    [ '2025/01/06', '通信費', 'MFクラウド', '1,848', nil, nil ]
+  }
 
   describe 'ledger_item_col_index' do
     context 'ledger_itemのcol_indexを取得する' do
@@ -72,39 +75,45 @@ RSpec.describe Files::LedgerImportCsvRow do
       end
     end
   end
-
+  
   describe 'data_for_ledger' do
     context 'csvに記述されたnameのエラーを取得する' do
       it 'should get date.' do
-        ledger_item_1
         preload = { address: addresses_eth, ledger_items: LedgerItem.all }
         csv_row = Files::LedgerImportCsvRow.new(master: master, row_num: 1, row: row_1, preload: preload)
         expect(csv_row.data_for_ledger(field: "date")).to eq(Date.new(2025, 1, 6))
       end
 
       it 'should get name.' do
-        ledger_item_1
         preload = { address: addresses_eth, ledger_items: LedgerItem.all }
         csv_row = Files::LedgerImportCsvRow.new(master: master, row_num: 1, row: row_1, preload: preload)
         expect(csv_row.data_for_ledger(field: "name")).to eq('MFクラウド')
       end
 
-      it 'should get face_value.' do
-        ledger_item_1
-        preload = { address: addresses_eth, ledger_items: LedgerItem.all }
-        csv_row = Files::LedgerImportCsvRow.new(master: master, row_num: 1, row: row_1, preload: preload)
-        expect(csv_row.data_for_ledger(field: "face_value")).to eq(1848)
+      context 'when face_value' do
+        # カンマなしface_value
+        it 'should get face_value.' do
+          preload = { address: addresses_eth, ledger_items: LedgerItem.all }
+          csv_row = Files::LedgerImportCsvRow.new(master: master, row_num: 1, row: row_1, preload: preload)
+          expect(csv_row.data_for_ledger(field: "face_value")).to eq(1848)
+        end
+
+        # カンマありface_value
+        it 'should get face_value.' do
+          preload = { address: addresses_eth, ledger_items: LedgerItem.all }
+          csv_row = Files::LedgerImportCsvRow.new(master: master, row_num: 1, row: row_1_comma_separated_face_value, preload: preload)
+          expect(csv_row.data_for_ledger(field: "face_value")).to eq(1848)
+        end
       end
 
+
       it 'should get proportion_rate.' do
-        ledger_item_1
         preload = { address: addresses_eth, ledger_items: LedgerItem.all }
         csv_row = Files::LedgerImportCsvRow.new(master: master, row_num: 1, row: row_1, preload: preload)
         expect(csv_row.data_for_ledger(field: "proportion_rate")).to be nil
       end
 
       it 'should get proportion_amount.' do
-        ledger_item_1
         preload = { address: addresses_eth, ledger_items: LedgerItem.all }
         csv_row = Files::LedgerImportCsvRow.new(master: master, row_num: 1, row: row_1, preload: preload)
         expect(csv_row.data_for_ledger(field: "proportion_amount")).to be nil
