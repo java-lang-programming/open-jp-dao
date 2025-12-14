@@ -35,6 +35,12 @@ module TaxReturns
       first_estimated_income_tax_prepayment = base.where(ledger_item_id: LedgerItem::ID_FIRST_ESTIMATED_INCOME_TAX_PREPAYMENT).sum(:recorded_amount)
       # 予定納税第2期
       second_estimated_income_tax_prepayment = base.where(ledger_item_id: LedgerItem::ID_SECOND_ESTIMATED_INCOME_TAX_PREPAYMENT).sum(:recorded_amount)
+      # 雑収入
+      miscellaneous_income = base.where(ledger_item_id: LedgerItem::ID_MISCELLANEOUS_INCOME).sum(:recorded_amount)
+      # 売上高
+      sales = base.where(ledger_item_id: LedgerItem::ID_SALES).sum(:recorded_amount)
+      # 総額
+      total = miscellaneous_income + sales
       {
         communication_expense: communication_expense,
         utility_costs: utility_costs,
@@ -45,7 +51,10 @@ module TaxReturns
         dc: dc,
         small_business_mutual_aid: small_business_mutual_aid,
         first_estimated_income_tax_prepayment: first_estimated_income_tax_prepayment,
-        second_estimated_income_tax_prepayment: second_estimated_income_tax_prepayment
+        second_estimated_income_tax_prepayment: second_estimated_income_tax_prepayment,
+        miscellaneous_income: miscellaneous_income,
+        sales: sales,
+        total: total
       }
     end
   end

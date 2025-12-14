@@ -1,11 +1,16 @@
 
 module FileUploads
   class DollarYenTransactionDepositCsv
+    include FileRecord::Header
+
     attr_accessor :file
 
     def initialize(address:, file:)
       @address = address
       @file = file
+      @master = FileUploads::GenerateMaster.new(
+        kind: FileUploads::GenerateMaster::DOLLAR_YEN_TRANSACTION_YAML
+      ).master
       @csvs = []
     end
 
@@ -13,6 +18,13 @@ module FileUploads
     # csvのデータにエラーがある
     # ユニークキー
     def validation_errors
+      header_errors = validate_header_fields(
+        file_path: @file.tempfile.path,
+        master: @master
+      )
+      # headerがダメならこの時点でエラーを返す
+      return header_errors if header_errors.present?
+
       csv_errors = []
       unique_key_hash = {}
       preload_records =  { address: @address, transaction_types: TransactionType.where(address_id: @address.id) }

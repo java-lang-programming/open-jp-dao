@@ -12,7 +12,7 @@ RSpec.describe FileUploads::Ledgers::File, type: :feature do
 
 
   describe 'validate_header_fileds' do
-    let(:ledger_csv_header_sample_path) { fixture_file_upload("#{Rails.root}/spec/files/uploads/ledger_csv/ledger_csv_header_sample.csv") }
+    let(:ledger_csv_header_path) { fixture_file_upload("#{Rails.root}/spec/files/uploads/ledger_csv/header.csv") }
     # ヘッダーの属性数が多い
     let(:ledger_csv_many_header_sample_path) { fixture_file_upload("#{Rails.root}/spec/files/uploads/ledger_csv/ledger_csv_many_header_sample.csv") }
     # ヘッダーの属性数が不足
@@ -78,7 +78,7 @@ RSpec.describe FileUploads::Ledgers::File, type: :feature do
 
     context 'ヘッダーが正常' do
       it "should be empty array when success" do
-        csv = FileUploads::Ledgers::File.new(address: addresses_eth, file: ledger_csv_header_sample_path)
+        csv = FileUploads::Ledgers::File.new(address: addresses_eth, file: ledger_csv_header_path)
         expect(csv.validate_headers).to eq([])
       end
     end

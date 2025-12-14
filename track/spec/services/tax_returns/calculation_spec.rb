@@ -40,7 +40,10 @@ RSpec.describe TaxReturns::Calculation do
            dc: 0,
            small_business_mutual_aid: 0,
            first_estimated_income_tax_prepayment: 0,
-           second_estimated_income_tax_prepayment: 0
+           second_estimated_income_tax_prepayment: 0,
+           miscellaneous_income: 0,
+           sales: 0,
+           total: 0
         })
       end
     end

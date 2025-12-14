@@ -11,6 +11,10 @@ class LedgerItem < ApplicationRecord
   ID_FIRST_ESTIMATED_INCOME_TAX_PREPAYMENT = 10
   # 予定納税第2期
   ID_SECOND_ESTIMATED_INCOME_TAX_PREPAYMENT = 11
+  # 雑収入
+  ID_MISCELLANEOUS_INCOME = 12
+  # 売上高
+  ID_SALES = 13
 
   enum :kind, { account_item: 1, drawings: 2 }
 end
