@@ -11,14 +11,37 @@ RSpec.describe FileUploads::DollarYenTransactionDepositCsv, type: :feature do
     let(:dollar_yen_transaction1) { create(:dollar_yen_transaction1, transaction_type: transaction_type1, address: addresses_eth) }
     let(:dollar_yen_transaction2) { create(:dollar_yen_transaction2, transaction_type: transaction_type1, address: addresses_eth) }
     let(:dollar_yen_transaction3) { create(:dollar_yen_transaction3, transaction_type: transaction_type1, address: addresses_eth) }
-    let(:error_deposit_csv_path) { "#{Rails.root}/spec/files/uploads/dollar_yen_transaction_deposit_csv/error_deposit.csv" }
-    let(:deposit_csv_path) { "#{Rails.root}/spec/files/uploads/dollar_yen_transaction_deposit_csv/deposit_csv.csv" }
+    let(:error_deposit_csv_path) {
+      fixture_file_upload("#{Rails.root}/spec/files/uploads/dollar_yen_transaction_csv/errors.csv")
+    }
+    let(:ledger_2025_1_6_csv_path) {
+      fixture_file_upload("#{Rails.root}/spec/files/uploads/ledger_csv/2025_1_6.csv")
+    }
     let(:deposit_three_csv_path) { "#{Rails.root}/spec/files/uploads/dollar_yen_transaction_deposit_csv/deposit_three_csv.csv" }
     let(:deposit_and_withdrawal_csv_path) { "#{Rails.root}/spec/files/uploads/dollar_yen_transaction_deposit_csv/deposit_and_withdrawal.csv" }
 
     context 'validation_errors' do
-      it 'should get validation_errors.' do
+      before do
         transaction_type1
+      end
+
+      # headerがエラーの場合はheaderのエラーだけ返す
+      it 'should get header_errors.' do
+        service = FileUploads::DollarYenTransactionDepositCsv.new(address: addresses_eth, file: ledger_2025_1_6_csv_path)
+        expect(service.validation_errors).to eq(
+          {
+            errors: [
+              { row: 1, col: 2, attribute: "transaction_type", value: "ledger_item", message: "ヘッダの属性名が不正です。正しい属性名はtransaction_typeです。" },
+              { row: 1, col: 3, attribute: "deposit_quantity", value: "name", message: "ヘッダの属性名が不正です。正しい属性名はdeposit_quantityです。" },
+              { row: 1, col: 4, attribute: "deposit_rate", value: "face_value", message: "ヘッダの属性名が不正です。正しい属性名はdeposit_rateです。" },
+              { row: 1, col: 5, attribute: "withdrawal_quantity", value: "proportion_rate", message: "ヘッダの属性名が不正です。正しい属性名はwithdrawal_quantityです。" },
+              { row: 1, col: 6, attribute: "exchange_en", value: "proportion_amount", message: "ヘッダの属性名が不正です。正しい属性名はexchange_enです。" }
+            ]
+          }
+        )
+      end
+
+      it 'should get validation_errors.' do
         service = FileUploads::DollarYenTransactionDepositCsv.new(address: addresses_eth, file: error_deposit_csv_path)
         expect(service.validation_errors).to eq([
           { msg: [ "2行目のdateが入力されていません" ] },

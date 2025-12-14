@@ -31,12 +31,20 @@
           <li class="py-3 sm:py-4">
             <div class="flex items-center justify-between space-x-4 rtl:space-x-reverse">
               <div class="flex-1 min-w-0">
-                <a href="./leaders?account_item_id=1" class="block text-sm font-medium text-gray-900 truncate dark:text-white">
-                  雑所得
-                </a>
+                <%= link_to t('views.tax_returns.items.miscellaneous_income'), ledgers_path(ledger_item_id: LedgerItem::ID_MISCELLANEOUS_INCOME), {class: "block text-sm font-medium text-gray-900 truncate dark:text-white"} %>
               </div>
               <div class="flex-shrink-0 text-base font-semibold text-gray-900 dark:text-white">
-                ¥10,000
+                <%= number_to_currency(@tax_return[:miscellaneous_income], unit: "¥", precision: 0) %>
+              </div>
+            </div>
+          </li>
+          <li class="py-3 sm:py-4">
+            <div class="flex items-center justify-between space-x-4 rtl:space-x-reverse">
+              <div class="flex-1 min-w-0">
+                <%= link_to t('views.tax_returns.items.sales'), ledgers_path(ledger_item_id: LedgerItem::ID_SALES), {class: "block text-sm font-medium text-gray-900 truncate dark:text-white"} %>
+              </div>
+              <div class="flex-shrink-0 text-base font-semibold text-gray-900 dark:text-white">
+                <%= number_to_currency(@tax_return[:sales], unit: "¥", precision: 0) %>
               </div>
             </div>
           </li>

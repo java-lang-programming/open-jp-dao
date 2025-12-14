@@ -88,8 +88,16 @@ FactoryBot.define do
   end
 
   factory :ledger_item_12, class: LedgerItem do
-    id { 12 }
+    id { LedgerItem::ID_MISCELLANEOUS_INCOME }
     name { "雑収入" }
+    kind { LedgerItem.kinds[:drawings] }
+    summary {  }
+    deleted_at { }
+  end
+
+  factory :ledger_item_13, class: LedgerItem do
+    id { LedgerItem::ID_SALES }
+    name { "売上高 " }
     kind { LedgerItem.kinds[:drawings] }
     summary {  }
     deleted_at { }

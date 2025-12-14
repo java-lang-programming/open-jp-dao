@@ -1,0 +1,14 @@
+---
+# csvのフィールド(header)を記載
+fields:
+  - date
+  - transaction_type
+  - deposit_quantity
+  - deposit_rate
+  - withdrawal_quantity
+  - exchange_en
+date:
+  type: date
+  options:
+    format: yyyy/mm/dd
+  require: true

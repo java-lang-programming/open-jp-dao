@@ -45,3 +45,5 @@ en:
         dc: "DC"
         first_estimated_income_tax_prepayment: "first_estimated_income_tax_prepayment"
         second_estimated_income_tax_prepayment: "second_estimated_income_tax_prepayment"
+        miscellaneous_income: "miscellaneous_income"
+        sales: 'sales'

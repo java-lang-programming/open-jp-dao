@@ -28,6 +28,8 @@ FactoryBot.create(:ledger_item_8)
 FactoryBot.create(:ledger_item_9)
 FactoryBot.create(:ledger_item_10)
 FactoryBot.create(:ledger_item_11)
+FactoryBot.create(:ledger_item_12)
+FactoryBot.create(:ledger_item_13)
 
 puts "仕訳項目マスタ作成終了"
 
