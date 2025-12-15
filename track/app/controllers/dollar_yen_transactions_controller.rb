@@ -326,14 +326,10 @@ class DollarYenTransactionsController < ApplicationViewController
 
     service = FileUploads::DollarYenTransactionDepositCsv.new(address: address, file: file)
     errors = service.validation_errors
-    puts errors.inspect
     if errors.present?
       # これに移行する
-      # flash[:errors] = errors
-      # render :csv_upload
-      # return
-      redirect_to csv_upload_dollar_yen_transactions_path, flash: { errors: errors }
-      # render json: { errors: errors }, status: :bad_request
+      flash[:errors] = errors
+      render :csv_import
       return
     end
 
