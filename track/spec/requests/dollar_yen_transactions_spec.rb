@@ -1,9 +1,11 @@
 require 'rails_helper'
 
-RSpec.describe "DollarYenTransactions", type: :request do
-  describe "GET /index" do
-    let(:addresses_eth) { create(:addresses_eth) }
+RSpec.describe DollarYenTransactionsController, type: :request do
+  include ActiveJob::TestHelper
 
+  let(:addresses_eth) { create(:addresses_eth) }
+
+  describe "GET /index" do
     context 'failure' do
       # セッションなし
       it "returns not_found_session.html.erb when session is not found." do
@@ -66,8 +68,6 @@ RSpec.describe "DollarYenTransactions", type: :request do
   end
 
   describe "GET /new" do
-    let(:addresses_eth) { create(:addresses_eth) }
-
     context 'success' do
       before do
         # sigin処理
@@ -105,7 +105,6 @@ RSpec.describe "DollarYenTransactions", type: :request do
   end
 
   describe "POST /create_confirmation" do
-    let(:addresses_eth) { create(:addresses_eth) }
     let(:transaction_type1) { create(:transaction_type1, address: addresses_eth) }
     let(:dollar_yen_transaction1) { create(:dollar_yen_transaction1, transaction_type: transaction_type1, address: addresses_eth) }
     let(:dollar_yen_transaction2) { create(:dollar_yen_transaction2, transaction_type: transaction_type1, address: addresses_eth) }
@@ -168,7 +167,6 @@ RSpec.describe "DollarYenTransactions", type: :request do
   end
 
   describe "POST /create" do
-    let(:addresses_eth) { create(:addresses_eth) }
     let(:transaction_type1) { create(:transaction_type1, address: addresses_eth) }
     let(:dollar_yen_transaction1) { create(:dollar_yen_transaction1, transaction_type: transaction_type1, address: addresses_eth) }
     let(:dollar_yen_transaction2) { create(:dollar_yen_transaction2, transaction_type: transaction_type1, address: addresses_eth) }
@@ -202,7 +200,6 @@ RSpec.describe "DollarYenTransactions", type: :request do
 
 
   describe "get /edit" do
-    let(:addresses_eth) { create(:addresses_eth) }
     let(:transaction_type1) { create(:transaction_type1, address: addresses_eth) }
     let(:dollar_yen_transaction1) { create(:dollar_yen_transaction1, transaction_type: transaction_type1, address: addresses_eth) }
 
@@ -295,7 +292,6 @@ RSpec.describe "DollarYenTransactions", type: :request do
   end
 
   describe "put /update" do
-    let(:addresses_eth) { create(:addresses_eth) }
     let(:transaction_type1) { create(:transaction_type1, address: addresses_eth) }
     let(:dollar_yen_transaction1) { create(:dollar_yen_transaction1, transaction_type: transaction_type1, address: addresses_eth) }
     let(:dollar_yen_transaction2) { create(:dollar_yen_transaction2, transaction_type: transaction_type1, address: addresses_eth) }
@@ -329,7 +325,6 @@ RSpec.describe "DollarYenTransactions", type: :request do
 
   # TODO methodをdeleteに変更
   describe "delete /delete_confirmation" do
-    let(:addresses_eth) { create(:addresses_eth) }
     let(:transaction_type1) { create(:transaction_type1, address: addresses_eth) }
     let(:dollar_yen_transaction1) { create(:dollar_yen_transaction1, transaction_type: transaction_type1, address: addresses_eth) }
     let(:dollar_yen_transaction2) { create(:dollar_yen_transaction2, transaction_type: transaction_type1, address: addresses_eth) }
@@ -373,7 +368,6 @@ RSpec.describe "DollarYenTransactions", type: :request do
   end
 
   describe "delete /destroy" do
-    let(:addresses_eth) { create(:addresses_eth) }
     let(:transaction_type1) { create(:transaction_type1, address: addresses_eth) }
     let(:dollar_yen_transaction1) { create(:dollar_yen_transaction1, transaction_type: transaction_type1, address: addresses_eth) }
     let(:dollar_yen_transaction2) { create(:dollar_yen_transaction2, transaction_type: transaction_type1, address: addresses_eth) }
@@ -414,11 +408,9 @@ RSpec.describe "DollarYenTransactions", type: :request do
   end
 
   describe "get /foreign_exchange_gain" do
-    let(:addresses_eth) { create(:addresses_eth) }
     let(:transaction_type5) { create(:transaction_type5, address: addresses_eth) }
     let(:dollar_yen_transaction44) { create(:dollar_yen_transaction44, transaction_type: transaction_type5, address: addresses_eth) }
     let(:dollar_yen_transaction51) { create(:dollar_yen_transaction51, transaction_type: transaction_type5, address: addresses_eth) }
-
 
     context 'success' do
       before do
@@ -453,6 +445,105 @@ RSpec.describe "DollarYenTransactions", type: :request do
         expect(body).to include '全2件'
         expect(body).to include dollar_yen_transaction44.date.strftime("%Y/%m/%d")
         expect(body).to include dollar_yen_transaction51.date.strftime("%Y/%m/%d")
+      end
+    end
+  end
+
+  describe "get /dollar_yen_transactions/csv_upload" do
+    before do
+      # sigin処理
+      mock_apis_verify(body: {})
+      mock_apis_ens(
+        status: 200,
+        body: { ens_name: "test.eth" }
+      )
+      get apis_sessions_nonce_path
+      post apis_sessions_signin_path, params: { address: addresses_eth.address, kind: Address.kinds[:ethereum], chain_id: 1, message: "message", signature: "signature", domain: "aiueo.com" }
+    end
+
+    # データなしの場合はリダイレクト
+    it "should be redirect." do
+      get csv_upload_dollar_yen_transactions_path
+      expect(response.status).to eq(200)
+    end
+  end
+
+  describe "get /dollar_yen_transactions/csv_upload" do
+    # TODO ここは共通化したい
+
+    let(:params) {
+      {
+        import_file: {
+          file: file
+        }
+      }
+    }
+
+    let(:file) { nil }
+
+    before do
+      # sigin処理
+      mock_apis_verify(body: {})
+      mock_apis_ens(
+        status: 200,
+        body: { ens_name: "test.eth" }
+      )
+      get apis_sessions_nonce_path
+      post apis_sessions_signin_path, params: { address: addresses_eth.address, kind: Address.kinds[:ethereum], chain_id: 1, message: "message", signature: "signature", domain: "aiueo.com" }
+    end
+
+    # データなしの場合はリダイレクト
+    it "should be redirect." do
+      post csv_import_dollar_yen_transactions_path, params: params
+
+      expect(response).to redirect_to(csv_upload_dollar_yen_transactions_path)
+
+      # flashを有効に
+      follow_redirect!
+
+      expect(flash[:errors]).to eq(
+         [ "uploadファイルが存在しません。ファイルを選択ボタンからファイルを選択してください" ]
+      )
+    end
+
+    # headerが間違っている
+    context 'when header is wrong' do
+      let(:ledger_csv_header_path) { "#{Rails.root}/spec/files/uploads/ledger_csv/header.csv" }
+      let(:file) { fixture_file_upload(ledger_csv_header_path, 'text/csv') }
+
+      it "should be errors." do
+        post csv_import_dollar_yen_transactions_path, params: params
+
+        expect(flash[:errors]).to eq(
+          errors: [
+            { row: 1, col: 2, attribute: "transaction_type", value: "ledger_item", message: "ヘッダの属性名が不正です。正しい属性名はtransaction_typeです。" },
+            { row: 1, col: 3, attribute: "deposit_quantity", value: "name", message: "ヘッダの属性名が不正です。正しい属性名はdeposit_quantityです。" },
+            { row: 1, col: 4, attribute: "deposit_rate", value: "face_value", message: "ヘッダの属性名が不正です。正しい属性名はdeposit_rateです。" },
+            { row: 1, col: 5, attribute: "withdrawal_quantity", value: "proportion_rate", message: "ヘッダの属性名が不正です。正しい属性名はwithdrawal_quantityです。" },
+            { row: 1, col: 6, attribute: "exchange_en", value: "proportion_amount", message: "ヘッダの属性名が不正です。正しい属性名はexchange_enです。" }
+          ]
+        )
+        expect(response).to have_http_status(:ok)
+      end
+    end
+
+    context 'when success.' do
+      let(:transaction_type1) { create(:transaction_type1, address: addresses_eth) }
+      let(:transaction_type2) { create(:transaction_type2, address: addresses_eth) }
+      let(:job_2) { create(:job_2) }
+      let(:deposit_series_csv_path) { "#{Rails.root}/spec/files/uploads/dollar_yen_transaction_deposit_csv/deposit_series_csv.csv" }
+      let(:file) { fixture_file_upload(deposit_series_csv_path, 'text/csv') }
+
+      before do
+        transaction_type1
+        transaction_type2
+        job_2
+      end
+
+      it "should be success." do
+        expect {
+          post csv_import_dollar_yen_transactions_path, params: params
+        }.to have_enqueued_job(DollarYenTransactionsCsvImportJob)
       end
     end
   end
