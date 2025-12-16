@@ -136,4 +136,23 @@ RSpec.describe Files::LedgerImportCsvRow do
       end
     end
   end
+
+  describe 'to_upsert_all_ledger' do
+    context 'upsert_allを実行するためのhashを取得する' do
+      it 'should get hashed data.' do
+        ledger_item_1
+        preload = { address: addresses_eth, ledger_items: LedgerItem.all }
+        csv_row = Files::LedgerImportCsvRow.new(master: master, row_num: 1, row: row_1, preload: preload)
+        hash = csv_row.to_upsert_all_ledger
+        expect(hash[:date]).to eq(Date.new(2025, 1, 6))
+        expect(hash[:name]).to eq('MFクラウド')
+        expect(hash[:ledger_item_id]).to eq(ledger_item_1.id)
+        expect(hash[:face_value]).to eq(1848)
+        expect(hash[:proportion_rate]).to be nil
+        expect(hash[:proportion_amount]).to be nil
+        expect(hash[:recorded_amount]).to eq(1848)
+        expect(hash[:address_id]).to eq(addresses_eth.id)
+      end
+    end
+  end
 end

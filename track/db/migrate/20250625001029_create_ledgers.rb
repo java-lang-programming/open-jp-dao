@@ -12,5 +12,9 @@ class CreateLedgers < ActiveRecord::Migration[8.0]
 
       t.timestamps
     end
+    add_index :ledgers,
+              [ :date, :name, :ledger_item_id ],
+              unique: true,
+              name: 'index_ledgers_unique_date_item_name'
   end
 end

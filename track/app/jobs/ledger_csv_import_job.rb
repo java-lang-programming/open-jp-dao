@@ -26,7 +26,7 @@ class LedgerCsvImportJob < ApplicationJob
       ledgers = ledger_import_file.generate_ledgers
 
       # bulk insert
-      Ledger.import ledgers, validate: false
+      Ledger.upsert_all ledgers, unique_by: %i[date name ledger_item_id]
 
       # ステータスを成功
       import_file.status = :completed

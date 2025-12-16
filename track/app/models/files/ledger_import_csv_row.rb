@@ -83,6 +83,21 @@ module Files
       ledger
     end
 
+    # upsert_allを実行するためのhashに変更
+    def to_upsert_all_ledger
+      ledger = to_ledger
+      {
+        address_id: ledger.address.id,
+        date: data_for_ledger(field: "date"),
+        name: ledger.name,
+        ledger_item_id: ledger.ledger_item.id,
+        face_value: ledger.face_value,
+        proportion_rate: ledger.proportion_rate,
+        proportion_amount: ledger.proportion_amount,
+        recorded_amount: ledger.recorded_amount
+      }
+    end
+
     # ledgerオブジェクトのためのデータを取得
     def data_for_ledger(field: "")
       field_col_index = @master[FileUploads::GenerateMaster::LEDGER_YAML_FIELDS].index(field)
