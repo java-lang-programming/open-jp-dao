@@ -25,8 +25,6 @@ RSpec.describe LedgerCsvImportJob, type: :job do
 
       expect(addresses_eth.import_files.first.status).to eq('failure')
       expect(addresses_eth.ledgers.size).to eq(0)
-      # 削除が呼ばれたことを確認
-      # TODO エラーメッセージの保存
     end
   end
 
@@ -54,6 +52,42 @@ RSpec.describe LedgerCsvImportJob, type: :job do
       expect(ledgers[12].recorded_amount).to eq(2360)
       expect(ledgers[18].recorded_amount).to eq(3854)
       expect(ledgers[24].recorded_amount).to eq(9148)
+    end
+
+    context '2回実行した場合はupdate' do
+      it 'should be success.'  do
+        csv = FileUploads::Ledgers::File.new(address: addresses_eth, file: ledger_2025_1_6_path)
+        import_file = csv.create_import_file
+        LedgerCsvImportJob.perform_now(import_file_id: import_file.id)
+
+        # 1回目(新規)
+        expect(addresses_eth.import_files.size).to eq(1)
+        expect(addresses_eth.import_files.first.status).to eq('completed')
+        expect(addresses_eth.ledgers.size).to eq(25)
+
+        ledgers = addresses_eth.ledgers.order(:id)
+        expect(ledgers[0].recorded_amount).to eq(1848)
+        expect(ledgers[6].recorded_amount).to eq(1866)
+        expect(ledgers[12].recorded_amount).to eq(2360)
+        expect(ledgers[18].recorded_amount).to eq(3854)
+        expect(ledgers[24].recorded_amount).to eq(9148)
+
+        csv2nd = FileUploads::Ledgers::File.new(address: addresses_eth, file: ledger_2025_1_6_path)
+        import_file = csv2nd.create_import_file
+        LedgerCsvImportJob.perform_now(import_file_id: import_file.id)
+
+        # 2回目(更新)
+        expect(addresses_eth.import_files.size).to eq(2)
+        expect(addresses_eth.import_files.last.status).to eq('completed')
+        expect(addresses_eth.ledgers.size).to eq(25)
+
+        ledgers = addresses_eth.ledgers.order(:id)
+        expect(ledgers[0].recorded_amount).to eq(1848)
+        expect(ledgers[6].recorded_amount).to eq(1866)
+        expect(ledgers[12].recorded_amount).to eq(2360)
+        expect(ledgers[18].recorded_amount).to eq(3854)
+        expect(ledgers[24].recorded_amount).to eq(9148)
+      end
     end
   end
 end
