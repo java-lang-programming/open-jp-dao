@@ -1,1 +1,1 @@
-export const ApiBaseUrl = "http://localhost:3000"
+export const ApiBaseUrl = process.env.NEXT_PUBLIC_API_URL
