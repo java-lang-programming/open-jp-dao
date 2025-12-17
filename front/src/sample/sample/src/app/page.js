@@ -25,6 +25,7 @@ export default function Home() {
   const router = useRouter();
 
   // 複数ロード
+  // これはready, loading, success, failureにする方が良い
   const [walletLoad, setWalletLoad] = useState(false);
   const [walletProcessing, setWalletProcessing] = useState(false);
   const [signin, setSignin] = useState(false);
@@ -169,8 +170,6 @@ export default function Home() {
     window.addEventListener("eip6963:announceProvider", onAnnouncement);
     // これでannounceProviderを呼び出す
     window.dispatchEvent(new Event("eip6963:requestProvider"));
-    // remove
-    window.removeEventListener("eip6963:announceProvider", onAnnouncement);
 
     // ---- Solana (Phantom) detection ----
     if ("solana" in window) {
@@ -179,6 +178,15 @@ export default function Home() {
         providers.solana = solana;
       }
     }
+
+    // 待機時間（重要）
+    setTimeout(function () {
+      // remove
+      window.removeEventListener(
+        "eip6963:announceProvider",
+        onAnnouncement
+      );
+    }, 1500);
 
     return providers;
   }
