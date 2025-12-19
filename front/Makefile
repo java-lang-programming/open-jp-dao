@@ -18,3 +18,5 @@ dc_stop: ## Docker環境の停止
 	docker-compose -f .devcontainer/compose.yaml stop
 dc_in: ## Docker環境を立ち上げた後にコンテナの中に入る
 	docker exec -it open-dao-front-dev /bin/sh
+build_prod: ## 本番用のコンテナをbuildする
+	docker build -t front-prod:latest .
