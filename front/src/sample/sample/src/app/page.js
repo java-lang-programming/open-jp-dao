@@ -8,7 +8,6 @@ import Link from 'next/link';
 import "./login.css";
 import Constants from "./models/errors";
 import { postSessionsSignin } from "./repo/sessions";
-import MetamaskSignin from "./components/matamask_signin";
 import Eip6963Loading from "./components/sessions/eip6963_loading";
 import SigninLoading from "./components/sessions/signin_loading";
 import MetamaskNotFound from "./components/sessions/metamask_not_found";
@@ -244,7 +243,7 @@ export default function Home() {
                   <div>
                   {
                     walletProcessing === false && errors.length > 0 && errors.map((e) => (
-                      <div className="login_error">
+                      <div key={e.code} className="login_error">
                         <p>{e.msg}</p>
                       </div>
                     ))
