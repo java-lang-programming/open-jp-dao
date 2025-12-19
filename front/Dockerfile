@@ -37,7 +37,7 @@ COPY --from=node_builder /usr/src/app/package.json ./
 COPY --from=node_builder /usr/src/app/node_modules ./node_modules
 COPY --from=node_builder /usr/src/app/.next ./.next
 COPY --from=node_builder /usr/src/app/public ./public
-COPY --from=node_builder /usr/src/app/next.config.js ./next.config.js
+COPY --from=node_builder /usr/src/app/next.config.mjs ./next.config.mjs
 
 EXPOSE 3000
 CMD ["pnpm", "start"]
