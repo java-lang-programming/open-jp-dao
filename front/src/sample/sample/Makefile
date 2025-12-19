@@ -14,5 +14,5 @@ dev: ## 立ち上げる
 	pnpm dev
 lint: ## build前までに修正
 	pnpm lint
-typecheck:
-	pnpm lint
+build: ## build
+	pnpm build
