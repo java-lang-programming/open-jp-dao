@@ -4,31 +4,49 @@
 # docker build -t my-app .
 # docker run -d -p 80:80 -p 443:443 --name my-app -e RAILS_MASTER_KEY=<value from config/master.key> my-app
 
+# =========================
+# 1. runtime base
+# =========================
 # Make sure RUBY_VERSION matches the Ruby version in .ruby-version
-ARG RUBY_VERSION=3.3.4
-FROM docker.io/library/ruby:$RUBY_VERSION-slim AS base
+ARG RUBY_VERSION=3.4.7
+FROM ruby:$RUBY_VERSION-slim AS runtime
 
 # Rails app lives here
 WORKDIR /rails
 
-# Install base packages
+#      libffi8 \
+#      libsodium23 \
+# Install base packages needed to build gems
 RUN apt-get update -qq && \
-    apt-get install --no-install-recommends -y curl libjemalloc2 libvips sqlite3 && \
-    rm -rf /var/lib/apt/lists /var/cache/apt/archives
+    apt-get install --no-install-recommends -y \
+      libjemalloc2 \
+      libvips \
+      sqlite3 \
+    && rm -rf /var/lib/apt/lists/* /var/cache/apt/archives
 
 # Set production environment
 ENV RAILS_ENV="production" \
+    SOLID_QUEUE_IN_PUMA="1" \
     BUNDLE_DEPLOYMENT="1" \
     BUNDLE_PATH="/usr/local/bundle" \
-    BUNDLE_WITHOUT="development"
+    BUNDLE_WITHOUT="development test" \
+    LANG="C.UTF-8" \
+    RUBYOPT="--yjit"
 
+# =========================
+# 2. build stage
+# =========================
 # Throw-away build stage to reduce size of final image
-FROM base AS build
+FROM runtime AS rails_build
 
-# Install packages needed to build gems
 RUN apt-get update -qq && \
-    apt-get install --no-install-recommends -y build-essential git pkg-config && \
-    rm -rf /var/lib/apt/lists /var/cache/apt/archives
+    apt-get install --no-install-recommends -y \
+    build-essential \
+    libyaml-dev \
+    libffi-dev \
+    libsodium-dev \
+    libsqlite3-dev \
+    pkg-config
 
 # Install application gems
 COPY Gemfile Gemfile.lock ./
@@ -43,14 +61,15 @@ COPY . .
 RUN bundle exec bootsnap precompile app/ lib/
 
 
-
-
+# =========================
+# 3. Production stage
+# =========================
 # Final stage for app image
-FROM base
+FROM runtime
 
 # Copy built artifacts: gems, application
-COPY --from=build "${BUNDLE_PATH}" "${BUNDLE_PATH}"
-COPY --from=build /rails /rails
+COPY --from=rails_build "${BUNDLE_PATH}" "${BUNDLE_PATH}"
+COPY --from=rails_build /rails /rails
 
 # Run and own only the runtime files as a non-root user for security
 RUN groupadd --system --gid 1000 rails && \
@@ -59,8 +78,8 @@ RUN groupadd --system --gid 1000 rails && \
 USER 1000:1000
 
 # Entrypoint prepares the database.
-ENTRYPOINT ["/rails/bin/docker-entrypoint"]
+# ENTRYPOINT ["/rails/bin/docker-entrypoint"]
 
 # Start the server by default, this can be overwritten at runtime
 EXPOSE 3000
-CMD ["./bin/rails", "server"]
+CMD ["./bin/rails", "server", "-b", "0.0.0.0"]
