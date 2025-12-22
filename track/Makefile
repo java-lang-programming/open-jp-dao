@@ -96,3 +96,17 @@ sqlite3_queue: ## queueのchmod
 	chmod 777 storage/development_queue.sqlite3
 local_ci: ## local ci
 	bin/ci
+## 本番コンテナ作業 ##
+build_prod: ## 本番用のコンテナをbuildする
+	docker build -t backend-prod:latest .
+make_chown: ## sqliteを配置するフォルダに権限設定
+	sudo chown -R 1000:1000 /Users/hoge/workplace/open-jp-dao/db
+	sudo chown -R 1000:1000 /Users/hoge/workplace/open-jp-dao/storage
+reset_prod: ## 本番用のコンテナでrestする
+	docker run --rm -v /Users/hoge/workplace/open-jp-dao/storage:/rails/storage -e RAILS_ENV=production -e RAILS_MASTER_KEY=hoge backend-prod bin/rails db:prepare
+run_prod: ## 本番用のコンテナをdocker runする
+	docker run -p 3000:3000 --name backend-prod -v /Users/hoge/workplace/open-jp-dao/storage:/rails/storage -e RAILS_MASTER_KEY=hoge backend-prod:latest
+stop_prod: ## 本番用のコンテナを停止する
+	docker stop backend-prod
+rm_prod: ## 本番用のコンテナを削除する
+	docker rm -f backend-prod
