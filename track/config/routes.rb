@@ -54,6 +54,7 @@ Rails.application.routes.draw do
   end
 
   resources :settings, only: [ :index ]
+  resources :help, only: [ :index ]
 
   # v2
   resources :ledgers do

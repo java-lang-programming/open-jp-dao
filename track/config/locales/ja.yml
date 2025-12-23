@@ -63,6 +63,9 @@ ja:
         exchange: "為替差損益"
         ledger: "ドル円外貨預金元帳"
         type: "取引種別"
+  footer:
+    nav:
+      help: "ヘルプ"
   views:
     dollar_yen_transactions:
       index: "ドル円外貨預金元帳"

@@ -35,6 +35,9 @@ en:
         exchange: "FX Gain/Loss"
         ledger: "FCD GL (USD/JPY)"
         type: "Trade Type"
+  footer:
+    nav:
+      help: "Help"
   views:
     dollar_yen_transactions:
       index: "FCD GL (USD/JPY)"
