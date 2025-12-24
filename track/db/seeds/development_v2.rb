@@ -38,3 +38,9 @@ puts "Job作成開始"
 FactoryBot.create(:job_3)
 
 puts "Job作成終了"
+
+puts "外部サービス作成開始"
+
+FactoryBot.create(:external_service)
+
+puts "外部サービス作成終了"

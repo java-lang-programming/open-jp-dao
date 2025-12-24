@@ -42,9 +42,19 @@ Rails.application.routes.draw do
       get "csv_upload"
       post "csv_import"
       post "create_confirmation"
-      # post "edit_confirmation"
+      # module を指定することで DollarYenTransactions::CsvCoordinationsController を呼び出す
+      scope module: :dollar_yen_transactions, as: :dollar_yen_transactions do
+        resources :csv_coordinations, only: [ :index, :show, :destroy ] do
+          # :id の配下に new と create を定義
+          member do
+            get :new
+            post :create
+          end
+        end
+      end
     end
   end
+
   resources :transaction_types
 
   resources :import_files, only: [ :index ] do

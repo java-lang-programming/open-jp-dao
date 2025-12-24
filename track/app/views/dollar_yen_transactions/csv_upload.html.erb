@@ -15,9 +15,10 @@
 
 <section class="py-8">
 
-  <div class="bg-white flex justify-center px-6 py-4">
-    <%= link_to "テンプレート", apis_download_path(filename: "dollar_yen_transactions_sample.csv"), class: "border border-black text-black hover:bg-gray-100 font-bold py-2 px-4 rounded mr-2" %>
-    <%= link_to "入力例", new_ledger_path, class: "hidden bg-white border border-black text-black hover:bg-gray-100 font-bold py-2 px-4 rounded" %>
+  <div class="bg-white flex justify-center items-center gap-4 px-6 py-4">
+    <%= link_to "テンプレート", apis_download_path(filename: "dollar_yen_transactions_sample.csv"), class: "bg-white border border-black text-black hover:bg-gray-100 font-bold py-2 px-4 rounded" %>
+    <%= link_to "入力例", new_ledger_path, class: "bg-white border border-black text-black hover:bg-gray-100 font-bold py-2 px-4 rounded" %>
+    <%= link_to "csv連携", dollar_yen_transactions_csv_coordinations_path, class: "bg-white border border-black text-black hover:bg-gray-100 font-bold py-2 px-4 rounded" %>
   </div>
 
   <%= form_with(model: @import_file, url: csv_import_dollar_yen_transactions_path, data: { turbo: false }, local: true, multipart: true, html: { id: 'uploadForm' }) do |form| %>

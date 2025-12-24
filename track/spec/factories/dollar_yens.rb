@@ -8,4 +8,9 @@ FactoryBot.define do
     date { "2024/12/19" }
     dollar_yen_nakane { 154.94 }
   end
+
+  factory :dollar_yen_20251001, class: DollarYen do
+    date { "2025/10/01" }
+    dollar_yen_nakane { 148.17 }
+  end
 end

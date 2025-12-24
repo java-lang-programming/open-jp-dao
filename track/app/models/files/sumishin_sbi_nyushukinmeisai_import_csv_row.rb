@@ -1,0 +1,191 @@
+module Files
+  class SumishinSbiNyushukinmeisaiImportCsvRow
+    include FileRecord::Validator
+
+    attr_accessor :master, :row_num, :row, :preload
+
+    def initialize(master:, row_num:, row:, preload: {})
+      @master = master
+      @row_num = row_num
+      @row = row
+      @preload = preload
+    end
+
+    def to_dollar_yen_transaction
+      # 内容
+      context = @row[1]
+
+      # 該当するexternal_service_transaction_type
+      target_external_service_transaction_type = @preload[:external_service_transaction_types].detect do |external_service_transaction_type|
+        context == external_service_transaction_type.name
+      end
+
+      # 該当するtransaction_type
+      target_transaction_type = nil
+      if target_external_service_transaction_type.present?
+        target_transaction_type = target_external_service_transaction_type.transaction_type
+      end
+
+      new_row = []
+      # date
+      new_row << @row[0]
+      if target_transaction_type.present?
+        new_row << target_transaction_type.name
+        # 入金
+        if target_transaction_type.deposit?
+          # deposit_quantity
+          new_row << @row[3]
+          # deposit_rate
+          dollar_yen = DollarYen.where(date: @row[0]).first
+          if dollar_yen.present?
+            new_row << dollar_yen.dollar_yen_nakane.to_f.to_s
+          else
+            new_row << nil
+          end
+          # withdrawal_quantity
+          new_row << nil
+          # exchange_en
+          new_row << nil
+        # 出金
+        elsif target_transaction_type.withdrawal?
+          # deposit_quantity
+          new_row << nil
+          # deposit_rate
+          new_row << nil
+          # withdrawal_quantity
+          new_row << @row[2]
+          # exchange_en
+          new_row << nil
+        end
+
+      else
+        new_row << context
+      end
+      new_row
+    end
+
+    # 内容
+    # yamlから場所を取りたい
+    # def content
+    #   @row[1]
+    # end
+
+    # # エラーを取得する
+    # # baseに記載するべき
+    # # valueの自動化がきついかも。。。
+    # # ここはValidatoeの共通処理 superで呼び出せるようにする
+    # def valid_errors
+    #   errors = []
+    #   @master[FileUploads::GenerateMaster::LEDGER_YAML_FIELDS].each.with_index do |field, idx|
+    #     col = idx + 1
+    #     content = @master[field]
+    #     case content&.dig("type")
+    #     when "date"
+    #       temp_errors = validate_date(content: content, col: col, row_num: @row_num, field: field, value: @row[col - 1])
+    #       errors.concat(temp_errors) if temp_errors.present?
+    #     when "string"
+    #       temp_errors = validate_string(content: content, col: col, row_num: @row_num, field: field, value: @row[col - 1])
+    #       errors.concat(temp_errors) if temp_errors.present?
+    #     when TYPE_MONEY_EN
+    #       temp_errors = validate_money_en(content: content, col: col, row_num: @row_num, field: field, value: @row[col - 1])
+    #       errors.concat(temp_errors) if temp_errors.present?
+    #     when "bigdecimal"
+    #       temp_errors = validate_bigdecimal(content: content, col: col, row_num: @row_num, field: field, value: @row[col - 1])
+    #       errors.concat(temp_errors) if temp_errors.present?
+    #     end
+    #   end
+    #   ImportFileError.error_json_hash(errors: errors)
+    # end
+    #
+    # def ledger_item_col_index
+    #   @master[FileUploads::GenerateMaster::LEDGER_YAML_FIELDS].index("ledger_item")
+    # end
+    #
+    # def find_ledger_item_by_name
+    #   col_index = ledger_item_col_index
+    #   name = @row[col_index]
+    #   preload[:ledger_items].detect do |ledger_item|
+    #     ledger_item.name == name
+    #   end
+    # end
+    #
+    # def validate_error_of_name
+    #   ledger_item = find_ledger_item_by_name
+    #   unless ledger_item.present?
+    #     col_index = ledger_item_col_index
+    #     name = @row[col_index]
+    #     ImportFileError.error_json_data(
+    #       row: @row_num,
+    #       col: col_index + 1,
+    #       attribute: "ledger_item",
+    #       value: name,
+    #       message: "#{name}はledger_itemに存在しません"
+    #     )
+    #   end
+    # end
+    #
+    # def to_ledger
+    #   ledger = Ledger.build(
+    #     address: @preload[:address],
+    #     date: data_for_ledger(field: "date"),
+    #     name: data_for_ledger(field: "name"),
+    #     ledger_item: find_ledger_item_by_name,
+    #     face_value: data_for_ledger(field: "face_value"),
+    #     proportion_rate: data_for_ledger(field: "proportion_rate"),
+    #     proportion_amount: data_for_ledger(field: "proportion_amount")
+    #   )
+    #   ledger.recorded_amount = ledger.calculate_recorded_amount
+    #   ledger
+    # end
+    #
+    # # upsert_allを実行するためのhashに変更
+    # def to_upsert_all_ledger
+    #   ledger = to_ledger
+    #   {
+    #     address_id: ledger.address.id,
+    #     date: data_for_ledger(field: "date"),
+    #     name: ledger.name,
+    #     ledger_item_id: ledger.ledger_item.id,
+    #     face_value: ledger.face_value,
+    #     proportion_rate: ledger.proportion_rate,
+    #     proportion_amount: ledger.proportion_amount,
+    #     recorded_amount: ledger.recorded_amount
+    #   }
+    # end
+    #
+    # # ledgerオブジェクトのためのデータを取得
+    # def data_for_ledger(field: "")
+    #   field_col_index = @master[FileUploads::GenerateMaster::LEDGER_YAML_FIELDS].index(field)
+    #   value = @row[field_col_index]
+    #   content = @master[field]
+    #   if content.present? && content["type"] == "date"
+    #     dates = value.split("/")
+    #     return Date.new(dates[0].to_i, dates[1].to_i, dates[2].to_i)
+    #   end
+    #
+    #   if content.present? && content["type"] == "string"
+    #     return value
+    #   end
+    #
+    #   if content.present? && content["type"] == TYPE_MONEY_EN
+    #     # 関数にする
+    #     return money_en_to_integer(value: value)
+    #   end
+    #
+    #   if content.present? && content["type"] == "bigdecimal" && value.present?
+    #     return BigDecimal(value)
+    #   end
+    #
+    #   nil
+    # end
+    #
+    # # お金の円をintegerにする
+    # def money_en_to_integer(value:)
+    #   normalized = value.to_s
+    #                     .delete(",")
+    #                     .gsub(/\A'|'?\Z/, "")
+    #
+    #   Integer(normalized)
+    # end
+  end
+end

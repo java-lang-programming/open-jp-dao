@@ -42,6 +42,8 @@ ja:
         deposit_rate: 米ドル円レート
         withdrawal_quantity: 売却した米ドル
         exchange_en: 受け取った日本円
+      external_service_transaction_type:
+        name: 内容
     activemodel:
       attributes:
         requests/dollar_yens_transaction:

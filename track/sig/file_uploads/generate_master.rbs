@@ -1,8 +1,12 @@
 module FileUploads
   class GenerateMaster
     LEDGER_YAML: Integer
+    DOLLAR_YEN_TRANSACTION_YAML: Integer
+    SUMISHIN_SBI_NYUSHUKINMEISAI: Integer
 
     DEFAULT_LEDGER_YAML_PATH: string
+    DEFAULT_DOLLAR_YEN_TRANSACTION_YAML_PATH: string
+    DEFAULT_SUMISHIN_SBI_NYUSHUKINMEISAI_YAML_PATH: string
 
     attr_accessor kind: Integer
 

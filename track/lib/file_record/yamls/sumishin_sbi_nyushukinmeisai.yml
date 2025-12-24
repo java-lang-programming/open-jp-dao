@@ -1,0 +1,35 @@
+---
+# csvのフィールド(header)を記載
+fields:
+  - 日付
+  - 内容
+  - 出金金額(USD)
+  - 入金金額(USD)
+  - 残高(USD)
+  - メモ
+日付:
+  type: date
+  options:
+    format: yyyy/mm/dd
+  require: true
+内容:
+  type: string
+  options:
+    max: 100
+  require: true
+  relations:
+    has_many: ledgers.item
+出金金額(USD):
+  type: string
+  options:
+    max: 100
+  require: false
+入金金額(USD):
+  type: money_en
+  require: true
+残高(USD):
+  type: bigdecimal
+  require: false 
+メモ:
+  type: bigdecimal
+  require: false 

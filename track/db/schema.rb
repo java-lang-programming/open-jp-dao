@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2025_09_11_000048) do
+ActiveRecord::Schema[8.1].define(version: 2025_12_24_092604) do
   create_table "active_storage_attachments", force: :cascade do |t|
     t.bigint "blob_id", null: false
     t.datetime "created_at", null: false
@@ -78,6 +78,25 @@ ActiveRecord::Schema[8.1].define(version: 2025_09_11_000048) do
     t.decimal "dollar_yen_nakane", null: false
     t.datetime "updated_at", null: false
     t.index ["date"], name: "index_dollar_yens_on_date", unique: true
+  end
+
+  create_table "external_service_transaction_types", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.datetime "deleted_at"
+    t.integer "external_service_id"
+    t.string "name", null: false
+    t.integer "transaction_type_id"
+    t.datetime "updated_at", null: false
+    t.index ["external_service_id", "name"], name: "idx_external_service_tx_types_on_service_id_and_name", unique: true
+    t.index ["external_service_id"], name: "idx_on_external_service_id_db208f0352"
+    t.index ["transaction_type_id"], name: "idx_on_transaction_type_id_4abb039d2c"
+  end
+
+  create_table "external_services", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.datetime "deleted_at"
+    t.string "name", null: false
+    t.datetime "updated_at", null: false
   end
 
   create_table "import_file_errors", force: :cascade do |t|

@@ -1,0 +1,93 @@
+<% content_for :title do %>WanWan <%= t('views.dollar_yen_transactions.index') %><% end %>
+
+<% content_for :header do %>
+  <%= render "layouts/header", user: @user, notification: @notification %>
+<% end %>
+
+<% if flash[:notice] %>
+  <section class="bg-white py-4">
+    <div class="flex">
+      <p class="mx-auto font-bold text-red-500"><%= notice %></p>
+    </div>
+  </section>
+<% end %>
+
+<div class="p-4 md:p-8 bg-white min-h-screen">
+  <div class="max-w-2xl mx-auto">
+
+    <div class="relative flex items-center mb-8">
+      <a href="#" class="absolute left-0 text-blue-600 hover:text-blue-800 flex items-center transition">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+        </svg>
+        <span class="hidden md:inline text-sm font-bold">一覧へ戻る</span>
+      </a>
+      <h1 class="text-2xl font-bold text-gray-800 text-center w-full">取引登録</h1>
+    </div>
+
+    <div class="bg-white shadow-md rounded-lg p-6 md:p-10 border border-gray-200">
+      <%= form_with model: @form, url: dollar_yen_transactions_csv_coordination_path, data: { turbo: false }, class:"bg-white p-8 rounded-lg" do |form|  %>
+      <form action="#" method="POST" class="space-y-6">
+        <%= render FormTextFieldComponent.new(
+          form: form,
+          attribute: :content,
+          form_status: @form_status,
+          placeholder_key: "activerecord.attributes.external_service_transaction_type.name",
+          required: true
+        ) %>
+
+        <div>
+          <label for="content" class="block text-sm font-bold text-gray-700 mb-2">
+            内容 <span class="text-red-500">*</span>
+          </label>
+          <input
+            type="text"
+            id="content"
+            name="content"
+            placeholder="例：オフィス備品代"
+            class="w-full px-4 py-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition appearance-none"
+            required
+          >
+        </div>
+
+        <div>
+          <label for="type" class="block text-sm font-bold text-gray-700 mb-2">
+            取引種別 <span class="text-red-500">*</span>
+          </label>
+          <div class="relative">
+            <%= form.select :transaction_type_id, @transaction_types.collect { |c| [c.name, c.id, { "data-kind": c.kind }] }, {}, { class: "w-full px-4 py-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition appearance-none bg-white cursor-pointer"} %>
+            <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-3 text-gray-500">
+              <svg class="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
+                <path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z"/>
+              </svg>
+            </div>
+          </div>
+        </div>
+
+        <hr class="my-8 border-gray-100">
+
+        <div class="flex flex-col md:flex-row gap-3">
+          <button type="button" class="order-2 md:order-1 flex-1 bg-white border border-gray-300 text-gray-700 font-bold py-3 rounded-md hover:bg-gray-100 transition">
+            キャンセル
+          </button>
+          <button type="submit" class="order-1 md:order-2 flex-1 bg-blue-600 text-white font-bold py-3 rounded-md hover:bg-blue-700 shadow-md transition">
+            保存する
+          </button>
+        </div>
+
+      </form>
+      <% end %>
+    </div>
+
+    <div class="mt-8 text-center">
+      <button type="button" class="text-red-500 hover:text-red-700 text-sm font-medium underline transition">
+        この取引データを削除する
+      </button>
+    </div>
+
+  </div>
+</div>
+
+<% content_for :footer do %>
+  <%= render "layouts/footer" %>
+<% end %>

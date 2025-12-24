@@ -1,6 +1,8 @@
 class Address < ApplicationRecord
   enum :kind, { ethereum: 1, solana: 2 }
   has_many :transaction_types, dependent: :destroy
+  # アドレスに紐付く全ての外部サービス取引名称を取得可能にする
+  has_many :external_service_transaction_types, through: :transaction_types
   has_many :dollar_yen_transactions, dependent: :destroy
   has_many :sessions, dependent: :destroy
   has_many :import_files, dependent: :destroy
