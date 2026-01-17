@@ -159,7 +159,35 @@
         </ul>
       </div>
     </div>
-    
+
+    <h3 class="text-xl font-semibold text-center mb-6 mt-10">所得から差し引かれる金額(仮表)</h3>
+    <div class="flex justify-center py-4">
+      <div class="w-full max-w-md">
+        <ul class="divide-y divide-gray-200 dark:divide-gray-700">
+          <li class="py-3 sm:py-4">
+            <div class="flex items-center justify-between space-x-4 rtl:space-x-reverse">
+              <div class="flex-1 min-w-0">
+                社会保険料控除
+              </div>
+              <div class="flex-shrink-0 text-base font-semibold text-gray-900 dark:text-white">
+                <%= number_to_currency(@tax_return[:social_insurance_premiums_deduction], unit: "¥", precision: 0) %>
+              </div>
+            </div>
+          </li>
+          <li class="py-3 sm:py-4">
+            <div class="flex items-center justify-between space-x-4 rtl:space-x-reverse">
+              <div class="flex-1 min-w-0">
+                小規模企業共済掛金控除
+              </div>
+              <div class="flex-shrink-0 text-base font-semibold text-gray-900 dark:text-white">
+                <%= number_to_currency(@tax_return[:small_scale_enterprise_mutual_relief_payments_deduction], unit: "¥", precision: 0) %>
+              </div>
+            </div>
+          </li>
+        </ul>
+      </div>
+    </div>
+
     <h3 class="text-xl font-semibold text-center mb-6 mt-10">税金前払い</h3>
     <div class="flex justify-center py-4">
       <div class="w-full max-w-md">
