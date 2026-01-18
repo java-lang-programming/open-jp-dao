@@ -103,4 +103,3 @@ bundle exec rails generate controller import_files
 bundle exec rails generate controller ledger index
 bundle exec rails generate controller top
 
-
