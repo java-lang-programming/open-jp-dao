@@ -26,8 +26,8 @@ RUN apt-get update -qq && \
 ENV APP_ROOT=/usr/src/app
 RUN mkdir ${APP_ROOT}
 
-# 2.5.15
-RUN gem install bundler -v 2.5.15
+# 4.0.4
+RUN gem install bundler -v 4.0.4
 
 # Install application gems
 COPY ../Gemfile ../Gemfile.lock /usr/src/app/

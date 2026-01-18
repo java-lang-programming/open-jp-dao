@@ -10,7 +10,7 @@ on:
       - 'track/**' # このパス以下の変更のみトリガー
 
 env:
-  BUNDLER_VESION: 2.5.15
+  BUNDLER_VESION: 4.0.4
 
 jobs:
   ruby:
