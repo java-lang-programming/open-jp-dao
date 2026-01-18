@@ -84,6 +84,7 @@ DollarYenTransactionDepositCsv
 bundle exec rails generate model Job job_name:string summary:text
 bundle exec rails generate model Notification message:string start_date:timestamp end_date:timestamp
 bundle exec rails generate model LedgerItem
+bundle exec rails generate model Setting job_name:string summary:text
 
 ドル円のcsvをimportします
 ドル円取引のcsvをimportします

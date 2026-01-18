@@ -39,7 +39,7 @@ RSpec.describe "Apis::SessionsController", type: :request do
           expect(json).to eq({ errors: [ { msg: "kindは必須入力です" } ] })
         end
 
-        # kindが布石な値
+        # kindが不正な値
         it "returns status code bad request when kind is empty." do
           get apis_sessions_nonce_path
           post apis_sessions_signin_path, params: { address: "0xaaaa", kind: 3, chain_id: 1, message: "message", signature: "signature", domain: "aiueo.com" }
@@ -83,7 +83,7 @@ RSpec.describe "Apis::SessionsController", type: :request do
       end
 
       # 初回ログイン
-      it "returns status code craeted." do
+      it "returns status code created." do
         mock_apis_ens(
           status: 200,
           body: { ens_name: "test.eth" }
@@ -95,9 +95,12 @@ RSpec.describe "Apis::SessionsController", type: :request do
 
         # 値の確認
         address = Address.where(address: "0xaaaa").first
-        # ここは非同期
-        # expect(address.ens_name).to eq("test.eth")
         expect(address.ens_name).to be nil
+        # 設定の確認
+        setting = address.setting
+        expect(setting.default_year).to eq(Time.current.year)
+        expect(setting.language).to eq(Setting::LANGUAGE_JA)
+        # sessionの確認
         session = address.sessions.first
         expect(session.chain_id).to eq(1)
         expect(session.message).to eq("message")

@@ -7,7 +7,7 @@ class TaxReturnsController < ApplicationViewController
     address = @session.address
     @navs = ledgers_navs(selected: TAX_RESULT)
 
-    calculation = TaxReturns::Calculation.new(address: address, year: Time.current.year)
+    calculation = TaxReturns::Calculation.new(address: address, year: address.setting.default_year)
     @tax_return = calculation.execute
   end
 end
