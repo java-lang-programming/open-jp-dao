@@ -41,6 +41,11 @@ module TaxReturns
       sales = base.where(ledger_item_id: LedgerItem::ID_SALES).sum(:recorded_amount)
       # 総額
       total = miscellaneous_income + sales
+      # 所得から差し引かれる金額
+      # 社会保険料控除
+      social_insurance_premiums_deduction = supplies_national_pension_insurance_premium + national_health_insurance
+      # 小規模企業共済掛金控除
+      small_scale_enterprise_mutual_relief_payments_deduction = dc + small_business_mutual_aid
       {
         communication_expense: communication_expense,
         utility_costs: utility_costs,
@@ -54,7 +59,9 @@ module TaxReturns
         second_estimated_income_tax_prepayment: second_estimated_income_tax_prepayment,
         miscellaneous_income: miscellaneous_income,
         sales: sales,
-        total: total
+        total: total,
+        social_insurance_premiums_deduction: social_insurance_premiums_deduction,
+        small_scale_enterprise_mutual_relief_payments_deduction: small_scale_enterprise_mutual_relief_payments_deduction
       }
     end
   end

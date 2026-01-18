@@ -43,7 +43,9 @@ RSpec.describe TaxReturns::Calculation do
            second_estimated_income_tax_prepayment: 0,
            miscellaneous_income: 0,
            sales: 0,
-           total: 0
+           total: 0,
+           small_scale_enterprise_mutual_relief_payments_deduction: 0,
+           social_insurance_premiums_deduction: 0
         })
       end
     end
