@@ -18,8 +18,7 @@ jobs:
     runs-on: ubuntu-24.04
     strategy:
       matrix:
-        # 4系はbundlerを変えないと動かない？？？
-        ruby-version: ["3.4.8", "4.0.1"]
+        ruby-version: ["4.0.1"]
     steps:
       - name: Install packages
         run: sudo apt-get update && sudo apt-get install --no-install-recommends -y libjemalloc2 sqlite3
