@@ -33,6 +33,8 @@ class Apis::SessionsController < ApplicationController
       # 初回ならデータベースに登録
       address = Address.new(address: target_address, kind: kind.to_i)
       address.save
+      # 設定(after_createでもいいかも)
+      address.create_setting(default_year: Time.current.year)
     end
 
     # ENS情報を取得して更新する(処理の時間がかかるので非同期)

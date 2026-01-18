@@ -20,6 +20,9 @@ address1 = Address.create!(
    kind: Address.kinds[:ethereum]
 )
 
+puts "addressの設定作成"
+address1.create_setting(default_year: 2025)
+
 # address2 = Address.create!(
 #    address: '0x00002E868c62FA205d38BeBaB7B903322A4CC89D',
 #    kind: Address.kinds[:ethereum]

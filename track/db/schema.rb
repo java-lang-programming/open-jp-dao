@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2025_09_11_000048) do
+ActiveRecord::Schema[8.1].define(version: 2026_01_18_084652) do
   create_table "active_storage_attachments", force: :cascade do |t|
     t.bigint "blob_id", null: false
     t.datetime "created_at", null: false
@@ -152,6 +152,15 @@ ActiveRecord::Schema[8.1].define(version: 2025_09_11_000048) do
     t.index ["address_id"], name: "index_sessions_on_address_id"
   end
 
+  create_table "settings", force: :cascade do |t|
+    t.integer "address_id", null: false
+    t.datetime "created_at", null: false
+    t.integer "default_year", null: false
+    t.string "language", default: "ja", null: false
+    t.datetime "updated_at", null: false
+    t.index ["address_id"], name: "index_settings_on_address_id"
+  end
+
   create_table "transaction_types", force: :cascade do |t|
     t.integer "address_id"
     t.datetime "created_at", null: false
@@ -167,4 +176,5 @@ ActiveRecord::Schema[8.1].define(version: 2025_09_11_000048) do
   add_foreign_key "import_files", "addresses"
   add_foreign_key "import_files", "jobs"
   add_foreign_key "sessions", "addresses"
+  add_foreign_key "settings", "addresses"
 end

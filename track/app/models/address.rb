@@ -5,6 +5,7 @@ class Address < ApplicationRecord
   has_many :sessions, dependent: :destroy
   has_many :import_files, dependent: :destroy
   has_many :ledgers, dependent: :destroy
+  has_one :setting, dependent: :destroy
 
   validates :address, presence: true
 
