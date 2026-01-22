@@ -16,5 +16,10 @@ class LedgerItem < ApplicationRecord
   # 売上高
   ID_SALES = 13
 
+  # 中間テーブルとのリレーション
+  has_many :csv_ledger_items, dependent: :destroy
+  # CSVとの多対多のリレーション
+  has_many :csvs, through: :csv_ledger_items
+
   enum :kind, { account_item: 1, drawings: 2 }
 end

@@ -7,9 +7,6 @@ module FileUploads
       # include ActiveRecord::Validators::Date
       attr_accessor :import_file, :master, :preload, :csv_rows
 
-      # これはここ
-      DEFAULT_YAML_PATH = "lib/file_record/yamls/ledger.yml"
-
       def initialize(import_file:)
         @import_file = import_file
         @master = FileUploads::GenerateMaster.new(kind: FileUploads::GenerateMaster::LEDGER_YAML).master
