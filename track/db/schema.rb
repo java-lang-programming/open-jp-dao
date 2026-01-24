@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_01_18_084652) do
+ActiveRecord::Schema[8.1].define(version: 2026_01_23_104152) do
   create_table "active_storage_attachments", force: :cascade do |t|
     t.bigint "blob_id", null: false
     t.datetime "created_at", null: false
@@ -46,6 +46,25 @@ ActiveRecord::Schema[8.1].define(version: 2026_01_18_084652) do
     t.string "ens_name"
     t.integer "kind", null: false
     t.string "sns"
+    t.datetime "updated_at", null: false
+  end
+
+  create_table "csv_ledger_items", force: :cascade do |t|
+    t.string "content", null: false
+    t.datetime "created_at", null: false
+    t.integer "csv_id"
+    t.integer "exact_match", null: false
+    t.integer "ledger_item_id"
+    t.decimal "proportion_amount"
+    t.decimal "proportion_rate"
+    t.datetime "updated_at", null: false
+    t.index ["csv_id"], name: "index_csv_ledger_items_on_csv_id"
+    t.index ["ledger_item_id"], name: "index_csv_ledger_items_on_ledger_item_id"
+  end
+
+  create_table "csvs", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.string "name", null: false
     t.datetime "updated_at", null: false
   end
 
