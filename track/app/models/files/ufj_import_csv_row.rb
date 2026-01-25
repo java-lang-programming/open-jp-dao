@@ -68,10 +68,12 @@ module Files
       return nil unless col_index.present?
       summary_content = @row[col_index]
       return nil unless summary_content.present?
-      puts preload[:csv_ledgers_items].inspect
-      # 完全一致じゃない方がいいかも
       preload[:csv_ledgers_items].detect do |csv_ledgers_item|
-        csv_ledgers_item.content == summary_content
+        if csv_ledgers_item.exact_match?
+          csv_ledgers_item.content == summary_content
+        else
+          summary_content =~ /#{csv_ledgers_item.content}/
+        end
       end
     end
 

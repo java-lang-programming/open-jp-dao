@@ -9,31 +9,38 @@ RSpec.describe Files::UfjImportCsvRow do
   let(:ledger_item_5) {
     create(:ledger_item_5)
   }
+  let(:ledger_item_11) {
+    create(:ledger_item_11)
+  }
   let(:csv_1) {
     create(:csv_1)
   }
-  let(:csv_ledger_item_2) {
-    create(:csv_ledger_item_2, ledger_item: ledger_item_5, csv: csv_1,)
+  let(:csv_ledger_item_1) {
+    create(:csv_ledger_item_1, ledger_item: ledger_item_11, csv: csv_1)
   }
-
-  let(:instance) {
-    described_class.new(master: master, row_num: 1, row: row_2, preload: preload)
+  let(:csv_ledger_item_2) {
+    create(:csv_ledger_item_2, ledger_item: ledger_item_5, csv: csv_1)
   }
   let(:row_1) {
-    [ '2024/12/2', '税金', '６ネン２キ　シヨトク', '273,400', nil, "1,173,684" ]
+    [ '2024/12/2', '税金', 'ネン２キ　シヨトク', '100,000', nil, "1,173,684" ]
   }
   let(:row_2) {
     [ '2024/12/2', '税金', 'コクミンネンキン', '17,320', nil, "1,000,000" ]
   }
+  let(:target_row) { row_2 }
+  let(:instance) {
+    described_class.new(master: master, row_num: 2, row: target_row, preload: preload)
+  }
 
   before do
+    csv_ledger_item_1
     csv_ledger_item_2
   end
 
   describe '#valid_errors' do
     context 'when エラーなし' do
       it 'should get {errors: []}.' do
-        expect(instance.valid_errors).to eq({errors: []})
+       expect(instance.valid_errors).to eq({errors: []})
       end
     end
   end
@@ -56,15 +63,15 @@ RSpec.describe Files::UfjImportCsvRow do
         csv_ledger_item = instance.find_csv_ledger_item_by_summary_content
         expect(csv_ledger_item).to eq(csv_ledger_item_2)
       end
+    end
 
-      # it 'should get nil.' do
-      #   ledger_item_1
-      #   preload = { address: addresses_eth, ledger_items: LedgerItem.all }
-      #   row = [ '2025/01/06', '通信', 'MFクラウド', '1848', nil, nil ]
-      #   csv_row = Files::LedgerImportCsvRow.new(master: master, row_num: 1, row: row, preload: preload)
-      #   ledger_item = csv_row.find_ledger_item_by_name
-      #   expect(ledger_item).to be nil
-      # end
+    context 'when 部分一致' do
+      let(:target_row) { row_1 }
+
+      it 'should get csv_ledger_item object.' do
+        csv_ledger_item = instance.find_csv_ledger_item_by_summary_content
+        expect(csv_ledger_item).to eq(csv_ledger_item_1)
+      end
     end
   end
   #
