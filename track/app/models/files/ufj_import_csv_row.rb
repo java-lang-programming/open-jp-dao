@@ -77,20 +77,20 @@ module Files
       end
     end
 
-    # ledger_itemの検証エラーを取得
-    def validate_error_of_ledger_item
-      ledger_item = find_ledger_item_by_summary_content
-      return nil if ledger_item.present?
-      col_index = summary_content_col_index
-      summary_content = @row[col_index]
-      ImportFileError.error_json_data(
-        row: @row_num,
-        col: col_index + 1,
-        attribute: "摘要内容",
-        value: summary_content,
-        message: "#{summary_content}は仕訳項目と連携されていません"
-      )
-    end
+    # # csv_ledger_itemの検証エラーを取得
+    # def validate_error_of_csv_ledger_item
+    #   ledger_item = find_csv_ledger_item_by_summary_content
+    #   return nil if ledger_item.present?
+    #   col_index = summary_content_col_index
+    #   summary_content = @row[col_index]
+    #   ImportFileError.error_json_data(
+    #     row: @row_num,
+    #     col: col_index + 1,
+    #     attribute: "摘要内容",
+    #     value: summary_content,
+    #     message: "#{summary_content}は仕訳項目と連携されていません"
+    #   )
+    # end
 
     # face_valueを計算（支払い金額または預かり金額のどちらか一方が存在する）
     def calculate_face_value

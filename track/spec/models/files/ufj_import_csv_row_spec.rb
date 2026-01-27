@@ -27,6 +27,9 @@ RSpec.describe Files::UfjImportCsvRow do
   let(:row_2) {
     [ '2024/12/2', '税金', 'コクミンネンキン', '17,320', nil, "1,000,000" ]
   }
+  let(:row_3) {
+    [ '2024/12/2', '口座振替３', 'コクミンケンコウホケン', '10,000', nil, "1,000,000" ]
+  }
   let(:target_row) { row_2 }
   let(:instance) {
     described_class.new(master: master, row_num: 2, row: target_row, preload: preload)
@@ -40,7 +43,7 @@ RSpec.describe Files::UfjImportCsvRow do
   describe '#valid_errors' do
     context 'when エラーなし' do
       it 'should get {errors: []}.' do
-       expect(instance.valid_errors).to eq({errors: []})
+       expect(instance.valid_errors).to eq({ errors: [] })
       end
     end
   end
@@ -74,33 +77,32 @@ RSpec.describe Files::UfjImportCsvRow do
       end
     end
   end
-  #
-  # describe 'validate_error_of_name' do
-  #   context 'csvに記述されたnameのエラーを取得する' do
-  #     it 'should no error.' do
-  #       ledger_item_1
-  #       preload = { address: addresses_eth, ledger_items: LedgerItem.all }
-  #       csv_row = Files::LedgerImportCsvRow.new(master: master, row_num: 1, row: row_1, preload: preload)
-  #       validate_error = csv_row.validate_error_of_name
-  #       expect(validate_error).to be nil
+
+  # describe 'validate_error_of_csv_ledger_item' do
+  #   context 'when 連携あり' do
+  #     it 'should be nil.' do
+  #       error = instance.validate_error_of_csv_ledger_item
+  #       expect(error).to be nil
   #     end
+  #   end
   #
-  #     it 'should get error object.' do
-  #       ledger_item_1
-  #       preload = { address: addresses_eth, ledger_items: LedgerItem.all }
-  #       row = [ '2025/01/06', '通信', 'MFクラウド', '1848', nil, nil ]
-  #       csv_row = Files::LedgerImportCsvRow.new(master: master, row_num: 1, row: row, preload: preload)
-  #       validate_error = csv_row.validate_error_of_name
-  #       expect(validate_error).to eq({
-  #                                      row: 1,
-  #                                      col: 2,
-  #                                      attribute: 'ledger_item',
-  #                                      value: '通信',
-  #                                      message: "通信はledger_itemに存在しません"
-  #                                    })
+  #   context 'when 連携データなし' do
+  #     let(:target_row) { row_3 }
+  #     it 'should be error msg.' do
+  #       error = instance.validate_error_of_csv_ledger_item
+  #       expect(error).to be nil
   #     end
   #   end
   # end
+
+  describe '#calculate_face_value' do
+    context 'when 支払い金額' do
+      it 'should get face_value integer.' do
+        face_value = instance.calculate_face_value
+        expect(face_value).to eq(17320)
+      end
+    end
+  end
   #
   # describe 'data_for_ledger' do
   #   context 'csvに記述されたnameのエラーを取得する' do
@@ -147,21 +149,18 @@ RSpec.describe Files::UfjImportCsvRow do
   #   end
   # end
   #
-  # describe 'to_ledger' do
-  #   context 'Ledgerオブジェクトを取得する' do
-  #     it 'should get ledger.' do
-  #       ledger_item_1
-  #       preload = { address: addresses_eth, ledger_items: LedgerItem.all }
-  #       csv_row = Files::LedgerImportCsvRow.new(master: master, row_num: 1, row: row_1, preload: preload)
-  #       ledger = csv_row.to_ledger
-  #       expect(ledger.date.to_date).to eq(Date.new(2025, 1, 6))
-  #       expect(ledger.name).to eq('MFクラウド')
-  #       expect(ledger.ledger_item).to eq(ledger_item_1)
-  #       expect(ledger.face_value).to eq(1848)
-  #       expect(ledger.recorded_amount).to eq(1848)
-  #     end
-  #   end
-  # end
+  describe '#to_ledger' do
+    context 'Ledgerオブジェクトを取得する' do
+      it 'should get ledger.' do
+        ledger = instance.to_ledger
+        expect(ledger.date.to_date).to eq(Date.new(2024, 12, 2))
+        expect(ledger.name).to eq('コクミンネンキン')
+        expect(ledger.ledger_item).to eq(ledger_item_5)
+        expect(ledger.face_value).to eq(17320)
+        expect(ledger.recorded_amount).to eq(17320)
+      end
+    end
+  end
   #
   # describe 'to_upsert_all_ledger' do
   #   context 'upsert_allを実行するためのhashを取得する' do
