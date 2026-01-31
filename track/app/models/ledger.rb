@@ -51,4 +51,17 @@ class Ledger < ApplicationRecord
     return nil unless recorded_amount.present?
     Currency.en_with_unit(value: recorded_amount)
   end
+
+  def to_upsert_all_hash
+    {
+      address_id: address.id,
+      date: Date.new(date.year, date.month, date.day),
+      name: name,
+      ledger_item_id: ledger_item.id,
+      face_value: face_value,
+      proportion_rate: proportion_rate,
+      proportion_amount: proportion_amount,
+      recorded_amount: recorded_amount
+    }
+  end
 end

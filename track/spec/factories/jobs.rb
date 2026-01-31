@@ -16,4 +16,10 @@ FactoryBot.define do
     name { "仕訳帳csvインポート" }
     summary { "仕訳帳のcsvをimportします" }
   end
+
+  factory :job_4, class: Job do
+    id { Job::UFJ_LEDGER_CSV_IMPORT }
+    name { "ufjcsvインポート" }
+    summary { "ufjのcsvをimportします" }
+  end
 end

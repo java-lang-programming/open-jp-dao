@@ -11,5 +11,42 @@ RSpec.describe FileUploads::GenerateMaster, type: :feature do
         )
       end
     end
+
+    context 'when UFJ_YAML' do
+      it "should get master data." do
+        instance = FileUploads::GenerateMaster.new(kind: FileUploads::GenerateMaster::UFJ_YAML)
+        expect(instance.master).to eq(
+          { "fields" => [ "日付", "摘要", "摘要内容", "支払い金額", "預かり金額", "差引残高" ],
+            "日付" => {
+              "type" => "date",
+              "options" => { "format" => "yyyy/mm/dd" },
+              "require" => true
+            },
+            "摘要" => {
+              "type" => "string",
+              "options" => { "max" => 100 },
+              "require" => true
+            },
+            "摘要内容" => {
+              "type" => "string",
+              "options" => { "max" => 100 },
+              "require" => true
+            },
+            "支払い金額" => {
+              "type" => "money_en",
+              "require" => false
+            },
+            "預かり金額" => {
+              "type" => "money_en",
+              "require" => false
+            },
+            "差引残高" => {
+              "type" => "money_en",
+              "require" => true
+            }
+          }
+        )
+      end
+    end
   end
 end
