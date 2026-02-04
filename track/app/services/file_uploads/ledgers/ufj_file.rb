@@ -10,7 +10,7 @@ module FileUploads
         @file = file
         @file_path = file.tempfile.path
         @master = FileUploads::GenerateMaster.new(kind: FileUploads::GenerateMaster::UFJ_YAML).master
-        # @preload = { address: address. }
+        @preload = {} # アップロード時の初期チェックではpreloadは不要
         @csv_rows = make_csv_rows(file_path: @file_path)
       end
 
@@ -26,11 +26,10 @@ module FileUploads
         csv_rows
       end
 
-      # 最初はいらない
-      # # headerのエラー処理
-      # def validate_headers
-      #   validate_header_fields(file_path: @file_path, master: @master)
-      # end
+      # headerのエラー処理
+      def validate_headers
+        validate_header_fields(file_path: @file_path, master: @master)
+      end
       #
       # # 処理に時間のかからないシンプルなチェック
       # def validate_errors_of_simple_data

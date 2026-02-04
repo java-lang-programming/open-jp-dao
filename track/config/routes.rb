@@ -67,6 +67,13 @@ Rails.application.routes.draw do
     end
   end
 
+  resources :ledger_csv_integrations, only: [] do
+    collection do
+      get "ufj_csv_upload_new"
+      post "ufj_csv_upload"
+    end
+  end
+
   resources :tax_returns, only: [ :index ]
 
   post "sessions/logout"
