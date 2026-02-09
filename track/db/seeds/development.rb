@@ -21,7 +21,7 @@ address1 = Address.create!(
 )
 
 puts "addressの設定作成"
-address1.create_setting(default_year: 2025)
+address1.create_setting(default_year: 2026)
 
 # address2 = Address.create!(
 #    address: '0x00002E868c62FA205d38BeBaB7B903322A4CC89D',
@@ -78,6 +78,8 @@ puts "Job作成開始"
 
 FactoryBot.create(:job_1)
 FactoryBot.create(:job_2)
+FactoryBot.create(:job_3)
+FactoryBot.create(:job_4)
 
 puts "Job作成終了"
 
@@ -92,6 +94,30 @@ service = FileUploads::DollarYenCsv.new(file: csv_dollar_yen_2025_path)
 service.execute
 
 puts "ドル円マスタ投入完了"
+
+puts "仕訳項目マスタデータ作成"
+
+FactoryBot.create(:ledger_item_1)
+FactoryBot.create(:ledger_item_2)
+FactoryBot.create(:ledger_item_3)
+FactoryBot.create(:ledger_item_4)
+FactoryBot.create(:ledger_item_5)
+FactoryBot.create(:ledger_item_6)
+FactoryBot.create(:ledger_item_7)
+FactoryBot.create(:ledger_item_8)
+FactoryBot.create(:ledger_item_9)
+FactoryBot.create(:ledger_item_10)
+FactoryBot.create(:ledger_item_11)
+FactoryBot.create(:ledger_item_12)
+FactoryBot.create(:ledger_item_13)
+
+puts "仕訳項目マスタデータ作成終了"
+
+puts "Csvマスタデータ作成"
+
+FactoryBot.create(:csv_1)
+
+puts "Csvマスタデータ作成終了"
 
 puts "お知らせ(header)作成"
 

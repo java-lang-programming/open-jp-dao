@@ -112,16 +112,6 @@ class Address < ApplicationRecord
     dollar_yen_transactions.where("date <= ?", target_date).order(date: :asc).order(id: :asc)
   end
 
-  # deprecated prev_dollar_yen_transactionsに移行する
-  # 更新時に再計算対象の1つ手前のdollar_yen_transactionを返す
-  #
-  # @param target_date [Date] 日付
-  # @param id [Integer] 更新対象のid
-  # @return [DollarYenTransaction | nil] 更新時に再計算対象の1つ手前のdollar_yen_transactions
-  def base_dollar_yen_transaction_update(target_date:, id:)
-    dollar_yen_transactions.where("date <= ?", target_date).where.not(id: id).where("id < ?", id).order(date: :asc).order(id: :asc).last
-  end
-
   # encを取得する
   def fetch_ens(chain_id: 1)
     ChainGate::Repositories::Sessions::Ens.new(

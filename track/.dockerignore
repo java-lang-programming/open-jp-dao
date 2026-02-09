@@ -40,3 +40,6 @@
 # Ignore Docker-related files
 /.dockerignore
 /Dockerfile*
+
+# local seed
+development_v2.rb
