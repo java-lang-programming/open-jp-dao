@@ -4,12 +4,6 @@ require "yaml"
 # 　リファクタリングをして@@file_pathや@masterは無くす
 module FileRecord
   module Header
-    # yamlをloadする(モジュールかする)
-    def yaml_load(path: path)
-      # pathは環境変数でも管理可能に
-      YAML.load_file(path)
-    end
-
     # 正常の場合は空配列を返す
     def validate_header_fields(file_path:, master:)
       csv_data = CSV.read(file_path, headers: true)

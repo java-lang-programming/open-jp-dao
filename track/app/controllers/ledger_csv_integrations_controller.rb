@@ -17,15 +17,14 @@ class LedgerCsvIntegrationsController < ApplicationViewController
 
     unless file.present?
       @import_file = ImportFile.new
-      flash.now[:errors] = { errors: [ "uploadファイルが存在しません。ファイルを選択ボタンからファイルを選択してください" ] }
-      render :ufj_csv_upload_new, status: :unprocessable_entity # redirectではなくrender
+      flash.now[:notice] = "uploadファイルが存在しません。ファイルを選択ボタンからファイルを選択してください"
+      render :ufj_csv_upload_new, status: :unprocessable_content # redirectではなくrender
       return
     end
 
     ufj_file = FileUploads::Ledgers::UfjFile.new(address: address, file: file)
     errors = ufj_file.validate_headers
     if errors.present?
-      # これに移行する
       @import_file = ImportFile.new
       flash.now[:errors] = errors
       render :ufj_csv_upload_new, status: :unprocessable_entity # redirectではなくrender

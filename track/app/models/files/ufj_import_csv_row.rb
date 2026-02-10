@@ -35,9 +35,6 @@ module Files
         when TYPE_MONEY_EN
           temp_errors = validate_money_en(content: content, col: col, row_num: @row_num, field: field, value: @row[col - 1])
           errors.concat(temp_errors) if temp_errors.present?
-        when "bigdecimal"
-          temp_errors = validate_bigdecimal(content: content, col: col, row_num: @row_num, field: field, value: @row[col - 1])
-          errors.concat(temp_errors) if temp_errors.present?
         end
       end
       ImportFileError.error_json_hash(errors: errors)
