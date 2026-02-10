@@ -1,4 +1,8 @@
 class LedgerItem < ApplicationRecord
+  # 通信費
+  ID_COMMUNICATION_EXPENSES = 1
+  # 水道光熱費
+  ID_UTILITY_BILLS = 2
   # 国民年金保険料
   ID_NATIONAL_PENSION_INSURANCE_PREMIUM = 5
   # 国民健康保険料

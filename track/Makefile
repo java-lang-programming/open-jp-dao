@@ -14,8 +14,12 @@ dc_build: ## Docker環境のビルド
 	docker-compose -f .devcontainer/compose.yaml build
 dc_up: ## Docker環境の立ち上げ
 	docker-compose -f .devcontainer/compose.yaml up
+dc_start: ## Docker環境の立ち上げ
+	docker-compose -f .devcontainer/compose.yaml start
 dc_stop: ## Docker環境の停止
 	docker-compose -f .devcontainer/compose.yaml stop
+dc_down: ## Docker環境の削除
+	docker-compose -f .devcontainer/compose.yaml down
 dc_in: ## Docker環境を立ち上げた後にコンテナの中に入る
 	docker exec -it devcontainer-wevb3-rails-dev-app-1 /bin/sh
 ## DB操作 ##

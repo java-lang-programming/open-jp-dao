@@ -71,6 +71,8 @@ Rails.application.routes.draw do
     collection do
       get "ufj_csv_upload_new"
       post "ufj_csv_upload"
+      get "rakuten_card_csv_upload_new"
+      post "rakuten_card_csv_upload"
     end
   end
 

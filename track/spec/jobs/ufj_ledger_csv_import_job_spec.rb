@@ -126,4 +126,12 @@ RSpec.describe UfjLedgerCsvImportJob, type: :job do
       end
     end
   end
+
+  describe 'キューの指定' do
+    it 'csvキューにジョブが入ること' do
+      expect {
+        described_class.perform_later(import_file_id: import_file.id)
+      }.to have_enqueued_job.on_queue('csv')
+    end
+  end
 end

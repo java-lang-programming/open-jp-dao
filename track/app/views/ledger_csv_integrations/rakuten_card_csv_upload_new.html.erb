@@ -1,0 +1,25 @@
+<% content_for :title do %>WanWan 楽天カード CSV upload<% end %>
+
+<% content_for :header do %>
+  <%= render "layouts/header", user: @user, notification: @notification %>
+<% end %>
+
+<% if flash[:errors].present? %>
+  <%= render "shared/import_files/list", import_file_errors: flash[:errors][:errors] %>
+<% end %>
+
+<% if flash[:notice].present? %>
+  <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded mb-4">
+    <%= flash[:notice] %>
+  </div>
+<% end %>
+
+<section class="py-8">
+
+  <%= form_with(model: @import_file, url: rakuten_card_csv_upload_ledger_csv_integrations_path, data: { turbo: false }, local: true, multipart: true, html: { id: 'uploadForm' }) do |form| %>
+    <%= render "shared/upload_form", form: form %>
+  <% end %>
+
+</section>
+<!-- これは共通化 -->
+<%= javascript_import_module_tag "views/ledgers/cvs_upload_new" %>

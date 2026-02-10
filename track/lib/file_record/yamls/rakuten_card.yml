@@ -1,0 +1,53 @@
+---
+# csvのフィールド(header)を記載
+fields:
+  - 利用日
+  - 利用店名・商品名
+  - 利用者
+  - 支払方法
+  - 利用金額
+  - 手数料/利息
+  - 支払総額
+  - N月支払金額
+  - N+1月繰越残高
+  - 新規サイン
+利用日:
+  type: date
+  options:
+    format: yyyy/mm/dd
+  require: true
+利用店名・商品名:
+  type: string
+  options:
+    max: 100
+  require: true
+利用者:
+  type: string
+  options:
+    max: 100
+  require: true
+支払方法:
+  type: string
+  options:
+    max: 100
+  require: true
+利用金額:
+  type: money_en
+  require: true
+手数料/利息:
+  type: money_en
+  require: true
+支払総額:
+  type: money_en
+  require: true
+N月支払金額:
+  type: money_en
+  require: true
+M月繰越残高:
+  type: money_en
+  require: true
+新規サイン:
+  type: string
+  options:
+    max: 100
+  require: true
