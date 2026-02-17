@@ -23,4 +23,20 @@ FactoryBot.define do
     proportion_rate {  }
     proportion_amount {  }
   end
+  factory :csv_ledger_item_4, class: CsvLedgerItem do
+    ledger_item {  }
+    csv { }
+    content { 'ＮＴＴ東日本光コラボ回収' }
+    exact_match { CsvLedgerItem::EXACT_MATCH_FALSE }
+    proportion_rate { 0.8 }
+    proportion_amount { 825 }
+  end
+  factory :csv_ledger_item_5, class: CsvLedgerItem do
+    ledger_item {  }
+    csv { }
+    content { 'ＥＮＥＯＳ　Ｐｏｗｅｒ（電気）' }
+    exact_match { CsvLedgerItem::EXACT_MATCH_TRUE }
+    proportion_rate { 0.2 }
+    proportion_amount {  }
+  end
 end

@@ -80,6 +80,7 @@ FactoryBot.create(:job_1)
 FactoryBot.create(:job_2)
 FactoryBot.create(:job_3)
 FactoryBot.create(:job_4)
+FactoryBot.create(:job_5)
 
 puts "Job作成終了"
 
@@ -116,6 +117,7 @@ puts "仕訳項目マスタデータ作成終了"
 puts "Csvマスタデータ作成"
 
 FactoryBot.create(:csv_1)
+FactoryBot.create(:csv_2)
 
 puts "Csvマスタデータ作成終了"
 

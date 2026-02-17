@@ -1,24 +1,23 @@
 module FileUploads
   module Ledgers
-    class UfjImportFile
-      include FileRecord::Header
+    class CsvBaseImportFile
+      attr_accessor :import_file, :kind, :master, :preload, :csv_rows
 
-      attr_accessor :import_file, :master, :preload, :csv_rows
-
-      def initialize(import_file:)
+      def initialize(import_file:, csv_id:)
         @import_file = import_file
-        @master = FileUploads::GenerateMaster.new(kind: FileUploads::GenerateMaster::UFJ_YAML).master
-        # ここにデータがない？
-        @preload = { address: import_file.address, csv_ledgers_items: CsvLedgerItem.where(csv_id: Csv::ID_UFJ).all }
+        @kind = Csv.find_kind_by_id(id: csv_id)
+        @master = FileUploads::GenerateMaster.new(kind: kind).master
+        @preload = { address: import_file.address, csv_ledgers_items: CsvLedgerItem.where(csv_id: csv_id).all }
         make_csv_rows_via_import
       end
 
-      # def save_error(error_json:)
-      #   @import_file.import_file_errors.create(error_json: error_json.to_json)
-      # end
-
       def generate_ledgers
         @csv_rows.map(&:to_upsert_all_ledger)
+      end
+
+      # 　子クラスで実体化する
+      def create_csv_row(master:, row_num:, row:, preload:)
+        raise NotImplementedError, "子クラスで実装してください"
       end
 
       private
@@ -35,7 +34,8 @@ module FileUploads
             row_num += 1
             next if row_num == 1
             # ここで対象のデータかをチェックしてcsv_rowsに入れる
-            csv_row = Files::UfjImportCsvRow.new(master: @master, row_num: row_num, row: row, preload: @preload)
+            # csv_row = Files::UfjImportCsvRow.new(master: @master, row_num: row_num, row: row, preload: @preload)
+            csv_row = create_csv_row(master: @master, row_num: row_num, row: row, preload: @preload)
             csv_rows << csv_row if csv_row.target?
           end
           csv_rows

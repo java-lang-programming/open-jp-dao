@@ -29,7 +29,6 @@ module FileRecord
       # 数は同じでも、中身が違う場合があるのでチェック
       if fields_size == csv_data_size
         result = master["fields"].each_with_object([]).with_index do |(field, array), idx|
-          # マスタの属性とcsvの属性が異なる
           unless field == csv_header[idx]
             row = 1
             col = idx + 1

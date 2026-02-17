@@ -4,12 +4,15 @@ module FileUploads
     LEDGER_YAML = 1
     DOLLAR_YEN_TRANSACTION_YAML = 2
     UFJ_YAML = 3
+    RAKUTEN_CARD_YAML = 4
+
 
     LEDGER_YAML_FIELDS = "fields"
 
     DEFAULT_LEDGER_YAML_PATH = "lib/file_record/yamls/ledger.yml"
     DEFAULT_DOLLAR_YEN_TRANSACTION_YAML_PATH = "lib/file_record/yamls/dollar_yen_transaction.yml"
     DEFAULT_UFJ_YAML_PATH = "lib/file_record/yamls/ufj.yml"
+    DEFAULT_RAKUTEN_CARD_YAML_PATH = "lib/file_record/yamls/rakuten_card.yml"
 
     attr_accessor :kind
 
@@ -25,6 +28,8 @@ module FileUploads
         YAML.load_file("#{Rails.root}/#{DEFAULT_DOLLAR_YEN_TRANSACTION_YAML_PATH}")
       elsif @kind == UFJ_YAML
         YAML.load_file("#{Rails.root}/#{DEFAULT_UFJ_YAML_PATH}")
+      elsif @kind == RAKUTEN_CARD_YAML
+        YAML.load_file("#{Rails.root}/#{DEFAULT_RAKUTEN_CARD_YAML_PATH}")
       end
     end
   end

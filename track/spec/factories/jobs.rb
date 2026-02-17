@@ -19,7 +19,13 @@ FactoryBot.define do
 
   factory :job_4, class: Job do
     id { Job::UFJ_LEDGER_CSV_IMPORT }
-    name { "ufjcsvインポート" }
+    name { "三菱UFJ csvインポート" }
     summary { "ufjのcsvをimportします" }
+  end
+
+  factory :job_5, class: Job do
+    id { Job::RAKUTEN_CARD_LEDGER_CSV_IMPORT }
+    name { "楽天カード csvインポート" }
+    summary { "楽天カードのcsvをimportします" }
   end
 end

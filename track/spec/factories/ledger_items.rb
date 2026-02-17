@@ -1,6 +1,6 @@
 FactoryBot.define do
   factory :ledger_item_1, class: LedgerItem do
-    id { 1 }
+    id { LedgerItem::ID_COMMUNICATION_EXPENSES }
     name { "通信費" }
     kind { LedgerItem.kinds[:account_item] }
     summary { }
@@ -8,7 +8,7 @@ FactoryBot.define do
   end
 
   factory :ledger_item_2, class: LedgerItem do
-    id { 2 }
+    id { LedgerItem::ID_UTILITY_BILLS }
     name { "水道光熱費" }
     kind { LedgerItem.kinds[:account_item] }
     summary { }
