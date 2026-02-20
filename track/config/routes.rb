@@ -56,7 +56,6 @@ Rails.application.routes.draw do
   resources :settings, only: [ :index ]
   resources :help, only: [ :index ]
 
-  # v2
   resources :ledgers do
     collection do
       get "csv_upload_new"
@@ -66,6 +65,8 @@ Rails.application.routes.draw do
       post "destroy_multiple"
     end
   end
+
+  resources :ledger_csvs, only: [ :index ]
 
   resources :ledger_csv_integrations, only: [] do
     collection do
