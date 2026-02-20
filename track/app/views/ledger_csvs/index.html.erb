@@ -1,0 +1,41 @@
+<% content_for :title do %>WanWan CSVアップロード 一覧<% end %>
+
+<% content_for :header do %>
+  <%= render "layouts/header", user: @user, notification: @notification %>
+<% end %>
+
+<section class="py-8">
+  <main class="flex-grow flex items-center justify-center p-6">
+    <div class="w-full max-w-lg">
+      <div class="mb-8">
+        <h2 class="inline-block text-2xl font-bold border-b-2 border-gray-900 pb-2 leading-relaxed">
+          ■ CSVアップロード 一覧
+        </h2>
+      </div>
+
+      <div class="flex flex-col gap-px bg-gray-200 border border-gray-200 rounded-xl overflow-hidden shadow-md">
+        <%= link_to csv_upload_new_ledgers_path, class: "bg-white p-6 flex justify-between items-center hover:bg-slate-50 transition group" do %>
+          <span class="text-lg font-bold group-hover:text-blue-600 transition-colors">仕訳 CSV</span>
+        <% end %>
+
+        <%= link_to ufj_csv_upload_new_ledger_csv_integrations_path, class: "bg-white p-6 flex justify-between items-center hover:bg-slate-50 transition group border-t border-gray-100" do %>
+          <span class="text-lg font-bold group-hover:text-blue-600 transition-colors">
+            UFJ CSV
+          </span>
+                  <span class="bg-blue-50 text-blue-600 border border-blue-200 text-sm font-medium px-3 py-1 rounded-full">
+            利用可能
+          </span>
+        <% end %>
+
+        <%= link_to rakuten_card_csv_upload_new_ledger_csv_integrations_path, class: "bg-white p-6 flex justify-between items-center hover:bg-slate-50 transition group border-t border-gray-100" do %>
+          <span class="text-lg font-bold group-hover:text-blue-600 transition-colors">
+            楽天カード CSV
+          </span>
+          <span class="bg-blue-50 text-blue-600 border border-blue-200 text-sm font-medium px-3 py-1 rounded-full">
+            利用可能
+          </span>
+        <% end %>
+      </div>
+    </div>
+  </main>
+</section>

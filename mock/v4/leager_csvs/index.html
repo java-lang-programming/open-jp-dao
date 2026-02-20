@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CSVアップロード一覧 - Wan2</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-[#fcfcfc] min-h-screen flex flex-col font-sans text-gray-800">
+
+    <header class="flex justify-between items-center px-8 py-3 bg-white border-b border-gray-100 shrink-0">
+        <div class="text-[#3b5998] font-bold text-xl flex items-baseline">
+            Wan <span class="text-xs ml-0.5">2</span>
+        </div>
+        <button class="bg-[#b22d24] text-white px-5 py-2 rounded-md text-sm hover:opacity-90 transition shadow-sm">
+            ログアウト
+        </button>
+    </header>
+
+    <nav class="flex gap-6 px-8 py-3 bg-white border-b border-gray-100 text-sm text-gray-500 shrink-0">
+        <a href="#" class="font-bold text-black border-b-2 border-black pb-1">仕訳帳</a>
+        <a href="#" class="hover:text-black">お知らせ・ご案内</a>
+        <a href="#" class="hover:text-black">設定</a>
+    </nav>
+
+    <main class="flex-grow flex items-center justify-center p-6">
+        <div class="w-full max-w-lg">
+            <div class="mb-8">
+                <h2 class="inline-block text-2xl font-bold border-b-2 border-gray-900 pb-2 leading-relaxed">
+                    ■ CSVアップロード 一覧
+                </h2>
+            </div>
+
+            <div class="flex flex-col gap-px bg-gray-200 border border-gray-200 rounded-xl overflow-hidden shadow-md">
+                
+                <a href="#" class="bg-white p-6 flex justify-between items-center hover:bg-slate-50 transition group">
+                    <span class="text-lg font-bold group-hover:text-blue-600 transition-colors">仕訳 CSV</span>
+                    </a>
+
+                <a href="#" class="bg-white p-6 flex justify-between items-center hover:bg-slate-50 transition group border-t border-gray-100">
+                    <span class="text-lg font-bold group-hover:text-blue-600 transition-colors">UFJ CSV</span>
+                    <span class="bg-blue-50 text-blue-600 border border-blue-200 text-sm font-medium px-3 py-1 rounded-full">
+                        利用可能
+                    </span>
+                </a>
+
+                <a href="#" class="bg-white p-6 flex justify-between items-center hover:bg-slate-50 transition group border-t border-gray-100">
+                    <span class="text-lg font-bold group-hover:text-blue-600 transition-colors">楽天カード CSV</span>
+                    <span class="bg-blue-50 text-blue-600 border border-blue-200 text-sm font-medium px-3 py-1 rounded-full">
+                        利用可能
+                    </span>
+                </a>
+
+            </div>
+        </div>
+    </main>
+
+</body>
+</html>
