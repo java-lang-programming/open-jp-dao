@@ -12,8 +12,8 @@ docker exec -it open-jp-dao-contracts-dev /bin/sh
 
 - **hardhat** powers the REST API and other web pages
 
-node v18.17.1
-npm 10.7.0
+node v24.14.0
+npm 11.10.1
 
 ## コンテナのbuild
 
@@ -56,3 +56,8 @@ make launch_hardhat
 ```
 make deploy_contracts_to_hardhat
 ```
+
+## TODO
+
+npmからpnpmにする
+hardhatのversionを最新にして対応
