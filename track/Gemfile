@@ -64,6 +64,7 @@ gem "propshaft"
 gem "importmap-rails"
 # Hotwire's SPA-like page accelerator [https://turbo.hotwired.dev]
 gem "turbo-rails"
+gem "stimulus-rails"
 
 gem "tailwindcss-rails"
 
