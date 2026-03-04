@@ -48,6 +48,7 @@ RSpec.describe DollarYenTransactionsCsvImportJob, type: :job do
     end
   end
 
+  # upsert_allにして許可する仕様に変更。duplicated keyは前に弾いている前提
   describe 'duplicate key' do
     let(:transaction_type1) { create(:transaction_type1, address: addresses_eth) }
     let(:duplicate_key_csv_path) { "#{Rails.root}/spec/files/uploads/dollar_yen_transaction_deposit_csv/duplicate_key.csv" }
@@ -61,16 +62,10 @@ RSpec.describe DollarYenTransactionsCsvImportJob, type: :job do
 
       DollarYenTransactionsCsvImportJob.perform_now(import_file_id: import_file.id)
 
-      errors = import_file.import_file_errors.first.fetch_errors
-      expect(errors).to eq([ { row: -1, col: -1, attribute: "例外処理", value: "import", message: "SQLite3::ConstraintException: UNIQUE constraint failed: dollar_yen_transactions.transaction_type_id, dollar_yen_transactions.date" } ])
+      # 重複したデータは最後の1件が登録になる
+      expect(addresses_eth.dollar_yen_transactions.size).to eq(1)
 
       FileUtils.rm_rf(ActiveStorage::Blob.service.root)
     end
   end
-
-  # https://qiita.com/necojackarc/items/b4a8ac682efeb1f62e74
-  # リトライ
-
-
-  # 値の確認
 end

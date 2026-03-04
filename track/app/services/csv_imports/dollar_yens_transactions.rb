@@ -58,7 +58,9 @@ module CsvImports
         prev_dollar_yen_transaction = data[:prev_dollar_yen_transactions]
       end
       dollar_yen_transactions = Files::DollarYenTransactionDepositCsv.make_dollar_yen_transactions(csvs: csvs, prev_dollar_yen_transaction:)
-      { type: type, dollar_yens_transactions: dollar_yen_transactions }
+      # hashにする
+      dollar_yen_transactions_hash = dollar_yen_transactions.map(&:to_upsert_all_hash)
+      { type: type, dollar_yens_transactions: dollar_yen_transactions_hash }
     end
 
     # Files::DollarYenTransactionDepositCsvのオブジェクトに変換

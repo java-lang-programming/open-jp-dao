@@ -15,14 +15,10 @@ class DollarYenTransactionsCsvImportJob < ApplicationJob
       ci = CsvImports::DollarYensTransactions.new(import_file: import_file)
       dollar_yens_transactions = ci.generate_dollar_yens_transactions
 
-      if dollar_yens_transactions[:type] == CsvImports::DollarYensTransactions::GENERATE_KIND_INSERT
-        # DollarYenTransaction.insert_all(dollar_yens_transactions[:dollar_yens_transactions])
-        DollarYenTransaction.import dollar_yens_transactions[:dollar_yens_transactions], validate: false
-      elsif dollar_yens_transactions[:type] == CsvImports::DollarYensTransactions::GENERATE_KIND_UPSERT
-        DollarYenTransaction.import dollar_yens_transactions[:dollar_yens_transactions], on_duplicate_key_update: { conflict_target: [ :id ], columns: [ :deposit_rate, :deposit_quantity, :deposit_en, :balance_rate, :balance_quantity, :balance_en ] },  validate: false
-      else
-        raise Exception("unexpected type")
-      end
+      DollarYenTransaction.upsert_all(
+        dollar_yens_transactions[:dollar_yens_transactions],
+        unique_by: %i[date transaction_type_id]
+      )
 
       import_file.status = ImportFile.statuses[:completed]
       import_file.save

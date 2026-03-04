@@ -31,8 +31,6 @@ gem "solid_queue", "~> 1.0"
 
 gem "csv"
 
-gem "activerecord-import"
-
 gem "view_component"
 
 group :development, :test do

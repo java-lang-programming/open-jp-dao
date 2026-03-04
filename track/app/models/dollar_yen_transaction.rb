@@ -440,6 +440,25 @@ class DollarYenTransaction < ApplicationRecord
     Files::DollarYenTransactionDepositCsv.make_dollar_yen_transactions(csvs: recalculation_csvs, prev_dollar_yen_transaction: base_dollar_yen_transaction)
   end
 
+  def to_upsert_all_hash
+    {
+      transaction_type_id: transaction_type.id,
+      date: Date.new(date.year, date.month, date.day),
+      deposit_rate: deposit_rate,
+      deposit_quantity: deposit_quantity,
+      deposit_en: deposit_en,
+      withdrawal_rate: withdrawal_rate,
+      withdrawal_quantity: withdrawal_quantity,
+      withdrawal_en: withdrawal_en,
+      exchange_en: exchange_en,
+      exchange_difference: exchange_difference,
+      balance_rate: balance_rate,
+      balance_quantity: balance_quantity,
+      balance_en: balance_en,
+      address_id: address.id
+    }
+  end
+
   private
 
     # 残帳簿価格で呼び出し 以前のデータをデータベース経由で数量米ドルを取得する

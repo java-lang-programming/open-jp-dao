@@ -28,11 +28,11 @@ RSpec.describe CsvImports::DollarYensTransactions, type: :feature do
         expect(dollar_yens_transactions[:dollar_yens_transactions].size).to eq(10)
 
         data1 = dollar_yens_transactions[:dollar_yens_transactions][0]
-        expect(data1.date).to eq(Date.new(2020, 4, 1))
-        expect(data1.transaction_type.name).to eq("HDV配当入金")
-        expect(data1.deposit_quantity).to eq(BigDecimal("3.97"))
-        expect(data1.deposit_rate).to eq(BigDecimal("106.59"))
-        expect(data1.deposit_en).to eq(BigDecimal("423"))
+        expect(data1[:date]).to eq(Date.new(2020, 4, 1))
+        expect(data1[:transaction_type_id]).to eq(transaction_type1.id)
+        expect(data1[:deposit_quantity]).to eq(BigDecimal("3.97"))
+        expect(data1[:deposit_rate]).to eq(BigDecimal("106.59"))
+        expect(data1[:deposit_en]).to eq(BigDecimal("423"))
 
         # TODO 9と10行目のデータを確認
 
