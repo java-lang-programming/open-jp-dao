@@ -7,6 +7,21 @@ RSpec.describe FormTextFieldComponent, type: :component do
   let(:attribute) { :deposit_quantity }
   let(:placeholder_key) { "activerecord.attributes.dollar_yen_transaction.deposit_quantity" }
 
+  describe "#datepicker?" do
+    let(:form_status) { { deposit_quantity: { status: 'complete' } } }
+    context "datepickerの有無" do
+      it "trueを返すこと" do
+        component = described_class.new(form: form, attribute: attribute, form_status: form_status, placeholder_key: placeholder_key, datepicker: true)
+        expect(component.datepicker?).to be true
+      end
+
+      it "デフォルトはfalseを返すこと" do
+        component = described_class.new(form: form, attribute: attribute, form_status: form_status, placeholder_key: placeholder_key)
+        expect(component.datepicker?).to be false
+      end
+    end
+  end
+
   describe "#required?" do
     let(:form_status) { { deposit_quantity: { status: 'complete' } } }
     context "必須項目の有無" do

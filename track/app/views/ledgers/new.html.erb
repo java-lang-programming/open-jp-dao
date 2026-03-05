@@ -16,7 +16,7 @@
           <label class="block text-gray-700 text-sm font-bold mb-2" for="default-datepicker">
             日付*<span id="dateOk" class="ml-2 text-green-500 hidden">OK</span>
           </label>
-          <%= form.text_field :date, class: "shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline", placeholder: "YYYY/MM/DD" %>
+          <%= form.text_field :date, data: { controller: "datepicker" }, class: "shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline", placeholder: "YYYY/MM/DD" %>
         </div>
         <div class="mb-5">
           <label for="transaction_kind" class="block text-gray-700 text-sm font-bold mb-2">勘定科目*</label>
