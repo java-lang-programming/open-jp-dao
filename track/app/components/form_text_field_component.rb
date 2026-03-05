@@ -1,12 +1,17 @@
 # frozen_string_literal: true
 
 class FormTextFieldComponent < ViewComponent::Base
-  def initialize(form:, attribute:, form_status:, placeholder_key:, required: false)
+  def initialize(form:, attribute:, form_status:, placeholder_key:, required: false, datepicker: false)
     @form = form
     @attribute = attribute
     @form_status = form_status
     @placeholder_key = placeholder_key
     @required = required
+    @datepicker = datepicker
+  end
+
+  def datepicker?
+    @datepicker
   end
 
   def required?
