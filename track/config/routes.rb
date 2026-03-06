@@ -53,7 +53,16 @@ Rails.application.routes.draw do
     end
   end
 
-  resources :settings, only: [ :index ]
+  namespace :settings do
+    resources :accounts, aria: [ :index ]
+    namespace :account do
+      get "info"
+      get "delete"
+    end
+    get   "default_year", to: "default_year#index", as: :default_year
+    patch "default_year", to: "default_year#update"
+  end
+
   resources :help, only: [ :index ]
 
   resources :ledgers do

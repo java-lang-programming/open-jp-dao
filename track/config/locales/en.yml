@@ -50,3 +50,12 @@ en:
         second_estimated_income_tax_prepayment: "second_estimated_income_tax_prepayment"
         miscellaneous_income: "miscellaneous_income"
         sales: 'sales'
+    settings:
+      index: "settings"
+      accounts:
+        index: "account"
+      default_year:
+        index: "default year"
+      account:
+        show: "account info"
+        remove: "delete my account"

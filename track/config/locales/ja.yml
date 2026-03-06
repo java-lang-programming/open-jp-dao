@@ -78,3 +78,12 @@ ja:
         second_estimated_income_tax_prepayment: "予定納税第2期"
         miscellaneous_income: "雑所得"
         sales: '売上高'
+    settings:
+      index: "設定"
+      accounts:
+        index: "アカウント"
+      default_year:
+        index: "デフォルト年度"
+      account:
+        show: "アカウント情報"
+        remove: "アカウント削除"

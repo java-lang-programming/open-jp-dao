@@ -1,0 +1,63 @@
+<% content_for :title do %>WanWan 設定 アカウント情報<% end %>
+
+<% content_for :header do %>
+  <%= render "layouts/header", user: @user, notification: @notification %>
+<% end %>
+
+<script>
+    function confirmDeleteAccount() {
+        if (confirm('本当にアカウントを削除しますか？この操作は取り消せません。')) {
+            try {
+                // ここにアカウント削除のAPI呼び出しなどの非同期処理を記述します
+                // 例：await fetch('/api/delete-account', { method: 'POST' });
+                console.log('アカウント削除処理を実行');
+                alert('アカウントを削除しました。');
+            } catch (error) {
+                console.error('アカウント削除中にエラーが発生しました:', error);
+                alert('アカウント削除に失敗しました。');
+            }
+        }
+    }
+</script>
+
+<section class="py-8">
+  <div class="grid place-items-center min-h-screen">
+    <div class="flex w-full max-w-5xl h-[600px] bg-white overflow-hidden">
+      <div class="flex min-h-screen w-full bg-white font-sans text-gray-800">
+        <%= render "settings/left_menu" %>
+        <main class="flex-1 flex flex-col bg-white overflow-y-auto">
+          <div class="flex items-center px-4 py-3 sticky top-0 bg-white z-10 border-b border-gray-50">
+            <%= link_to settings_accounts_path, class: "p-2 hover:bg-gray-100 rounded-full transition-colors mr-4" do %>
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" /></svg>
+            <% end %>
+            <h2 class="text-xl font-bold tracking-tight">アカウントを削除</h2>
+          </div>
+
+          <div class="p-4">
+            <div class="flex items-center p-2 mb-6 transition-colors">
+              <div class="flex flex-col">
+                <span class="font-bold text-[15px]"><%= @address.address %></span>
+                <span class="text-sm text-gray-500"><%= @address.ens_name %></span>
+              </div>
+            </div>
+
+            <h3 class="text-xl font-bold mb-3 px-2">アカウントが削除されます</h3>
+            <p class="text-[15px] text-gray-500 mb-8 px-2 leading-tight">
+              WanWanアカウントの削除を行います。
+            </p>
+
+            <div class="mt-8 flex justify-center py-4">
+              <button onclick="confirmDeleteAccount()" class="text-red-500 hover:bg-red-50 px-6 py-2 rounded-full transition-colors text-[15px]">
+                アカウント削除
+              </button>
+            </div>
+          </div>
+        </main>
+      </div>
+    </div>
+  </div>
+</section>
+
+<% content_for :footer do %>
+  <%= render "layouts/footer" %>
+<% end %>

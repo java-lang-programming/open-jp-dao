@@ -141,6 +141,14 @@ class Address < ApplicationRecord
     dollaryen_transactions.inject (0) { |sum, t| sum += Fraction.en(value: t.exchange_difference) }
   end
 
+  def ens_app_link(chain_id:)
+    "https://app.ens.domains/#{ens_name}?network=sepolia"
+  end
+
+  def etherscan_link(chain_id:)
+    "https://sepolia.etherscan.io/address/#{address}"
+  end
+
   class << self
     def kind_errors(kind: nil)
       errors = []
