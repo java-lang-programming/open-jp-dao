@@ -5,6 +5,6 @@ class Settings::AccountsController < ApplicationViewController
   def index
     @navs = settings_navs(selected: ACCOUNT)
     @user = user
-    @selected_item = SettingsController::ITEMS[0]
+    @selected_item = SETTINGS_LEFT_ITEMS[0]
   end
 end

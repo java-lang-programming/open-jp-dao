@@ -5,7 +5,7 @@ class Settings::AccountController < ApplicationViewController
   def info
     @navs = settings_navs(selected: ACCOUNT)
     @user = user
-    @selected_item = SettingsController::ITEMS[0]
+    @selected_item = SETTINGS_LEFT_ITEMS[0]
     @address = @session.address
     # ログインchianもわからないとあかんな
     @info = {
@@ -17,7 +17,7 @@ class Settings::AccountController < ApplicationViewController
   def delete
     @navs = settings_navs(selected: ACCOUNT)
     @user = user
-    @selected_item = SettingsController::ITEMS[0]
+    @selected_item = SETTINGS_LEFT_ITEMS[0]
     @address = @session.address
   end
 end
