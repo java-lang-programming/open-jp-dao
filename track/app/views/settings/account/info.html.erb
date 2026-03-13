@@ -1,0 +1,71 @@
+<% content_for :title do %>WanWan 設定 アカウント情報<% end %>
+
+<% content_for :header do %>
+  <%= render "layouts/header", user: @user, notification: @notification %>
+<% end %>
+
+<section class="py-8">
+  <div class="grid place-items-center min-h-screen">
+    <div class="flex w-full max-w-5xl h-[600px] bg-white overflow-hidden">
+      <div class="flex min-h-screen w-full bg-white font-sans text-gray-800">
+        <%= render "settings/left_menu" %>
+        <main class="flex-1 flex flex-col bg-white overflow-y-auto">
+          <div class="flex items-center px-4 py-3 sticky top-0 bg-white z-10 border-b border-gray-50">
+            <%= link_to settings_accounts_path, class: "p-2 hover:bg-gray-100 rounded-full transition-colors mr-4" do %>
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" /></svg>
+            <% end %>
+            <h2 class="text-xl font-bold tracking-tight">アカウント情報</h2>
+          </div>
+
+          <div class="divide-y divide-gray-50">
+            <%= link_to @info[:etherscan_link], target: "_blank", rel: "noopener" do %>
+              <div class="flex items-center justify-between px-4 py-3 hover:bg-gray-50 cursor-pointer transition-colors group">
+                <div>
+                  <div class="text-[15px]">アドレス</div>
+                  <div class="text-[13px] text-gray-500"><%= @address.address %></div>
+                </div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" /></svg>
+              </div>
+            <% end %>
+            <%= link_to @info[:ens_app_link], target: "_blank", rel: "noopener" do %>
+              <div class="flex items-center justify-between px-4 py-3 hover:bg-gray-50 cursor-pointer transition-colors group">
+                <div>
+                  <div class="text-[15px]">ENS</div>
+                  <div class="text-[13px] text-gray-500"><%= @address.ens_name %></div>
+                </div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" /></svg>
+              </div>
+            <% end %>
+
+            <div class="flex items-center justify-between px-4 py-3 hover:bg-gray-50 cursor-pointer transition-colors">
+              <div>
+                <div class="text-[15px]">メールアドレス</div>
+                <!--<div class="text-[13px] text-gray-500">marsa.jp.company@gmail.com</div>-->
+              </div>
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" /></svg>
+            </div>
+
+            <div class="px-4 py-3">
+              <div class="text-[15px]">アカウントの作成</div>
+              <div class="text-[13px] text-gray-500 leading-tight">
+                <%= @address.created_at %>
+              </div>
+            </div>
+
+            <div class="flex items-center justify-between px-4 py-3 hover:bg-gray-50 cursor-pointer transition-colors">
+              <div>
+                <div class="text-[15px]">言語</div>
+                <div class="text-[13px] text-gray-500">日本語</div>
+              </div>
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" /></svg>
+            </div>
+          </div>
+        </main>
+      </div>
+    </div>
+  </div>
+</section>
+
+<% content_for :footer do %>
+  <%= render "layouts/footer" %>
+<% end %>

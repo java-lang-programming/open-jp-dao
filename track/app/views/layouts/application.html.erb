@@ -19,6 +19,13 @@
   </head>
   <body>
     <div class="container">
+      <div id="flash-container" class="fixed bottom-10 left-1/2 -translate-x-1/2 z-50 flex flex-col gap-2 items-center">
+        <% if flash[:toast_notice] %>
+          <%= render "shared/toast", message: flash[:toast_notice], type: "notice" %>
+        <% elsif flash[:toast_alert] %>
+          <%= render "shared/toast", message: flash[:toast_alert], type: "alert" %>
+        <% end %>
+      </div>
       <%= yield :header %>
       <%= yield :notification %>
       <%= yield %>

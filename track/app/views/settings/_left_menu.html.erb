@@ -1,0 +1,43 @@
+<aside class="w-80 border-r border-gray-100 flex flex-col">
+  <div class="p-4 pt-6">
+    <h1 class="text-xl font-bold mb-4 px-2"><%= t('views.settings.index') %></h1>
+  </div>
+  <nav class="flex-1 overflow-y-auto">
+    <ul class="space-y-1">
+      <% if @selected_item != Nav::SETTINGS_LEFT_ITEMS[0] %>
+        <%= link_to settings_accounts_path do %>
+          <li class="flex items-center justify-between px-4 py-3 hover:bg-gray-50 cursor-pointer transition-colors">
+            <span class="text-sm"><%= t('views.settings.accounts.index') %></span>
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+            </svg>
+          </li>
+        <% end %>
+      <% else  %>
+        <li class="flex items-center justify-between px-4 py-3 border-r-4 border-blue-400">
+          <span class="text-sm"><%= t('views.settings.accounts.index') %></span>
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+          </svg>
+        </li>
+      <% end %>
+      <% if @selected_item != Nav::SETTINGS_LEFT_ITEMS[1] %>
+        <%= link_to settings_default_year_path do %>
+          <li class="flex items-center justify-between px-4 py-3 hover:bg-gray-50 cursor-pointer transition-colors">
+            <span class="text-sm"><%= t('views.settings.default_year.index') %></span>
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+            </svg>
+          </li>
+        <% end %>
+      <% else  %>
+        <li class="flex items-center justify-between px-4 py-3 border-r-4 border-blue-400">
+          <span class="text-sm"><%= t('views.settings.default_year.index') %></span>
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+          </svg>
+        </li>
+      <% end %>
+    </ul>
+  </nav>
+</aside>

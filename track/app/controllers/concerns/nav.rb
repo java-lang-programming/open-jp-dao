@@ -8,6 +8,11 @@ module Nav
 
   ACCOUNT = 1
 
+  SETTINGS_LEFT_ITEMS = %w[
+    account
+    default_year
+  ].freeze
+
   def transactions_navs(selected: EXCHANGE_GAIN_AND_LOSSES)
     [
       { id: 1, name: I18n.t("header.nav.dollar_yen_transactions.exchange"), path: foreign_exchange_gain_dollar_yen_transactions_path, selected: selected == 1 },
@@ -25,7 +30,7 @@ module Nav
 
   def settings_navs(selected: ACCOUNT)
     [
-      { id: 1, name: "アカウント", path: settings_path, selected: selected == 1 }
+      { id: 1, name: "アカウント", path: settings_accounts_path, selected: selected == 1 }
     ]
   end
 end

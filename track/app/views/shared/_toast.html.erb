@@ -1,0 +1,26 @@
+<%# 渡された type に応じて背景色を決定。デフォルトは gray-800 %>
+<%
+  bg_class = case type
+             when "notice" then "bg-green-600"
+             when "alert"  then "bg-red-600"
+             else "bg-gray-800"
+             end
+%>
+
+<div data-controller="toast"
+     class="<%= bg_class %> text-white px-6 py-3 rounded-full shadow-2xl flex items-center justify-between min-w-[300px] transition-all duration-300 ease-in-out transform opacity-100 translate-y-0"
+     data-transition-enter-from="translate-y-10 opacity-0"
+     data-transition-enter-to="translate-y-0 opacity-100"
+     data-transition-leave-to="translate-y-10 opacity-0">
+  
+  <div class="flex items-center gap-3">
+    <% if type == "notice" %>
+      <span>✅</span>
+    <% elsif type == "alert" %>
+      <span>⚠️</span>
+    <% end %>
+    <span><%= message %></span>
+  </div>
+
+  <button data-action="click->toast#close" class="ml-4 text-gray-400 hover:text-white">&times;</button>
+</div>
