@@ -11,7 +11,7 @@
         <%= render "settings/left_menu" %>
         <main class="flex-1 flex flex-col bg-white" data-controller="modal">
           <div class="px-4 pt-6 pb-2">
-            <h2 class="text-xl font-bold tracking-tight">デフォルト年度</h2>
+            <h2 class="text-xl font-bold tracking-tight"><%= t('views.settings.default_year.index') %></h2>
             <p class="text-[13px] text-gray-500 mt-4">コンテンツの表示方法を管理します。</p>
           </div>
 
@@ -21,7 +21,7 @@
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" /></svg>
               </div>
               <div class="flex-1">
-                <h3 class="text-[15px] font-medium">デフォルト年度</h3>
+                <h3 class="text-[15px] font-medium"><%= t('views.settings.default_year.index') %></h3>
                 <p class="text-[13px] text-gray-500 mt-0.5 leading-tight"><%= @setting.default_year %></p>
               </div>
               <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-gray-400 self-center" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" /></svg>
@@ -29,48 +29,41 @@
           </div>
 
           <!-- modal -->
-          <div data-modal-target="container" class="fixed inset-0 z-50 items-center justify-center bg-black/50 p-4 hidden">
-            <div class="relative w-full max-w-[600px] bg-white rounded-2xl shadow-2xl flex flex-col max-h-[90vh] animate-in fade-in zoom-in duration-200 overflow-hidden">
-              <button data-action="click->modal#close" class="absolute top-4 right-4 p-2 hover:bg-gray-100 rounded-full transition-colors z-20">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-gray-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-                </svg>
-              </button>
-              <%= form_with(model: @setting, url: settings_default_year_path, data: { turbo: true }) do |form| %>
-                <div class="px-8 pb-4 pt-12 overflow-y-auto custom-scrollbar">
-                  <h2 class="text-3xl font-bold mb-2">デフォルト年度を選択</h2>
-                  <p class="text-[15px] text-gray-500 mb-6 leading-tight">デフォルトで使用する対象年度を選択します。 </p>
-                  <div class="relative mb-6 group"></div>
-                  <div class="space-y-1">
-                    <label class="flex items-center justify-between py-4 px-2 cursor-pointer hover:bg-gray-50 rounded-lg transition-colors group">
-                      <span class="text-[15px] font-bold">2026年度 - 令和8年</span>
-                      <div class="relative flex items-center">
-                        <%= form.radio_button :default_year, 2026, class: "peer appearance-none w-5 h-5 border-2 border-gray-300 rounded-full checked:border-blue-500 transition-all cursor-pointer" %>
-                        <div class="absolute w-2.5 h-2.5 bg-blue-500 rounded-full left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 scale-0 peer-checked:scale-100 transition-transform pointer-events-none"></div>
-                      </div>
-                    </label>
-                    <label class="flex items-center justify-between py-4 px-2 cursor-pointer hover:bg-gray-50 rounded-lg transition-colors group">
-                      <span class="text-[15px] font-bold">2025年度 - 令和7年</span>
-                      <div class="relative flex items-center">
-                        <%= form.radio_button :default_year, 2025, class: "peer appearance-none w-5 h-5 border-2 border-gray-300 rounded-full checked:border-blue-500 transition-all cursor-pointer" %>
-                        <div class="absolute w-2.5 h-2.5 bg-blue-500 rounded-full left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 scale-0 peer-checked:scale-100 transition-transform pointer-events-none"></div>
-                      </div>
-                    </label>
-                    <label class="flex items-center justify-between py-4 px-2 cursor-pointer hover:bg-gray-50 rounded-lg transition-colors group">
-                      <span class="text-[15px] font-bold">2024年度 - 令和6年</span>
-                      <div class="relative flex items-center">
-                        <%= form.radio_button :default_year, 2024, class: "peer appearance-none w-5 h-5 border-2 border-gray-300 rounded-full checked:border-blue-500 transition-all cursor-pointer" %>
-                        <div class="absolute w-2.5 h-2.5 bg-blue-500 rounded-full left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 scale-0 peer-checked:scale-100 transition-transform pointer-events-none"></div>
-                      </div>
-                    </label>
-                  </div>
+          <%= render layout: 'shared/modal' do %>
+            <%= form_with(model: @setting, url: settings_default_year_path, data: { turbo: true }) do |form| %>
+              <div class="px-8 pb-4 pt-12 overflow-y-auto custom-scrollbar">
+                <h2 class="text-3xl font-bold mb-2">デフォルト年度を選択</h2>
+                <p class="text-[15px] text-gray-500 mb-6 leading-tight">デフォルトで使用する対象年度を選択します。 </p>
+                <div class="relative mb-6 group"></div>
+                <div class="space-y-1">
+                  <label class="flex items-center justify-between py-4 px-2 cursor-pointer hover:bg-gray-50 rounded-lg transition-colors group">
+                    <span class="text-[15px] font-bold">2026年度 - 令和8年</span>
+                    <div class="relative flex items-center">
+                      <%= form.radio_button :default_year, 2026, class: "peer appearance-none w-5 h-5 border-2 border-gray-300 rounded-full checked:border-blue-500 transition-all cursor-pointer" %>
+                      <div class="absolute w-2.5 h-2.5 bg-blue-500 rounded-full left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 scale-0 peer-checked:scale-100 transition-transform pointer-events-none"></div>
+                    </div>
+                  </label>
+                  <label class="flex items-center justify-between py-4 px-2 cursor-pointer hover:bg-gray-50 rounded-lg transition-colors group">
+                    <span class="text-[15px] font-bold">2025年度 - 令和7年</span>
+                    <div class="relative flex items-center">
+                      <%= form.radio_button :default_year, 2025, class: "peer appearance-none w-5 h-5 border-2 border-gray-300 rounded-full checked:border-blue-500 transition-all cursor-pointer" %>
+                      <div class="absolute w-2.5 h-2.5 bg-blue-500 rounded-full left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 scale-0 peer-checked:scale-100 transition-transform pointer-events-none"></div>
+                    </div>
+                  </label>
+                  <label class="flex items-center justify-between py-4 px-2 cursor-pointer hover:bg-gray-50 rounded-lg transition-colors group">
+                    <span class="text-[15px] font-bold">2024年度 - 令和6年</span>
+                    <div class="relative flex items-center">
+                      <%= form.radio_button :default_year, 2024, class: "peer appearance-none w-5 h-5 border-2 border-gray-300 rounded-full checked:border-blue-500 transition-all cursor-pointer" %>
+                      <div class="absolute w-2.5 h-2.5 bg-blue-500 rounded-full left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 scale-0 peer-checked:scale-100 transition-transform pointer-events-none"></div>
+                    </div>
+                  </label>
                 </div>
-                <div class="p-8 space-y-3 bg-white border-t border-gray-50">
-                  <%= form.submit "設定", class: "w-full bg-blue-500 hover:bg-blue-700 text-white font-bold py-3.5 rounded-full text-[17px] transition-colors shadow-sm" %>
-                </div>
-              <% end %>
-            </div>
-          </div>
+              </div>
+              <div class="p-8 space-y-3 bg-white border-t border-gray-50">
+                <%= form.submit "設定", class: "w-full bg-blue-500 hover:bg-blue-700 text-white font-bold py-3.5 rounded-full text-[17px] transition-colors shadow-sm" %>
+              </div>
+            <% end %>
+          <% end %>
         </main>
 
       </div>

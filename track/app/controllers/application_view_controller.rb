@@ -36,17 +36,15 @@ class ApplicationViewController < ActionController::Base
 
   layout "application"
 
-  def find_session_by_cookie
-    Session.find_by(id: cookies.signed[:session_id])
-  end
-
   # 毎回は良くない
   # TODO
   # 24時間を超えたら認証にする。時間は外だし
   # 2週間で強制ログイン
   def verify
-    @session ||= find_session_by_cookie
+    current_session
     raise NotFoundSession unless @session.present?
+
+    set_locale
 
     # puts "@session.update_at"
     # puts @session.updated_at
@@ -81,7 +79,7 @@ class ApplicationViewController < ActionController::Base
   # headerのユーザー情報取得
   # display_user:
   def user
-    @session ||= find_session_by_cookie
+    current_session
     return { errors: [ { msg: "ログイン情報がありません" } ] } unless @session.present?
     { address: @session.address.address, display_address: @session.address.display_address, network: @session.network, last_login: @session.last_login }
   end
@@ -94,4 +92,18 @@ class ApplicationViewController < ActionController::Base
     @user = user
     @notification = notification
   end
+
+  private
+    def set_locale
+      # 1. ログイン中ならユーザーの設定、そうでなければデフォルト(jaなど)を使用
+      I18n.locale = @session.address.setting&.language || I18n.default_locale
+    end
+
+    def current_session
+      @session ||= find_session_by_cookie
+    end
+
+    def find_session_by_cookie
+      Session.find_by(id: cookies.signed[:session_id])
+    end
 end
