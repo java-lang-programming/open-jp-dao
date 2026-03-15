@@ -58,6 +58,7 @@ Rails.application.routes.draw do
     namespace :account do
       get "info"
       get "delete"
+      patch "locale", to: "update_locale"
     end
     get   "default_year", to: "default_year#index", as: :default_year
     patch "default_year", to: "default_year#update"

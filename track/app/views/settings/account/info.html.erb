@@ -9,7 +9,7 @@
     <div class="flex w-full max-w-5xl h-[600px] bg-white overflow-hidden">
       <div class="flex min-h-screen w-full bg-white font-sans text-gray-800">
         <%= render "settings/left_menu" %>
-        <main class="flex-1 flex flex-col bg-white overflow-y-auto">
+        <main class="flex-1 flex flex-col bg-white overflow-y-auto" data-controller="modal">
           <div class="flex items-center px-4 py-3 sticky top-0 bg-white z-10 border-b border-gray-50">
             <%= link_to settings_accounts_path, class: "p-2 hover:bg-gray-100 rounded-full transition-colors mr-4" do %>
               <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" /></svg>
@@ -52,7 +52,7 @@
               </div>
             </div>
 
-            <div class="flex items-center justify-between px-4 py-3 hover:bg-gray-50 cursor-pointer transition-colors">
+            <div class="flex items-center justify-between px-4 py-3 hover:bg-gray-50 cursor-pointer transition-colors" data-action="click->modal#open">
               <div>
                 <div class="text-[15px]">言語</div>
                 <div class="text-[13px] text-gray-500">日本語</div>
@@ -60,6 +60,35 @@
               <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" /></svg>
             </div>
           </div>
+
+          <%= render layout: 'shared/modal' do %>
+            <%= form_with(model: @setting, url: settings_account_locale_path, data: { turbo: true }) do |form| %>
+              <div class="px-8 pb-4 pt-12 overflow-y-auto custom-scrollbar">
+                <h2 class="text-3xl font-bold mb-2">言語を選択</h2>
+                <p class="text-[15px] text-gray-500 mb-6 leading-tight">デフォルトで使用する言語を選択します。 </p>
+                <div class="relative mb-6 group"></div>
+                <div class="space-y-1">
+                  <label class="flex items-center justify-between py-4 px-2 cursor-pointer hover:bg-gray-50 rounded-lg transition-colors group">
+                    <span class="text-[15px] font-bold">日本語</span>
+                    <div class="relative flex items-center">
+                      <%= form.radio_button :language, 'ja', class: "peer appearance-none w-5 h-5 border-2 border-gray-300 rounded-full checked:border-blue-500 transition-all cursor-pointer" %>
+                      <div class="absolute w-2.5 h-2.5 bg-blue-500 rounded-full left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 scale-0 peer-checked:scale-100 transition-transform pointer-events-none"></div>
+                    </div>
+                  </label>
+                  <label class="flex items-center justify-between py-4 px-2 cursor-pointer hover:bg-gray-50 rounded-lg transition-colors group">
+                    <span class="text-[15px] font-bold">英語</span>
+                    <div class="relative flex items-center">
+                      <%= form.radio_button :language, 'en', class: "peer appearance-none w-5 h-5 border-2 border-gray-300 rounded-full checked:border-blue-500 transition-all cursor-pointer" %>
+                      <div class="absolute w-2.5 h-2.5 bg-blue-500 rounded-full left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 scale-0 peer-checked:scale-100 transition-transform pointer-events-none"></div>
+                    </div>
+                  </label>
+                </div>
+              </div>
+              <div class="p-8 space-y-3 bg-white border-t border-gray-50">
+                <%= form.submit "設定", class: "w-full bg-blue-500 hover:bg-blue-700 text-white font-bold py-3.5 rounded-full text-[17px] transition-colors shadow-sm" %>
+              </div>
+            <% end %>
+          <% end %>
         </main>
       </div>
     </div>

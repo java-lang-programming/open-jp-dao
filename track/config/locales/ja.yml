@@ -49,6 +49,11 @@ ja:
           deposit_quantity: 預入数量米ドル
           deposit_rate: 預入レート
     errors:
+      models:
+        setting:
+          attributes:
+            language:
+              inclusion: "はja, enの中から選択してください"
       messages:
         blank: を入力してください
         too_many_decimal_places: は小数点以下2桁以内で入力してください
