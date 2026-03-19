@@ -1,126 +1,71 @@
-<script>
+<header class="w-full bg-white border-b border-gray-200 shadow-sm sticky top-0 z-50">
+  <div class="max-w-7xl mx-auto px-4 h-16 flex items-center justify-between">
 
-  /**
-   * ヘッダーイベントの設定
-   **/
-  function setHeaderEventListener() {
-    const mobileMenuButton = document.querySelector('[data-collapse-toggle="navbar-dropdown"]');
-    const mobileMenu = document.getElementById('navbar-dropdown');
+    <div class="flex items-center gap-10">
+      <h1 class="text-2xl font-bold text-black-600 tracking-tighter">Wan<span class="text-xs align-top">2</span></h1>
 
-    mobileMenuButton.addEventListener('click', function() {
-      mobileMenu.classList.toggle('hidden');
-      mobileMenu.classList.toggle('block'); // hiddenクラスとblockクラスを切り替える
-      const expanded = this.getAttribute('aria-expanded') === 'true' || false;
-      this.setAttribute('aria-expanded', !expanded);
-    });
+      <%
+        # 1. クラスを共通変数として定義（一箇所直せば全部変わる）
+        nav_base = "px-4 flex items-center h-full text-sm transition"
+        active_s = "font-bold text-blue-600 border-b-2 border-blue-600"
+        idle_s   = "font-medium text-gray-500 hover:text-gray-900"
 
-    // ドロップダウンメニューの表示・非表示切り替え
-    const dropdownButton = document.getElementById('dropdownNavbarLink');
-    const dropdownMenu = document.getElementById('dropdownNavbar');
+        is_dollar_yen_transactions = request.path.start_with?('/dollar_yen_transactions') || request.path.start_with?('/transaction_types')
+        is_ledgers = request.path.start_with?('/tax_returns') || request.path.start_with?('/ledgers')
+        is_settings = request.path.start_with?('/settings')
+      %>
+      <nav class="hidden md:flex items-center gap-1 h-16">
+        <%= link_to t('views.dollar_yen_transactions.index'), dollar_yen_transactions_path, class: "#{nav_base} #{is_dollar_yen_transactions ? active_s : idle_s}" %>
+        <%= link_to t('views.ledgers.index'), tax_returns_path, class: "#{nav_base} #{is_ledgers ? active_s : idle_s}" %>
+        <%= link_to t('views.settings.index'), settings_accounts_path, class: "#{nav_base} #{is_settings ? active_s : idle_s}" %>
+      </nav>
+    </div>
 
-    dropdownButton.addEventListener('click', function() {
-      dropdownMenu.classList.toggle('hidden');
-      dropdownMenu.classList.toggle('block'); // hiddenクラスとblockクラスを切り替える
-    });
-
-    // ドロップダウンメニュー外をクリックしたら閉じる
-    document.addEventListener('click', function(event) {
-      if (!dropdownButton.contains(event.target) && !dropdownMenu.contains(event.target)) {
-        dropdownMenu.classList.add('hidden');
-        dropdownMenu.classList.remove('block');
-      }
-    });
-  }
-
-  // イベントの登録の呼び出し
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', () => {
-      setHeaderEventListener();
-    });
-  } else {
-    setHeaderEventListener();
-  }
-
-</script>
-<header>
-  <!-- header 1行目 -->
-  <nav class="bg-white border-gray-200 dark:bg-gray-900 dark:border-gray-700">
-    <div class="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto p-4">
-      <a href="#" class="text-lg font-bold text-blue-600 lg:pr-8">Wan
-        <sup>2</sup>
-      </a>
-      <button data-collapse-toggle="navbar-dropdown" type="button" class="inline-flex items-center p-2 w-10 h-10 justify-center text-sm text-gray-500 rounded-lg md:hidden hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-200 dark:text-gray-400 dark:hover:bg-gray-700 dark:focus:ring-gray-600" aria-controls="navbar-dropdown" aria-expanded="false">
-        <span class="sr-only">Open main menu</span>
-        <svg class="w-5 h-5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 17 14">
-          <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M1 1h15M1 7h15M1 13h15"/>
-        </svg>
-      </button>
-      <div class="hidden w-full md:block md:w-auto" id="navbar-dropdown">
-        <ul class="flex flex-col font-medium p-4 md:p-0 mt-4 rounded-lg bg-gray-50 md:space-x-8 rtl:space-x-reverse md:flex-row md:mt-0 md:border-0 md:bg-white dark:bg-gray-800 md:dark:bg-gray-900 dark:border-gray-700">
-          <li class="relative">
-            <button id="dropdownNavbarLink" data-dropdown-toggle="dropdownNavbar" class="flex items-center justify-between w-full py-2 px-3 text-gray-900 rounded-sm hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-blue-700 md:p-0 md:w-auto dark:text-white md:dark:hover:text-blue-500 dark:focus:text-white dark:border-gray-700 dark:hover:bg-gray-700 md:dark:hover:bg-transparent">メニュー
-              <svg class="w-2.5 h-2.5 ms-2.5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 10 6">
-                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 4 4 4-4"/>
-              </svg>
-            </button>
-            <!-- Dropdown menu -->
-            <div id="dropdownNavbar" class="z-50 hidden font-normal bg-white divide-y divide-gray-100 rounded-lg shadow-sm w-44 absolute dark:bg-gray-700 dark:divide-gray-600">
-              <ul class="py-2 text-sm text-gray-700 dark:text-gray-400" aria-labelledby="dropdownLargeButton">
-                <li>
-                  <%= link_to t('views.dollar_yen_transactions.index'), dollar_yen_transactions_path, class: "block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white" %>
-                </li>
-                <li>
-                  <%= link_to "仕訳帳", tax_returns_path, class: "block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white" %>
-                </li>
-                <!--<li>ledgers_path
-                  <a href="#" class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">クリプト元帳</a>
-                </li>-->
-              </ul>
-            </div>
-          </li>
-          <li>
-            <%= link_to t('views.settings.index'), settings_accounts_path, class: "block py-2 px-3 text-gray-900 rounded-sm hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-blue-700 md:p-0 dark:text-white md:dark:hover:text-blue-500 dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent" %>
-          </li>
-          <li>
-            <%= link_to "ログアウト", sessions_logout_path,  data: { "turbo-method": :post }, class: "block py-2 px-3 text-gray-900 rounded-sm hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-blue-700 md:p-0 dark:text-white md:dark:hover:text-blue-500 dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent" %>
-          </li>
-        </ul>
+    <div class="flex items-center gap-3">
+      <div class="flex items-center gap-2 px-3 py-1.5 bg-purple-50 border border-purple-100 rounded-full">
+        <span class="w-2 h-2 bg-purple-500 rounded-full animate-pulse"></span>
+        <span class="text-xs font-bold text-purple-700 uppercase tracking-wider"><%= user[:network] %></span>
       </div>
-    </div>
-  </nav>
 
-  <% if @navs.present? %>
-  <div class="mx-auto max-w-screen-xl">
-    <div class="overflow-y-auto whitespace-nowrap bg-gray-50 p-5">
-      <ul class="inline-flex list-none items-center">
-        <% @navs.each do |nav| %>
-          <% if nav[:selected] == true %>
-            <li class="font-bold underline decoration-green-500 decoration-4 mr-1 px-4 py-1"><%= nav[:name] %></li>
-          <% else%>
-            <li><%= link_to nav[:name], nav[:path], class: "mr-1 rounded-md px-4 py-1 text-base text-gray-500 ring-offset-2 ring-offset-current transition duration-500 ease-in-out hover:text-blue-600 focus:outline-none focus:ring-2" %></li>
-          <% end %>
-        <% end %>
-      </ul>
-    </div>
-  </div>
-  <% end %>
+      <div class="flex items-center px-3 py-1.5 bg-gray-100 rounded-lg group cursor-pointer hover:bg-gray-200 transition">
+        <span class="text-xs font-mono text-gray-600"><%= user[:display_address] %></span>
+        <svg class="w-3 h-3 ml-2 text-gray-400 group-hover:text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"></path></svg>
+      </div>
 
-  <!-- login情報 -->
-  <div class="bg-white mx-auto max-w-screen-xl py-4">
-    <div class="mx-auto flex items-center justify-between px-4">
-      <div class="text-left"><%= user[:display_address] %></div>
-      <div class="text-center"><%= user[:network] %></div>
-      <div class="text-right">最終ログイン:&nbsp;<%= user[:last_login] %></div>
+      <%= link_to sessions_logout_path,
+                  data: { turbo_method: :post, turbo_confirm: "ログアウトしますか？" },
+                  class: "ml-2 p-2 text-gray-400 hover:text-red-500 transition border border-transparent hover:border-red-100 hover:bg-red-50 rounded-lg",
+                  title: t('header.logout') do %>
+
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path>
+        </svg>
+      <% end %>
     </div>
   </div>
-
-  <!-- imformation -->
-  <% if notification.present? %>
-  <div class="bg-white mx-auto max-w-screen-xl py-4">
-    <div class="mx-auto flex px-4">
-      <div class="mx-auto"><%= notification.message %></div>
-    </div>
-  </div>
-  <% end %>
-
 </header>
+
+<% if @navs.present? && !is_settings %>
+<div class="w-full bg-gray-50 border-b border-gray-200">
+  <div class="max-w-7xl mx-auto px-4 h-12 flex items-center gap-8">
+    <nav class="flex gap-6 text-sm">
+      <% @navs.each do |nav| %>
+        <% if nav[:selected] == true %>
+          <a class="text-gray-900 font-bold"><%= nav[:name] %></a>
+        <% else%>
+          <%= link_to nav[:name], nav[:path], class: "text-gray-500 hover:text-gray-800" %>
+        <% end %>
+      <% end %>
+    </nav>
+  </div>
+</div>
+<% end %>
+
+<!-- imformation -->
+<% if notification.present? %>
+<div class="bg-white mx-auto max-w-screen-xl py-4">
+  <div class="mx-auto flex px-4">
+    <div class="mx-auto"><%= notification.message %></div>
+  </div>
+</div>
+<% end %>
