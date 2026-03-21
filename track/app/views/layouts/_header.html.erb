@@ -11,7 +11,7 @@
         idle_s   = "font-medium text-gray-500 hover:text-gray-900"
 
         is_dollar_yen_transactions = request.path.start_with?('/dollar_yen_transactions') || request.path.start_with?('/transaction_types')
-        is_ledgers = request.path.start_with?('/tax_returns') || request.path.start_with?('/ledgers')
+        is_ledgers = request.path.start_with?('/tax_returns') || request.path.start_with?('/ledgers') || request.path.start_with?('/ledger_csvs') || request.path.start_with?('/ledger_csv_integrations')
         is_settings = request.path.start_with?('/settings')
       %>
       <nav class="hidden md:flex items-center gap-1 h-16">

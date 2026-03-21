@@ -4,17 +4,6 @@
   <%= render "layouts/header", user: @user, notification: @notification %>
 <% end %>
 
-<style>
-    /** 一旦これで **/
-    .hidden {
-      display: none;
-    }
-
-    .bg-opacity-50 {
-      background-color: rgb(75 85 99 / 0.5);
-    }
-</style>
-
 <section class="py-8" data-controller="ledgers">
   <div class="bg-white flex justify-end px-6 py-4">
     <%= link_to "作成", new_ledger_path, class: "bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mr-2" %>
@@ -98,7 +87,10 @@
     <!-- modal 外出しにする -->
     <div data-ledgers-target="modal"
          data-action="click->ledgers#closeModal"
-         class="modal-overlay fixed inset-0 bg-gray-600 bg-opacity-50 flex items-center justify-center z-50 hidden">
+         class="fixed inset-0 z-50 flex items-center justify-center bg-gray-600/50
+            invisible opacity-0 pointer-events-none
+            data-[state=open]:visible data-[state=open]:opacity-100 data-[state=open]:pointer-events-auto
+            transition-all duration-200">
       <div class="modal-content relative bg-white rounded-lg shadow-xl w-11/12 md:max-w-sm mx-auto p-6">
           <button data-action="click->ledgers#closeModal"
                   class="close-modal-button absolute top-4 right-4 text-gray-500 hover:text-gray-800 focus:outline-none">
