@@ -27,7 +27,7 @@ export default class extends Controller {
     const names = checkedRows.map(row => row.querySelector('.item-name').textContent.trim())
     this.itemInfoTarget.textContent = names.join(', ')
 
-    this.modalTarget.classList.remove('hidden')
+    this.modalTarget.dataset.state = "open"
   }
 
   // モーダルを閉じる
@@ -43,7 +43,7 @@ export default class extends Controller {
       if (!isBackground && !isCloseButton) return
     }
     // イベントのデフォルト挙動（aタグなら遷移など）を止める
-    this.modalTarget.classList.add('hidden')
+    this.modalTarget.dataset.state = "closed"
   }
 
   // 削除実行（フォーム送信）
@@ -79,7 +79,7 @@ export default class extends Controller {
       form.submit()
 
       // モーダルを閉じる
-      this.modalTarget.classList.add('hidden')
+      this.modalTarget.dataset.state = "closed"
     }
   }
 }

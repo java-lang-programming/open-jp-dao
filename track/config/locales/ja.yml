@@ -63,6 +63,7 @@ ja:
         not_an_integer: は整数で入力してください
         must_be_greater_than_or_equal_to_zero: は0以上の値で入力してください
   header:
+    logout: "ログアウト"
     nav:
       dollar_yen_transactions:
         exchange: "為替差損益"
@@ -74,6 +75,8 @@ ja:
   views:
     dollar_yen_transactions:
       index: "ドル円外貨預金元帳"
+    ledgers:
+      index: "仕訳"
     import_files:
       index: "csvインポート結果画面"
     tax_returns:

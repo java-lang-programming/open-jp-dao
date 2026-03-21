@@ -92,7 +92,7 @@ class LedgersController < ApplicationViewController
     # jsでチェックするのでledger_idsのチェックは不要
     address.ledgers.where(id: ledger_ids).destroy_all
 
-    redirect_to ledgers_path
+    redirect_to ledgers_path, flash: { toast_notice: "削除しました" }
   end
 
   def csv_upload_new

@@ -30,6 +30,7 @@
 en:
   hello: "Hello world"
   header:
+    logout: "Logout"
     nav:
       dollar_yen_transactions:
         exchange: "FX Gain/Loss"
@@ -41,6 +42,8 @@ en:
   views:
     dollar_yen_transactions:
       index: "FCD GL (USD/JPY)"
+    ledgers:
+      index: "Journal Entry"
     import_files:
       index: "csv Import Results Page"
     tax_returns:
@@ -51,9 +54,9 @@ en:
         miscellaneous_income: "miscellaneous_income"
         sales: 'sales'
     settings:
-      index: "settings"
+      index: "Settings"
       accounts:
-        index: "account"
+        index: "Account"
       default_year:
         index: "default year"
       account:
