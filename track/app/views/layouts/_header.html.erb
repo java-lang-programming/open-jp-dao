@@ -52,7 +52,7 @@
       <% @navs.each do |nav| %>
         <% if nav[:selected] == true %>
           <a class="text-gray-900 font-bold"><%= nav[:name] %></a>
-        <% else%>
+        <% else %>
           <%= link_to nav[:name], nav[:path], class: "text-gray-500 hover:text-gray-800" %>
         <% end %>
       <% end %>

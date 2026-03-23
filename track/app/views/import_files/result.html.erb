@@ -13,13 +13,13 @@
       <p class="text-yellow-700 p-3 rounded-md text-center font-semibold text-lg max-w-lg w-full">
         処理を準備中です。少々お待ちください。
       </p>
-    </div>  
+    </div>
   <% elsif @import_file.in_progress? %>
     <div class="flex justify-center">
       <p class="text-green-700 p-3 rounded-md text-center font-semibold text-lg max-w-lg w-full">
         処理を実行中です。少々お待ちください。
       </p>
-    </div>  
+    </div>
   <% elsif @import_file.completed? %>
     <div class="flex flex-col items-center justify-center gap-4">
       <p class="text-green-700 p-3 rounded-md text-center font-semibold text-lg max-w-lg w-full">
