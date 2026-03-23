@@ -55,6 +55,7 @@ end
 group :development do
   # 型検査ツール
   gem "steep"
+  gem "i18n-tasks", "~> 1.0"
 end
 
 group :test do

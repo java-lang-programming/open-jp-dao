@@ -1,0 +1,12 @@
+glob: "**/*.{html,text,js}{+*,}.erb"
+exclude:
+  - '**/vendor/**/*'
+  - '**/node_modules/**/*'
+linters:
+  # 安全性のチェック（今のお気に入り）
+  ErbSafety:
+    enabled: true
+
+  # HTMLタグの閉じ忘れチェック
+  RightTrim:
+    enabled: true
