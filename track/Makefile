@@ -52,8 +52,12 @@ brakeman: ## brakeman実行
 	bin/brakeman --quiet --no-pager --exit-on-warn --exit-on-error
 rubocop: ## rubocopを実行
 	bin/rubocop
+erb_lint: ## erb_lintを実行
+	bundle exec erb_lint --lint-all
 rubocop_auto_correct: ## rubocopでコードを自動修正
 	bundle exec rubocop --auto-correct
+erb_lint_auto_correct: ## erb_lintでコードを自動修正
+	bundle exec erb_lint app/views -a
 zeitwerk_check: ## zeitwerkモードが有効であることを確認
 	bundle exec rails zeitwerk:check
 zeitwerk_check_prod: ## zeitwerkモードが有効であることを本番環境で確認
