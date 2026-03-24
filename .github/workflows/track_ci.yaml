@@ -69,9 +69,11 @@ jobs:
         run: make rubocop
 
       - name: Run ERB Lint
+        working-directory: track
         run: make erb_lint
 
       - name: Check for missing translations
+        working-directory: track
         run: make i18n-tasks
 
       # - name: Run steep(試験導入)
