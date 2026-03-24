@@ -2,7 +2,7 @@
   <div id="<%= @attribute %>_error" class="text-red-600 text-sm mb-1 <%= error_hidden_class %>">
     <p><%= @form_status[@attribute][:msg] %></p>
   </div>
-  
+
   <label for="<%= @attribute %>" class="block text-gray-700 text-sm font-bold mb-2">
     <%= placeholder_text %>
     <% if required? %>

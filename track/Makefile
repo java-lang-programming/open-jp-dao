@@ -57,7 +57,9 @@ erb_lint: ## erb_lintを実行
 rubocop_auto_correct: ## rubocopでコードを自動修正
 	bundle exec rubocop --auto-correct
 erb_lint_auto_correct: ## erb_lintでコードを自動修正
-	bundle exec erb_lint app/views -a
+	bundle exec erb_lint app/views app/components/ -a
+i18n-tasks: ## i18n-tasksを実行
+	bundle exec i18n-tasks missing
 zeitwerk_check: ## zeitwerkモードが有効であることを確認
 	bundle exec rails zeitwerk:check
 zeitwerk_check_prod: ## zeitwerkモードが有効であることを本番環境で確認

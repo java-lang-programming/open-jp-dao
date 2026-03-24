@@ -18,7 +18,7 @@ jobs:
     runs-on: ubuntu-24.04
     strategy:
       matrix:
-        ruby-version: ["4.0.1"]
+        ruby-version: ["4.0.2"]
     steps:
       - name: Install packages
         run: sudo apt-get update && sudo apt-get install --no-install-recommends -y libjemalloc2 sqlite3
@@ -67,6 +67,14 @@ jobs:
       - name: Run ruboCop
         working-directory: track
         run: make rubocop
+
+      - name: Run ERB Lint
+        working-directory: track
+        run: make erb_lint
+
+      - name: Check for missing translations
+        working-directory: track
+        run: make i18n-tasks
 
       # - name: Run steep(試験導入)
       #   working-directory: track
