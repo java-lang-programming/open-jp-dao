@@ -1,6 +1,29 @@
 require 'rails_helper'
 
-RSpec.describe "Sessions", type: :request do
+RSpec.describe SessionsController, type: :request do
+  describe "GET /login" do
+    context 'when not login' do
+      it "should get view message." do
+        get login_path
+        expect(response.status).to eq(200)
+        expect(response.body).to include 'ログイン'
+      end
+    end
+
+    context 'when login' do
+      let(:addresses_eth) { create(:addresses_eth, :with_setting) }
+
+      before do
+        sign_in_as(address_record: addresses_eth)
+      end
+
+      it "should get view message." do
+        get login_path
+        expect(response.status).to eq(302) # redirect
+      end
+    end
+  end
+
   describe "GET /logout" do
     let(:addresses_eth) { create(:addresses_eth) }
 
