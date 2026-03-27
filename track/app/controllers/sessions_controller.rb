@@ -3,6 +3,10 @@ class SessionsController < ApplicationViewController
 
   skip_before_action :verify_authenticity_token, only: [ :logout ]
 
+  def new
+    
+  end
+
   def logout
     # Current.session.destroy
     cookies.delete(:session_id)
