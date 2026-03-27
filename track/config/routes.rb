@@ -89,7 +89,7 @@ Rails.application.routes.draw do
 
   resources :tax_returns, only: [ :index ]
 
-  get "login", to: 'sessions#new'
+  get "login", to: "sessions#new"
   post "sessions/logout"
   get "sessions/signout"
 
