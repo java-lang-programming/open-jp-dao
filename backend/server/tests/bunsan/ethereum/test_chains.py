@@ -33,3 +33,16 @@ class TestChains:
 
     with pytest.raises(ExceptionInvalidChainID):
         Chains.url_via_chain_id(chain_id=2)
+
+  def test_network_name(self):
+    network_name = Chains.network_name(chain_id='11155111')
+    assert network_name == Chains.SEPOLIA_CHAIN_NAME
+
+    network_name = Chains.network_name(chain_id="1")
+    assert network_name == Chains.MAIN_CHAIN_NAME
+
+    network_name = Chains.network_name(chain_id="8545")
+    assert network_name == Chains.HARDHAT_CHAIN_NAME
+
+    with pytest.raises(ExceptionInvalidChainID):
+        Chains.url_via_chain_id(chain_id='2')

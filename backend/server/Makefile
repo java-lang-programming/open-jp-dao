@@ -22,8 +22,7 @@ code_formatting:
 	make lint
 unit_test:
 	poetry run pytest -s --cache-clear tests/bunsan
-	poetry run pytest -s --cache-clear tests/decentralized/requests/solana
-	poetry run pytest -s --cache-clear tests/decentralized/responses/
+	poetry run pytest -s --cache-clear tests/decentralized/
 	poetry run pytest -s --cache-clear tests/exceptions/
 unit_test_client:
 	poetry run pytest -s --cache-clear tests/test_main.py

@@ -6,11 +6,19 @@ from web3.types import TxReceipt
 from src.bunsan.ethereum.repositories.base_contract_repository import (
     BaseContractRepository,
 )
+from src.bunsan.ethereum.chains import Chains
 
 
 class Ethereum(BaseContractRepository):
-    def __init__(self, url: str):
+    def __init__(self, url: str, chain_id: str):
+        self.chain_id = Chains.validate_chain_id(chain_id=chain_id)
         self.w3 = Web3(provider=Web3.HTTPProvider(url))
+
+    def network(self) -> str:
+        return Chains.network_name(chain_id=self.chain_id)
+
+    def chain_id(self) -> int:
+        return self.chain_id
 
     def is_connected(self) -> bool:
         return self.w3.is_connected()

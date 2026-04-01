@@ -44,7 +44,9 @@ async def verify(verify: Verify):
             ).create()
         )
 
-    ethereum = Ethereum(url=Chains.url_via_chain_id(chain_id=int_chain_id))
+    ethereum = Ethereum(
+        url=Chains.url_via_chain_id(chain_id=int_chain_id), chain_id=verify.chain_id
+    )
     if not ethereum.is_connected():
         raise NotConnectedException(
             errors=Errors(
@@ -87,7 +89,9 @@ async def ens_address(chain_id: str, address: str):
             ).create()
         )
 
-    ethereum = Ethereum(url=Chains.url_via_chain_id(chain_id=int_chain_id))
+    ethereum = Ethereum(
+        url=Chains.url_via_chain_id(chain_id=int_chain_id), chain_id=chain_id
+    )
     if not ethereum.is_connected():
         raise NotConnectedException(
             errors=Errors(

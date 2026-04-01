@@ -40,6 +40,7 @@ class Chains:
                     )
                 )
 
+    @staticmethod
     def url_via_chain_id(chain_id: int) -> str:
         """
         chain_idからurlを取得
@@ -55,5 +56,28 @@ class Chains:
                 raise ExceptionInvalidChainID(
                     "invalid chain id. chain id must be {} or {}".format(
                         Chains.HARDHAT_CHAIN_ID, Chains.SEPOLIA_CHAIN_ID
+                    )
+                )
+
+    @staticmethod
+    def network_name(chain_id: str) -> str:
+        """
+        chain_idから名称を取得する
+        """
+        int_chain_id: int = int(chain_id)
+
+        match int_chain_id:
+            case Chains.HARDHAT_CHAIN_ID:
+                return Chains.HARDHAT_CHAIN_NAME
+            case Chains.SEPOLIA_CHAIN_ID:
+                return Chains.SEPOLIA_CHAIN_NAME
+            case Chains.MAIN_CHAIN_ID:
+                return Chains.MAIN_CHAIN_NAME
+            case _:
+                raise ExceptionInvalidChainID(
+                    "invalid chain id. chain id must be {} or {} or {}".format(
+                        Chains.MAIN_CHAIN_ID,
+                        Chains.HARDHAT_CHAIN_ID,
+                        Chains.SEPOLIA_CHAIN_ID,
                     )
                 )
