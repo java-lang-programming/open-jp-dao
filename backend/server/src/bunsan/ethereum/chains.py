@@ -9,7 +9,10 @@ class Chains:
     # これは環境によって変えられた方が良いので可変にする
     HARDHAT_URL: str = "http://host.docker.internal:8545"
     HARDHAT_CHAIN_ID: int = 8545
-    HARDHAT_CHAIN_NAME: str = "localhost"
+    HARDHAT_CHAIN_NAME: str = "HARDHAT Local"
+    ANVIL_URL: str = "http://host.docker.internal:8545"
+    ANVIL_CHAIN_ID = 31337
+    ANVIL_CHAIN_NAME: str = "ANVIL Local"
     SEPOLIA_URL: str = "https://ethereum-sepolia-rpc.publicnode.com"
     SEPOLIA_CHAIN_ID: int = 11155111
     SEPOLIA_CHAIN_NAME: int = "sepolia"
@@ -27,15 +30,18 @@ class Chains:
         match int_chain_id:
             case Chains.HARDHAT_CHAIN_ID:
                 return Chains.HARDHAT_CHAIN_ID
+            case Chains.ANVIL_CHAIN_ID:
+                return Chains.ANVIL_CHAIN_ID
             case Chains.SEPOLIA_CHAIN_ID:
                 return Chains.SEPOLIA_CHAIN_ID
             case Chains.MAIN_CHAIN_ID:
                 return Chains.MAIN_CHAIN_ID
             case _:
                 raise ExceptionInvalidChainID(
-                    "invalid chain id. chain id must be {} or {} or {}".format(
+                    "invalid chain id. chain id must be {} or {} or {} or {}".format(
                         Chains.MAIN_CHAIN_ID,
                         Chains.HARDHAT_CHAIN_ID,
+                        Chains.ANVIL_CHAIN_ID,
                         Chains.SEPOLIA_CHAIN_ID,
                     )
                 )
@@ -48,6 +54,8 @@ class Chains:
         match chain_id:
             case Chains.HARDHAT_CHAIN_ID:
                 return Chains.HARDHAT_URL
+            case Chains.ANVIL_CHAIN_ID:
+                return Chains.ANVIL_URL
             case Chains.SEPOLIA_CHAIN_ID:
                 return Chains.SEPOLIA_URL
             case Chains.MAIN_CHAIN_ID:
@@ -69,6 +77,8 @@ class Chains:
         match int_chain_id:
             case Chains.HARDHAT_CHAIN_ID:
                 return Chains.HARDHAT_CHAIN_NAME
+            case Chains.ANVIL_CHAIN_ID:
+                return Chains.ANVIL_CHAIN_NAME
             case Chains.SEPOLIA_CHAIN_ID:
                 return Chains.SEPOLIA_CHAIN_NAME
             case Chains.MAIN_CHAIN_ID:

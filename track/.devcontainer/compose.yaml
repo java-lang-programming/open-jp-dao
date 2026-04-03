@@ -21,6 +21,13 @@ services:
     # Use "forwardPorts" in **devcontainer.json** to forward an app port locally.
     # (Adding the "ports" property to this file will not forward from a Codespace.)
 
+  # ブロックチェーン（必要な時だけ！）
+  anvil:
+    image: ghcr.io/foundry-rs/foundry
+    profiles: ["blockchain"]
+    ports:
+      - "8545:8545"
+    entrypoint: ["anvil", "--host", "0.0.0.0"]
 
 volumes:
   bundle-data:

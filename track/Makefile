@@ -14,10 +14,14 @@ dc_build: ## Docker環境のビルド
 	docker-compose -f .devcontainer/compose.yaml build
 dc_up: ## Docker環境の立ち上げ
 	docker-compose -f .devcontainer/compose.yaml up
+dc_up_with_block: ## blockchainと一緒にDocker環境のビルド
+	docker-compose -f .devcontainer/compose.yaml --profile blockchain up
 dc_start: ## Docker環境の立ち上げ
 	docker-compose -f .devcontainer/compose.yaml start
 dc_stop: ## Docker環境の停止
 	docker-compose -f .devcontainer/compose.yaml stop
+dc_stop_with_block: ## Docker環境の停止
+	docker-compose -f .devcontainer/compose.yaml --profile blockchain stop
 dc_down: ## Docker環境の削除
 	docker-compose -f .devcontainer/compose.yaml down
 dc_in: ## Docker環境を立ち上げた後にコンテナの中に入る
