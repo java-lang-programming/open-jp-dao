@@ -89,6 +89,8 @@ Rails.application.routes.draw do
 
   resources :tax_returns, only: [ :index ]
 
+  resources :products, only: [ :index, :show ]
+
   get "login", to: "sessions#new"
   post "sessions/logout"
   get "sessions/signout"
