@@ -27,6 +27,8 @@ deploy_governor_to_hardhat:
 	npx hardhat run scripts/deploy_OpenJpDaoGovernor.js --network localhost
 deploy_jpycPayment_to_sepolia:
 	npx hardhat run scripts/deploy_JpycPayment.js --network sepolia | tee deploy.log
+deploy_jpycPayment_to_sepolia:
+	npx hardhat run scripts/deploy_JpycPayment.js --network anvil | tee deploy_anvil.log
 launch_hardhat:
 	npx hardhat node --hostname 0.0.0.0
 unit_test:

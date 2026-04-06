@@ -3,7 +3,7 @@ require("@nomiclabs/hardhat-ethers");
 require("@nomiclabs/hardhat-waffle");
 require('@openzeppelin/hardhat-upgrades');
 
-const { SEPOLIA_URL, PRIVATE_KEY } = process.env;
+const { ANVIL_URL, SEPOLIA_URL, PRIVATE_KEY } = process.env;
 
 /** @type import('hardhat/config').HardhatUserConfig */
 module.exports = {
@@ -30,6 +30,14 @@ module.exports = {
       url: "http://0.0.0.0:8545",
       gas: 12000000,
       allowUnlimitedContractSize: true,
+    },
+    // 明示的な Anvil 設定
+    anvil: {
+      url: ANVIL_URL || "",
+      chainId: 31337,
+      allowUnlimitedContractSize: true,
+      // Anvilのデフォルト秘密鍵（必要に応じて.envで管理）
+      accounts: PRIVATE_KEY ? [PRIVATE_KEY] : ["0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80"]
     },
     // Sepoliaの設定を追加
     sepolia: {

@@ -4,6 +4,16 @@ async function main() {
   const [deployer] = await ethers.getSigners();
 
   console.log("Deploying contracts with the account:", deployer.address);
+
+  // Anvil専用のRPCメソッド「anvil_setBalance」を叩く
+  // 100 ETH を付与
+  await network.provider.send("anvil_setBalance", [
+    deployer.address,
+    "0x56BC75E2D63100000", // 100 ETH (16進数)
+  ]);
+
+  console.log("Deployer balance set!");
+
   // v5では BigNumber を使用
   console.log("Account balance:", (await deployer.getBalance()).toString());
 
