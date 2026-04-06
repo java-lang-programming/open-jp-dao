@@ -26,8 +26,6 @@ export default class extends Controller {
 
         const res_nonce = await nonceResponse();
         const nonce = res_nonce.nonce;
-        console.log(chainId)
-        console.log(nonce)
 
         // ここからは毎回
         const scheme = window.location.protocol.slice(0, -1)

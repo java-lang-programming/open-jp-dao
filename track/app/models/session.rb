@@ -2,6 +2,9 @@ class Session < ApplicationRecord
   ETHEREUM_SEPOLIA = 11155111
   ETHEREUM_MAINNET = 1
   SOLANA = nil
+  HARDHAT = 8545
+  ANVIL = 31337
+
   # belongs_to :user
   belongs_to :address
 
@@ -23,9 +26,10 @@ class Session < ApplicationRecord
 
   # https://chainlist.org/
   def network
-    # TODO 接続チェーンはここでは(表記)判断しない
     return "Sepolia" if chain_id == Session::ETHEREUM_SEPOLIA
     return "Ethereum Mainnet" if chain_id == Session::ETHEREUM_MAINNET
+    return "HARDHAT Local" if chain_id == Session::HARDHAT
+    return "ANVIL Local" if chain_id == Session::ANVIL
     return "Solana" if chain_id == Session::SOLANA
     ""
   end
