@@ -1,0 +1,4 @@
+ollama list
+
+cd /Users/masayasuzuki/workplace/open-jp-dao/track/prompts
+ollama run llama3.1 < orders_controller_create.md

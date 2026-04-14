@@ -27,7 +27,7 @@ services:
     profiles: ["blockchain"]
     ports:
       - "8545:8545"
-    entrypoint: ["anvil", "--host", "0.0.0.0"]
+    entrypoint: ["anvil", "--host", "0.0.0.0", "--fork-url", "https://ethereum-sepolia-rpc.publicnode.com"]
 
 volumes:
   bundle-data:

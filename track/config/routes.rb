@@ -29,6 +29,11 @@ Rails.application.routes.draw do
     post "sessions/signin"
     post "sessions/signout"
     get "sessions/user"
+
+    resources :orders, only: [ :create, :show ] do
+      # resource (単数形) にすることで /orders/:order_id/payment というURLになる
+      resource :payment, only: [ :create ], module: :orders
+    end
   end
 
   resources :dollar_yen_transactions do

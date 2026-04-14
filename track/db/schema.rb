@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_01_23_104152) do
+ActiveRecord::Schema[8.1].define(version: 2026_04_09_010016) do
   create_table "active_storage_attachments", force: :cascade do |t|
     t.bigint "blob_id", null: false
     t.datetime "created_at", null: false
@@ -47,6 +47,19 @@ ActiveRecord::Schema[8.1].define(version: 2026_01_23_104152) do
     t.integer "kind", null: false
     t.string "sns"
     t.datetime "updated_at", null: false
+  end
+
+  create_table "blockchains_orders", force: :cascade do |t|
+    t.decimal "amount", precision: 36, scale: 18
+    t.integer "block_number"
+    t.string "chain_id", null: false
+    t.datetime "created_at", null: false
+    t.string "from_address"
+    t.integer "order_id", null: false
+    t.string "to_address"
+    t.string "tx_hash", null: false
+    t.datetime "updated_at", null: false
+    t.index ["order_id"], name: "index_blockchains_orders_on_order_id"
   end
 
   create_table "csv_ledger_items", force: :cascade do |t|
@@ -158,6 +171,44 @@ ActiveRecord::Schema[8.1].define(version: 2026_01_23_104152) do
     t.datetime "updated_at", null: false
   end
 
+  create_table "orders", force: :cascade do |t|
+    t.integer "address_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "deleted_at"
+    t.integer "payment_id", null: false
+    t.integer "price", default: 0, null: false
+    t.integer "product_id", null: false
+    t.integer "status", default: 0, null: false
+    t.datetime "updated_at", null: false
+    t.string "uuid", null: false
+    t.index ["address_id"], name: "index_orders_on_address_id"
+    t.index ["deleted_at"], name: "index_orders_on_deleted_at"
+    t.index ["payment_id"], name: "index_orders_on_payment_id"
+    t.index ["product_id"], name: "index_orders_on_product_id"
+    t.index ["uuid"], name: "index_orders_on_uuid", unique: true
+  end
+
+  create_table "payments", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.string "name", null: false
+    t.integer "status", default: 0, null: false
+    t.datetime "updated_at", null: false
+  end
+
+  create_table "products", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.datetime "deleted_at"
+    t.text "description", null: false
+    t.string "name", null: false
+    t.integer "price", default: 0, null: false
+    t.datetime "published_at"
+    t.integer "status", default: 0, null: false
+    t.datetime "updated_at", null: false
+    t.index ["deleted_at"], name: "index_products_on_deleted_at"
+    t.index ["published_at"], name: "index_products_on_published_at"
+    t.index ["status"], name: "index_products_on_status"
+  end
+
   create_table "sessions", force: :cascade do |t|
     t.integer "address_id", null: false
     t.integer "chain_id"
@@ -192,8 +243,12 @@ ActiveRecord::Schema[8.1].define(version: 2026_01_23_104152) do
 
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
+  add_foreign_key "blockchains_orders", "orders"
   add_foreign_key "import_files", "addresses"
   add_foreign_key "import_files", "jobs"
+  add_foreign_key "orders", "addresses"
+  add_foreign_key "orders", "payments"
+  add_foreign_key "orders", "products"
   add_foreign_key "sessions", "addresses"
   add_foreign_key "settings", "addresses"
 end
