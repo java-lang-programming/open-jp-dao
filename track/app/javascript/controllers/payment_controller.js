@@ -1,5 +1,6 @@
 import { Controller } from "@hotwired/stimulus"
 import { ethers } from "ethers"
+import { postOrderResponse } from "usecases/orders";
 
 // Connects to data-controller="payment"
 export default class extends Controller {
@@ -36,7 +37,24 @@ export default class extends Controller {
       const approveTx = await jpyc.approve(paymentContractAddress, amount)
       await approveTx.wait()
 
+      // TODO
+      // 残高の計算
+
+      const obj = {
+        product_id: 1
+      }
+      // 注文データ作成
+      const res_order = await postOrderResponse(JSON.stringify(obj))
+      if (res_signin.status !== 201) {
+        status.innerText = "エラーが発生しました: " + error.message
+        this.submitButtonTarget.disabled = false
+        return
+      }
+
+      console.log(res_order);
+
       // 2. Payment (実際の決済)
+      // 本体はtabを切り替えていく感じかな？？
       status.innerText = "ステップ 2/2: 支払いを確認中..."
       const paymentAbi = ["function payOneMonth() external"]
       const paymentContract = new ethers.Contract(paymentContractAddress, paymentAbi, signer)
@@ -44,9 +62,12 @@ export default class extends Controller {
       
       // 3. Railsへ結果を送信 (ここが重要！)
       status.innerText = "サーバーで処理中..."
-      await this.notifyRails(payTx.hash)
+      // await this.notifyRails(payTx.hash)
 
-      status.innerText = "決済が完了しました！"
+      // ここのapiはviwe用で画面遷移が良いと思うが。。。
+      // status.innerText = "決済が完了しました！"
+
+
       // 成功したらリダイレクトなど
       // window.location.href = "/dashboard"
 
