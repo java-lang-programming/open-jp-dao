@@ -3,7 +3,7 @@ require 'rails_helper'
 RSpec.describe Order, type: :model do
   let(:product) { create(:product, price: 5000) }
   let(:address) { create(:addresses_eth) }
-  let(:payment) { create(:payment) }
+  let(:payment) { create(:payment_jpyc) }
 
   describe 'Destruction safety' do
     it '決済データ(BlockchainOrder)が存在する注文は、削除できないこと' do

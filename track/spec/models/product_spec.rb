@@ -27,7 +27,7 @@ RSpec.describe Product, type: :model do
     it '注文がある商品は、物理削除しようとするとエラーが発生すること' do
       product = create(:product)
       address = create(:addresses_eth)
-      payment = create(:payment)
+      payment = create(:payment_jpyc)
       create(:order, product: product, address: address, payment: payment)
       # DBの制約によって守られていることを検証
       expect { product.destroy }.to raise_error(ActiveRecord::InvalidForeignKey)
