@@ -33,37 +33,4 @@ RSpec.describe Product, type: :model do
       expect { product.destroy }.to raise_error(ActiveRecord::InvalidForeignKey)
     end
   end
-
-  # describe 'Callbacks' do
-  #   describe '#set_published_at_if_active' do
-  #     context 'ステータスを active に変更した場合' do
-  #       let(:product) { create(:product, status: :draft, published_at: nil) }
-  #
-  #       it 'published_at が nil なら現在時刻が設定されること' do
-  #         expect {
-  #           product.update(status: :active)
-  #         }.to change { product.published_at }.from(nil).to(be_within(1.second).of(Time.current))
-  #       end
-  #
-  #       it 'すでに published_at が設定されている場合は上書きされないこと' do
-  #         existing_time = 1.day.ago
-  #         product.update(published_at: existing_time)
-  #
-  #         expect {
-  #           product.update(status: :active)
-  #         }.not_to change { product.published_at }
-  #       end
-  #     end
-  #
-  #     context 'ステータスを active 以外に変更した場合' do
-  #       let(:product) { create(:product, status: :draft, published_at: nil) }
-  #
-  #       it 'published_at は nil のままであること' do
-  #         expect {
-  #           product.update(status: :scheduled)
-  #         }.not_to change { product.published_at }
-  #       end
-  #     end
-  #   end
-  # end
 end

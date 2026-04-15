@@ -3,7 +3,7 @@ class Order < ApplicationRecord
   belongs_to :address
   belongs_to :payment
 
-  has_one :blockchain_order
+  has_one :blockchains_order
 
   enum :status, {
     pending: 0,    # 決済待ち（注文ボタンを押した直後）

@@ -32,7 +32,7 @@ Rails.application.routes.draw do
 
     resources :orders, only: [ :create, :show ] do
       # resource (単数形) にすることで /orders/:order_id/payment というURLになる
-      resource :payment, only: [ :create ], module: :orders
+      resource :payments, only: [ :create ], module: :orders
     end
   end
 

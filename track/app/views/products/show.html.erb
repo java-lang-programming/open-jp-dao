@@ -3,14 +3,13 @@
 <div data-controller="payment"
      data-payment-jpyc-address-value="<%= @payment_config[:jpyc_address] %>"
      data-payment-jpyc-abi-approve-value="<%= @payment_config[:jpyc_abi_approve] %>"
-     data-payment-payment-address-value="<%= @payment_config[:payment_address] %>"
-     >
+     data-payment-payment-address-value="<%= @payment_config[:payment_address] %>">
   <h2>月額プラン（330 JPYC）の支払い</h2>
-  
+
   <p id="status-message">ボタンを押して決済を開始してください</p>
 
-  <button 
-    data-action="click->payment#start" 
+  <button
+    data-action="click->payment#start"
     data-payment-target="submitButton"
     class="btn btn-primary">
     JPYCで支払う

@@ -6,15 +6,15 @@ class Apis::OrdersController < ApplicationController
       return
     end
 
-    @order = Order.new(order_params)
-    @order.address = session.address
-    @order.generate_uuid
-    @order.copy_product_price
+    order = Order.new(order_params)
+    order.address = session.address
+    order.generate_uuid
+    order.copy_product_price
 
-    if @order.save
-      render json: { id: @order.id }, status: :created
+    if order.save
+      render json: { id: order.id }, status: :created
     else
-      render json: { errors: @order.errors.full_messages }, status: :unprocessable_entity
+      render json: { errors: order.errors.full_messages }, status: :unprocessable_entity
     end
   end
 
