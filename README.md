@@ -25,3 +25,17 @@
 
 - ガバナンス -  contracts/src/contracts/OpenJpDaoGovernor.sol
 
+## プロジェクト構成
+
+当プロジェクトは monorepo（モノリポ）形式で構成されています。
+
+/
+├── track/        # Rails 8 API / バックエンドアプリケーション
+│   └── README.md # セットアップ・起動手順・各種コマンド
+└── backend/      # fast api / ブロックチェーンAPIアプリケーション
+│   └── README.md # セットアップ・起動手順・各種コマンド
+
+### 主要ディレクトリの役割
+
+- **`./track`**: Ruby on Rails で作成されたバックエンドプロジェクト。開発環境の起動方法や環境変数の設定等は `./track/README.md` を参照してください。
+- - **`./backend`**: fast api で作成されたブロックチェーンAPIアプリケーション。開発環境の起動方法や環境変数の設定等は `./backend/README.md` を参照してください。

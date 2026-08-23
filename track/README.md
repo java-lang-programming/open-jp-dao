@@ -23,6 +23,44 @@ Things you may want to cover:
 
 * ...
 
+## 初回環境構築
+
+コンテナビルド
+
+```
+make dc_build
+```
+
+コンテナ立ち上げ
+
+```
+make dc_up
+```
+
+コンテナin
+
+```
+make dc_in
+```
+
+migrate
+
+```
+make db_migrate
+```
+
+bundle install
+
+```
+make bundle_install
+```
+
+開発用rails立ち上げ
+
+```
+make launch_dev
+```
+
 ##　コマンドについて
 
 アプリの開発・運用ではMakefileに記載されているコマンドを使うと便利です。
@@ -45,9 +83,13 @@ make dc_up
 ##　コンテナに入る
 
 ```
-rails-new --devcontainer --database=sqlite3
-docker exec -it wanwan-create /bin/sh
-docker exec -it devcontainer-wevb3-rails-dev-app-1 /bin/sh
+make dc_in
+```
+
+## アプリケーション起動
+
+```
+make dc_in
 ```
 
 ## temp

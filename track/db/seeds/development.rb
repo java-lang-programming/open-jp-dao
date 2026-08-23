@@ -16,7 +16,7 @@
 # テスト用データの作成
 puts "address作成"
 address1 = Address.create!(
-   address: '0x91582E868c62FA205d38BeBaB7B903322A4CC89D',
+   address: '0xAd89481B60aCa6191DD2C6888dd0e1c968E858Cc',
    kind: Address.kinds[:ethereum]
 )
 
