@@ -92,6 +92,18 @@ make dc_in
 make dc_in
 ```
 
+## AI agent
+
+```
+cd agent
+```
+
+rspec実行
+
+```
+mise run run
+```
+
 ## temp
 
 curl -X POST -F "file=@/Users/masayasuzuki/workplace/study/open-jp-dao/track/test.csv" http://localhost/3000/apis/dollaryen/transactions/csv_upload
