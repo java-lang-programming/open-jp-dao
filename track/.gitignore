@@ -40,3 +40,7 @@
 .idea/*
 
 vendor/*
+
+agent/.venv/
+agent/__pycache__/
+agent/agent.log

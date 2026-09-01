@@ -1,0 +1,11 @@
+[tools]
+poetry = "1.8.5"
+python = "3.14"
+
+[tasks.setup]
+description = "Poetryの仮想環境作成と依存関係のインストール"
+run = "poetry install --no-root"
+
+[tasks.run]
+description = "AI Agentの起動"
+run = "poetry run python main.py"
