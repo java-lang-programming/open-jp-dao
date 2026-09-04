@@ -106,6 +106,9 @@ sqlite3_queue: ## queueのchmod
 	chmod 777 storage/development_queue.sqlite3
 local_ci: ## local ci
 	bin/ci
+## セキュリティ ##
+betterleaks_current:
+	betterleaks dir . -v
 ## 本番コンテナ作業 ##
 build_prod: ## 本番用のコンテナをbuildする
 	docker build -t backend-prod:latest .
