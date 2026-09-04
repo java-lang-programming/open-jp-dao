@@ -1,4 +1,4 @@
-name: rails コードチェック&テスト
+name: rails betterleaks
 
 on:
   push:
