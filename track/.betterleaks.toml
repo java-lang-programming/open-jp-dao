@@ -1,0 +1,17 @@
+# .betterleaks.toml
+
+[extend]
+useDefault = true
+
+[allowlist]
+paths = [
+  # Rails
+  '''^db/schema\.rb$''',
+  '''^db/migrate/.*''',
+
+  # RSpec test data
+  '''^spec/fixtures/.*''',
+
+  '''^tmp/.*''',
+  '''^log/.*''',
+]

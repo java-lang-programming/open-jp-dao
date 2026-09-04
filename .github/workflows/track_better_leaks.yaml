@@ -1,0 +1,25 @@
+name: rails betterleaks
+
+on:
+  push:
+    branches:
+      - main
+      - develop
+      - feature/*
+    paths:
+      - 'track/**' # このパス以下の変更のみトリガー
+
+jobs:
+  betterleaks:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: dortort/betterleaks-action@v0.1.0
+        with:
+          scan-mode: dir
+          scan-path: track
+          config: track/.betterleaks.toml
