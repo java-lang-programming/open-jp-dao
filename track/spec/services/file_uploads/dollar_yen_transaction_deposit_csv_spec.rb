@@ -43,13 +43,18 @@ RSpec.describe FileUploads::DollarYenTransactionDepositCsv, type: :feature do
 
       it 'should get validation_errors.' do
         service = FileUploads::DollarYenTransactionDepositCsv.new(address: addresses_eth, file: error_deposit_csv_path)
-        expect(service.validation_errors).to eq([
-          { msg: [ "2行目のdateが入力されていません" ] },
-          { msg: [ "3行目のdateの値が不正です。yyyy/mm/dd形式で正しい日付を入力してください", "3行目のtransaction_type_nameが入力されていません" ] },
-          { msg: [ "4行目のdeposit_quantityの値が不正です。数値、もしくは小数点付きの数値を入力してください" ] },
-          { msg: [ "5行目のdeposit_rateが入力されていません" ] },
-          { msg: [ "6行目のdeposit_rateの値が不正です。数値、もしくは小数点付きの数値を入力してください" ] }
-        ])
+        expect(service.validation_errors).to eq(
+           {
+              errors: [
+                { attribute: "date", col: 1, message: "dateが入力されていません", row: 2, value: nil },
+                { attribute: "date", col: 1, message: "dateの値が不正です。yyyy/mm/dd形式で正しい日付を入力してください", row: 3, value: "2020/06/32" },
+                { attribute: "transaction_type", col: 2, message: "transaction_typeが入力されていません", row: 3, value: nil },
+                { attribute: "deposit_quantity", col: 3, message: "deposit_quantityの値が不正です。数値、もしくは小数点付きの数値を入力してください", row: 4, value: "aaa" },
+                { attribute: "deposit_rate", col: 4, message: "deposit_rateが入力されていません", row: 5, value: nil },
+                { attribute: "deposit_rate", col: 4, message: "deposit_rateの値が不正です。数値、もしくは小数点付きの数値を入力してください", row: 6, value: "aaa" }
+              ]
+           }
+        )
       end
     end
 

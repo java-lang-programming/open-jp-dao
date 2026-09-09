@@ -49,6 +49,7 @@ module Files
       errors
     end
 
+
     def valid_date?(errors:)
       # date:, errors: [], row_num: -1
       # Validators::DollarYensTransaction.date_errors(date: @date, errors: errors, row_num: @row_num)
@@ -56,16 +57,37 @@ module Files
         dates = @date.split("/")
         size = dates.length
         if size != 3
-          errors << "#{@row_num}行目のdateのフォーマットが不正です。yyyy/mm/dd形式で入力してください"
+          error = ImportFileError.error_json_data(
+            row: @row_num,
+            col: COLUMN_DATE_INDEX + 1,
+            attribute: "date",
+            value: @date,
+            message: "dateのフォーマットが不正です。yyyy/mm/dd形式で入力してください"
+          )
+          errors << error
         elsif size == 3
           begin
             Date.new(dates[0].to_i, dates[1].to_i, dates[2].to_i)
           rescue => e
-            errors << "#{@row_num}行目のdateの値が不正です。yyyy/mm/dd形式で正しい日付を入力してください"
+            error = ImportFileError.error_json_data(
+              row: @row_num,
+              col: COLUMN_DATE_INDEX + 1,
+              attribute: "date",
+              value: @date,
+              message: "dateの値が不正です。yyyy/mm/dd形式で正しい日付を入力してください"
+            )
+            errors << error
           end
         end
       else
-        errors << "#{@row_num}行目のdateが入力されていません"
+        error = ImportFileError.error_json_data(
+          row: @row_num,
+          col: COLUMN_DATE_INDEX + 1,
+          attribute: "date",
+          value: @date,
+          message: "dateが入力されていません"
+        )
+        errors << error
       end
     end
 
@@ -78,10 +100,24 @@ module Files
       if @transaction_type_name.present?
         find_transaction_type
         unless @transaction_type.present?
-          errors << "#{@row_num}行目のtransaction_type_nameが不正です。正しいtransaction_type_nameを入力してください"
+          error = ImportFileError.error_json_data(
+            row: @row_num,
+            col: COLUMN_TRANSACTION_TYPE_NAME_INDEX + 1,
+            attribute: "transaction_type",
+            value: @transaction_type_name,
+            message: "transaction_typeが不正です。正しいtransaction_typeを入力してください"
+          )
+          errors << error
         end
       else
-        errors << "#{@row_num}行目のtransaction_type_nameが入力されていません"
+        error = ImportFileError.error_json_data(
+          row: @row_num,
+          col: COLUMN_TRANSACTION_TYPE_NAME_INDEX + 1,
+          attribute: "transaction_type",
+          value: @transaction_type_name,
+          message: "transaction_typeが入力されていません"
+        )
+        errors << error
       end
     end
 
@@ -138,6 +174,8 @@ module Files
     # deposit時の@target_nameのtarget_valueが有効な数値か検証する
     #
     def deposit_value_errors(errors:, target_name:, target_value:)
+      col = target_name == "deposit_quantity" ? 3 : 4
+      value = target_name == "deposit_quantity" ? @deposit_quantity : @deposit_rate
       if @transaction_type.present?
         if @transaction_type.deposit?
           if target_value.present?
@@ -145,14 +183,35 @@ module Files
               BigDecimal(target_value)
               errors
             rescue => e
-              errors << "#{@row_num}行目の#{target_name}の値が不正です。数値、もしくは小数点付きの数値を入力してください"
+              error = ImportFileError.error_json_data(
+                row: @row_num,
+                col: col,
+                attribute: target_name,
+                value: value,
+                message: "#{target_name}の値が不正です。数値、もしくは小数点付きの数値を入力してください"
+              )
+              errors << error
             end
           else
-            errors << "#{@row_num}行目の#{target_name}が入力されていません"
+            error = ImportFileError.error_json_data(
+              row: @row_num,
+              col: col,
+              attribute: target_name,
+              value: value,
+              message: "#{target_name}が入力されていません"
+            )
+            errors << error
           end
         elsif @transaction_type.withdrawal?
           if target_value.present?
-             errors << "#{@row_num}行目の#{target_name}は入力できません。値を削除してください"
+            error = ImportFileError.error_json_data(
+              row: @row_num,
+              col: col,
+              attribute: target_name,
+              value: value,
+              message: "#{target_name}は入力できません。値を削除してください"
+            )
+            errors << error
           end
         end
       end
@@ -165,10 +224,20 @@ module Files
     # withdrawal時の@target_nameのtarget_valueが有効な数値か検証する
     #
     def withdrawal_value_errors(errors:, target_name:, target_value:)
+      col = target_name == "withdrawal_quantity" ? 5 : 6
+      value = target_name == "withdrawal_quantity" ? @withdrawal_quantity : @exchange_en
+
       if @transaction_type.present?
         if @transaction_type.deposit?
           if target_value.present?
-            errors << "#{@row_num}行目の#{target_name}は入力できません。値を削除してください"
+            error = ImportFileError.error_json_data(
+              row: @row_num,
+              col: col,
+              attribute: target_name,
+              value: value,
+              message: "#{target_name}は入力できません。値を削除してください"
+            )
+            errors << error
           end
         elsif @transaction_type.withdrawal?
           if target_value.present?
@@ -176,10 +245,24 @@ module Files
               BigDecimal(target_value)
               errors
             rescue => e
-              errors << "#{@row_num}行目の#{target_name}の値が不正です。数値、もしくは小数点付きの数値を入力してください"
+              error = ImportFileError.error_json_data(
+                row: @row_num,
+                col: col,
+                attribute: target_name,
+                value: value,
+                message: "#{target_name}の値が不正です。数値、もしくは小数点付きの数値を入力してください"
+              )
+              errors << error
             end
           else
-            errors << "#{@row_num}行目の#{target_name}が入力されていません"
+            error = ImportFileError.error_json_data(
+              row: @row_num,
+              col: col,
+              attribute: target_name,
+              value: value,
+              message: "#{target_name}が入力されていません"
+            )
+            errors << error
           end
         end
       end
