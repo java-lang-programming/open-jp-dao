@@ -1,5 +1,6 @@
 require 'rails_helper'
 
+
 # https://github.com/willnet/rspec-style-guide
 RSpec.describe Files::DollarYenTransactionDepositCsv, type: :model do
   describe 'transaction_type_name_errors' do
@@ -17,7 +18,7 @@ RSpec.describe Files::DollarYenTransactionDepositCsv, type: :model do
 
       errors = []
       errors = csv.transaction_type_name_errors(errors: errors)
-      expect(errors).to eq([ "2行目のtransaction_type_nameが入力されていません" ])
+      expect(errors).to eq([ { attribute: "transaction_type", col: 2, message: "transaction_typeが入力されていません", row: 2, value: "" } ])
     end
 
     # 存在しないtransaction_type_nam
@@ -32,7 +33,7 @@ RSpec.describe Files::DollarYenTransactionDepositCsv, type: :model do
 
       errors = []
       errors = csv.transaction_type_name_errors(errors: errors)
-      expect(errors).to eq([ "2行目のtransaction_type_nameが不正です。正しいtransaction_type_nameを入力してください" ])
+      expect(errors).to eq([ { attribute: "transaction_type", col: 2, message: "transaction_typeが不正です。正しいtransaction_typeを入力してください", row: 2, value: "あいうえお" } ])
     end
   end
 
@@ -57,7 +58,8 @@ RSpec.describe Files::DollarYenTransactionDepositCsv, type: :model do
 
         errors = []
         errors = csv.deposit_quantity_errors(errors: errors)
-        expect(errors).to eq([ "2行目のdeposit_quantityが入力されていません" ])
+
+        expect(errors).to eq([ { attribute: "deposit_quantity", col: 3, message: "deposit_quantityが入力されていません", row: 2, value: "" } ])
       end
 
       # deposit_quantityがある場合
@@ -87,7 +89,7 @@ RSpec.describe Files::DollarYenTransactionDepositCsv, type: :model do
 
           errors = []
           errors = csv.deposit_quantity_errors(errors: errors)
-          expect(errors).to eq([ "2行目のdeposit_quantityの値が不正です。数値、もしくは小数点付きの数値を入力してください" ])
+          expect(errors).to eq([ { attribute: "deposit_quantity", col: 3, message: "deposit_quantityの値が不正です。数値、もしくは小数点付きの数値を入力してください", row: 2, value: "aaaa" } ])
         end
 
         # deposit_quantityが数値の場合
@@ -148,7 +150,7 @@ RSpec.describe Files::DollarYenTransactionDepositCsv, type: :model do
 
         errors = []
         errors = csv.deposit_quantity_errors(errors: errors)
-        expect(errors).to eq([ "2行目のdeposit_quantityは入力できません。値を削除してください" ])
+        expect(errors).to eq([ { attribute: "deposit_quantity", col: 3, message: "deposit_quantityは入力できません。値を削除してください", row: 2, value: "3.97" } ])
       end
     end
   end
@@ -168,7 +170,8 @@ RSpec.describe Files::DollarYenTransactionDepositCsv, type: :model do
 
           errors = []
           errors = csv.deposit_rate_errors(errors: errors)
-          expect(errors).to eq([ "2行目のdeposit_rateが入力されていません" ])
+
+          expect(errors).to eq([ { attribute: "deposit_rate", col: 4, message: "deposit_rateが入力されていません", row: 2, value: "" } ])
         end
       end
 
@@ -203,7 +206,8 @@ RSpec.describe Files::DollarYenTransactionDepositCsv, type: :model do
 
           errors = []
           errors = csv.deposit_rate_errors(errors: errors)
-          expect(errors).to eq([ "2行目のdeposit_rateの値が不正です。数値、もしくは小数点付きの数値を入力してください" ])
+
+          expect(errors).to eq([ { attribute: "deposit_rate", col: 4, message: "deposit_rateの値が不正です。数値、もしくは小数点付きの数値を入力してください", row: 2, value: "bbbb" } ])
         end
       end
     end
@@ -240,7 +244,8 @@ RSpec.describe Files::DollarYenTransactionDepositCsv, type: :model do
 
         errors = []
         errors = csv.deposit_rate_errors(errors: errors)
-        expect(errors).to eq([ "2行目のdeposit_rateは入力できません。値を削除してください" ])
+
+        expect(errors).to eq([ { attribute: "deposit_rate", col: 4, message: "deposit_rateは入力できません。値を削除してください", row: 2, value: "106.59" } ])
       end
     end
   end
@@ -291,7 +296,7 @@ RSpec.describe Files::DollarYenTransactionDepositCsv, type: :model do
 
           errors = []
           errors = csv.withdrawal_quantity_errors(errors: errors)
-          expect(errors).to eq([ "2行目のwithdrawal_quantityが入力されていません" ])
+          expect(errors).to eq([ { attribute: "withdrawal_quantity", col: 5, message: "withdrawal_quantityが入力されていません", row: 2, value: "" } ])
         end
 
         it 'should get error withdrawal_quantity is string.' do
@@ -307,7 +312,8 @@ RSpec.describe Files::DollarYenTransactionDepositCsv, type: :model do
 
           errors = []
           errors = csv.withdrawal_quantity_errors(errors: errors)
-          expect(errors).to eq([ "2行目のwithdrawal_quantityの値が不正です。数値、もしくは小数点付きの数値を入力してください" ])
+
+          expect(errors).to eq([ { attribute: "withdrawal_quantity", col: 5, message: "withdrawal_quantityの値が不正です。数値、もしくは小数点付きの数値を入力してください", row: 2, value: "aaaaa" } ])
         end
       end
     end
@@ -345,7 +351,8 @@ RSpec.describe Files::DollarYenTransactionDepositCsv, type: :model do
 
         errors = []
         errors = csv.withdrawal_quantity_errors(errors: errors)
-        expect(errors).to eq([ "2行目のwithdrawal_quantityは入力できません。値を削除してください" ])
+
+        expect(errors).to eq([ { attribute: "withdrawal_quantity", col: 5, message: "withdrawal_quantityは入力できません。値を削除してください", row: 2, value: "88" } ])
       end
     end
   end
@@ -396,7 +403,8 @@ RSpec.describe Files::DollarYenTransactionDepositCsv, type: :model do
 
           errors = []
           errors = csv.exchange_en_errors(errors: errors)
-          expect(errors).to eq([ "2行目のexchange_enが入力されていません" ])
+
+          expect(errors).to eq([ { attribute: "exchange_en", col: 6, message: "exchange_enが入力されていません", row: 2, value: "" } ])
         end
 
         it 'should get error exchange_en is string.' do
@@ -412,7 +420,8 @@ RSpec.describe Files::DollarYenTransactionDepositCsv, type: :model do
 
           errors = []
           errors = csv.exchange_en_errors(errors: errors)
-          expect(errors).to eq([ "2行目のexchange_enの値が不正です。数値、もしくは小数点付きの数値を入力してください" ])
+
+          expect(errors).to eq([ { attribute: "exchange_en", col: 6, message: "exchange_enの値が不正です。数値、もしくは小数点付きの数値を入力してください", row: 2, value: "aaaaa" } ])
         end
       end
     end
@@ -449,7 +458,8 @@ RSpec.describe Files::DollarYenTransactionDepositCsv, type: :model do
 
         errors = []
         errors = csv.exchange_en_errors(errors: errors)
-        expect(errors).to eq([ "2行目のexchange_enは入力できません。値を削除してください" ])
+
+        expect(errors).to eq([ { attribute: "exchange_en", col: 6, message: "exchange_enは入力できません。値を削除してください", row: 2, value: "10924" } ])
       end
     end
   end
@@ -482,7 +492,7 @@ RSpec.describe Files::DollarYenTransactionDepositCsv, type: :model do
           row = [ "", "HDV配当入金", "3.97", "106.59", "", "" ]
           csv = Files::DollarYenTransactionDepositCsv.new(address: addresses_eth, row_num: 2, row: row)
           errors = csv.valid_errors
-          expect(errors).to eq([ "2行目のdateが入力されていません" ])
+          expect(errors).to eq([ { attribute: "date", col: 1, message: "dateが入力されていません", row: 2, value: "" } ])
         end
 
         it 'should be error when date is invalid format.' do
@@ -490,7 +500,7 @@ RSpec.describe Files::DollarYenTransactionDepositCsv, type: :model do
           row = [ "2020-04-01", "HDV配当入金", "3.97", "106.59", "", "" ]
           csv = Files::DollarYenTransactionDepositCsv.new(address: addresses_eth, row_num: 2, row: row)
           errors = csv.valid_errors
-          expect(errors).to eq([ "2行目のdateのフォーマットが不正です。yyyy/mm/dd形式で入力してください" ])
+          expect(errors).to eq([ { attribute: "date", col: 1, message: "dateのフォーマットが不正です。yyyy/mm/dd形式で入力してください", row: 2, value: "2020-04-01" } ])
         end
 
         it 'should be error when date is invalid date.' do
@@ -498,7 +508,7 @@ RSpec.describe Files::DollarYenTransactionDepositCsv, type: :model do
           row = [ "2020/04/33", "HDV配当入金", "3.97", "106.59", "", "" ]
           csv = Files::DollarYenTransactionDepositCsv.new(address: addresses_eth, row_num: 2, row: row)
           errors = csv.valid_errors
-          expect(errors).to eq([ "2行目のdateの値が不正です。yyyy/mm/dd形式で正しい日付を入力してください" ])
+          expect(errors).to eq([ { attribute: "date", col: 1, message: "dateの値が不正です。yyyy/mm/dd形式で正しい日付を入力してください", row: 2, value: "2020/04/33" } ])
         end
 
         it 'should be error when date is invalid date2.' do
@@ -506,7 +516,7 @@ RSpec.describe Files::DollarYenTransactionDepositCsv, type: :model do
           row = [ "aaaa/bb/cc", "HDV配当入金", "3.97", "106.59", "", "" ]
           csv = Files::DollarYenTransactionDepositCsv.new(address: addresses_eth, row_num: 2, row: row)
           errors = csv.valid_errors
-          expect(errors).to eq([ "2行目のdateの値が不正です。yyyy/mm/dd形式で正しい日付を入力してください" ])
+          expect(errors).to eq([ { attribute: "date", col: 1, message: "dateの値が不正です。yyyy/mm/dd形式で正しい日付を入力してください", row: 2, value: "aaaa/bb/cc" } ])
         end
       end
 
@@ -516,14 +526,14 @@ RSpec.describe Files::DollarYenTransactionDepositCsv, type: :model do
           row = [ "2020/04/01", "", "3.97", "106.59", "", "" ]
           csv = Files::DollarYenTransactionDepositCsv.new(address: addresses_eth, row_num: 2, row: row)
           errors = csv.valid_errors
-          expect(errors).to eq([ "2行目のtransaction_type_nameが入力されていません" ])
+          expect(errors).to eq([ { attribute: "transaction_type", col: 2, message: "transaction_typeが入力されていません", row: 2, value: "" } ])
         end
 
         it 'should be error when transaction_type_name is error.' do
           row = [ "2020/04/01", "SPA配当入金", "3.97", "106.59", "", "" ]
           csv = Files::DollarYenTransactionDepositCsv.new(address: addresses_eth, row_num: 2, row: row)
           errors = csv.valid_errors
-          expect(errors).to eq([ "2行目のtransaction_type_nameが不正です。正しいtransaction_type_nameを入力してください" ])
+          expect(errors).to eq([ { attribute: "transaction_type", col: 2, message: "transaction_typeが不正です。正しいtransaction_typeを入力してください", row: 2, value: "SPA配当入金" } ])
         end
       end
 
@@ -533,7 +543,8 @@ RSpec.describe Files::DollarYenTransactionDepositCsv, type: :model do
           row = [ "2020/04/01", "HDV配当入金", "", "106.59", "", ""  ]
           csv = Files::DollarYenTransactionDepositCsv.new(address: addresses_eth, row_num: 2, row: row)
           errors = csv.valid_errors
-          expect(errors).to eq([ "2行目のdeposit_quantityが入力されていません" ])
+
+          expect(errors).to eq([ { attribute: "deposit_quantity", col: 3, message: "deposit_quantityが入力されていません", row: 2, value: "" } ])
         end
 
         it 'should be error when deposit_quantity is invalid.' do
@@ -541,7 +552,8 @@ RSpec.describe Files::DollarYenTransactionDepositCsv, type: :model do
           row = [ "2020/04/01", "HDV配当入金", "aaa", "106.59", "", ""  ]
           csv = Files::DollarYenTransactionDepositCsv.new(address: addresses_eth, row_num: 3, row: row)
           errors = csv.valid_errors
-          expect(errors).to eq([ "3行目のdeposit_quantityの値が不正です。数値、もしくは小数点付きの数値を入力してください" ])
+
+          expect(errors).to eq([ { attribute: "deposit_quantity", col: 3, message: "deposit_quantityの値が不正です。数値、もしくは小数点付きの数値を入力してください", row: 3, value: "aaa" } ])
         end
       end
 
@@ -551,7 +563,8 @@ RSpec.describe Files::DollarYenTransactionDepositCsv, type: :model do
           row = [ "2020/04/01", "HDV配当入金", "10", "", "", "" ]
           csv = Files::DollarYenTransactionDepositCsv.new(address: addresses_eth, row_num: 2, row: row)
           errors = csv.valid_errors
-          expect(errors).to eq([ "2行目のdeposit_rateが入力されていません" ])
+
+          expect(errors).to eq([ { attribute: "deposit_rate", col: 4, message: "deposit_rateが入力されていません", row: 2, value: "" } ])
         end
 
         it 'should be error when deposit_rate is invalid.' do
@@ -559,7 +572,8 @@ RSpec.describe Files::DollarYenTransactionDepositCsv, type: :model do
           row = [ "2020/04/01", "HDV配当入金", "10", "cccc", "", "" ]
           csv = Files::DollarYenTransactionDepositCsv.new(address: addresses_eth, row_num: 3, row: row)
           errors = csv.valid_errors
-          expect(errors).to eq([ "3行目のdeposit_rateの値が不正です。数値、もしくは小数点付きの数値を入力してください" ])
+
+          expect(errors).to eq([ { attribute: "deposit_rate", col: 4, message: "deposit_rateの値が不正です。数値、もしくは小数点付きの数値を入力してください", row: 3, value: "cccc" } ])
         end
       end
     end

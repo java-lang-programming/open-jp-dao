@@ -47,7 +47,7 @@ module FileUploads
         end
       end
       # csvのデータにエラーがある
-      return csv_errors.flat_map { |a| { msg: a } } if csv_errors.present?
+      return { errors: csv_errors.flat_map { |a| a } } if csv_errors.present?
       unique_keys_errors = unique_keys_errors(unique_key_hash: unique_key_hash)
       # ユニークでないキーがある
       return unique_keys_errors.map { |a| { msg: a } } if unique_keys_errors.present?
