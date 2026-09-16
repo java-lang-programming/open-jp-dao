@@ -1,6 +1,5 @@
 require 'rails_helper'
 
-
 # https://github.com/willnet/rspec-style-guide
 RSpec.describe Files::DollarYenTransactionDepositCsv, type: :model do
   describe 'transaction_type_name_errors' do
@@ -364,7 +363,7 @@ RSpec.describe Files::DollarYenTransactionDepositCsv, type: :model do
 
     context 'withdrawal' do
       context 'exchange_enが正しい値' do
-        # 　数値の場合はOK
+        # 数値の場合はOK
         it 'should be [].' do
           transaction_type5
           row = [ "2024/02/01", "ドルを円に変換", "", "", "88", "12918" ]
@@ -427,39 +426,86 @@ RSpec.describe Files::DollarYenTransactionDepositCsv, type: :model do
     end
 
     context 'deposit' do
-      # exchange_enがない場合
-      it 'should be ok exchange_en is empty.' do
-        transaction_type1
-        row = [ "2020/04/01", "HDV配当入金", "3.97", "106.59", "", "" ]
-        csv = Files::DollarYenTransactionDepositCsv.new(
+      let(:exchange_en) { 10924 }
+      let(:row) { [ "2020/04/01", transaction_type1.name, "3.97", "106.59", "", exchange_en ] }
+      let(:dollar_yen_transaction_csv) {
+        Files::DollarYenTransactionDepositCsv.new(
           address: addresses_eth,
           row_num: 2,
           row: row,
           preload_records: { transaction_types: TransactionType.where(address_id: addresses_eth.id) }
         )
-        csv.find_transaction_type
+      }
+      # exchange_enがない場合
+      context 'when exchange_en is empty' do
+        let(:exchange_en) { "" }
 
-        errors = []
-        errors = csv.exchange_en_errors(errors: errors)
-        expect(errors).to eq([])
+        it 'should be ok' do
+          dollar_yen_transaction_csv.find_transaction_type
+
+          errors = []
+          errors = dollar_yen_transaction_csv.exchange_en_errors(errors: errors)
+          expect(errors).to eq([])
+        end
       end
 
       # exchange_enがある場合
-      it 'should be ng exchange_en is found.' do
-        transaction_type1
-        row = [ "2020/04/01", "HDV配当入金", "3.97", "106.59", "", "10924" ]
-        csv = Files::DollarYenTransactionDepositCsv.new(
-          address: addresses_eth,
-          row_num: 2,
-          row: row,
-          preload_records: { transaction_types: TransactionType.where(address_id: addresses_eth.id) }
-        )
-        csv.find_transaction_type
+      context 'when ng exchange_en is found.' do
+        let(:exchange_en) { "10924" }
 
-        errors = []
-        errors = csv.exchange_en_errors(errors: errors)
+        it 'should be ok' do
+          dollar_yen_transaction_csv.find_transaction_type
 
-        expect(errors).to eq([ { attribute: "exchange_en", col: 6, message: "exchange_enは入力できません。値を削除してください", row: 2, value: "10924" } ])
+          errors = []
+          errors = dollar_yen_transaction_csv.exchange_en_errors(errors: errors)
+          expect(errors).to eq([ { attribute: "exchange_en", col: 6, message: "exchange_enは入力できません。値を削除してください", row: 2, value: "10924" } ])
+        end
+      end
+
+      context 'when exchange_en is comma.' do
+        let(:transaction_type5) { create(:transaction_type5, address: addresses_eth) }
+        let(:exchange_en) { "10,924" }
+        let(:row) { [ "2020/04/01", transaction_type5.name, "3.97", "106.59", "", exchange_en ] }
+        let(:dollar_yen_transaction_csv) {
+          Files::DollarYenTransactionDepositCsv.new(
+            address: addresses_eth,
+            row_num: 2,
+            row: row,
+            preload_records: { transaction_types: TransactionType.where(address_id: addresses_eth.id) }
+          )
+        }
+
+        it 'should be ok' do
+          dollar_yen_transaction_csv.find_transaction_type
+
+          errors = []
+          errors = dollar_yen_transaction_csv.exchange_en_errors(errors: errors)
+          expect(errors).to eq([])
+        end
+
+        context 'when no comma string' do
+          let(:exchange_en) { "10,924" }
+
+          it 'should be ok' do
+            dollar_yen_transaction_csv.find_transaction_type
+
+            errors = []
+            errors = dollar_yen_transaction_csv.exchange_en_errors(errors: errors)
+            expect(errors).to eq([])
+          end
+        end
+
+        context 'when integer' do
+          let(:exchange_en) { 10924 }
+
+          it 'should be ok' do
+            dollar_yen_transaction_csv.find_transaction_type
+
+            errors = []
+            errors = dollar_yen_transaction_csv.exchange_en_errors(errors: errors)
+            expect(errors).to eq([])
+          end
+        end
       end
     end
   end
@@ -621,12 +667,21 @@ RSpec.describe Files::DollarYenTransactionDepositCsv, type: :model do
     let(:dollar_yen_transaction2) { create(:dollar_yen_transaction2, transaction_type: transaction_type1, address: addresses_eth) }
 
     context 'deposit' do
-      # 　初回データ
+      let(:exchange_en) { "" }
+      let(:withdrawal_quantity) { "" }
+      let(:transaction_type_name) { transaction_type1.name }
+      let(:row) {
+        [ "2020/04/01", transaction_type_name, "3.97", "106.59", withdrawal_quantity, exchange_en ]
+      }
+      let(:csv) {
+        Files::DollarYenTransactionDepositCsv.new(
+          address: addresses_eth,
+          row_num: 2,
+          row: row
+        )
+      }
+      # 初回データ
       it 'should get first data.' do
-        # transaction_type1の実体化
-        transaction_type1
-        row = [ "2020/04/01", "HDV配当入金", "3.97", "106.59", "", "" ]
-        csv = Files::DollarYenTransactionDepositCsv.new(address: addresses_eth, row_num: 2, row: row)
         csv.find_transaction_type
 
         dollar_yen_transaction = csv.to_dollar_yen_transaction
@@ -640,7 +695,7 @@ RSpec.describe Files::DollarYenTransactionDepositCsv, type: :model do
         expect(dollar_yen_transaction.balance_en.truncate(6)).to eq(dollar_yen_transaction1.balance_en.truncate(6))
       end
 
-      # 　次のデータ
+      # 次のデータ
       it 'should get next data.' do
         # transaction_type1の実体化
         transaction_type1
@@ -664,11 +719,14 @@ RSpec.describe Files::DollarYenTransactionDepositCsv, type: :model do
     end
 
     context 'deposit and withdrawal' do
+      let(:exchange_en) { "250" }
+      let(:withdrawal_row) {
+        [ "2020/06/19", transaction_type5.name, "", "", "2", exchange_en ]
+      }
+
       it 'should get withdrawal data.' do
-        transaction_type1
-        transaction_type5
-        row = [ "2020/04/01", "HDV配当入金", "3.97", "106.59", "", "" ]
-        row2 = [ "2020/06/19", "ドルを円に変換", "", "", "2", "250" ]
+        row = [ "2020/04/01", transaction_type1.name, "3.97", "106.59", "", "" ]
+        row2 = withdrawal_row
         csv_line1 = Files::DollarYenTransactionDepositCsv.new(address: addresses_eth, row_num: 2, row: row)
         csv_line1.find_transaction_type
         calc_dollar_yen_transaction1 = csv_line1.to_dollar_yen_transaction
@@ -695,6 +753,50 @@ RSpec.describe Files::DollarYenTransactionDepositCsv, type: :model do
         expect(calc_dollar_yen_transaction2.withdrawal_en.truncate(7).to_f).to eq(213.0982367)
         expect(calc_dollar_yen_transaction2.exchange_en).to eq(250)
         expect(calc_dollar_yen_transaction2.exchange_difference.truncate(7).to_f).to eq(36.9017632)
+      end
+
+      context 'when exchange_en is comma string integer.' do
+        let(:exchange_en) { "1,000" }
+        let(:csv_line2) {
+          Files::DollarYenTransactionDepositCsv.new(address: addresses_eth, row_num: 3, row: withdrawal_row)
+        }
+
+        before do
+          row = [ "2020/04/01", transaction_type1.name, "3.97", "106.59", "", "" ]
+          csv_line1 = Files::DollarYenTransactionDepositCsv.new(address: addresses_eth, row_num: 2, row: row)
+          csv_line1.find_transaction_type
+          csv_line1.to_dollar_yen_transaction
+          csv_line2.find_transaction_type
+        end
+
+        it 'should get withdrawal data.' do
+          calc_dollar_yen_transaction2 = csv_line2.to_dollar_yen_transaction(previous_dollar_yen_transactions: dollar_yen_transaction1)
+
+          expect(calc_dollar_yen_transaction2.exchange_en).to eq(1000)
+          expect(calc_dollar_yen_transaction2.exchange_difference.truncate(7).to_f).to eq(786.9017632)
+        end
+
+        context 'when exchange_en is integer.' do
+          let(:exchange_en) { 1000 }
+
+          it 'should get withdrawal data.' do
+            calc_dollar_yen_transaction2 = csv_line2.to_dollar_yen_transaction(previous_dollar_yen_transactions: dollar_yen_transaction1)
+
+            expect(calc_dollar_yen_transaction2.exchange_en).to eq(1000)
+            expect(calc_dollar_yen_transaction2.exchange_difference.truncate(7).to_f).to eq(786.9017632)
+          end
+        end
+
+        context 'when exchange_en is en comma string integer.' do
+          let(:exchange_en) { '¥1000' }
+
+          it 'should get withdrawal data.' do
+            calc_dollar_yen_transaction2 = csv_line2.to_dollar_yen_transaction(previous_dollar_yen_transactions: dollar_yen_transaction1)
+
+            expect(calc_dollar_yen_transaction2.exchange_en).to eq(1000)
+            expect(calc_dollar_yen_transaction2.exchange_difference.truncate(7).to_f).to eq(786.9017632)
+          end
+        end
       end
     end
   end
