@@ -9,5 +9,15 @@ module FileRecord
 
       Integer(normalized)
     end
+
+    def money_to_numeric(value:)
+      # 通貨記号（$, ¥, €, £）やカンマ、シングルクォートを除去
+      normalized = value.to_s
+                        .gsub(/[$,¥€£']/, "")
+                        .strip
+
+      # ドットが含まれていれば Float、なければ Integer で変換
+      normalized.include?(".") ? Float(normalized) : Integer(normalized)
+    end
   end
 end

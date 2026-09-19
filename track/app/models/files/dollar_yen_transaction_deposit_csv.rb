@@ -2,6 +2,8 @@ module Files
   # TODO 名称を変更
   # DollarYenTransactionCsv
   class DollarYenTransactionDepositCsv
+    include FileRecord::Type
+
     COLUMN_DATE_INDEX = 0
     COLUMN_TRANSACTION_TYPE_NAME_INDEX = 1
     COLUMN_DEPOSIT_QUANTITY_INDEX = 2
@@ -165,7 +167,47 @@ module Files
     # @exchange_enが有効な数値か検証する
     #
     def exchange_en_errors(errors:)
-      withdrawal_value_errors(errors: errors, target_name: "exchange_en", target_value: @exchange_en)
+      target_name = "exchange_en"
+      col = 6
+      if @transaction_type.present?
+        if @transaction_type.deposit?
+          if @exchange_en.present?
+            error = ImportFileError.error_json_data(
+              row: @row_num,
+              col: col,
+              attribute: target_name,
+              value: @exchange_en,
+              message: "#{target_name}は入力できません。値を削除してください"
+            )
+            errors << error
+          end
+        elsif @transaction_type.withdrawal?
+          if @exchange_en.present?
+            begin
+              money_to_numeric(value: @exchange_en)
+            rescue => e
+              error = ImportFileError.error_json_data(
+                row: @row_num,
+                col: col,
+                attribute: target_name,
+                value: @exchange_en,
+                message: "#{target_name}の値が不正です。数値、もしくは小数点付きの数値を入力してください"
+              )
+              errors << error
+            end
+          else
+            error = ImportFileError.error_json_data(
+              row: @row_num,
+              col: col,
+              attribute: target_name,
+              value: @exchange_en,
+              message: "#{target_name}が入力されていません"
+            )
+            errors << error
+          end
+        end
+      end
+      errors
     end
 
     # @param errors [Array] エラーメッセージを格納する配列
@@ -309,7 +351,7 @@ module Files
       dyt.deposit_rate = BigDecimal(@deposit_rate.to_s) if dyt.deposit?
       dyt.deposit_quantity = BigDecimal(@deposit_quantity.to_s) if dyt.deposit?
       dyt.withdrawal_quantity = BigDecimal(@withdrawal_quantity.to_s) if dyt.withdrawal?
-      dyt.exchange_en = BigDecimal(@exchange_en.to_s) if dyt.withdrawal?
+      dyt.exchange_en = BigDecimal(money_to_numeric(value: @exchange_en.to_s)) if dyt.withdrawal?
 
       en = dyt.calculate_deposit_en if dyt.deposit?
       withdrawal_rate = dyt.calculate_withdrawal_rate(previous_dollar_yen_transactions: previous_dollar_yen_transactions) if dyt.withdrawal?
